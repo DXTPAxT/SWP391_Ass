@@ -10,33 +10,36 @@ public class Products {
     private int ProductID ;
     private String Name ;
     private String Description ;
+    private String Brand;
     private Double Price ;
     private int Quantity ;
     private int WarrantyPeriod ;
     private Date CreatedAt ;
-    private int ComponentID ;
+    private int CategoryIDID ;
     private int Status ;
 
-    public Products(int ProductID, String Name, String Description, Double Price, int Quantity, int WarrantyPeriod, Date CreatedAt, int ComponentID, int Status) {
+    public Products(int ProductID, String Name, String Description, String Brand, Double Price, int Quantity, int WarrantyPeriod, Date CreatedAt, int CategoryIDID, int Status) {
         this.ProductID = ProductID;
         this.Name = Name;
         this.Description = Description;
+        this.Brand = Brand;
         this.Price = Price;
         this.Quantity = Quantity;
         this.WarrantyPeriod = WarrantyPeriod;
         this.CreatedAt = CreatedAt;
-        this.ComponentID = ComponentID;
+        this.CategoryIDID = CategoryIDID;
         this.Status = Status;
     }
 
-    public Products(String Name, String Description, Double Price, int Quantity, int WarrantyPeriod, Date CreatedAt, int ComponentID, int Status) {
+    public Products(String Name, String Description, String Brand, Double Price, int Quantity, int WarrantyPeriod, Date CreatedAt, int CategoryIDID, int Status) {
         this.Name = Name;
         this.Description = Description;
+        this.Brand = Brand;
         this.Price = Price;
         this.Quantity = Quantity;
         this.WarrantyPeriod = WarrantyPeriod;
         this.CreatedAt = CreatedAt;
-        this.ComponentID = ComponentID;
+        this.CategoryIDID = CategoryIDID;
         this.Status = Status;
     }
 
@@ -62,6 +65,14 @@ public class Products {
 
     public void setDescription(String Description) {
         this.Description = Description;
+    }
+
+    public String getBrand() {
+        return Brand;
+    }
+
+    public void setBrand(String Brand) {
+        this.Brand = Brand;
     }
 
     public Double getPrice() {
@@ -96,12 +107,12 @@ public class Products {
         this.CreatedAt = CreatedAt;
     }
 
-    public int getComponentID() {
-        return ComponentID;
+    public int getCategoryIDID() {
+        return CategoryIDID;
     }
 
-    public void setComponentID(int ComponentID) {
-        this.ComponentID = ComponentID;
+    public void setCategoryIDID(int CategoryIDID) {
+        this.CategoryIDID = CategoryIDID;
     }
 
     public int getStatus() {
@@ -111,7 +122,9 @@ public class Products {
     public void setStatus(int Status) {
         this.Status = Status;
     }
-    
+  
+
+   
     
     
 }

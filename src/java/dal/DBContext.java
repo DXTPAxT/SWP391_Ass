@@ -30,7 +30,9 @@ public class DBContext {
         try {
             String user = "sa";
             String pass = "123";
+
             String url = "jdbc:sqlserver://LAPTOP-63C2NPU0\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
+
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException | SQLException ex) {
@@ -38,13 +40,14 @@ public class DBContext {
         }
 
     }
-    public ResultSet getData(String sql){
+
+    public ResultSet getData(String sql) {
         ResultSet rs = null;
         Statement state;
         try {
-            state = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            state = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             rs = state.executeQuery(sql);
-            
+
         } catch (SQLException ex) {
             ex.getStackTrace();
         }

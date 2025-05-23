@@ -1,3 +1,10 @@
+<%-- 
+    Document   : homepages
+    Created on : May 22, 2025, 11:04:18 AM
+    Author     : PC
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -115,7 +122,7 @@
 								<li><a href="index.html" class="active">Home</a></li>
 								<li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
-                                        <li><a href="shop.html">Products</a></li>
+                                        <li><a href="/ProductServlet">Products</a></li>
 										<li><a href="product-details.html">Product Details</a></li> 
 										<li><a href="checkout.html">Checkout</a></li> 
 										<li><a href="cart.html">Cart</a></li> 
@@ -213,25 +220,27 @@
 			<div class="row">
 				<div class="col-sm-3">
 					<div class="left-sidebar">
-						<h2>Category</h2>
+                                            <h2 ><a href="${pageContext.request.contextPath}/Components?action=list">Category</a></h2>
 						<div class="panel-group category-products" id="accordian"><!--category-productsr-->
 							<div class="panel panel-default">
 								<div class="panel-heading">
 									<h4 class="panel-title">
 										<a data-toggle="collapse" data-parent="#accordian" href="#sportswear">
 											<span class="badge pull-right"><i class="fa fa-plus"></i></span>
-											Sportswear
+											Màn hình
 										</a>
 									</h4>
 								</div>
 								<div id="sportswear" class="panel-collapse collapse">
 									<div class="panel-body">
 										<ul>
-											<li><a href="#">Nike </a></li>
-											<li><a href="#">Under Armour </a></li>
-											<li><a href="#">Adidas </a></li>
-											<li><a href="#">Puma</a></li>
-											<li><a href="#">ASICS </a></li>
+											<li><a href="Manhinh/AcerCategory.jsp">Acer </a></li>
+											<li><a href="#">Asus </a></li>
+											<li><a href="#">SamSung </a></li>
+											<li><a href="#">MSI</a></li>
+											<li><a href="#">Xiaomi </a></li>
+                                                                                        <li><a href="#">DELL</a></li>
+                                                                                        <li><a href="#">LENOVO</a></li>
 										</ul>
 									</div>
 								</div>
@@ -241,23 +250,19 @@
 									<h4 class="panel-title">
 										<a data-toggle="collapse" data-parent="#accordian" href="#mens">
 											<span class="badge pull-right"><i class="fa fa-plus"></i></span>
-											Mens
+											 Vỏ Case PC
 										</a>
 									</h4>
 								</div>
 								<div id="mens" class="panel-collapse collapse">
 									<div class="panel-body">
 										<ul>
-											<li><a href="#">Fendi</a></li>
-											<li><a href="#">Guess</a></li>
-											<li><a href="#">Valentino</a></li>
-											<li><a href="#">Dior</a></li>
-											<li><a href="#">Versace</a></li>
-											<li><a href="#">Armani</a></li>
-											<li><a href="#">Prada</a></li>
-											<li><a href="#">Dolce and Gabbana</a></li>
-											<li><a href="#">Chanel</a></li>
-											<li><a href="#">Gucci</a></li>
+											<li><a href="AcerCategory.jsp">Acer </a></li>
+											<li><a href="#">Asus </a></li>
+											<li><a href="#">MSI</a></li>
+											<li><a href="#">Xiaomi </a></li>
+                                                                                        <li><a href="#">DELL</a></li>
+                                                                                        <li><a href="#">LENOVO</a></li>
 										</ul>
 									</div>
 								</div>
@@ -268,55 +273,71 @@
 									<h4 class="panel-title">
 										<a data-toggle="collapse" data-parent="#accordian" href="#womens">
 											<span class="badge pull-right"><i class="fa fa-plus"></i></span>
-											Womens
+											Main
 										</a>
 									</h4>
 								</div>
 								<div id="womens" class="panel-collapse collapse">
 									<div class="panel-body">
 										<ul>
-											<li><a href="#">Fendi</a></li>
-											<li><a href="#">Guess</a></li>
-											<li><a href="#">Valentino</a></li>
-											<li><a href="#">Dior</a></li>
-											<li><a href="#">Versace</a></li>
+											<li><a href="#">Asus</a></li>
+											<li><a href="#">MSI</a></li>
+											<li><a href="#">Intel</a></li>
+											
 										</ul>
 									</div>
 								</div>
 							</div>
 							<div class="panel panel-default">
 								<div class="panel-heading">
-									<h4 class="panel-title"><a href="#">Kids</a></h4>
+									<h4 class="panel-title"><a href="#">CPU</a></h4>
 								</div>
 							</div>
 							<div class="panel panel-default">
 								<div class="panel-heading">
-									<h4 class="panel-title"><a href="#">Fashion</a></h4>
+									<h4 class="panel-title"><a href="#">Ram</a></h4>
 								</div>
 							</div>
 							<div class="panel panel-default">
 								<div class="panel-heading">
-									<h4 class="panel-title"><a href="#">Households</a></h4>
+									<h4 class="panel-title"><a href="#">HDD / SSD</a></h4>
 								</div>
 							</div>
 							<div class="panel panel-default">
 								<div class="panel-heading">
-									<h4 class="panel-title"><a href="#">Interiors</a></h4>
+									<h4 class="panel-title"><a href="#">GPU / VGA</a></h4>
 								</div>
 							</div>
 							<div class="panel panel-default">
 								<div class="panel-heading">
-									<h4 class="panel-title"><a href="#">Clothing</a></h4>
+									<h4 class="panel-title"><a href="#">PSU - Power Supply Unit</a></h4>
 								</div>
 							</div>
 							<div class="panel panel-default">
 								<div class="panel-heading">
-									<h4 class="panel-title"><a href="#">Bags</a></h4>
+									<h4 class="panel-title"><a href="#">Tản nhiệt (Cooling)</a></h4>
 								</div>
 							</div>
+                                                    <div class="panel panel-default">
+								<div class="panel-heading">
+									<h4 class="panel-title"><a href="#">Mouse</a></h4>
+								</div>
+							</div>
+                                                    <div class="panel panel-default">
+								<div class="panel-heading">
+									<h4 class="panel-title"><a href="#">Keyboard</a></h4>
+								</div>
+							</div>
+
+
 							<div class="panel panel-default">
 								<div class="panel-heading">
-									<h4 class="panel-title"><a href="#">Shoes</a></h4>
+									<h4 class="panel-title"><a href="#">Full PC</a></h4>
+								</div>
+							</div>
+                                                    <div class="panel panel-default">
+								<div class="panel-heading">
+									<h4 class="panel-title"><a href="#">LapTop</a></h4>
 								</div>
 							</div>
 						</div><!--/category-products-->
