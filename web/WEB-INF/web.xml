@@ -29,6 +29,10 @@
         <url-pattern>/Login</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>ProductServlet</servlet-name>
+        <url-pattern>/Product</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/Home</url-pattern>
     </servlet-mapping>
