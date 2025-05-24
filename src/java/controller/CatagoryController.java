@@ -5,7 +5,7 @@
 
 package controller;
 
-import dal.ComponentsDAO;
+import dal.CatagoryDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,14 +14,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import models.Components;
+import models.Catagory;
 
 /**
  *
  * @author PC
  */
-@WebServlet(name="ComponentsController", urlPatterns={"/Components"})
-public class ComponentsController extends HttpServlet {
+@WebServlet(name="CatagoryController", urlPatterns={"/Catagorys"})
+public class CatagoryController extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -58,15 +58,15 @@ public class ComponentsController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-         ComponentsDAO dao = new ComponentsDAO();
-        List<Components> components = dao.getComponents();
+         CatagoryDAO dao = new CatagoryDAO();
+        List<Catagory> components = dao.getComponents();
        request.setAttribute("data",components );
-      request.getRequestDispatcher("/ShopPages/Pages/Components.jsp").forward(request, response);
+      request.getRequestDispatcher("/ShopPages/Pages/Catagorys.jsp").forward(request, response);
 
     } 
 
     /** 
-     * Handles the HTTP <code>POST</code> method.
+     * Handles the HTTP <code>POST</code> method.   
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs

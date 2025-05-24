@@ -6,20 +6,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import models.Components;
+import models.Catagory;
 
-public class ComponentsDAO extends DBContext {
+public class CatagoryDAO extends DBContext {
    
 
-    public List<Components> getComponents() {
-        List<Components> list = new ArrayList<>();
+    public List<Catagory> getComponents() {
+        List<Catagory> list = new ArrayList<>();
         String sql = "SELECT ComponentID, ComponentName FROM Components;";
 
         try (PreparedStatement st = connection.prepareStatement(sql);
              ResultSet rs = st.executeQuery()) {
             
             while (rs.next()) {
-                Components c = new Components(
+                Catagory c = new Catagory(
                     rs.getInt("ComponentID"),
                     rs.getString("ComponentName")
                  
@@ -33,13 +33,13 @@ public class ComponentsDAO extends DBContext {
 
         return list;
     }
-    public Components getComponentByName(String name) {
+    public Catagory getComponentByName(String name) {
     String sql = "SELECT * FROM Components WHERE ComponentName = ?";
     try (PreparedStatement st = connection.prepareStatement(sql)) {
         st.setString(1, name);
         ResultSet rs = st.executeQuery();
         if (rs.next()) {
-            return new Components(
+            return new Catagory(
                 rs.getInt("ComponentID"),
                 rs.getString("ComponentName")
             );
@@ -51,13 +51,13 @@ public class ComponentsDAO extends DBContext {
 }
 
       public static void main(String[] args) {
-        ComponentsDAO dao = new ComponentsDAO();
-        List<Components> components = dao.getComponents();
+        CatagoryDAO dao = new CatagoryDAO();
+        List<Catagory> components = dao.getComponents();
 
         if (components.isEmpty()) {
             System.out.println("Không có dữ liệu trong bảng Components.");
         } else {
-            for (Components c : components) {
+            for (Catagory c : components) {
                 System.out.println(c);
             }
         }

@@ -1,22 +1,22 @@
 package models;
 
-public class Components {
+public class Catagory {
     private int componentID;
     private String componentName;
     private int quantity; 
     private int status;
 
-    public Components() {
+    public Catagory() {
     }
 
-    public Components(int componentID, String componentName, int quantity, int status) {
+    public Catagory(int componentID, String componentName, int quantity, int status) {
         this.componentID = componentID;
         this.componentName = componentName;
         this.quantity = quantity;
         this.status = status;
     }
 
-    public Components(int componentID, String componentName) {
+    public Catagory(int componentID, String componentName) {
         this.componentID = componentID;
         this.componentName = componentName;
         this.quantity = 0; 
