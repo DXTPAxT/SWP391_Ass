@@ -7,6 +7,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
+<%@ page isErrorPage="true" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -304,7 +306,7 @@
 
                     <div class="col-sm-9 padding-right">
                         <div class="features_items"><!--features_items-->
-                            <h2 class="title text-center">PC </h2>
+                            <h2 class="title text-center">Products </h2>
 
 
                             <c:forEach var="product" items="${requestScope.data}"> 
@@ -312,20 +314,19 @@
                                 <div class="col-sm-4">
                                     <div class="product-image-wrapper">
                                         <div class="single-products">
-                                            <div class="productinfo text-center">
-                                                <img src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
 
-                                                <h2>${product.price}</h2>
-                                                <p>${product.name}</p>
+                                            <div class="productinfo text-center">
+
+                                                <img src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
+                                                
+                                                    <h2>${product.price}</h2>
+
+                                                    <p>${product.name}</p>
+                                                
                                                 <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                                             </div>
-                                            <div class="product-overlay">
-                                                <div class="overlay-content">
-                                                    <h2>${product.price}</h2>
-                                                    <p>${product.name}</p>
-                                                    <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-                                                </div>
-                                            </div>
+
+
                                         </div>
                                         <div class="choose">
                                             <ul class="nav nav-pills nav-justified">

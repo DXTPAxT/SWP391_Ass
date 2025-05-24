@@ -4,7 +4,6 @@
  */
 package controller;
 
-
 import dal.ProductDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Date;
+import java.util.List;
 import java.util.Vector;
 import models.Products;
 
@@ -31,22 +31,23 @@ public class ProductServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         ProductDAO dao = new ProductDAO();
-       
+
         String service = request.getParameter("service");
         if (service == null) {
             service = "listProduct";
         }
-       
+
+        Vector<Products> list;
+
         if (service.equals("listProduct")) {
             String submit = request.getParameter("submit");
-            String productName = request.getParameter("productName");
-            //Call models
-            Vector<Products> list;
+
             if (submit == null) {
                 list = dao.getAllProduct(SQL);
             } else {
-                list = dao.getAllProduct("SELECT *\n"
-                        + "FROM Products");
+                list = dao.getAllProduct("""
+                                         SELECT *
+                                         FROM Products""");
             }
             //set data for view
             request.setAttribute("data", list);
@@ -55,6 +56,18 @@ public class ProductServlet extends HttpServlet {
 
             //Select view
             request.getRequestDispatcher("ShopPages/Pages/ProductList.jsp").forward(request, response);
+        } 
+        if ("Detail".equals(service)) {
+            try {
+                int id = Integer.parseInt(request.getParameter("ProductID"));
+                Products product = dao.getProductById(id);
+           
+                request.setAttribute("product", product);
+
+                request.getRequestDispatcher("ShopPages/Pages/ProductDetail.jsp").forward(request, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
