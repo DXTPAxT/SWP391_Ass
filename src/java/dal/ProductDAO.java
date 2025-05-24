@@ -39,6 +39,48 @@ public class ProductDAO extends DBContext {
         }
         return listProduct;
     }
+
+    public Products getProductById(int id) {
+        Products p = null;
+        try {
+            String sql = "SELECT * FROM Products WHERE ProductID = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                p = new Products();
+                p.setProductID(rs.getInt("ProductID")); // viết đúng tên cột
+                p.setName(rs.getString("Name"));
+                p.setDescription(rs.getString("Description"));
+                p.setBrand(rs.getString("Brand"));
+                p.setPrice(rs.getDouble("Price"));
+                p.setQuantity(rs.getInt("Quantity"));
+                p.setWarrantyPeriod(rs.getInt("WarrantyPeriod"));
+                p.setCreatedAt(rs.getDate("CreatedAt")); // nếu bạn dùng LocalDateTime
+                p.setCategoryID(rs.getInt("CategoryID"));
+                p.setStatus(rs.getInt("Status"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return p;
+    }
+
+    private Products mapProduct(ResultSet rs) throws SQLException {
+        return new Products(
+                rs.getInt("ProductID"),
+                rs.getString("Name"),
+                rs.getString("Description"),
+                rs.getString("Brand"),
+                rs.getDouble("Price"),
+                rs.getInt("Quantity"),
+                rs.getInt("WarrantyPeriod"),
+                rs.getDate("CreatAt"),
+                rs.getInt("CategoryID"),
+                rs.getInt("Status")
+        );
+    }
     /*public static void main(String[] args) {
     ProductDAO dao = new ProductDAO();
     String sql = "SELECT * FROM Products"; // Hoặc điều chỉnh theo bảng thật của bạn
