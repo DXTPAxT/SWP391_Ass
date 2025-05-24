@@ -61,7 +61,7 @@ public class ComponentsController extends HttpServlet {
          ComponentsDAO dao = new ComponentsDAO();
         List<Components> components = dao.getComponents();
        request.setAttribute("data",components );
-      request.getRequestDispatcher("/ShopPages/Pages/Components.jsp").forward(request, response);
+      request.getRequestDispatcher("/ShopPages/Pages/Catagorys.jsp").forward(request, response);
 
     } 
 

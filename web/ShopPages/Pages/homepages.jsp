@@ -232,8 +232,8 @@
 										</a>
 									</h4>
 								</div>
-								<div id="sportswear" class="panel-collapse collapse">
-									<div class="panel-body">
+                                                                    <div id="sportswear" class="panel-collapse collapse">
+                                                                            <div class="panel-body">
 										<ul>
 											<li><a href="Manhinh/AcerCategory.jsp">Acer </a></li>
 											<li><a href="#">Asus </a></li>
