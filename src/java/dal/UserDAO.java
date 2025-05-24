@@ -48,7 +48,6 @@ public class UserDAO extends DBContext {
         }
         return users;
     }
-    
 
     public boolean isEmailExist(String email) {
         User user = null;
@@ -58,6 +57,36 @@ public class UserDAO extends DBContext {
                          """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                user = new User(
+                        rs.getInt("UserID"),
+                        rs.getInt("RoleID"),
+                        rs.getString("FullName"),
+                        rs.getString("Email"),
+                        rs.getString("PhoneNumber"),
+                        rs.getString("Address"),
+                        rs.getString("PasswordHash"),
+                        rs.getString("CreatedAt"),
+                        rs.getInt("Status")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            return false;
+        }
+        return user != null;
+    }
+
+    public boolean isPhoneNumberExisted(String phoneNumber) {
+        User user = null;
+        String sql = """
+                        Select * from Users
+                        Where phoneNumber = ?
+                         """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, phoneNumber);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 user = new User(
@@ -110,6 +139,29 @@ public class UserDAO extends DBContext {
             return null;
         }
         return user;
+    }
+
+    public boolean createNewUser(String email, String fullName, String address, String phoneNumber, String password, int roleID) {
+        User user = null;
+        int n = 0;
+        String sql = """
+                        Insert into Users(Email, FullName, Address, PhoneNumber, PasswordHash, RoleID, Status) 
+                        values(?,?,?,?,?,?,1)
+                         """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setString(2, fullName);
+            ps.setString(3, address);
+            ps.setString(4, phoneNumber);
+            ps.setString(5, password);
+            ps.setInt(6, roleID);
+            n = ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            return false;
+        }
+        return n > 0;
     }
 
     public static void main(String[] args) {
