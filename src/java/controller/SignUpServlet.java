@@ -68,7 +68,7 @@ public class SignUpServlet extends HttpServlet {
             if (user.getRoleID() != 1) {
                 String redirectURL = (String) session.getAttribute("redirectAfterLogin");
                 if (redirectURL == null) {
-                    redirectURL = "User";
+                    redirectURL = "Home";
                 }
                 session.setAttribute("redirectAfterLogin", null);
                 response.sendRedirect(redirectURL);
