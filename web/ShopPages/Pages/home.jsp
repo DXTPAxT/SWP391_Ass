@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html lang="en">
@@ -14,13 +15,13 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <title>Home | E-Shopper</title>
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/prettyPhoto.css" rel="stylesheet">
-        <link href="css/price-range.css" rel="stylesheet">
-        <link href="css/animate.css" rel="stylesheet">
-        <link href="css/main.css" rel="stylesheet">
-        <link href="css/responsive.css" rel="stylesheet">
+        <link href="${ctx}/ShopPages/Pages/css/bootstrap.min.css" rel="stylesheet">
+        <link href="${ctx}/ShopPages/Pages/css/font-awesome.min.css" rel="stylesheet">
+        <link href="${ctx}/ShopPages/Pages/css/prettyPhoto.css" rel="stylesheet">
+        <link href="${ctx}/ShopPages/Pages/css/price-range.css" rel="stylesheet">
+        <link href="${ctx}/ShopPages/Pages/css/animate.css" rel="stylesheet">
+        <link href="${ctx}/ShopPages/Pages/css/main.css" rel="stylesheet">
+        <link href="${ctx}/ShopPages/Pages/css/responsive.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -32,7 +33,6 @@
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
     </head><!--/head-->
 
-<<<<<<< HEAD
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -41,8 +41,8 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> 0337593524</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> CyberBeast@gmail.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -66,17 +66,39 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="homepages.jsp"><img src="images/home/CyberBeast2.png" style="height: 150px; width: 200px;  "/></a>
+                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
                             </div>
                             <div class="btn-group pull-right">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
+                                        USA
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#">Canada</a></li>
+                                        <li><a href="#">UK</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
+                                        DOLLAR
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#">Canadian Dollar</a></li>
+                                        <li><a href="#">Pound</a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
-                                <ul class="nav navbar-nav"  style=" padding-top: 50px ">
-                                    <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                <ul class="nav navbar-nav">
                                     <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
                                     <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                                    <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                     <li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li>
                                 </ul>
                             </div>
@@ -99,7 +121,7 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="homepages.jsp" class="active">Home</a></li>
+                                    <li><a href="index.html" class="active">Home</a></li>
                                     <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="shop.html">Products</a></li>
@@ -144,16 +166,14 @@
                             <div class="carousel-inner">
                                 <div class="item active">
                                     <div class="col-sm-6">
-                                        <h1><span style="color: red ">Cyber</span><span style="color: #111111;">Beast</span></h1>
-                                        <h3>Best Seller</h3>
-                                        <p>Powerful Performance:  Intel® Core™ i5/i7 processor and NVIDIA® GeForce® GTX/RTX graphics.
-                                        <p>Vibrant Display: 15.6” Full HD IPS display with a fast refresh rate—perfect.</p>
-                                        <p>Cooling Mastery: Advanced thermal design keeps the system cool under pressure. </p>
+                                        <h1><span>E</span>-SHOPPER</h1>
+                                        <h2>Free E-Commerce Template</h2>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
                                         <button type="button" class="btn btn-default get">Get it now</button>
                                     </div>
                                     <div class="col-sm-6">
-                                        <img src="images/home/nitrov15.png" style="height:450px; width:auto; padding-top:30px" class="girl img-responsive" alt="" />
-
+                                        <img src="images/home/girl1.jpg" class="girl img-responsive" alt="" />
+                                        <img src="images/home/pricing.png"  class="pricing" alt="" />
                                     </div>
                                 </div>
                                 <div class="item">
@@ -202,7 +222,7 @@
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="left-sidebar">
-                            <h2 ><a href="${pageContext.request.contextPath}/Category?action=list">Category</a></h2>
+                            <h2 ><a href="${pageContext.request.contextPath}/Components?action=list">Category</a></h2>
                             <div class="panel-group category-products" id="accordian"><!--category-productsr-->
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
@@ -328,13 +348,13 @@
                                 <h2>Brands</h2>
                                 <div class="brands-name">
                                     <ul class="nav nav-pills nav-stacked">
-                                        <li><a href="#"> <span class="pull-right"></span>Acer</a></li>
-                                        <li><a href="#"> <span class="pull-right"></span>Asus</a></li>
-                                        <li><a href="#"> <span class="pull-right"></span>SamSung</a></li>
-                                        <li><a href="#"> <span class="pull-right"></span>MSI</a></li>
-                                        <li><a href="#"> <span class="pull-right"></span>Xiaomi</a></li>
-                                        <li><a href="#"> <span class="pull-right"></span>LENOVO</a></li>
-                                   
+                                        <li><a href="#"> <span class="pull-right">(50)</span>Acne</a></li>
+                                        `		<li><a href="#"> <span class="pull-right">(56)</span>Grüne Erde</a></li>
+                                        <li><a href="#"> <span class="pull-right">(27)</span>Albiro</a></li>
+                                        <li><a href="#"> <span class="pull-right">(32)</span>Ronhill</a></li>
+                                        <li><a href="#"> <span class="pull-right">(5)</span>Oddmolly</a></li>
+                                        <li><a href="#"> <span class="pull-right">(9)</span>Boudestijn</a></li>
+                                        <li><a href="#"> <span class="pull-right">(4)</span>Rösch creative culture</a></li>
                                     </ul>
                                 </div>
                             </div><!--/brands_products-->
@@ -1059,6 +1079,7 @@
             </div>
 
         </footer><!--/Footer-->
+
 
 
         <script src="js/jquery.js"></script>

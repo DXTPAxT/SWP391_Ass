@@ -5,12 +5,16 @@
 
 package controller;
 
+import dal.UserDAO;
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import models.User;
 
 /**
  *
@@ -53,7 +57,11 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+          UserDAO userDAO = new UserDAO();
+          ArrayList<User> users = userDAO.getUsers();
+          request.setAttribute("users", users);
+          RequestDispatcher rs = request.getRequestDispatcher("test.jsp");
+          rs.forward(request, response);
     } 
 
     /** 
