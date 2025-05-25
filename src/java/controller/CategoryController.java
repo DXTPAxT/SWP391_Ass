@@ -5,7 +5,7 @@
 
 package controller;
 
-import dal.ComponentsDAO;
+import dal.CategoryDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,14 +14,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import models.Components;
+import models.Catagorys;
 
 /**
  *
  * @author PC
  */
-@WebServlet(name="ComponentsController", urlPatterns={"/Components"})
-public class ComponentsController extends HttpServlet {
+@WebServlet(name="CategoryController", urlPatterns={"/Category"})
+public class CategoryController extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -33,19 +33,12 @@ public class ComponentsController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ComponentsController</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ComponentsController at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+         CategoryDAO dao = new CategoryDAO();
+        List<Catagorys> cate = dao.getAllCategoryNames();
+       request.setAttribute("data",cate );
+      request.getRequestDispatcher("/ShopPages/Pages/Catagorys.jsp").forward(request, response);
         }
-    } 
+    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
@@ -58,11 +51,7 @@ public class ComponentsController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-         ComponentsDAO dao = new ComponentsDAO();
-        List<Components> components = dao.getComponents();
-       request.setAttribute("data",components );
-      request.getRequestDispatcher("/ShopPages/Pages/Catagorys.jsp").forward(request, response);
-
+        processRequest(request, response);
     } 
 
     /** 
@@ -75,7 +64,7 @@ public class ComponentsController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        doGet(request, response);
+        processRequest(request, response);
     }
 
     /** 
