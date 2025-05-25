@@ -4,7 +4,6 @@
  */
 package controller;
 
-
 import dal.ProductDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +14,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+import models.Categories;
 import models.Products;
 
 /**
@@ -31,12 +34,12 @@ public class ProductServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         ProductDAO dao = new ProductDAO();
-       
+
         String service = request.getParameter("service");
         if (service == null) {
             service = "listProduct";
         }
-       
+
         if (service.equals("listProduct")) {
             String submit = request.getParameter("submit");
             String productName = request.getParameter("productName");
@@ -55,6 +58,23 @@ public class ProductServlet extends HttpServlet {
 
             //Select view
             request.getRequestDispatcher("ShopPages/Pages/ProductList.jsp").forward(request, response);
+        }
+        if (service.equals("Detail")) {
+            int id = Integer.parseInt(request.getParameter("ProductID"));
+            Products p = dao.getProductByID(id);
+            request.setAttribute("product", p);
+            request.getRequestDispatcher("ShopPages/Pages/ProductDetail.jsp").forward(request, response);
+        }
+        if (service.equals("listCategory")) {
+
+            Vector<Categories> categoryList = dao.getAllCategory("SELECT * FROM Categories");
+            Vector<Products> productList = dao.getAllProduct("SELECT * FROM Products");
+
+            request.setAttribute("categoryList", categoryList);
+            request.setAttribute("productList", productList);
+
+            request.getRequestDispatcher("ShopPages/Pages/HomePage.jsp").forward(request, response);
+            // request.getRequestDispatcher("ShopPages/Pages/test.jsp").forward(request, response);
         }
 
     }
