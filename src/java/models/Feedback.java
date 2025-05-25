@@ -9,16 +9,27 @@ public class Feedback {
     private String content;
     private int productID;
     private Date createdAt;
+    private int rate; // ✅ Thêm trường rate
 
     public Feedback() {
     }
 
-    public Feedback(int feedbackID, int userID, String content, int productID, Date createdAt) {
+    // ✅ Constructor đầy đủ
+    public Feedback(int feedbackID, int userID, String content, int productID, Date createdAt, int rate) {
         this.feedbackID = feedbackID;
         this.userID = userID;
         this.content = content;
         this.productID = productID;
         this.createdAt = createdAt;
+        this.rate = rate;
+    }
+
+    // ✅ Constructor dùng cho insert (không cần ID, createdAt)
+    public Feedback(int userID, String content, int productID, int rate) {
+        this.userID = userID;
+        this.content = content;
+        this.productID = productID;
+        this.rate = rate;
     }
 
     public int getFeedbackID() {
@@ -59,5 +70,13 @@ public class Feedback {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public int getRate() {
+        return rate;
+    }
+
+    public void setRate(int rate) {
+        this.rate = rate;
     }
 }
