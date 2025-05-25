@@ -160,16 +160,19 @@
                             <h2>Login to your account</h2>
                             <form action="Login" method="POST">
                                 <label class="form">Email</label>
-                                <input type="text" placeholder="Enter email address" class="form-control ${not empty error ? "is-invalid" : ''}" name="email" placeholder="Enter email" required="" value="${not empty error ? email : ''}"/>
+                                <input type="text" placeholder="Enter email address" class="form-control ${error == "Email is not exitsted" ? "is-invalid" : ''}" name="email" placeholder="Enter email" required="" value="${not empty error ? email : ''}"/>
+                                <c:if test="${error == 'Email is not exitsted'}">
+                                    <p class="error-messager">${error}</p>
+                                </c:if>
                                 <label>Password</label>
-                                <input type="password" placeholder="Enter password" class="form-control ${not empty error ? "is-invalid" : ''}" name="password" placeholder="Enter password" required="" value="${not empty error ? password : ''}"/>
+                                <input type="password" placeholder="Enter password" class="form-control ${error == "Incorrect password!" ? "is-invalid" : ''}" name="password" placeholder="Enter password" required="" value="${not empty error ? password : ''}"/>
+                                <c:if test="${error == 'Incorrect password!'}">
+                                    <p class="error-messager">${error}</p>
+                                </c:if>
                                 <span>
                                     <input type="checkbox" class="checkbox"> 
                                     Keep me signed in
                                 </span>
-                                <c:if test="${error != null}">
-                                    <p class="text-danger">${error}</p>
-                                </c:if>
                                 <div class="custom-between mt-3">
                                     <button type="submit" class="btn btn-default " id="loginButton">Login</button>
                                     <a href="SignUp">SignUp</a>
@@ -340,7 +343,25 @@
 
         </footer><!--/Footer-->
 
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Chọn tất cả input có class is-invalid
+                const invalidInputs = document.querySelectorAll("input.is-invalid");
 
+                invalidInputs.forEach(function (input) {
+                    input.addEventListener("input", function () {
+                        // Xóa class is-invalid khỏi input
+                        input.classList.remove("is-invalid");
+
+                        // Ẩn tất cả phần tử có class .error-message (nếu có)
+                        const errorMessages = document.querySelectorAll(".error-message");
+                        errorMessages.forEach(function (el) {
+                            el.style.display = "none";
+                        });
+                    });
+                });
+            });
+        </script>
 
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>

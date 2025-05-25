@@ -8,16 +8,16 @@ package models;
  *
  * @author PC
  */
-public class Catagorys {
+public class Categories {
     private int catagoryID;
     private String catagoryName;
     private int quantity;
     private int status;
 
-    public Catagorys() {
+    public Categories() {
     }
 
-    public Catagorys(int catagoryID, String catagoryName, int quantity, int status) {
+    public Categories(int catagoryID, String catagoryName, int quantity, int status) {
         this.catagoryID = catagoryID;
         this.catagoryName = catagoryName;
         this.quantity = quantity;

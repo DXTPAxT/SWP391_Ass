@@ -63,7 +63,7 @@ public class ProductServlet extends HttpServlet {
         if ("Detail".equals(service)) {
             try {
                 int id = Integer.parseInt(request.getParameter("ProductID"));
-                Products product = dao.getProductById(id);
+                Products product = dao.getProductByID(id);
            
                 request.setAttribute("product", product);
 
