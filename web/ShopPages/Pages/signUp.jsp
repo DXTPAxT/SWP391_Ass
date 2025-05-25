@@ -21,7 +21,7 @@
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/animate.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/main.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/responsive.css" rel="stylesheet">
-        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/custom.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/custom.css?v=1.0.2" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -155,27 +155,38 @@
         <section id="form"><!--form-->
             <div class="container">
                 <div class="row custom-center">
-                    <div class="col-sm-4 col-sm-offset-1 ml-0">
-                        <div class="login-form"><!--login form-->
-                            <h2>Login to your account</h2>
-                            <form action="Login" method="POST">
+                    <div class="col-sm-4">
+                        <div class="signup-form"><!--sign up form-->
+                            <h2>New User Signup!</h2>
+                            <form action="SignUp" method="POST">
                                 <label class="form">Email</label>
-                                <input type="text" placeholder="Enter email address" class="form-control ${not empty error ? "is-invalid" : ''}" name="email" placeholder="Enter email" required="" value="${not empty error ? email : ''}"/>
-                                <label>Password</label>
-                                <input type="password" placeholder="Enter password" class="form-control ${not empty error ? "is-invalid" : ''}" name="password" placeholder="Enter password" required="" value="${not empty error ? password : ''}"/>
-                                <span>
-                                    <input type="checkbox" class="checkbox"> 
-                                    Keep me signed in
-                                </span>
-                                <c:if test="${error != null}">
-                                    <p class="text-danger">${error}</p>
+                                <input type="email" placeholder="Enter email address" class="form-control ${error == "Email existed!" ? "is-invalid" : ''}" name="email" required="" value="${not empty error ? email : ''}"/>
+                                <c:if test="${error == 'Email existed!'}">
+                                    <p class="text-danger error-message">${error}</p>
                                 </c:if>
-                                <div class="custom-between mt-3">
-                                    <button type="submit" class="btn btn-default " id="loginButton">Login</button>
-                                    <a href="SignUp">SignUp</a>
+                                <label class="form">Full name</label>
+                                <input type="text" placeholder="Enter full name" class="form-control" name="fullName" required="" value="${not empty error ? fullName : ''}"/>
+                                <label class="form">Address</label>
+                                <input type="text" placeholder="Enter address" class="form-control" name="address" required="" value="${not empty error ? address : ''}"/>
+                                <label class="form">Phone number</label>
+                                <input type="text" placeholder="Enter phone number " class="form-control ${error == "Phone number existed!" ? "is-invalid" : ''}" name="phoneNumber" required="" value="${not empty error ? phoneNumber : ''}"/>
+                                <c:if test="${error == 'Phone number existed!'}">
+                                    <p class="text-danger error-message">${error}</p>
+                                </c:if>
+                                <label class="form">Password</label>
+                                <input type="password" placeholder="Enter password" class="form-control" name="password" required="" value="${not empty error ? password : ''}"/>
+                                <label class="form">Confirm password</label>
+                                <input type="password" placeholder="Confirm your password" class="form-control ${error == "Confirm password not match!" ? "is-invalid" : ''}" name="confirmPassword" required="" value="${not empty error ? confirmPassword : ''}"/>
+                                <c:if test="${error == 'Confirm password not match!'}">
+                                    <p class="text-danger error-message">${error} </p>
+                                </c:if>
+
+                                <div class="custom-between">
+                                    <button type="submit" class="btn btn-default">SignUp</button>
+                                    <a href="Login">Login</a>
                                 </div>
                             </form>
-                        </div><!--/login form-->
+                        </div><!--/sign up form-->
                     </div>
                 </div>
             </div>
@@ -340,6 +351,26 @@
 
         </footer><!--/Footer-->
 
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Chọn tất cả input có class is-invalid
+                const invalidInputs = document.querySelectorAll("input.is-invalid");
+
+                invalidInputs.forEach(function (input) {
+                    input.addEventListener("input", function () {
+                        // Xóa class is-invalid khỏi input
+                        input.classList.remove("is-invalid");
+
+                        // Ẩn tất cả phần tử có class .error-message (nếu có)
+                        const errorMessages = document.querySelectorAll(".error-message");
+                        errorMessages.forEach(function (el) {
+                            el.style.display = "none";
+                        });
+                    });
+                });
+            });
+        </script>
 
 
         <script src="js/jquery.js"></script>

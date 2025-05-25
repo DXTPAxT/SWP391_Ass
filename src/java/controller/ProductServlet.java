@@ -40,16 +40,17 @@ public class ProductServlet extends HttpServlet {
             service = "listProduct";
         }
 
+        Vector<Products> list;
+
         if (service.equals("listProduct")) {
             String submit = request.getParameter("submit");
-            String productName = request.getParameter("productName");
-            //Call models
-            Vector<Products> list;
+
             if (submit == null) {
                 list = dao.getAllProduct(SQL);
             } else {
-                list = dao.getAllProduct("SELECT *\n"
-                        + "FROM Products");
+                list = dao.getAllProduct("""
+                                         SELECT *
+                                         FROM Products""");
             }
             //set data for view
             request.setAttribute("data", list);
@@ -58,6 +59,18 @@ public class ProductServlet extends HttpServlet {
 
             //Select view
             request.getRequestDispatcher("ShopPages/Pages/ProductList.jsp").forward(request, response);
+        } 
+        if ("Detail".equals(service)) {
+            try {
+                int id = Integer.parseInt(request.getParameter("ProductID"));
+                Products product = dao.getProductById(id);
+           
+                request.setAttribute("product", product);
+
+                request.getRequestDispatcher("ShopPages/Pages/ProductDetail.jsp").forward(request, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         if (service.equals("Detail")) {
             int id = Integer.parseInt(request.getParameter("ProductID"));

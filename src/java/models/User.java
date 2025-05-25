@@ -31,6 +31,10 @@ public class User {
         this.Status = Status;
     }
 
+    public User(String Fullname) {
+        this.Fullname = Fullname;
+    }
+
     public int getUserID() {
         return UserID;
     }

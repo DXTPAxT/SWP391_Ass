@@ -7,6 +7,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
+<%@ page isErrorPage="true" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -304,7 +306,7 @@
 
                     <div class="col-sm-9 padding-right">
                         <div class="features_items"><!--features_items-->
-                            <h2 class="title text-center">PC </h2>
+                            <h2 class="title text-center">Products </h2>
 
 
                             <c:forEach var="product" items="${requestScope.data}"> 

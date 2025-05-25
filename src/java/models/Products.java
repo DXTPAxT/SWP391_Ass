@@ -15,10 +15,13 @@ public class Products {
     private int Quantity ;
     private int WarrantyPeriod ;
     private Date CreatedAt ;
-    private int CategoryIDID ;
+    private int CategoryID ;
     private int Status ;
 
-    public Products(int ProductID, String Name, String Description, String Brand, Double Price, int Quantity, int WarrantyPeriod, Date CreatedAt, int CategoryIDID, int Status) {
+    public Products() {
+    }
+    
+    public Products(int ProductID, String Name, String Description, String Brand, Double Price, int Quantity, int WarrantyPeriod, Date CreatedAt, int CategoryID, int Status) {
         this.ProductID = ProductID;
         this.Name = Name;
         this.Description = Description;
@@ -27,11 +30,11 @@ public class Products {
         this.Quantity = Quantity;
         this.WarrantyPeriod = WarrantyPeriod;
         this.CreatedAt = CreatedAt;
-        this.CategoryIDID = CategoryIDID;
+        this.CategoryID = CategoryID;
         this.Status = Status;
     }
 
-    public Products(String Name, String Description, String Brand, Double Price, int Quantity, int WarrantyPeriod, Date CreatedAt, int CategoryIDID, int Status) {
+    public Products(String Name, String Description, String Brand, Double Price, int Quantity, int WarrantyPeriod, Date CreatedAt, int CategoryID, int Status) {
         this.Name = Name;
         this.Description = Description;
         this.Brand = Brand;
@@ -39,7 +42,7 @@ public class Products {
         this.Quantity = Quantity;
         this.WarrantyPeriod = WarrantyPeriod;
         this.CreatedAt = CreatedAt;
-        this.CategoryIDID = CategoryIDID;
+        this.CategoryID = CategoryID;
         this.Status = Status;
     }
 
@@ -107,12 +110,12 @@ public class Products {
         this.CreatedAt = CreatedAt;
     }
 
-    public int getCategoryIDID() {
-        return CategoryIDID;
+    public int getCategoryID() {
+        return CategoryID;
     }
 
-    public void setCategoryIDID(int CategoryIDID) {
-        this.CategoryIDID = CategoryIDID;
+    public void setCategoryID(int CategoryID) {
+        this.CategoryID = CategoryID;
     }
 
     public int getStatus() {

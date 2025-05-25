@@ -8,36 +8,36 @@ package models;
  *
  * @author PC
  */
-public class Categories {
-    private int categoryID;
-    private String categoryName;
+public class Catagorys {
+    private int catagoryID;
+    private String catagoryName;
     private int quantity;
     private int status;
 
-    public Categories() {
+    public Catagorys() {
     }
 
-    public Categories(int categoryID, String categoryName, int quantity, int status) {
-        this.categoryID = categoryID;
-        this.categoryName = categoryName;
+    public Catagorys(int catagoryID, String catagoryName, int quantity, int status) {
+        this.catagoryID = catagoryID;
+        this.catagoryName = catagoryName;
         this.quantity = quantity;
         this.status = status;
     }
 
     public int getCatagoryID() {
-        return categoryID;
+        return catagoryID;
     }
 
-    public void setCatagoryID(int categoryID) {
-        this.categoryID = categoryID;
+    public void setCatagoryID(int catagoryID) {
+        this.catagoryID = catagoryID;
     }
 
     public String getCatagoryName() {
-        return categoryName;
+        return catagoryName;
     }
 
-    public void setCatagoryName(String categoryName) {
-        this.categoryName = categoryName;
+    public void setCatagoryName(String catagoryName) {
+        this.catagoryName = catagoryName;
     }
 
     public int getQuantity() {
@@ -58,7 +58,7 @@ public class Categories {
 
     @Override
     public String toString() {
-        return "Categories{" + "categoryID=" + categoryID + ", categoryName=" + categoryName + ", quantity=" + quantity + ", status=" + status + '}';
+        return "Catagorys{" + "catagoryID=" + catagoryID + ", catagoryName=" + catagoryName + ", quantity=" + quantity + ", status=" + status + '}';
     }
     
 }

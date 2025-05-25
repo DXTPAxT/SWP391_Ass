@@ -5,22 +5,23 @@
 
 package controller;
 
-import dal.UserDAO;
-import jakarta.servlet.RequestDispatcher;
+import dal.CategoryDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import models.User;
+import java.util.List;
+import models.Products;
 
 /**
  *
- * @author PC ASUS
+ * @author PC
  */
-public class UserServlet extends HttpServlet {
+@WebServlet(name="HomePagesController", urlPatterns={"/HomePages"})
+public class HomePagesController extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -32,19 +33,44 @@ public class UserServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet UserServlet</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet UserServlet at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        // how many product in one page
+        final int PAGE_SIZE = 3; 
+        int page = 1;
+
+        String pageParam = request.getParameter("page");
+    if (pageParam != null) {
+        try {
+            page = Integer.parseInt(pageParam);
+        } catch (NumberFormatException e) {
+            page = 1;
         }
-    } 
+    }
+
+    int start = (page - 1) * PAGE_SIZE;
+
+    CategoryDAO dao = new CategoryDAO();
+
+    // take PC
+    List<Products> pcProducts = dao.GetCata2(start, PAGE_SIZE);
+    int totalPC = dao.countTotalProducts();
+    int totalPagesPC = (int) Math.ceil(totalPC * 1.0 / PAGE_SIZE);
+
+    // take Laptop 
+    List<Products> laptopProducts = dao.GetCata3(start, PAGE_SIZE);
+    int totalLaptop = dao.countTotalProducts();
+    int totalPagesLaptop = (int) Math.ceil(totalLaptop * 1.0 / PAGE_SIZE);
+
+    // sent to jsp
+    request.setAttribute("pcProducts", pcProducts);
+    request.setAttribute("totalPagesPC", totalPagesPC);
+
+    request.setAttribute("laptopProducts", laptopProducts);
+    request.setAttribute("totalPagesLaptop", totalPagesLaptop);
+
+    request.setAttribute("currentPage", page);
+
+    request.getRequestDispatcher("/ShopPages/Pages/homepages.jsp").forward(request, response);
+            } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
@@ -57,11 +83,7 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-          UserDAO userDAO = new UserDAO();
-          ArrayList<User> users = userDAO.getUsers();
-          request.setAttribute("users", users);
-          RequestDispatcher rs = request.getRequestDispatcher("test.jsp");
-          rs.forward(request, response);
+        processRequest(request, response);
     } 
 
     /** 

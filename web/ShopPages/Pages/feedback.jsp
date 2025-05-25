@@ -1,12 +1,11 @@
 <%-- 
-    Document   : ProductDetail.jsp
-    Created on : May 24, 2025, 7:32:03 PM
-    Author     : Admin
+    Document   : feedbacj
+    Created on : May 23, 2025, 8:49:26 AM
+    Author     : haiga
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="ctx" value="${pageContext.request.contextPath}" />
+<!DOCTYPE html>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -15,13 +14,13 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <title>Product Details | E-Shopper</title>
-        <link href="${ctx}/ShopPages/Pages/css/bootstrap.min.css" rel="stylesheet">
-        <link href="${ctx}/ShopPages/Pages/css/font-awesome.min.css" rel="stylesheet">
-        <link href="${ctx}/ShopPages/Pages/css/prettyPhoto.css" rel="stylesheet">
-        <link href="${ctx}/ShopPages/Pages/css/price-range.css" rel="stylesheet">
-        <link href="${ctx}/ShopPages/Pages/css/animate.css" rel="stylesheet">
-        <link href="${ctx}/ShopPages/Pages/css/main.css" rel="stylesheet">
-        <link href="${ctx}/ShopPages/Pages/css/responsive.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/prettyPhoto.css" rel="stylesheet">
+        <link href="css/price-range.css" rel="stylesheet">
+        <link href="css/animate.css" rel="stylesheet">
+        <link href="css/main.css" rel="stylesheet">
+        <link href="css/responsive.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -34,8 +33,6 @@
     </head><!--/head-->
 
     <body>
-       
-
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
                 <div class="container">
@@ -126,8 +123,11 @@
                                     <li><a href="index.html">Home</a></li>
                                     <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="${pageContext.request.contextPath}/Product?service=listProduct" class="active">Products</a></li>
-
+                                            <li><a href="shop.html">Products</a></li>
+                                            <li><a href="product-details.html" class="active">Product Details</a></li> 
+                                            <li><a href="checkout.html">Checkout</a></li> 
+                                            <li><a href="cart.html">Cart</a></li> 
+                                            <li><a href="login.html">Login</a></li> 
                                         </ul>
                                     </li> 
                                     <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
@@ -298,7 +298,7 @@
                         <div class="product-details"><!--product-details-->
                             <div class="col-sm-5">
                                 <div class="view-product">
-                                    <img src="${ctx}/ShopPages/Pages/images/product-details/1.jpg" alt="" />
+                                    <img src="images/product-details/1.jpg" alt="" />
                                     <h3>ZOOM</h3>
                                 </div>
                                 <div id="similar-product" class="carousel slide" data-ride="carousel">
@@ -306,19 +306,19 @@
                                     <!-- Wrapper for slides -->
                                     <div class="carousel-inner">
                                         <div class="item active">
-                                            <a href=""><img src="{ctx}/ShopPages/Pages/images/product-details/similar1.jpg" alt=""></a>
-                                            <a href=""><img src="{ctx}/ShopPages/Pages/images/product-details/similar2.jpg" alt=""></a>
-                                            <a href=""><img src="{ctx}/ShopPages/Pages/images/product-details/similar3.jpg" alt=""></a>
+                                            <a href=""><img src="images/product-details/similar1.jpg" alt=""></a>
+                                            <a href=""><img src="images/product-details/similar2.jpg" alt=""></a>
+                                            <a href=""><img src="images/product-details/similar3.jpg" alt=""></a>
                                         </div>
                                         <div class="item">
-                                            <a href=""><img src="{ctx}/ShopPages/Pages/images/product-details/similar1.jpg" alt=""></a>
-                                            <a href=""><img src="{ctx}/ShopPages/Pages/images/product-details/similar2.jpg" alt=""></a>
-                                            <a href=""><img src="{ctx}/ShopPages/Pages/images/product-details/similar3.jpg" alt=""></a>
+                                            <a href=""><img src="images/product-details/similar1.jpg" alt=""></a>
+                                            <a href=""><img src="images/product-details/similar2.jpg" alt=""></a>
+                                            <a href=""><img src="images/product-details/similar3.jpg" alt=""></a>
                                         </div>
                                         <div class="item">
-                                            <a href=""><img src="{ctx}/ShopPages/Pages/images/product-details/similar1.jpg" alt=""></a>
-                                            <a href=""><img src="{ctx}/ShopPages/Pages/images/product-details/similar2.jpg" alt=""></a>
-                                            <a href=""><img src="{ctx}/ShopPages/Pages/images/product-details/similar3.jpg" alt=""></a>
+                                            <a href=""><img src="images/product-details/similar1.jpg" alt=""></a>
+                                            <a href=""><img src="images/product-details/similar2.jpg" alt=""></a>
+                                            <a href=""><img src="images/product-details/similar3.jpg" alt=""></a>
                                         </div>
 
                                     </div>
@@ -333,17 +333,14 @@
                                 </div>
 
                             </div>
-
-
-
                             <div class="col-sm-7">
                                 <div class="product-information"><!--/product-information-->
                                     <img src="images/product-details/new.jpg" class="newarrival" alt="" />
-                                    <h2>${product.name}</h2>
-                                    
-                                    <img src="{ctx}/ShopPages/Pages/images/product-details/rating.png" alt="" />
+                                    <h2>Anne Klein Sleeveless Colorblock Scuba</h2>
+                                    <p>Web ID: 1089772</p>
+                                    <img src="images/product-details/rating.png" alt="" />
                                     <span>
-                                        <span>${product.price}</span>
+                                        <span>US $59</span>
                                         <label>Quantity:</label>
                                         <input type="text" value="3" />
                                         <button type="button" class="btn btn-fefault cart">
@@ -353,14 +350,11 @@
                                     </span>
                                     <p><b>Availability:</b> In Stock</p>
                                     <p><b>Condition:</b> New</p>
-                                    <p><b>Brand:</b> ${product.brand}</p>
-                                    <a href=""><img src="{ctx}/ShopPages/Pages/images/product-details/share.png" class="share img-responsive"  alt="" /></a>
+                                    <p><b>Brand:</b> E-SHOPPER</p>
+                                    <a href=""><img src="images/product-details/share.png" class="share img-responsive"  alt="" /></a>
                                 </div><!--/product-information-->
                             </div>
-
                         </div><!--/product-details-->
-
-
 
                         <div class="category-tab shop-details-tab"><!--category-tab-->
                             <div class="col-sm-12">
@@ -528,7 +522,7 @@
                                 <div class="tab-pane fade active in" id="reviews" >
                                     <div class="col-sm-12">
                                         <ul>
-                                            <li><a href=""><i class="fa fa-user"></i>EUGEN</a></li>
+                                            <li><a href=""><i class="fa fa-user"></i>USER</a></li>
                                             <li><a href=""><i class="fa fa-clock-o"></i>12:41 PM</a></li>
                                             <li><a href=""><i class="fa fa-calendar-o"></i>31 DEC 2014</a></li>
                                         </ul>
@@ -805,7 +799,8 @@
             </div>
 
         </footer><!--/Footer-->
-        
+
+
 
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>
