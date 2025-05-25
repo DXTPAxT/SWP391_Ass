@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import models.Catagorys;
+import models.Categories;
 import models.Products;
 
 /**
@@ -17,8 +17,8 @@ import models.Products;
  * @author PC
  */
 public class CategoryDAO extends DBContext{
-    public List<Catagorys> getAllCategoryNames() {
-        List<Catagorys> categoryList = new ArrayList<>();
+    public List<Categories> getAllCategoryNames() {
+        List<Categories> categoryList = new ArrayList<>();
         String sql = "SELECT CategoryName FROM Categories";
 
         try {
@@ -26,7 +26,7 @@ public class CategoryDAO extends DBContext{
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Catagorys cat = new Catagorys();
+                Categories cat = new Categories();
                 cat.setCatagoryName(rs.getString("CategoryName"));
                 categoryList.add(cat);
             }

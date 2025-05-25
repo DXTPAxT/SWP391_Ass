@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.Categories;
 
+
 public class ProductDAO extends DBContext {
 
     public Vector<Products> getAllProduct(String sql) {

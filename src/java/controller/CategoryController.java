@@ -8,13 +8,13 @@ package controller;
 import dal.CategoryDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
-import jakarta.servlet.ServletException;
+import jakarta  .servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import models.Catagorys;
+import models.Categories;
 
 /**
  *
@@ -34,7 +34,7 @@ public class CategoryController extends HttpServlet {
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
          CategoryDAO dao = new CategoryDAO();
-        List<Catagorys> cate = dao.getAllCategoryNames();
+        List<Categories> cate = dao.getAllCategoryNames();
        request.setAttribute("data",cate );
       request.getRequestDispatcher("/ShopPages/Pages/Catagorys.jsp").forward(request, response);
         }
