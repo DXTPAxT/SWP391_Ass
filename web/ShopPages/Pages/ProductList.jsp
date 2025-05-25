@@ -314,19 +314,17 @@
                                 <div class="col-sm-4">
                                     <div class="product-image-wrapper">
                                         <div class="single-products">
-
                                             <div class="productinfo text-center">
 
-                                                <img src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
-                                                
+                                                <a href="${pageContext.request.contextPath}/Product?service=Detail&ProductID=${product.productID}" style="text-decoration: none; color: inherit;">
+                                                    <img src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
                                                     <h2>${product.price}</h2>
-
                                                     <p>${product.name}</p>
-                                                
+                                                </a>
+
                                                 <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                                             </div>
-
-
+                                            
                                         </div>
                                         <div class="choose">
                                             <ul class="nav nav-pills nav-justified">
