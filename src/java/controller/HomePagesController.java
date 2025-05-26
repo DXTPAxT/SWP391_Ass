@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import models.BrandByCategoriesName;
+import models.Categories;
 import models.Products;
 
 /**
@@ -49,7 +51,10 @@ public class HomePagesController extends HttpServlet {
     int start = (page - 1) * PAGE_SIZE;
 
     CategoryDAO dao = new CategoryDAO();
-
+    // take categories List
+    List<Categories> Categories= dao.getCategoriesName();
+    // take brand
+    List<BrandByCategoriesName> BWCN = dao.getBrandWithCategoryName();
     // take PC
     List<Products> pcProducts = dao.GetCata2(start, PAGE_SIZE);
     int totalPC = dao.countTotalProducts();
@@ -61,6 +66,8 @@ public class HomePagesController extends HttpServlet {
     int totalPagesLaptop = (int) Math.ceil(totalLaptop * 1.0 / PAGE_SIZE);
 
     // sent to jsp
+    request.setAttribute("categories",Categories );
+    request.setAttribute("BrandWithCategoryName", BWCN);
     request.setAttribute("pcProducts", pcProducts);
     request.setAttribute("totalPagesPC", totalPagesPC);
 

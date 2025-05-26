@@ -120,32 +120,9 @@ public class ProductDAO extends DBContext {
         );
     }
 
-    public Vector<Categories> getAllCategory(String sql) {
-        Vector<Categories> listCategory = new Vector<>();
-        PreparedStatement ptm;
+    
 
-        try {
-            ptm = connection.prepareStatement(sql);
-            ResultSet rs = ptm.executeQuery();
-
-            while (rs.next()) {
-                Categories cat = new Categories(
-                        rs.getInt(1), // cột id
-                        rs.getString(2), // cột categoryName
-                        rs.getInt(3),
-                        rs.getInt(4)
-                );
-                listCategory.add(cat);
-            }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace(); // hoặc dùng logger nếu cần
-        }
-
-        return listCategory;
-    }
-
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
         Vector<Categories> categories = dao.getAllCategory("SELECT * FROM Categories");
 
@@ -156,5 +133,5 @@ public class ProductDAO extends DBContext {
                 System.out.println(c);
             }
         }
-    }
+    }*/
 }

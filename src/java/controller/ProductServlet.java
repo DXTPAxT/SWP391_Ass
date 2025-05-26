@@ -80,10 +80,10 @@ public class ProductServlet extends HttpServlet {
         }
         if (service.equals("listCategory")) {
 
-            Vector<Categories> categoryList = dao.getAllCategory("SELECT * FROM Categories");
+          
             Vector<Products> productList = dao.getAllProduct("SELECT * FROM Products");
 
-            request.setAttribute("categoryList", categoryList);
+           
             request.setAttribute("productList", productList);
 
             request.getRequestDispatcher("ShopPages/Pages/HomePage.jsp").forward(request, response);

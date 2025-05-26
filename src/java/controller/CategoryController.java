@@ -34,7 +34,7 @@ public class CategoryController extends HttpServlet {
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
          CategoryDAO dao = new CategoryDAO();
-        List<Categories> cate = dao.getAllCategoryNames();
+        List<Categories> cate = dao.getCategoriesName();
        request.setAttribute("data",cate );
       request.getRequestDispatcher("/ShopPages/Pages/homepages.jsp").forward(request, response);
         }
