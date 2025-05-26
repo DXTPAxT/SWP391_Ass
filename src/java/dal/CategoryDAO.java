@@ -112,4 +112,16 @@ public class CategoryDAO extends DBContext{
         return 0;
     }
     
+   /* public List<Products> getTypeOfProduct( String Brand){
+        List<Products>list = new ArrayList<>();
+        String sql = "Select * From Products Where Cat "
+    }
+    
+   */ 
+    
+    
+    
+    
+    
+    
 }
