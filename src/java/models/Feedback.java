@@ -24,6 +24,14 @@ public class Feedback {
         this.rate = rate;
     }
 
+    public Feedback(int feedbackID, int userID, String content, int productID, int rate) {
+        this.feedbackID = feedbackID;
+        this.userID = userID;
+        this.content = content;
+        this.productID = productID;
+        this.rate = rate;
+    }
+
     // ✅ Constructor dùng cho insert (không cần ID, createdAt)
     public Feedback(int userID, String content, int productID, int rate) {
         this.userID = userID;

@@ -1,12 +1,7 @@
-<%-- 
-    Document   : feedbacj
-    Created on : May 23, 2025, 8:49:26 AM
-    Author     : haiga
---%>
+<!DOCTYPE html>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -14,13 +9,13 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <title>Product Details | E-Shopper</title>
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/prettyPhoto.css" rel="stylesheet">
-        <link href="css/price-range.css" rel="stylesheet">
-        <link href="css/animate.css" rel="stylesheet">
-        <link href="css/main.css" rel="stylesheet">
-        <link href="css/responsive.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/bootstrap.min.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/font-awesome.min.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/prettyPhoto.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/price-range.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/animate.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/main.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/responsive.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -33,6 +28,7 @@
     </head><!--/head-->
 
     <body>
+
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
                 <div class="container">
@@ -366,7 +362,8 @@
                                 </ul>
                             </div>
                             <div class="tab-content">
-                                <div class="tab-pane fade" id="details" >
+                                <div class="tab-pane fade" id="details">
+                                    <!-- Các sản phẩm ví dụ tab Details -->
                                     <div class="col-sm-3">
                                         <div class="product-image-wrapper">
                                             <div class="single-products">
@@ -374,177 +371,83 @@
                                                     <img src="images/home/gallery1.jpg" alt="" />
                                                     <h2>$56</h2>
                                                     <p>Easy Polo Black Edition</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
+                                                    <button type="button" class="btn btn-default add-to-cart">
+                                                        <i class="fa fa-shopping-cart"></i> Add to cart
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/gallery2.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/gallery3.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/gallery4.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <!-- Tương tự các sản phẩm khác trong tab Details -->
                                 </div>
 
-                                <div class="tab-pane fade" id="companyprofile" >
-                                    <div class="col-sm-3">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/gallery1.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/gallery3.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/gallery2.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/gallery4.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="tab-pane fade" id="companyprofile">
+                                    <!-- Nội dung tab Company Profile tương tự -->
                                 </div>
 
-                                <div class="tab-pane fade" id="tag" >
-                                    <div class="col-sm-3">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/gallery1.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/gallery2.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/gallery3.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/gallery4.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="tab-pane fade" id="tag">
+                                    <!-- Nội dung tab Tag tương tự -->
                                 </div>
 
-                                <div class="tab-pane fade active in" id="reviews" >
+                                <div class="tab-pane fade active in" id="reviews">
                                     <div class="col-sm-12">
-                                        <ul>
-                                            <li><a href=""><i class="fa fa-user"></i>USER</a></li>
-                                            <li><a href=""><i class="fa fa-clock-o"></i>12:41 PM</a></li>
-                                            <li><a href=""><i class="fa fa-calendar-o"></i>31 DEC 2014</a></li>
-                                        </ul>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-                                        <p><b>Write Your Review</b></p>
+                                        <!-- Danh sách review -->
+                                        <div id="review-list">
+                                            <c:choose>
+                                                <c:when test="${not empty feedbackList}">
+                                                    <c:forEach var="fb" items="${feedbackList}">
+                                                        <div class="single-review">
+                                                            <ul>
+                                                                <li><a href="#"><i class="fa fa-user"></i> UserID: ${fb.userID}</a></li>
+                                                                <li><a href="#"><i class="fa fa-clock-o"></i> ${fb.createdAt}</a></li>
+                                                                <li><a href="#"><i class="fa fa-star"></i> Đánh giá: ${fb.rate} sao</a></li>
+                                                            </ul>
+                                                            <p>${fb.content}</p>
 
-                                        <form action="#">
-                                            <span>
-                                                <input type="text" placeholder="Your Name"/>
-                                                <input type="email" placeholder="Email Address"/>
-                                            </span>
-                                            <textarea name="" ></textarea>
-                                            <b>Rating: </b> <img src="images/product-details/rating.png" alt="" />
-                                            <button type="button" class="btn btn-default pull-right">
-                                                Submit
-                                            </button>
+                                                            <c:if test="${user != null && user.getUserID() == fb.userID}">
+                                                                <div class="review-actions">
+                                                                    <button class="btn btn-link btn-edit" data-id="${fb.feedbackID}">Sửa</button>
+                                                                    <button class="btn btn-link btn-delete" data-id="${fb.feedbackID}">Xóa</button>
+                                                                </div>
+                                                            </c:if>
+                                                        </div>
+                                                    </c:forEach>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+
+                                        <hr>
+
+                                        <!-- Form viết review -->
+                                        <p><b>Write Your Review</b></p>
+                                        <form id="review-form" method="post" action="/ComputerOnlineShop/submitFeedback">
+
+
+                                            <input type="hidden" name="productId" value="${param.productId}" />
+
+                                            <textarea name="content" id="review-content" rows="5" placeholder="Viết nhận xét của bạn..." required></textarea>
+                                            <br />
+                                            <b>Rating: </b>
+                                            <select id="review-rating" name="rating" required>
+                                                <option value="">Chọn đánh giá</option>
+                                                <option value="5">5 sao</option>
+                                                <option value="4">4 sao</option>
+                                                <option value="3">3 sao</option>
+                                                <option value="2">2 sao</option>
+                                                <option value="1">1 sao</option>
+                                            </select>
+
+                                            <button type="submit" class="btn btn-default pull-right" style="margin-top:10px;">Submit</button>
                                         </form>
+
                                     </div>
                                 </div>
-
-                            </div>
+                            </div><!--/tab-content-->
                         </div><!--/category-tab-->
+
 
                         <div class="recommended_items"><!--recommended_items-->
                             <h2 class="title text-center">recommended items</h2>
@@ -734,7 +637,7 @@
                                     <li><a href="">Contact Us</a></li>
                                     <li><a href="">Order Status</a></li>
                                     <li><a href="">Change Location</a></li>
-                                    <li><a href="">FAQ’s</a></li>
+                                    <li><a href="">FAQ?s</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -808,5 +711,7 @@
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+        <div id="feedback-container"></div>
+
     </body>
 </html>
