@@ -899,7 +899,7 @@ h2.title {
   transition: height 500ms ease 0s;
   width: 100%;
   display: block;
-  opacity:;
+  opacity: calc;
 }
 
 .single-products:hover .product-overlay {
@@ -2520,4 +2520,15 @@ h2.title {
   color: #FE980F;
 }
 
+.pagination-area {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 30px;
+    clear: both;
+}
+
+.pagination-area .pagination {
+    display: inline-block;
+    float: none;
+}
 

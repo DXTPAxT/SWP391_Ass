@@ -9,72 +9,56 @@ package models;
  * @author PC
  */
 public class Categories {
-    private int id;
-    private String CatagoryName;
-    private String Brand;
-    private int ComponentID;
-    private String Description;
-    private int Status;
+    private int catagoryID;
+    private String catagoryName;
+    private int quantity;
+    private int status;
 
     public Categories() {
     }
 
-    public Categories(int id, String CatagoryName, String Brand, int ComponentID, String Description, int Status) {
-        this.id = id;
-        this.CatagoryName = CatagoryName;
-        this.Brand = Brand;
-        this.ComponentID = ComponentID;
-        this.Description = Description;
-        this.Status = Status;
+    public Categories(int catagoryID, String catagoryName, int quantity, int status) {
+        this.catagoryID = catagoryID;
+        this.catagoryName = catagoryName;
+        this.quantity = quantity;
+        this.status = status;
     }
 
-    public int getId() {
-        return id;
+    public int getCatagoryID() {
+        return catagoryID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCatagoryID(int catagoryID) {
+        this.catagoryID = catagoryID;
     }
 
     public String getCatagoryName() {
-        return CatagoryName;
+        return catagoryName;
     }
 
-    public void setCatagoryName(String CatagoryName) {
-        this.CatagoryName = CatagoryName;
+    public void setCatagoryName(String catagoryName) {
+        this.catagoryName = catagoryName;
     }
 
-    public String getBrand() {
-        return Brand;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setBrand(String Brand) {
-        this.Brand = Brand;
-    }
-
-    public int getComponentID() {
-        return ComponentID;
-    }
-
-    public void setComponentID(int ComponentID) {
-        this.ComponentID = ComponentID;
-    }
-
-    public String getDescription() {
-        return Description;
-    }
-
-    public void setDescription(String Description) {
-        this.Description = Description;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public int getStatus() {
-        return Status;
+        return status;
     }
 
-    public void setStatus(int Status) {
-        this.Status = Status;
+    public void setStatus(int status) {
+        this.status = status;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Catagorys{" + "catagoryID=" + catagoryID + ", catagoryName=" + catagoryName + ", quantity=" + quantity + ", status=" + status + '}';
+    }
     
 }

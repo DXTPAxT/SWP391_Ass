@@ -1,11 +1,10 @@
 <%-- 
-    Document   : login
-    Created on : May 22, 2025, 9:18:17 AM
+    Document   : cart
+    Created on : May 25, 2025, 9:22:52 PM
     Author     : PC ASUS
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -13,7 +12,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Login | E-Shopper</title>
+        <title>Cart | E-Shopper</title>
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/bootstrap.min.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/font-awesome.min.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/prettyPhoto.css" rel="stylesheet">
@@ -21,7 +20,6 @@
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/animate.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/main.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/responsive.css" rel="stylesheet">
-        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/custom.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -66,7 +64,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="index.html"><img src="${pageContext.request.contextPath}/ShopPages/Pages/images/home/logo.png" alt="" /></a>
                             </div>
                             <div class="btn-group pull-right">
                                 <div class="btn-group">
@@ -98,8 +96,8 @@
                                     <li><a href=""><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href=""><i class="fa fa-star"></i> Wishlist</a></li>
                                     <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                    <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-                                    <li><a href="login.html" class="active"><i class="fa fa-lock"></i> Login</a></li>
+                                    <li><a href="cart.html" class="active"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -127,8 +125,8 @@
                                             <li><a href="shop.html">Products</a></li>
                                             <li><a href="product-details.html">Product Details</a></li> 
                                             <li><a href="checkout.html">Checkout</a></li> 
-                                            <li><a href="cart.html">Cart</a></li> 
-                                            <li><a href="login.html" class="active">Login</a></li> 
+                                            <li><a href="cart.html" class="active">Cart</a></li> 
+                                            <li><a href="login.html">Login</a></li> 
                                         </ul>
                                     </li> 
                                     <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
@@ -152,38 +150,185 @@
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <section id="form"><!--form-->
+        <section id="cart_items">
             <div class="container">
-                <div class="row custom-center">
-                    <div class="col-sm-4 col-sm-offset-1 ml-0">
-                        <div class="login-form"><!--login form-->
-                            <h2>Login to your account</h2>
-                            <form action="Login" method="POST">
-                                <label class="form">Email</label>
-                                <input type="text" placeholder="Enter email address" class="form-control ${error == "Email is not exitsted" ? "is-invalid" : ''}" name="email" placeholder="Enter email" required="" value="${not empty error ? email : ''}"/>
-                                <c:if test="${error == 'Email is not exitsted'}">
-                                    <p class="error-messager">${error}</p>
-                                </c:if>
-                                <label>Password</label>
-                                <input type="password" placeholder="Enter password" class="form-control ${error == "Incorrect password!" ? "is-invalid" : ''}" name="password" placeholder="Enter password" required="" value="${not empty error ? password : ''}"/>
-                                <c:if test="${error == 'Incorrect password!'}">
-                                    <p class="error-messager">${error}</p>
-                                </c:if>
-                                <span>
-                                    <input type="checkbox" class="checkbox"> 
-                                    Keep me signed in
-                                </span>
-                                <div class="custom-between mt-3">
-                                    <button type="submit" class="btn btn-default " id="loginButton">Login</button>
-                                    <a href="SignUp">SignUp</a>
-                                </div>
-                            </form>
-                        </div><!--/login form-->
+                <div class="breadcrumbs">
+                    <ol class="breadcrumb">
+                        <li><a href="#">Home</a></li>
+                        <li class="active">Shopping Cart</li>
+                    </ol>
+                </div>
+                <div class="table-responsive cart_info">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr class="cart_menu">
+                                <td class="image">Item</td>
+                                <td class="description"></td>
+                                <td class="price">Price</td>
+                                <td class="quantity">Quantity</td>
+                                <td class="total">Total</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="cart_product">
+                                    <a href=""><img src="${pageContext.request.contextPath}/ShopPages/Pages/images/cart/one.png" alt=""></a>
+                                </td>
+                                <td class="cart_description">
+                                    <h4><a href="">Colorblock Scuba</a></h4>
+                                    <p>Web ID: 1089772</p>
+                                </td>
+                                <td class="cart_price">
+                                    <p>$59</p>
+                                </td>
+                                <td class="cart_quantity">
+                                    <div class="cart_quantity_button">
+                                        <a class="cart_quantity_up" href=""> + </a>
+                                        <input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
+                                        <a class="cart_quantity_down" href=""> - </a>
+                                    </div>
+                                </td>
+                                <td class="cart_total">
+                                    <p class="cart_total_price">$59</p>
+                                </td>
+                                <td class="cart_delete">
+                                    <a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="cart_product">
+                                    <a href=""><img src="${pageContext.request.contextPath}/ShopPages/Pages/images/cart/two.png" alt=""></a>
+                                </td>
+                                <td class="cart_description">
+                                    <h4><a href="">Colorblock Scuba</a></h4>
+                                    <p>Web ID: 1089772</p>
+                                </td>
+                                <td class="cart_price">
+                                    <p>$59</p>
+                                </td>
+                                <td class="cart_quantity">
+                                    <div class="cart_quantity_button">
+                                        <a class="cart_quantity_up" href=""> + </a>
+                                        <input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
+                                        <a class="cart_quantity_down" href=""> - </a>
+                                    </div>
+                                </td>
+                                <td class="cart_total">
+                                    <p class="cart_total_price">$59</p>
+                                </td>
+                                <td class="cart_delete">
+                                    <a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="cart_product">
+                                    <a href=""><img src="${pageContext.request.contextPath}/ShopPages/Pages/images/cart/three.png" alt=""></a>
+                                </td>
+                                <td class="cart_description">
+                                    <h4><a href="">Colorblock Scuba</a></h4>
+                                    <p>Web ID: 1089772</p>
+                                </td>
+                                <td class="cart_price">
+                                    <p>$59</p>
+                                </td>
+                                <td class="cart_quantity">
+                                    <div class="cart_quantity_button">
+                                        <a class="cart_quantity_up" href=""> + </a>
+                                        <input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
+                                        <a class="cart_quantity_down" href=""> - </a>
+                                    </div>
+                                </td>
+                                <td class="cart_total">
+                                    <p class="cart_total_price">$59</p>
+                                </td>
+                                <td class="cart_delete">
+                                    <a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section> <!--/#cart_items-->
+
+        <section id="do_action">
+            <div class="container">
+                <div class="heading">
+                    <h3>What would you like to do next?</h3>
+                    <p>Choose if you have a discount code or reward points you want to use or would like to estimate your delivery cost.</p>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="chose_area">
+                            <ul class="user_option">
+                                <li>
+                                    <input type="checkbox">
+                                    <label>Use Coupon Code</label>
+                                </li>
+                                <li>
+                                    <input type="checkbox">
+                                    <label>Use Gift Voucher</label>
+                                </li>
+                                <li>
+                                    <input type="checkbox">
+                                    <label>Estimate Shipping & Taxes</label>
+                                </li>
+                            </ul>
+                            <ul class="user_info">
+                                <li class="single_field">
+                                    <label>Country:</label>
+                                    <select>
+                                        <option>United States</option>
+                                        <option>Bangladesh</option>
+                                        <option>UK</option>
+                                        <option>India</option>
+                                        <option>Pakistan</option>
+                                        <option>Ucrane</option>
+                                        <option>Canada</option>
+                                        <option>Dubai</option>
+                                    </select>
+
+                                </li>
+                                <li class="single_field">
+                                    <label>Region / State:</label>
+                                    <select>
+                                        <option>Select</option>
+                                        <option>Dhaka</option>
+                                        <option>London</option>
+                                        <option>Dillih</option>
+                                        <option>Lahore</option>
+                                        <option>Alaska</option>
+                                        <option>Canada</option>
+                                        <option>Dubai</option>
+                                    </select>
+
+                                </li>
+                                <li class="single_field zip-field">
+                                    <label>Zip Code:</label>
+                                    <input type="text">
+                                </li>
+                            </ul>
+                            <a class="btn btn-default update" href="">Get Quotes</a>
+                            <a class="btn btn-default check_out" href="">Continue</a>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="total_area">
+                            <ul>
+                                <li>Cart Sub Total <span>$59</span></li>
+                                <li>Eco Tax <span>$2</span></li>
+                                <li>Shipping Cost <span>Free</span></li>
+                                <li>Total <span>$61</span></li>
+                            </ul>
+                            <a class="btn btn-default update" href="">Update</a>
+                            <a class="btn btn-default check_out" href="">Check Out</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section><!--/form-->
-
+        </section><!--/#do_action-->
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -200,7 +345,7 @@
                                 <div class="video-gallery text-center">
                                     <a href="#">
                                         <div class="iframe-img">
-                                            <img src="images/home/iframe1.png" alt="" />
+                                            <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/home/iframe1.png" alt="" />
                                         </div>
                                         <div class="overlay-icon">
                                             <i class="fa fa-play-circle-o"></i>
@@ -215,7 +360,7 @@
                                 <div class="video-gallery text-center">
                                     <a href="#">
                                         <div class="iframe-img">
-                                            <img src="images/home/iframe2.png" alt="" />
+                                            <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/home/iframe2.png" alt="" />
                                         </div>
                                         <div class="overlay-icon">
                                             <i class="fa fa-play-circle-o"></i>
@@ -230,7 +375,7 @@
                                 <div class="video-gallery text-center">
                                     <a href="#">
                                         <div class="iframe-img">
-                                            <img src="images/home/iframe3.png" alt="" />
+                                            <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/home/iframe3.png" alt="" />
                                         </div>
                                         <div class="overlay-icon">
                                             <i class="fa fa-play-circle-o"></i>
@@ -245,7 +390,7 @@
                                 <div class="video-gallery text-center">
                                     <a href="#">
                                         <div class="iframe-img">
-                                            <img src="images/home/iframe4.png" alt="" />
+                                            <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/home/iframe4.png" alt="" />
                                         </div>
                                         <div class="overlay-icon">
                                             <i class="fa fa-play-circle-o"></i>
@@ -258,7 +403,7 @@
                         </div>
                         <div class="col-sm-3">
                             <div class="address">
-                                <img src="images/home/map.png" alt="" />
+                                <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/home/map.png" alt="" />
                                 <p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
                             </div>
                         </div>
@@ -343,30 +488,11 @@
 
         </footer><!--/Footer-->
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                // Chọn tất cả input có class is-invalid
-                const invalidInputs = document.querySelectorAll("input.is-invalid");
 
-                invalidInputs.forEach(function (input) {
-                    input.addEventListener("input", function () {
-                        // Xóa class is-invalid khỏi input
-                        input.classList.remove("is-invalid");
-
-                        // Ẩn tất cả phần tử có class .error-message (nếu có)
-                        const errorMessages = document.querySelectorAll(".error-message");
-                        errorMessages.forEach(function (el) {
-                            el.style.display = "none";
-                        });
-                    });
-                });
-            });
-        </script>
 
         <script src="js/jquery.js"></script>
-        <script src="js/price-range.js"></script>
-        <script src="js/jquery.scrollUp.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
+        <script src="js/jquery.scrollUp.min.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
     </body>

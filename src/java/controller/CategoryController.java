@@ -5,22 +5,23 @@
 
 package controller;
 
-import dal.UserDAO;
-import jakarta.servlet.RequestDispatcher;
+import dal.CategoryDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
-import jakarta.servlet.ServletException;
+import jakarta  .servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import models.User;
+import java.util.List;
+import models.Categories;
 
 /**
  *
- * @author PC ASUS
+ * @author PC
  */
-public class UserServlet extends HttpServlet {
+@WebServlet(name="CategoryController", urlPatterns={"/Category"})
+public class CategoryController extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -32,19 +33,12 @@ public class UserServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet UserServlet</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet UserServlet at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+         CategoryDAO dao = new CategoryDAO();
+        List<Categories> cate = dao.getAllCategoryNames();
+       request.setAttribute("data",cate );
+      request.getRequestDispatcher("/ShopPages/Pages/Catagorys.jsp").forward(request, response);
         }
-    } 
+    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
@@ -57,11 +51,7 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-          UserDAO userDAO = new UserDAO();
-          ArrayList<User> users = userDAO.getUsers();
-          request.setAttribute("users", users);
-          RequestDispatcher rs = request.getRequestDispatcher("test.jsp");
-          rs.forward(request, response);
+        processRequest(request, response);
     } 
 
     /** 

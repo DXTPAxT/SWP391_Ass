@@ -19,7 +19,7 @@ import models.User;
  *
  * @author PC ASUS
  */
-public class LoginServlet extends HttpServlet {
+public class SignUpServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,10 +38,10 @@ public class LoginServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginServlet</title>");
+            out.println("<title>Servlet SignUpServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet SignUpServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,7 +62,7 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/login.jsp");
+            RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/signUp.jsp");
             rs.forward(request, response);
         } else {
             if (user.getRoleID() != 1) {
@@ -91,38 +91,63 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         UserDAO userDAO = new UserDAO();
         String email = request.getParameter("email");
+        String fullName = request.getParameter("fullName");
+        String address = request.getParameter("address");
+        String phoneNumber = request.getParameter("phoneNumber");
         String password = request.getParameter("password");
+        String confirmPassword = request.getParameter("confirmPassword");
         boolean isEmailExist = userDAO.isEmailExist(email);
+        boolean isPhoneNumberExisted = userDAO.isPhoneNumberExisted(phoneNumber);
         String error = null;
-        if (!isEmailExist) {
-            error = "Email is not exitsted";
+        if (isEmailExist) {
+            error = "Email existed!";
             request.setAttribute("error", error);
             request.setAttribute("email", email);
+            request.setAttribute("fullName", fullName);
+            request.setAttribute("address", address);
+            request.setAttribute("phoneNumber", phoneNumber);
             request.setAttribute("password", password);
-            RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/login.jsp");
+            request.setAttribute("confirmPassword", confirmPassword);
+            RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/signUp.jsp");
+            rs.forward(request, response);
+        } else if (isPhoneNumberExisted) {
+            error = "Phone number existed!";
+            request.setAttribute("error", error);
+            request.setAttribute("email", email);
+            request.setAttribute("fullName", fullName);
+            request.setAttribute("address", address);
+            request.setAttribute("phoneNumber", phoneNumber);
+            request.setAttribute("password", password);
+            request.setAttribute("confirmPassword", confirmPassword);
+            RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/signUp.jsp");
+            rs.forward(request, response);
+        } else if (!password.equals(confirmPassword)) {
+            error = "Confirm password not match!";
+            request.setAttribute("error", error);
+            request.setAttribute("email", email);
+            request.setAttribute("fullName", fullName);
+            request.setAttribute("address", address);
+            request.setAttribute("phoneNumber", phoneNumber);
+            request.setAttribute("password", password);
+            request.setAttribute("confirmPassword", confirmPassword);
+            RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/signUp.jsp");
             rs.forward(request, response);
         } else {
-            User user = userDAO.getUserByEmailAndPassword(email, password);
-            if (user != null) {
-                HttpSession session = request.getSession();
-                session.setAttribute("user", user);
-                session.setAttribute("id", user.getUserID());
-                if (user.getUserID() != 1) {
-                    String redirectURL = (String) session.getAttribute("redirectAfterLogin");
-                    if (redirectURL == null) {
-                        redirectURL = "Home";
-                    }
-                    session.setAttribute("redirectAfterLogin", null);
-                    response.sendRedirect(redirectURL);
-                } else {
-                    response.sendRedirect("Admin");
-                }
+            boolean isSuccess = userDAO.createNewUser(email, fullName, address, phoneNumber, password, 3);
+            if (isSuccess) {
+                request.setAttribute("isSuccess", isSuccess);
+                RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/login.jsp");
+                rs.forward(request, response);
             } else {
-                error = "Incorrect password!";
+                error = "Sign up failed!";
                 request.setAttribute("error", error);
                 request.setAttribute("email", email);
+                request.setAttribute("fullName", fullName);
+                request.setAttribute("address", address);
+                request.setAttribute("phoneNumber", phoneNumber);
                 request.setAttribute("password", password);
-                RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/login.jsp");
+                request.setAttribute("confirmPassword", confirmPassword);
+                RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/signUp.jsp");
                 rs.forward(request, response);
             }
         }

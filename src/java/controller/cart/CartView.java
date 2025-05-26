@@ -3,25 +3,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller;
+package controller.cart;
 
-import dal.ComponentsDAO;
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import models.Components;
 
 /**
  *
- * @author PC
+ * @author PC ASUS
  */
-@WebServlet(name="ComponentsController", urlPatterns={"/Components"})
-public class ComponentsController extends HttpServlet {
+public class CartView extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -38,10 +34,10 @@ public class ComponentsController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ComponentsController</title>");  
+            out.println("<title>Servlet CartView</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ComponentsController at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet CartView at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,11 +54,8 @@ public class ComponentsController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-         ComponentsDAO dao = new ComponentsDAO();
-        List<Components> components = dao.getComponents();
-       request.setAttribute("data",components );
-      request.getRequestDispatcher("/ShopPages/Pages/Components.jsp").forward(request, response);
-
+            RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/cart.jsp");
+            rs.forward(request, response);
     } 
 
     /** 
@@ -75,7 +68,7 @@ public class ComponentsController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        doGet(request, response);
+        processRequest(request, response);
     }
 
     /** 

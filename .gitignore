@@ -1,4 +1,5 @@
 /build/
 /nbproject/
-DBContext.java
+src/java/dal/DBContext.java
+test.jsp
 /dist/
