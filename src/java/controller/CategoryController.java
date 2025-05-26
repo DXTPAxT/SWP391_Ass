@@ -36,7 +36,7 @@ public class CategoryController extends HttpServlet {
          CategoryDAO dao = new CategoryDAO();
         List<Categories> cate = dao.getAllCategoryNames();
        request.setAttribute("data",cate );
-      request.getRequestDispatcher("/ShopPages/Pages/Catagorys.jsp").forward(request, response);
+      request.getRequestDispatcher("/ShopPages/Pages/homepages.jsp").forward(request, response);
         }
     
 

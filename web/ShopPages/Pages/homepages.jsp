@@ -70,7 +70,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="homepages.jsp"><img src="${ctx}/ShopPages/Pages/images/home/CyberBeast2.png" style="height: 150px; width: 200px;  "/></a>
+                                <a href="${pageContext.request.contextPath}/HomePages"><img src="${ctx}/ShopPages/Pages/images/home/CyberBeast2.png" style="height: 150px; width: 200px;  "/></a>
                             </div>
                             <div class="btn-group pull-right">
                             </div>
@@ -103,7 +103,7 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="homepages.jsp" class="active">Home</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/HomePages" class="active">Home</a></li>
                                     <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="${pageContext.request.contextPath}/Product?service=listProduct" class="active">Products</a></li>                                            <li><a href="product-details.html">Product Details</a></li> 
@@ -154,9 +154,10 @@
                                             <span style="color: red">Cyber</span><span style="color: #111111;">Beast</span>
                                         </h1>
                                         <h3>Best Seller</h3>
-                                        <p>Powerful Performance: Intel® Core™ i5/i7 processor and NVIDIA® GeForce® GTX/RTX graphics.</p>
-                                        <p>Vibrant Display: 15.6” Full HD IPS display with a fast refresh rate—perfect.</p>
-                                        <p>Cooling Mastery: Advanced thermal design keeps the system cool under pressure.</p>
+                                        <p>Efficient Performance: Intel® Core™ i5/i7 (12th Gen) processor with Intel® Iris® Xe Graphics.</p>
+                                        <p>Stunning Display: 14” Full HD (1920x1080) NanoEdge IPS display with ultra-slim bezels.</p>
+                                        <p>Premium Portability: Lightweight aluminum chassis, only ~1.3kg and 15.9mm thin—ideal for mobility.</p>
+
                                         <button type="button" class="btn btn-default get">Get it now</button>
                                     </div>
                                     <div class="col-sm-6 text-center">
@@ -169,8 +170,8 @@
                                 <!-- Slide 2 -->
                                 <div class="item">
                                     <div class="col-sm-6">
-                                        <h1><span style="color:#FE980F">E</span>-SHOPPER</h1>
-                                        <h2>100% Responsive Design</h2>
+                                        <h1><span style="color: red">Cyber</span><span style="color: #111111;">Beast</span></h1>
+                                        <h3>Best Seller</h3>
                                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                                         <button type="button" class="btn btn-default get">Get it now</button>
                                     </div>
@@ -219,125 +220,18 @@
                     <div class="col-sm-3">
                         <div class="left-sidebar">
                             <h2 ><a href="${pageContext.request.contextPath}/Category?action=list">Category</a></h2>
-                            <div class="panel-group category-products" id="accordian"><!--category-productsr-->
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordian" href="#sportswear">
-                                                <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                                Màn hình
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="sportswear" class="panel-collapse collapse">
-                                        <div class="panel-body">
-                                            <ul>
-                                                <li><a href="Manhinh/AcerCategory.jsp">Acer </a></li>
-                                                <li><a href="#">Asus </a></li>
-                                                <li><a href="#">SamSung </a></li>
-                                                <li><a href="#">MSI</a></li>
-                                                <li><a href="#">Xiaomi </a></li>
-                                                <li><a href="#">DELL</a></li>
-                                                <li><a href="#">LENOVO</a></li>
-                                            </ul>
+                            <div class="panel-group category-products" id="accordian"><!--category-products-->
+                                <c:forEach var="cate" items="${data}">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <a href="${pageContext.request.contextPath}/CategoryProduct?name=${cate.catagoryName}">
+                                                    ${cate.catagoryName}
+                                                </a>
+                                            </h4>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordian" href="#mens">
-                                                <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                                Vỏ Case PC
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="mens" class="panel-collapse collapse">
-                                        <div class="panel-body">
-                                            <ul>
-                                                <li><a href="AcerCategory.jsp">Acer </a></li>
-                                                <li><a href="#">Asus </a></li>
-                                                <li><a href="#">MSI</a></li>
-                                                <li><a href="#">Xiaomi </a></li>
-                                                <li><a href="#">DELL</a></li>
-                                                <li><a href="#">LENOVO</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordian" href="#womens">
-                                                <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                                Main
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="womens" class="panel-collapse collapse">
-                                        <div class="panel-body">
-                                            <ul>
-                                                <li><a href="#">Asus</a></li>
-                                                <li><a href="#">MSI</a></li>
-                                                <li><a href="#">Intel</a></li>
-
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">CPU</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Ram</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">HDD / SSD</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">GPU / VGA</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">PSU - Power Supply Unit</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Tản nhiệt (Cooling)</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Mouse</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Keyboard</a></h4>
-                                    </div>
-                                </div>
-
-
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Full PC</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">LapTop</a></h4>
-                                    </div>
-                                </div>
+                                </c:forEach>
                             </div><!--/category-products-->
 
                             <div class="brands_products"><!--brands_products-->
@@ -357,9 +251,6 @@
 
 
 
-                            <div class="shipping text-center"><!--shipping-->
-                                <img src="images/home/shipping.jpg" alt="" />
-                            </div><!--/shipping-->
 
                         </div>
                     </div>
@@ -714,18 +605,18 @@
     </footer><!--/Footer-->
 
 
-   <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/main.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
 
-<!-- Kích hoạt carousel nếu cần -->
-<script>
-    $(document).ready(function() {
-        $('#slider-carousel').carousel(); // Khởi động carousel thủ công
-    });
-</script>
+    <!-- Kích hoạt carousel nếu cần -->
+    <script>
+        $(document).ready(function () {
+            $('#slider-carousel').carousel(); // Khởi động carousel thủ công
+        });
+    </script>
 </body>
 </html>
