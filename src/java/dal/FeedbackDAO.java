@@ -56,7 +56,7 @@ public class FeedbackDAO extends DBContext {
 
     // Thêm feedback mới
     public boolean insertFeedback(Feedback f) {
-        String sql = "INSERT INTO Feedbacks (UserID, Content, ProductID, CreatedAt, Rate) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)";
+        String sql = "INSERT INTO Feedbacks (UserID, Content, ProductID, Rate) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, f.getUserID());
             ps.setString(2, f.getContent());
@@ -120,4 +120,29 @@ public class FeedbackDAO extends DBContext {
         }
         return list;
     }
+
+    public static void main(String[] args) {
+        FeedbackDAO dao = new FeedbackDAO();
+
+        // Tạo đối tượng Feedback mới để thêm vào CSDL
+        Feedback newFeedback = new Feedback(
+                0, // FeedbackID (0 hoặc bất kỳ, sẽ được tự động tạo)
+                1, // UserID - giả sử user có ID = 1
+                "Sản phẩm rất tốt, giao hàng nhanh!", // Content
+                2, // ProductID - giả sử sản phẩm có ID = 2
+                null, // CreatedAt - để null vì sẽ do DB tự set (nếu dùng default)
+                5 // Rate - đánh giá sao
+        );
+
+        // Gọi phương thức insert
+        boolean success = dao.insertFeedback(newFeedback);
+
+        // In kết quả ra console
+        if (success) {
+            System.out.println("Thêm feedback thành công!");
+        } else {
+            System.out.println("Thêm feedback thất bại.");
+        }
+    }
+
 }
