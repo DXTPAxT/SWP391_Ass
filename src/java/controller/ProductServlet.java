@@ -39,7 +39,7 @@ public class ProductServlet extends HttpServlet {
         CategoryDAO cate = new CategoryDAO();
         String service = request.getParameter("service");
         if (service == null) {
-            service = "listProduct";
+            service = "list";
         }
 
         Vector<Products> list;
@@ -76,6 +76,41 @@ public class ProductServlet extends HttpServlet {
                 e.printStackTrace();
             }
         }
+        if ("priceFilter".equals(service)) {
+            String minStr = request.getParameter("minPrice");
+            String maxStr = request.getParameter("maxPrice");
+
+            double minPrice = 0;
+            double maxPrice = Double.MAX_VALUE;
+
+            try {
+                if (minStr != null) {
+                    minPrice = Double.parseDouble(minStr);
+                }
+                if (maxStr != null) {
+                    maxPrice = Double.parseDouble(maxStr);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace(); // Log nếu cần
+            }
+
+            // Lọc theo khoảng giá
+            list = dao.getAllProduct("SELECT * FROM Products WHERE Price BETWEEN " + minPrice + " AND " + maxPrice);
+
+            request.setAttribute("data", list);
+            request.setAttribute("pageTitle", "Search Results");
+            request.setAttribute("tableTitle", "Products from "
+                    + String.format("%,.0f VND", minPrice) + " to "
+                    + String.format("%,.0f VND", maxPrice));
+
+            List<Categories> listcate = cate.getCategoriesName();
+            List<BrandByCategoriesName> BWCN = cate.getBrandWithCategoryName();
+            request.setAttribute("categories", listcate);
+            request.setAttribute("BrandWithCategoryName", BWCN);
+
+            request.getRequestDispatcher("ShopPages/Pages/ProductList.jsp").forward(request, response);
+        }
+
 
         /*List<Categories> listcate= cate.getCategoriesName();
          List<BrandByCategoriesName> BWCN = cate.getBrandWithCategoryName();
