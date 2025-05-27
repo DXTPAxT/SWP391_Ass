@@ -3,9 +3,9 @@
     Created on : May 22, 2025, 1:25:48 PM
     Author     : Admin
 --%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <%@ page isErrorPage="true" %>
 
@@ -35,28 +35,29 @@
         <link rel="apple-touch-icon-precomposed" href="${ctx}/ShopPages/Pages/images/ico/apple-touch-icon-57-precomposed.png">
     </head><!--/head-->
 
-    <body>
 
+
+    <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
                 <div class="container">
                     <div class="row">
-                        <div class="col-sm-6 ">
+                        <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href=""><i class="fa fa-phone"></i> 123456789</a></li>
-                                    <li><a href=""><i class="fa fa-envelope"></i>ComputerOnlineShop@gmail.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> 0337593524</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> CyberBeast@gmail.com</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="social-icons pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href=""><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href=""><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -69,39 +70,17 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="${pageContext.request.contextPath}/HomePages"><img src="${ctx}/ShopPages/Pages/images/home/CyberBeast2.png" style="height: 150px; width: 200px;  "/></a>
                             </div>
                             <div class="btn-group pull-right">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        USA
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canada</a></li>
-                                        <li><a href="">UK</a></li>
-                                    </ul>
-                                </div>
-
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        DOLLAR
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canadian Dollar</a></li>
-                                        <li><a href="">Pound</a></li>
-                                    </ul>
-                                </div>
                             </div>
                         </div>
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
-                                <ul class="nav navbar-nav">
-                                    <li><a href=""><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href=""><i class="fa fa-star"></i> Wishlist</a></li>
-                                    <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                                <ul class="nav navbar-nav"  style=" padding-top: 50px ">
                                     <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
                                     <li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li>
                                 </ul>
                             </div>
@@ -124,11 +103,10 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePage.jsp">Home</a></li>
-                                    <li class="dropdown"><a href="#" class="active">Shop<i class="fa fa-angle-down"></i></a>
+                                    <li><a href="${pageContext.request.contextPath}/HomePages" class="active">Home</a></li>
+                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="${pageContext.request.contextPath}/Product?service=listProduct" class="active">Products</a></li>
-                                            <li><a href="product-details.html">Product Details</a></li> 
+                                            <li><a href="${pageContext.request.contextPath}/Product?service=list" class="active">Products</a></li>                                            <li><a href="product-details.html">Product Details</a></li> 
                                             <li><a href="checkout.html">Checkout</a></li> 
                                             <li><a href="cart.html">Cart</a></li> 
                                             <li><a href="login.html">Login</a></li> 
@@ -160,124 +138,122 @@
             </div>
         </header>
 
-        <section id="advertisement">
+        <section id="slider"><!--slider-->
             <div class="container">
-                <img src="images/shop/advertisement.jpg" alt="" />
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="slider-carousel" class="carousel slide" data-ride="carousel">
+                            <!-- Indicators -->
+                            <ol class="carousel-indicators">
+                                <li data-target="#slider-carousel" data-slide-to="0" class="active"></li>
+                                <li data-target="#slider-carousel" data-slide-to="1"></li>
+                                <li data-target="#slider-carousel" data-slide-to="2"></li>
+                            </ol>
+
+                            <!-- Slides -->
+                            <div class="carousel-inner">
+                                <!-- Slide 1 -->
+                                <div class="item active">
+                                    <div class="col-sm-6">
+                                        <h1>
+                                            <span style="color: red">Cyber</span><span style="color: #111111;">Beast</span>
+                                        </h1>
+                                        <h3>Best Seller</h3>
+                                        <p>Efficient Performance: Intel® Core™ i5/i7 (12th Gen) processor with Intel® Iris® Xe Graphics.</p>
+                                        <p>Stunning Display: 14” Full HD (1920x1080) NanoEdge IPS display with ultra-slim bezels.</p>
+                                        <p>Premium Portability: Lightweight aluminum chassis, only ~1.3kg and 15.9mm thin—ideal for mobility.</p>
+
+                                        <button type="button" class="btn btn-default get">Get it now</button>
+                                    </div>
+                                    <div class="col-sm-6 text-center">
+                                        <img src="${ctx}/ShopPages/Pages/images/home/nitrov15.png"
+                                             style="height: 450px; width: auto; padding-top: 30px;"
+                                             class="girl img-responsive" alt="CyberBeast" />
+                                    </div>
+                                </div> 
+
+                                <!-- Slide 2 -->
+                                <div class="item">
+                                    <div class="col-sm-6">
+                                        <h1><span style="color: red">Cyber</span><span style="color: #111111;">Beast</span></h1>
+                                        <h3>Best Seller</h3>
+                                        <p>Powerful Performance: Intel® Core™ i7-12700F CPU with ASUS TUF Gaming B660 motherboard.</p>
+                                        <p>Graphics Excellence: NVIDIA® GeForce RTX™ 3060 12GB for smooth 1440p gaming and rendering.</p>
+                                        <p>Solid Setup: 16GB DDR4 RAM, 512GB NVMe SSD, 650W PSU, housed in ASUS Prime case with RGB fans.</p>
+
+                                        <button type="button" class="btn btn-default get">Get it now</button>
+                                    </div>
+                                    <div class="col-sm-6 text-center">
+                                        <img src="${ctx}/ShopPages/Pages/images/home/1.png"
+                                             style="height: 400px; width: auto; padding-top: 40px;"
+                                             class="girl img-responsive" alt="Responsive Design" />
+
+                                    </div>
+                                </div>
+
+                                <!-- Slide 3 -->
+                                <div class="item">
+                                    <div class="col-sm-6">
+                                        <h1><span style="color: red">Cyber</span><span style="color: #111111;">Beast</span></h1>
+                                        <h3>Recommend Main</h3>
+                                        <p>Extreme Compatibility: Supports Intel® 12th & 13th Gen processors with LGA1700 socket, built for gaming and productivity.</p>
+                                        <p>Next-Gen Memory: Ready for DDR5 RAM up to 6400MHz (OC), 4 DIMM slots for up to 128GB high-speed memory.</p>
+                                        <p>High-Speed Connectivity: PCIe 5.0 x16 slot for latest GPUs, 4x M.2 NVMe slots, and Wi-Fi 6E with Bluetooth 5.2 onboard.</p>
+                                        <button type="button" class="btn btn-default get">Get it now</button>
+                                    </div>
+                                    <div class="col-sm-6 text-center">
+                                        <img src="${ctx}/ShopPages/Pages/images/home/asus.png"
+                                             style="height: 450px; width: auto; padding-top: 20px;"
+                                             class="girl img-responsive" alt="Free Template" />
+                                      
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Controls -->
+                            <a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a href="#slider-carousel" class="right control-carousel hidden-xs" data-slide="next">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </section>
+        </section><!--/slider-->
 
         <section>
             <div class="container">
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="left-sidebar">
-                            <h2>Category</h2>
-                            <div class="panel-group category-products" id="accordian"><!--category-productsr-->
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordian" href="#sportswear">
-                                                <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                                Sportswear
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="sportswear" class="panel-collapse collapse">
-                                        <div class="panel-body">
-                                            <ul>
-                                                <li><a href="">Nike </a></li>
-                                                <li><a href="">Under Armour </a></li>
-                                                <li><a href="">Adidas </a></li>
-                                                <li><a href="">Puma</a></li>
-                                                <li><a href="">ASICS </a></li>
-                                            </ul>
+                            <h2 class="title text-center">CATEGORY</h2>
+                            <div class="panel-group category-products" id="accordian"><!--category-products-->
+                                <c:forEach var="cate" items="${categories}">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" href="#collapse${cate.categoryID}">
+                                                    <span class="badge pull-right"><i class="fa fa-plus"></i></span>
+                                                        ${cate.catagoryName}
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapse${cate.categoryID}" class="panel-collapse collapse">
+                                            <div class="panel-body">
+                                                <ul>
+                                                    <c:forEach var="item" items="${BrandWithCategoryName}">
+                                                        <c:if test="${item.categoryID eq cate.categoryID}">
+                                                            <li><a href="#">${item.brand}</a></li>
+                                                            </c:if>
+                                                        </c:forEach>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordian" href="#mens">
-                                                <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                                Mens
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="mens" class="panel-collapse collapse">
-                                        <div class="panel-body">
-                                            <ul>
-                                                <li><a href="">Fendi</a></li>
-                                                <li><a href="">Guess</a></li>
-                                                <li><a href="">Valentino</a></li>
-                                                <li><a href="">Dior</a></li>
-                                                <li><a href="">Versace</a></li>
-                                                <li><a href="">Armani</a></li>
-                                                <li><a href="">Prada</a></li>
-                                                <li><a href="">Dolce and Gabbana</a></li>
-                                                <li><a href="">Chanel</a></li>
-                                                <li><a href="">Gucci</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordian" href="#womens">
-                                                <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                                Womens
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="womens" class="panel-collapse collapse">
-                                        <div class="panel-body">
-                                            <ul>
-                                                <li><a href="">Fendi</a></li>
-                                                <li><a href="">Guess</a></li>
-                                                <li><a href="">Valentino</a></li>
-                                                <li><a href="">Dior</a></li>
-                                                <li><a href="">Versace</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Kids</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Fashion</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Households</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Interiors</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Clothing</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Bags</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Shoes</a></h4>
-                                    </div>
-                                </div>
-                            </div><!--/category-productsr-->
+                                </c:forEach>
+                            </div><!--/category-products-->
 
                             <div class="brands_products"><!--brands_products-->
                                 <h2>Brands</h2>
@@ -516,12 +492,19 @@
 
 
 
-        <script src="js/jquery.js"></script>
-        <script src="js/price-range.js"></script>
-        <script src="js/jquery.scrollUp.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/jquery.prettyPhoto.js"></script>
-        <script src="js/main.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
+
+    <!-- Kích hoạt carousel nếu cần -->
+    <script>
+        $(document).ready(function () {
+            $('#slider-carousel').carousel(); // Khởi động carousel thủ công
+        });
+    </script>
 
     </body>
 </html>

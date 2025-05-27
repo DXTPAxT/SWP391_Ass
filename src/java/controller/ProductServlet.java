@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dal.CategoryDAO;
 import dal.ProductDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import models.BrandByCategoriesName;
 import models.Categories;
 import models.Products;
 
@@ -34,7 +36,7 @@ public class ProductServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         ProductDAO dao = new ProductDAO();
-
+        CategoryDAO cate = new CategoryDAO();
         String service = request.getParameter("service");
         if (service == null) {
             service = "listProduct";
@@ -54,6 +56,10 @@ public class ProductServlet extends HttpServlet {
             request.setAttribute("data", list);
             request.setAttribute("pageTitle", "Search Results");
             request.setAttribute("tableTitle", "Matching Products");
+            List<Categories> listcate = cate.getCategoriesName();
+            List<BrandByCategoriesName> BWCN = cate.getBrandWithCategoryName();
+            request.setAttribute("categories", listcate);
+            request.setAttribute("BrandWithCategoryName", BWCN);
 
             request.getRequestDispatcher("ShopPages/Pages/ProductList.jsp").forward(request, response);
         }
@@ -71,6 +77,11 @@ public class ProductServlet extends HttpServlet {
             }
         }
 
+        /*List<Categories> listcate= cate.getCategoriesName();
+         List<BrandByCategoriesName> BWCN = cate.getBrandWithCategoryName();
+         request.setAttribute("categories",listcate );
+    request.setAttribute("BrandWithCategoryName", BWCN);
+    request.getRequestDispatcher("ShopPages/Pages/ProductList.jsp").forward(request, response);*/
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
