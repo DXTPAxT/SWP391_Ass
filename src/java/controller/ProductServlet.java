@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dal.CategoryDAO;
 import dal.ProductDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import models.BrandByCategoriesName;
 import models.Categories;
 import models.Products;
 
@@ -34,62 +36,87 @@ public class ProductServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         ProductDAO dao = new ProductDAO();
-
+        CategoryDAO cate = new CategoryDAO();
         String service = request.getParameter("service");
         if (service == null) {
-            service = "listProduct";
+            service = "list";
         }
 
         Vector<Products> list;
 
-        if (service.equals("listProduct")) {
-            String submit = request.getParameter("submit");
+        if ("list".equals(service)) {
+            String keyword = request.getParameter("keyword");
 
-            if (submit == null) {
+            if (keyword == null || keyword.trim().isEmpty()) {
                 list = dao.getAllProduct(SQL);
             } else {
-                list = dao.getAllProduct("""
-                                         SELECT *
-                                         FROM Products""");
+                list = dao.getAllProduct("SELECT * FROM Products WHERE Name LIKE N'%" + keyword + "%'");
             }
-            //set data for view
-            request.setAttribute("data", list);
-            request.setAttribute("pageTitle", "Product Manager");
-            request.setAttribute("tableTitle", "List of Product");
 
-            //Select view
+            request.setAttribute("data", list);
+            request.setAttribute("pageTitle", "Search Results");
+            request.setAttribute("tableTitle", "Matching Products");
+            List<Categories> listcate = cate.getCategoriesName();
+            List<BrandByCategoriesName> BWCN = cate.getBrandWithCategoryName();
+            request.setAttribute("categories", listcate);
+            request.setAttribute("BrandWithCategoryName", BWCN);
+
             request.getRequestDispatcher("ShopPages/Pages/ProductList.jsp").forward(request, response);
-        } 
-        if ("Detail".equals(service)) {
+        }
+
+        if ("detail".equals(service)) {
             try {
-                int id = Integer.parseInt(request.getParameter("ProductID"));
+                int id = Integer.parseInt(request.getParameter("productID"));
                 Products product = dao.getProductByID(id);
-           
-                request.setAttribute("product", product);
+
+                request.setAttribute("p", product);
 
                 request.getRequestDispatcher("ShopPages/Pages/ProductDetail.jsp").forward(request, response);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        if (service.equals("Detail")) {
-            int id = Integer.parseInt(request.getParameter("ProductID"));
-            Products p = dao.getProductByID(id);
-            request.setAttribute("product", p);
-            request.getRequestDispatcher("ShopPages/Pages/ProductDetail.jsp").forward(request, response);
+        if ("priceFilter".equals(service)) {
+            String minStr = request.getParameter("minPrice");
+            String maxStr = request.getParameter("maxPrice");
+
+            double minPrice = 0;
+            double maxPrice = Double.MAX_VALUE;
+
+            try {
+                if (minStr != null) {
+                    minPrice = Double.parseDouble(minStr);
+                }
+                if (maxStr != null) {
+                    maxPrice = Double.parseDouble(maxStr);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace(); // Log nếu cần
+            }
+
+            // Lọc theo khoảng giá
+            list = dao.getAllProduct("SELECT * FROM Products WHERE Price BETWEEN " + minPrice + " AND " + maxPrice);
+
+            request.setAttribute("data", list);
+            request.setAttribute("pageTitle", "Search Results");
+            request.setAttribute("tableTitle", "Products from "
+                    + String.format("%,.0f VND", minPrice) + " to "
+                    + String.format("%,.0f VND", maxPrice));
+
+            List<Categories> listcate = cate.getCategoriesName();
+            List<BrandByCategoriesName> BWCN = cate.getBrandWithCategoryName();
+            request.setAttribute("categories", listcate);
+            request.setAttribute("BrandWithCategoryName", BWCN);
+
+            request.getRequestDispatcher("ShopPages/Pages/ProductList.jsp").forward(request, response);
         }
-        if (service.equals("listCategory")) {
 
-          
-            Vector<Products> productList = dao.getAllProduct("SELECT * FROM Products");
 
-           
-            request.setAttribute("productList", productList);
-
-            request.getRequestDispatcher("ShopPages/Pages/HomePage.jsp").forward(request, response);
-            // request.getRequestDispatcher("ShopPages/Pages/test.jsp").forward(request, response);
-        }
-
+        /*List<Categories> listcate= cate.getCategoriesName();
+         List<BrandByCategoriesName> BWCN = cate.getBrandWithCategoryName();
+         request.setAttribute("categories",listcate );
+    request.setAttribute("BrandWithCategoryName", BWCN);
+    request.getRequestDispatcher("ShopPages/Pages/ProductList.jsp").forward(request, response);*/
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

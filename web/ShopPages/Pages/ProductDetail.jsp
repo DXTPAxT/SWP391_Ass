@@ -34,7 +34,6 @@
     </head><!--/head-->
 
     <body>
-       
 
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -333,19 +332,17 @@
                                 </div>
 
                             </div>
-
-
-
+                                        
                             <div class="col-sm-7">
                                 <div class="product-information"><!--/product-information-->
-                                    <img src="images/product-details/new.jpg" class="newarrival" alt="" />
-                                    <h2>${product.name}</h2>
+                                    <img src="${ctx}/ShopPages/Pages/images/product-details/new.jpg" class="newarrival" alt="" />
+                                    <h2>${p.name}</h2>
                                     
-                                    <img src="{ctx}/ShopPages/Pages/images/product-details/rating.png" alt="" />
+                                    <img src="${ctx}/ShopPages/Pages/images/product-details/rating.png" alt="" />
                                     <span>
-                                        <span>${product.price}</span>
+                                        <span>${p.price}</span>
                                         <label>Quantity:</label>
-                                        <input type="text" value="3" />
+                                        <input type="text" value="1" name="value" />
                                         <button type="button" class="btn btn-fefault cart">
                                             <i class="fa fa-shopping-cart"></i>
                                             Add to cart
@@ -353,7 +350,7 @@
                                     </span>
                                     <p><b>Availability:</b> In Stock</p>
                                     <p><b>Condition:</b> New</p>
-                                    <p><b>Brand:</b> ${product.brand}</p>
+                                    <p><b>Brand:</b> ${p.brand}</p>
                                     <a href=""><img src="{ctx}/ShopPages/Pages/images/product-details/share.png" class="share img-responsive"  alt="" /></a>
                                 </div><!--/product-information-->
                             </div>

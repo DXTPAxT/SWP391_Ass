@@ -3,9 +3,9 @@
     Created on : May 22, 2025, 1:25:48 PM
     Author     : Admin
 --%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <%@ page isErrorPage="true" %>
 
@@ -103,11 +103,10 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="${pageContext.request.contextPath}/HomePages">Home</a></li>
-                                    <li class="dropdown"><a href="#" class="active">Shop<i class="fa fa-angle-down"></i></a>
+                                    <li><a href="${pageContext.request.contextPath}/HomePages" class="active">Home</a></li>
+                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="${pageContext.request.contextPath}/Product?service=listProduct" class="active">Products</a></li>
-                                            <li><a href="product-details.html">Product Details</a></li> 
+                                            <li><a href="${pageContext.request.contextPath}/Product?service=list" class="active">Products</a></li>                                            <li><a href="product-details.html">Product Details</a></li> 
                                             <li><a href="checkout.html">Checkout</a></li> 
                                             <li><a href="cart.html">Cart</a></li> 
                                             <li><a href="login.html">Login</a></li> 
@@ -126,7 +125,12 @@
                         </div>
                         <div class="col-sm-3">
                             <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
+                                <form action="Product" method="get">
+                                    <input type="hidden" name="service" value="list"/>
+                                    <input type="text" name="keyword" placeholder="Search by product name" onkeydown="if (event.key === 'Enter') {
+                                                this.form.submit();
+                                            }"/>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -134,124 +138,122 @@
             </div>
         </header>
 
-        <section id="advertisement">
+        <section id="slider"><!--slider-->
             <div class="container">
-                <img src="images/shop/advertisement.jpg" alt="" />
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="slider-carousel" class="carousel slide" data-ride="carousel">
+                            <!-- Indicators -->
+                            <ol class="carousel-indicators">
+                                <li data-target="#slider-carousel" data-slide-to="0" class="active"></li>
+                                <li data-target="#slider-carousel" data-slide-to="1"></li>
+                                <li data-target="#slider-carousel" data-slide-to="2"></li>
+                            </ol>
+
+                            <!-- Slides -->
+                            <div class="carousel-inner">
+                                <!-- Slide 1 -->
+                                <div class="item active">
+                                    <div class="col-sm-6">
+                                        <h1>
+                                            <span style="color: red">Cyber</span><span style="color: #111111;">Beast</span>
+                                        </h1>
+                                        <h3>Best Seller</h3>
+                                        <p>Efficient Performance: Intel® Core™ i5/i7 (12th Gen) processor with Intel® Iris® Xe Graphics.</p>
+                                        <p>Stunning Display: 14” Full HD (1920x1080) NanoEdge IPS display with ultra-slim bezels.</p>
+                                        <p>Premium Portability: Lightweight aluminum chassis, only ~1.3kg and 15.9mm thin—ideal for mobility.</p>
+
+                                        <button type="button" class="btn btn-default get">Get it now</button>
+                                    </div>
+                                    <div class="col-sm-6 text-center">
+                                        <img src="${ctx}/ShopPages/Pages/images/home/nitrov15.png"
+                                             style="height: 450px; width: auto; padding-top: 30px;"
+                                             class="girl img-responsive" alt="CyberBeast" />
+                                    </div>
+                                </div> 
+
+                                <!-- Slide 2 -->
+                                <div class="item">
+                                    <div class="col-sm-6">
+                                        <h1><span style="color: red">Cyber</span><span style="color: #111111;">Beast</span></h1>
+                                        <h3>Best Seller</h3>
+                                        <p>Powerful Performance: Intel® Core™ i7-12700F CPU with ASUS TUF Gaming B660 motherboard.</p>
+                                        <p>Graphics Excellence: NVIDIA® GeForce RTX™ 3060 12GB for smooth 1440p gaming and rendering.</p>
+                                        <p>Solid Setup: 16GB DDR4 RAM, 512GB NVMe SSD, 650W PSU, housed in ASUS Prime case with RGB fans.</p>
+
+                                        <button type="button" class="btn btn-default get">Get it now</button>
+                                    </div>
+                                    <div class="col-sm-6 text-center">
+                                        <img src="${ctx}/ShopPages/Pages/images/home/1.png"
+                                             style="height: 400px; width: auto; padding-top: 40px;"
+                                             class="girl img-responsive" alt="Responsive Design" />
+
+                                    </div>
+                                </div>
+
+                                <!-- Slide 3 -->
+                                <div class="item">
+                                    <div class="col-sm-6">
+                                        <h1><span style="color: red">Cyber</span><span style="color: #111111;">Beast</span></h1>
+                                        <h3>Recommend Main</h3>
+                                        <p>Extreme Compatibility: Supports Intel® 12th & 13th Gen processors with LGA1700 socket, built for gaming and productivity.</p>
+                                        <p>Next-Gen Memory: Ready for DDR5 RAM up to 6400MHz (OC), 4 DIMM slots for up to 128GB high-speed memory.</p>
+                                        <p>High-Speed Connectivity: PCIe 5.0 x16 slot for latest GPUs, 4x M.2 NVMe slots, and Wi-Fi 6E with Bluetooth 5.2 onboard.</p>
+                                        <button type="button" class="btn btn-default get">Get it now</button>
+                                    </div>
+                                    <div class="col-sm-6 text-center">
+                                        <img src="${ctx}/ShopPages/Pages/images/home/asus.png"
+                                             style="height: 450px; width: auto; padding-top: 20px;"
+                                             class="girl img-responsive" alt="Free Template" />
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Controls -->
+                            <a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a href="#slider-carousel" class="right control-carousel hidden-xs" data-slide="next">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </section>
+        </section><!--/slider-->
 
         <section>
             <div class="container">
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="left-sidebar">
-                            <h2>Category</h2>
-                            <div class="panel-group category-products" id="accordian"><!--category-productsr-->
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordian" href="#sportswear">
-                                                <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                                Sportswear
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="sportswear" class="panel-collapse collapse">
-                                        <div class="panel-body">
-                                            <ul>
-                                                <li><a href="">Nike </a></li>
-                                                <li><a href="">Under Armour </a></li>
-                                                <li><a href="">Adidas </a></li>
-                                                <li><a href="">Puma</a></li>
-                                                <li><a href="">ASICS </a></li>
-                                            </ul>
+                            <h2 class="title text-center">CATEGORY</h2>
+                            <div class="panel-group category-products" id="accordian"><!--category-products-->
+                                <c:forEach var="cate" items="${categories}">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" href="#collapse${cate.categoryID}">
+                                                    <span class="badge pull-right"><i class="fa fa-plus"></i></span>
+                                                        ${cate.catagoryName}
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapse${cate.categoryID}" class="panel-collapse collapse">
+                                            <div class="panel-body">
+                                                <ul>
+                                                    <c:forEach var="item" items="${BrandWithCategoryName}">
+                                                        <c:if test="${item.categoryID eq cate.categoryID}">
+                                                            <li><a href="#">${item.brand}</a></li>
+                                                            </c:if>
+                                                        </c:forEach>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordian" href="#mens">
-                                                <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                                Mens
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="mens" class="panel-collapse collapse">
-                                        <div class="panel-body">
-                                            <ul>
-                                                <li><a href="">Fendi</a></li>
-                                                <li><a href="">Guess</a></li>
-                                                <li><a href="">Valentino</a></li>
-                                                <li><a href="">Dior</a></li>
-                                                <li><a href="">Versace</a></li>
-                                                <li><a href="">Armani</a></li>
-                                                <li><a href="">Prada</a></li>
-                                                <li><a href="">Dolce and Gabbana</a></li>
-                                                <li><a href="">Chanel</a></li>
-                                                <li><a href="">Gucci</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordian" href="#womens">
-                                                <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                                Womens
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="womens" class="panel-collapse collapse">
-                                        <div class="panel-body">
-                                            <ul>
-                                                <li><a href="">Fendi</a></li>
-                                                <li><a href="">Guess</a></li>
-                                                <li><a href="">Valentino</a></li>
-                                                <li><a href="">Dior</a></li>
-                                                <li><a href="">Versace</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Kids</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Fashion</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Households</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Interiors</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Clothing</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Bags</a></h4>
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a href="#">Shoes</a></h4>
-                                    </div>
-                                </div>
-                            </div><!--/category-productsr-->
+                                </c:forEach>
+                            </div><!--/category-products-->
 
                             <div class="brands_products"><!--brands_products-->
                                 <h2>Brands</h2>
@@ -271,14 +273,25 @@
                             <div class="price-range"><!--price-range-->
                                 <h2>Price Range</h2>
                                 <div class="well">
-                                    <input type="text" class="span2" value="" data-slider-min="0" data-slider-max="600" data-slider-step="5" data-slider-value="[250,450]" id="sl2" ><br />
-                                    <b>$ 0</b> <b class="pull-right">$ 600</b>
+                                    <form action="Product" method="get">
+                                        <input type="hidden" name="service" value="priceFilter"/>
+
+                                        <div class="form-group">
+                                            <label for="minPrice">Minimum Price (VND):</label>
+                                            <input type="number" id="minPrice" name="minPrice" class="form-control"
+                                                   placeholder="e.g. 10,000,000" min="0" />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="maxPrice">Maximum Price (VND):</label>
+                                            <input type="number" id="maxPrice" name="maxPrice" class="form-control"
+                                                   placeholder="e.g. 50,000,000" min="0"/>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-warning btn-block">Search by Price</button>
+                                    </form>
                                 </div>
                             </div><!--/price-range-->
-
-                            <div class="shipping text-center"><!--shipping-->
-                                <img src="images/home/shipping.jpg" alt="" />
-                            </div><!--/shipping-->
 
                         </div>
                     </div>
@@ -293,9 +306,8 @@
                                 <div class="col-sm-4">
                                     <div class="product-image-wrapper">
                                         <div class="single-products">
-                                            <div class="productinfo text-center">
-
-                                                <a href="${pageContext.request.contextPath}/Product?service=Detail&ProductID=${product.productID}" style="text-decoration: none; color: inherit;">
+                                            <div class="productinfo text-center"> 
+                                                <a href="${pageContext.request.contextPath}/Product?service=detail&productID=${product.productID}">
                                                     <img src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
                                                     <h2>${product.price}</h2>
                                                     <p>${product.name}</p>
@@ -303,14 +315,9 @@
 
                                                 <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                                             </div>
-                                            
+
                                         </div>
-                                        <div class="choose">
-                                            <ul class="nav nav-pills nav-justified">
-                                                <li><a href=""><i class="fa fa-plus-square"></i>Add to wishlist</a></li>
-                                                <li><a href=""><i class="fa fa-plus-square"></i>Add to compare</a></li>
-                                            </ul>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </c:forEach> 
@@ -491,12 +498,60 @@
 
 
 
-        <script src="js/jquery.js"></script>
-        <script src="js/price-range.js"></script>
-        <script src="js/jquery.scrollUp.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/jquery.prettyPhoto.js"></script>
-        <script src="js/main.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
+
+        <!-- Kích hoạt carousel nếu cần -->
+        <script>
+                                        $(document).ready(function () {
+                                            $('#slider-carousel').carousel(); // Khởi động carousel thủ công
+                                        });
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const form = document.querySelector("form[action='Product']");
+                const minInput = document.getElementById("minPrice");
+                const maxInput = document.getElementById("maxPrice");
+
+                // Ngăn nhập chữ cái và ký tự không hợp lệ
+                function preventNonNumericInput(e) {
+                    const invalidChars = ['e', 'E', '+', '-', ','];
+                    if (invalidChars.includes(e.key)) {
+                        e.preventDefault();
+                    }
+                }
+
+                minInput.addEventListener('keydown', preventNonNumericInput);
+                maxInput.addEventListener('keydown', preventNonNumericInput);
+
+                // Validate khi submit form
+                form.addEventListener("submit", function (e) {
+                    const min = parseInt(minInput.value);
+                    const max = parseInt(maxInput.value);
+
+                    if (isNaN(min) || isNaN(max)) {
+                        alert("Please enter both minimum and maximum prices.");
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (min < 0 || max < 0) {
+                        alert("Price cannot be negative.");
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (max < min) {
+                        alert("Maximum price must be greater than or equal to minimum price.");
+                        e.preventDefault();
+                    }
+                });
+            });
+        </script>
 
     </body>
 </html>
