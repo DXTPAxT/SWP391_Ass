@@ -107,7 +107,7 @@
                                     <li><a href="${pageContext.request.contextPath}/HomePages" class="active">Home</a></li>
                                     <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="${pageContext.request.contextPath}/Product?service=listProduct" class="active">Products</a></li>                                            <li><a href="product-details.html">Product Details</a></li> 
+                                            <li><a href="${pageContext.request.contextPath}/Product?service=list" class="active">Products</a></li>                                            <li><a href="product-details.html">Product Details</a></li> 
                                             <li><a href="checkout.html">Checkout</a></li> 
                                             <li><a href="cart.html">Cart</a></li> 
                                             <li><a href="login.html">Login</a></li> 
@@ -199,7 +199,7 @@
                                     </div>
                                     <div class="col-sm-6 text-center">
                                         <img src="${ctx}/ShopPages/Pages/images/home/asus.png"
-                                             style="height: 450px; width: 200; padding-top: 20px;"
+                                             style="height: 450px; width: auto; padding-top: 20px;"
                                              class="girl img-responsive" alt="Free Template" />
                                       
                                     </div>
