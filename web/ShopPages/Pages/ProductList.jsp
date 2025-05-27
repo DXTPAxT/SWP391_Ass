@@ -205,7 +205,7 @@
                                         <img src="${ctx}/ShopPages/Pages/images/home/asus.png"
                                              style="height: 450px; width: auto; padding-top: 20px;"
                                              class="girl img-responsive" alt="Free Template" />
-                                      
+
                                     </div>
                                 </div>
                             </div>
@@ -273,14 +273,25 @@
                             <div class="price-range"><!--price-range-->
                                 <h2>Price Range</h2>
                                 <div class="well">
-                                    <input type="text" class="span2" value="" data-slider-min="0" data-slider-max="600" data-slider-step="5" data-slider-value="[250,450]" id="sl2" ><br />
-                                    <b>$ 0</b> <b class="pull-right">$ 600</b>
+                                    <form action="Product" method="get">
+                                        <input type="hidden" name="service" value="priceFilter"/>
+
+                                        <div class="form-group">
+                                            <label for="minPrice">Minimum Price (VND):</label>
+                                            <input type="number" id="minPrice" name="minPrice" class="form-control"
+                                                   placeholder="e.g. 10,000,000" min="0" />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="maxPrice">Maximum Price (VND):</label>
+                                            <input type="number" id="maxPrice" name="maxPrice" class="form-control"
+                                                   placeholder="e.g. 50,000,000" min="0"/>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-warning btn-block">Search by Price</button>
+                                    </form>
                                 </div>
                             </div><!--/price-range-->
-
-                            <div class="shipping text-center"><!--shipping-->
-                                <img src="images/home/shipping.jpg" alt="" />
-                            </div><!--/shipping-->
 
                         </div>
                     </div>
@@ -306,12 +317,7 @@
                                             </div>
 
                                         </div>
-                                        <div class="choose">
-                                            <ul class="nav nav-pills nav-justified">
-                                                <li><a href=""><i class="fa fa-plus-square"></i>Add to wishlist</a></li>
-                                                <li><a href=""><i class="fa fa-plus-square"></i>Add to compare</a></li>
-                                            </ul>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </c:forEach> 
@@ -493,18 +499,59 @@
 
 
         <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
-    <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
-    <script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
-    <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
-    <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
-    <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
 
-    <!-- Kích hoạt carousel nếu cần -->
-    <script>
-        $(document).ready(function () {
-            $('#slider-carousel').carousel(); // Khởi động carousel thủ công
-        });
-    </script>
+        <!-- Kích hoạt carousel nếu cần -->
+        <script>
+                                        $(document).ready(function () {
+                                            $('#slider-carousel').carousel(); // Khởi động carousel thủ công
+                                        });
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const form = document.querySelector("form[action='Product']");
+                const minInput = document.getElementById("minPrice");
+                const maxInput = document.getElementById("maxPrice");
+
+                // Ngăn nhập chữ cái và ký tự không hợp lệ
+                function preventNonNumericInput(e) {
+                    const invalidChars = ['e', 'E', '+', '-', ','];
+                    if (invalidChars.includes(e.key)) {
+                        e.preventDefault();
+                    }
+                }
+
+                minInput.addEventListener('keydown', preventNonNumericInput);
+                maxInput.addEventListener('keydown', preventNonNumericInput);
+
+                // Validate khi submit form
+                form.addEventListener("submit", function (e) {
+                    const min = parseInt(minInput.value);
+                    const max = parseInt(maxInput.value);
+
+                    if (isNaN(min) || isNaN(max)) {
+                        alert("Please enter both minimum and maximum prices.");
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (min < 0 || max < 0) {
+                        alert("Price cannot be negative.");
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (max < min) {
+                        alert("Maximum price must be greater than or equal to minimum price.");
+                        e.preventDefault();
+                    }
+                });
+            });
+        </script>
 
     </body>
 </html>
