@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <%@ page isErrorPage="true" %>
 
@@ -172,30 +173,35 @@
                                     <div class="col-sm-6">
                                         <h1><span style="color: red">Cyber</span><span style="color: #111111;">Beast</span></h1>
                                         <h3>Best Seller</h3>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                                        <p>Powerful Performance: Intel® Core™ i7-12700F CPU with ASUS TUF Gaming B660 motherboard.</p>
+                                        <p>Graphics Excellence: NVIDIA® GeForce RTX™ 3060 12GB for smooth 1440p gaming and rendering.</p>
+                                        <p>Solid Setup: 16GB DDR4 RAM, 512GB NVMe SSD, 650W PSU, housed in ASUS Prime case with RGB fans.</p>
+
                                         <button type="button" class="btn btn-default get">Get it now</button>
                                     </div>
                                     <div class="col-sm-6 text-center">
-                                        <img src="${ctx}/ShopPages/Pages/images/home/girl2.jpg"
+                                        <img src="${ctx}/ShopPages/Pages/images/home/1.png"
+                                             style="height: 400px; width: auto; padding-top: 40px;"
                                              class="girl img-responsive" alt="Responsive Design" />
-                                        <img src="${ctx}/ShopPages/Pages/images/home/pricing.png"
-                                             class="pricing" alt="Pricing" />
+
                                     </div>
                                 </div>
 
                                 <!-- Slide 3 -->
                                 <div class="item">
                                     <div class="col-sm-6">
-                                        <h1><span style="color:#FE980F">E</span>-SHOPPER</h1>
-                                        <h2>Free Ecommerce Template</h2>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                                        <h1><span style="color: red">Cyber</span><span style="color: #111111;">Beast</span></h1>
+                                        <h3>Recommend Main</h3>
+                                        <p>Extreme Compatibility: Supports Intel® 12th & 13th Gen processors with LGA1700 socket, built for gaming and productivity.</p>
+                                        <p>Next-Gen Memory: Ready for DDR5 RAM up to 6400MHz (OC), 4 DIMM slots for up to 128GB high-speed memory.</p>
+                                        <p>High-Speed Connectivity: PCIe 5.0 x16 slot for latest GPUs, 4x M.2 NVMe slots, and Wi-Fi 6E with Bluetooth 5.2 onboard.</p>
                                         <button type="button" class="btn btn-default get">Get it now</button>
                                     </div>
                                     <div class="col-sm-6 text-center">
-                                        <img src="${ctx}/ShopPages/Pages/images/home/girl3.jpg"
+                                        <img src="${ctx}/ShopPages/Pages/images/home/asus.png"
+                                             style="height: 450px; width: 200; padding-top: 20px;"
                                              class="girl img-responsive" alt="Free Template" />
-                                        <img src="${ctx}/ShopPages/Pages/images/home/pricing.png"
-                                             class="pricing" alt="Pricing" />
+                                      
                                     </div>
                                 </div>
                             </div>
@@ -219,20 +225,33 @@
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="left-sidebar">
-                            <h2 ><a href="${pageContext.request.contextPath}/Category?action=list">Category</a></h2>
+                            <h2 class="title text-center">CATEGORY</h2>
                             <div class="panel-group category-products" id="accordian"><!--category-products-->
-                                <c:forEach var="cate" items="${data}">
+                                <c:forEach var="cate" items="${categories}">
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h4 class="panel-title">
-                                                <a href="${pageContext.request.contextPath}/CategoryProduct?name=${cate.catagoryName}">
-                                                    ${cate.catagoryName}
+                                                <a data-toggle="collapse" href="#collapse${cate.categoryID}">
+                                                    <span class="badge pull-right"><i class="fa fa-plus"></i></span>
+                                                        ${cate.catagoryName}
                                                 </a>
                                             </h4>
+                                        </div>
+                                        <div id="collapse${cate.categoryID}" class="panel-collapse collapse">
+                                            <div class="panel-body">
+                                                <ul>
+                                                    <c:forEach var="item" items="${BrandWithCategoryName}">
+                                                        <c:if test="${item.categoryID eq cate.categoryID}">
+                                                            <li><a href="#">${item.brand}</a></li>
+                                                            </c:if>
+                                                        </c:forEach>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </c:forEach>
                             </div><!--/category-products-->
+
 
                             <div class="brands_products"><!--brands_products-->
                                 <h2>Brands</h2>
