@@ -42,52 +42,33 @@ public class ProductServlet extends HttpServlet {
 
         Vector<Products> list;
 
-        if (service.equals("listProduct")) {
-            String submit = request.getParameter("submit");
+        if ("list".equals(service)) {
+            String keyword = request.getParameter("keyword");
 
-            if (submit == null) {
+            if (keyword == null || keyword.trim().isEmpty()) {
                 list = dao.getAllProduct(SQL);
             } else {
-                list = dao.getAllProduct("""
-                                         SELECT *
-                                         FROM Products""");
+                list = dao.getAllProduct("SELECT * FROM Products WHERE Name LIKE N'%" + keyword + "%'");
             }
-            //set data for view
-            request.setAttribute("data", list);
-            request.setAttribute("pageTitle", "Product Manager");
-            request.setAttribute("tableTitle", "List of Product");
 
-            //Select view
+            request.setAttribute("data", list);
+            request.setAttribute("pageTitle", "Search Results");
+            request.setAttribute("tableTitle", "Matching Products");
+
             request.getRequestDispatcher("ShopPages/Pages/ProductList.jsp").forward(request, response);
-        } 
-        if ("Detail".equals(service)) {
+        }
+
+        if ("detail".equals(service)) {
             try {
-                int id = Integer.parseInt(request.getParameter("ProductID"));
+                int id = Integer.parseInt(request.getParameter("productID"));
                 Products product = dao.getProductByID(id);
-           
-                request.setAttribute("product", product);
+
+                request.setAttribute("p", product);
 
                 request.getRequestDispatcher("ShopPages/Pages/ProductDetail.jsp").forward(request, response);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        if (service.equals("Detail")) {
-            int id = Integer.parseInt(request.getParameter("ProductID"));
-            Products p = dao.getProductByID(id);
-            request.setAttribute("product", p);
-            request.getRequestDispatcher("ShopPages/Pages/ProductDetail.jsp").forward(request, response);
-        }
-        if (service.equals("listCategory")) {
-
-          
-            Vector<Products> productList = dao.getAllProduct("SELECT * FROM Products");
-
-           
-            request.setAttribute("productList", productList);
-
-            request.getRequestDispatcher("ShopPages/Pages/HomePage.jsp").forward(request, response);
-            // request.getRequestDispatcher("ShopPages/Pages/test.jsp").forward(request, response);
         }
 
     }
