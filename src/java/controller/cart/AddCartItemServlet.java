@@ -5,23 +5,18 @@
 package controller.cart;
 
 import dal.CartItemDAO;
-import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
-import models.CartItem;
-import models.User;
 
 /**
  *
  * @author PC ASUS
  */
-public class CartView extends HttpServlet {
+public class AddCartItemServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,10 +35,10 @@ public class CartView extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CartView</title>");
+            out.println("<title>Servlet AddCartItemServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CartView at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AddCartItemServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -61,15 +56,7 @@ public class CartView extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-        
-        CartItemDAO dao = new CartItemDAO();
-        ArrayList<CartItem> cart = dao.getCartItemsByUserId(user.getUserID());
-        
-        session.setAttribute("cart", cart);
-        RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/cart.jsp");
-        rs.forward(request, response);
+        processRequest(request, response);
     }
 
     /**
@@ -83,7 +70,30 @@ public class CartView extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("text/plain");
+
+        try {
+            String userIDparam = request.getParameter("userID");
+            String productIDparam = request.getParameter("productID");
+            String quantityparam = request.getParameter("quantity");
+
+//            if (cartItemParam == null || quantityParam == null
+//                    || cartItemParam.isEmpty() || quantityParam.isEmpty()) {
+//                response.getWriter().write("missing_parameters");
+//                return;
+//            }
+            int userID = Integer.parseInt(userIDparam);
+            int productID = Integer.parseInt(productIDparam);
+            int quantity = Integer.parseInt(quantityparam);
+
+            CartItemDAO dao = new CartItemDAO();
+            boolean deleted = dao.addCartItem(userID, productID, quantity);
+
+            response.getWriter().write(deleted ? "success" : "fail");
+        } catch (Exception e) {
+            e.printStackTrace(); // để xem trong console
+            response.getWriter().write("error");
+        }
     }
 
     /**

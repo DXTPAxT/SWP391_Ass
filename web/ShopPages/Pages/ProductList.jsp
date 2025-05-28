@@ -8,6 +8,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <%@ page isErrorPage="true" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -309,15 +310,26 @@
                                             <div class="productinfo text-center"> 
                                                 <a href="${pageContext.request.contextPath}/Product?service=detail&productID=${product.productID}">
                                                     <img src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
-                                                    <h2>${product.price}</h2>
+                                                    <h2>
+                                                        <fmt:formatNumber value="${product.price}" type="number" groupingUsed="true"/> VND
+                                                    </h2>
                                                     <p>${product.name}</p>
                                                 </a>
-
-                                                <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                                <button class="add-to-cart"
+                                                        data-userid="${user.getUserID()}"
+                                                        data-productid="${product.getProductID()}"
+                                                        data-name="${product.name}"
+                                                        data-image="${ctx}/ShopPages/Pages/images/shop/product12.jpg"
+                                                        data-price="${product.price}"
+                                                        class="btn btn-default add-to-cart"
+                                                        >
+                                                    <i class="fa fa-shopping-cart"></i>
+                                                    Add to cart
+                                                </button>
                                             </div>
 
                                         </div>
-                                        
+
                                     </div>
                                 </div>
                             </c:forEach> 
@@ -496,14 +508,14 @@
 
         </footer><!--/Footer-->
 
-
-
         <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
         <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
         <script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
         <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
         <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
         <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
+        <!-- SweetAlert2 CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <!-- Kích hoạt carousel nếu cần -->
         <script>
@@ -551,6 +563,124 @@
                     }
                 });
             });
+        </script>
+
+        <script>
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const userID = btn.dataset.userid;
+                    const productID = btn.dataset.productid;
+                    const name = btn.dataset.name;
+                    const image = btn.dataset.image;
+                    const price = btn.dataset.price;
+                    console.log("Tên:", name, "Ảnh:", image);
+                    addItem(userID, productID, name, image, price);
+                });
+            });
+
+            function addItem(userID, productID, productName, productImageURL, productPrice) {
+                confirmAddProductToCart(productName, productImageURL, productPrice).then(quantity => {
+                    if (quantity !== null && quantity > 0) {
+                        const params = new URLSearchParams();
+                        params.append("userID", userID);
+                        params.append("productID", productID);
+                        params.append("quantity", quantity);
+
+                        fetch('AddCartItem', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: params.toString()
+                        })
+                                .then(response => response.text())
+                                .then(data => {
+                                    if (data.trim() === 'success') {
+                                        Swal.fire("Thành công", "Sản phẩm đã được thêm vào giỏ", "success");
+                                        // updateCartTotal(); // nếu có
+                                    } else {
+                                        Swal.fire("Lỗi", "Thêm thất bại", "error");
+                                    }
+                                });
+                    } else {
+                        console.log("Người dùng hủy thêm sản phẩm hoặc nhập sai số lượng");
+                    }
+                });
+            }
+
+
+            function confirmAddProductToCart(productName, productImageURL, productPrice) {
+                return Swal.fire({
+                    title: "Thêm sản phẩm vào giỏ hàng",
+                    html: `
+    <div style="text-align: center; margin-bottom: 10px;">
+        <img src="` + productImageURL + `" alt="` + productName + `" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 5px;" />
+        <div style="font-weight: bold; font-size: 16px;">` + productName + `</div>
+        <div style="margin-top: 5px; font-size: 14px; color: #fd7e14;">Giá: 
+            <span id="unitPrice">` + Number(productPrice).toLocaleString('vi-VN', { maximumFractionDigits: 0 }).replace(/\./g, ',') + `</span> VND
+        </div>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+        <button id="decreaseBtn" class="swal2-styled" style="padding: 10px; font-size: 18px;">–</button>
+        <input id="quantity" type="number" min="1" value="1"
+               class="swal2-input"
+               style="width: 60px; text-align: center; font-size: 18px; height: 40px; padding: 0; margin: 0;" />
+        <button id="increaseBtn" class="swal2-styled" style="padding: 10px; font-size: 18px;">+</button>
+    </div>
+    <div style="margin-top: 5px; font-size: 18px; color: #e8590c; font-weight: bold;">Tổng: 
+        <span id="totalPrice">` + Number(productPrice).toLocaleString('vi-VN', { maximumFractionDigits: 0 }).replace(/\./g, ',') + `</span> VND
+    </div>
+`,
+            
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "<span style='font-size: 18px;'>Thêm</span>",
+                    cancelButtonText: "<span style='font-size: 18px;'>Hủy</span>",
+                    didOpen: () => {
+                        const qtyInput = document.getElementById('quantity');
+                        const totalElem = document.getElementById('totalPrice');
+
+                        const updateTotal = () => {
+                            const qty = parseInt(qtyInput.value);
+                            totalElem.textContent = (qty * productPrice).toLocaleString();
+                        };
+
+                        document.getElementById('increaseBtn').addEventListener('click', () => {
+                            qtyInput.value = parseInt(qtyInput.value) + 1;
+                            updateTotal();
+                        });
+
+                        document.getElementById('decreaseBtn').addEventListener('click', () => {
+                            const current = parseInt(qtyInput.value);
+                            if (current > 1) {
+                                qtyInput.value = current - 1;
+                                updateTotal();
+                            }
+                        });
+
+                        qtyInput.addEventListener('input', () => {
+                            const val = parseInt(qtyInput.value);
+                            if (val >= 1)
+                                updateTotal();
+                        });
+                    },
+                    preConfirm: () => {
+                        const qty = document.getElementById('quantity').value;
+                        if (!qty || qty <= 0) {
+                            Swal.showValidationMessage("Vui lòng nhập số lượng hợp lệ");
+                            return false;
+                        }
+                        return parseInt(qty);
+                    }
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        return result.value;
+                    }
+                    return null;
+                });
+            }
+
+
         </script>
 
     </body>
