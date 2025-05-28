@@ -28,6 +28,7 @@ public class DBContext {
             // Nếu KHÔNG dùng instance, thử dùng dòng này thay thế:
             // String url = "jdbc:sqlserver://localhost:1433;databaseName=" + dbName + ";encrypt=true;trustServerCertificate=true;";
 
+
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException | SQLException ex) {

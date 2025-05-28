@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.Categories;
 
-
 public class ProductDAO extends DBContext {
 
     public Vector<Products> getAllProduct(String sql) {
@@ -47,22 +46,6 @@ public class ProductDAO extends DBContext {
             ptm.setInt(1, id);
             ResultSet rs = ptm.executeQuery();
             if (rs.next()) {
-                return mapProduct(rs);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-
-    public Vector<Products> getAllProductsByCategoryID(int categoryID) {
-        Vector<Products> products = new Vector<>();
-        String sql = "SELECT * FROM Products WHERE CategoryID = ?";
-
-        try (PreparedStatement ptm = connection.prepareStatement(sql)) {
-            ptm.setInt(1, categoryID);
-            ResultSet rs = ptm.executeQuery();
-            while (rs.next()) {
                 Products p = new Products(
                         rs.getInt("ProductID"),
                         rs.getString("Name"),
@@ -75,38 +58,25 @@ public class ProductDAO extends DBContext {
                         rs.getInt("CategoryID"),
                         rs.getInt("Status")
                 );
-                products.add(p);
+                return p;
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        return products;
+        return null;
     }
 
-    public Vector<Categories> getCategoriesByParentId(int parentId) {
-        Vector<Categories> list = new Vector<>();
-        String sql = "SELECT * FROM Categories WHERE ParentID = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, parentId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Categories cat = new Categories(
-                        rs.getInt("categoryID"),
-                        rs.getString("categoryName"),
-                        rs.getInt("quantity"),
-                        rs.getInt("status")
-                );
-                list.add(cat);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
+   public List<Products> getAllProductsByCategoryName(String categoryName) {
+    List<Products> products = new ArrayList<>();
+    String sql = "SELECT p.* FROM Products p " +
+                 "JOIN Categories c ON p.CategoryID = c.CategoryID " +
+                 "WHERE c.CategoryName = ?";
 
-    private Products mapProduct(ResultSet rs) throws SQLException {
-        return new Products(
+    try (PreparedStatement ptm = connection.prepareStatement(sql)) {
+        ptm.setString(1, categoryName);
+        ResultSet rs = ptm.executeQuery();
+        while (rs.next()) {
+            Products p = new Products(
                 rs.getInt("ProductID"),
                 rs.getString("Name"),
                 rs.getString("Description"),
@@ -117,44 +87,49 @@ public class ProductDAO extends DBContext {
                 rs.getDate("CreatedAt"),
                 rs.getInt("CategoryID"),
                 rs.getInt("Status")
-        );
+            );
+            products.add(p);
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
     }
 
-    public Vector<Categories> getAllCategory(String sql) {
-        Vector<Categories> listCategory = new Vector<>();
-        PreparedStatement ptm;
+    return products;
+}
 
-        try {
-            ptm = connection.prepareStatement(sql);
-            ResultSet rs = ptm.executeQuery();
 
+
+    public Vector<Products> searchByName(String keyword) {
+        Vector<Products> list = new Vector<>();
+        String sql = "SELECT * FROM Products WHERE Name LIKE ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, "%" + keyword + "%");
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Categories cat = new Categories(
-                        rs.getInt(1), // cột id
-                        rs.getString(2), // cột categoryName
-                        rs.getInt(3),
-                        rs.getInt(4)
+                Products p = new Products(
+                        rs.getInt("ProductID"),
+                        rs.getString("Name"),
+                        rs.getString("Description"),
+                        rs.getString("Image"), // hoặc đúng tên cột ảnh
+                        rs.getDouble("Price"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("CategoryID"),
+                        rs.getDate("CreatedAt"),
+                        rs.getInt("BrandID"),
+                        rs.getInt("Status")
                 );
-                listCategory.add(cat);
+                list.add(p);
             }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace(); // hoặc dùng logger nếu cần
+        } catch (SQLException e) {
+            System.err.println("Search error: " + e.getMessage());
         }
-
-        return listCategory;
+        return list;
     }
 
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
-        Vector<Categories> categories = dao.getAllCategory("SELECT * FROM Categories");
-
-        if (categories.isEmpty()) {
-            System.out.println("Không có danh mục nào.");
-        } else {
-            for (Categories c : categories) {
-                System.out.println(c);
-            }
-        }
+        Products p = new Products();
+        p = dao.getProductByID(1);
+        System.out.println(p.getName());
     }
 }

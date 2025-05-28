@@ -36,6 +36,22 @@
         <servlet-name>Blog_CateServlet</servlet-name>
         <servlet-class>controller.Blog_CateServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdateCartItemServlet</servlet-name>
+        <servlet-class>controller.cart.UpdateCartItemServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteCartItemServlet</servlet-name>
+        <servlet-class>controller.cart.DeleteCartItemServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ProductAdminServlet</servlet-name>
+        <servlet-class>controllerAdmin.ProductAdminServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminDashbordServlet</servlet-name>
+        <servlet-class>controllerAdmin.AdminDashbordServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
         <url-pattern>/Demo</url-pattern>
@@ -75,5 +91,21 @@
     <servlet-mapping>
         <servlet-name>Blog_CateServlet</servlet-name>
         <url-pattern>/blogc</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateCartItemServlet</servlet-name>
+        <url-pattern>/UpdateCartItem</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteCartItemServlet</servlet-name>
+        <url-pattern>/DeleteCartItem</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProductAdminServlet</servlet-name>
+        <url-pattern>/ProductAdmin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminDashbordServlet</servlet-name>
+        <url-pattern>/AdminDashbordServlet</url-pattern>
     </servlet-mapping>
 </web-app>

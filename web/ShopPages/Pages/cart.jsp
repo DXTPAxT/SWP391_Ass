@@ -21,6 +21,7 @@
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/animate.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/main.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/responsive.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/custom.css?v=1.0.4" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -179,23 +180,32 @@
                                     </td>
                                     <td class="cart_description">
                                         <h4><a href="">${cartItem.getProduct().getName()}</a></h4>
-                                        <p>${cartItem.getProduct().getProductID()}</p>
+                                        <p>ID: ${cartItem.getProduct().getProductID()}</p>
                                     </td>
                                     <td class="cart_price">
-                                        <p>${cartItem.getProduct().getPrice()}</p>
+                                        <p>${cartItem.getProduct().getPrice()} VNĐ</p>
                                     </td>
                                     <td class="cart_quantity">
-                                        <div class="cart_quantity_button">
-                                            <a class="cart_quantity_up" href=""> + </a>
-                                            <input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
-                                            <a class="cart_quantity_down" href=""> - </a>
+                                        <div class="cart_quantity_button custom-center">
+                                            <button onclick="changeQty(this, -1)">−</button>
+                                            <input class="cart_quantity_input"
+                                                   type="number" 
+                                                   name="quantity" 
+                                                   value="${cartItem.getQuantity()}" 
+                                                   autocomplete="off"
+                                                   data-itemid="${cartItem.getCartItemID()}"
+                                                   data-price="${cartItem.getProduct().getPrice()}"
+                                                   data-old-value="${cartItem.getQuantity()}"
+                                                   oninput="validateQty(this)"
+                                                   onchange="debounceTrigger(this)">    
+                                            <button onclick="changeQty(this, 1)">+</button>
                                         </div>
                                     </td>
                                     <td class="cart_total">
-                                        <p class="cart_total_price">${cartItem.getProduct().getPrice() * cartItem.getQuantity()}</p>
+                                        <p class="cart_total_price">${cartItem.getProduct().getPrice() * cartItem.getQuantity()}  VNĐ</p>
                                     </td>
                                     <td class="cart_delete">
-                                        <a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
+                                        <button onclick="changeQty(this, )"><i class="fa fa-times"></i></button>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -440,7 +450,158 @@
 
         </footer><!--/Footer-->
 
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+        <script>
+                                            let debounceTimer = null;
+
+                                            function changeQty(button, delta) {
+                                                const input = button.parentElement.querySelector('input');
+                                                const oldValue = parseInt(input.value) || 1;
+                                                let newValue = Math.max(0, oldValue + delta);
+                                                input.dataset.oldValue = oldValue;
+                                                input.value = newValue;
+                                                debounceTrigger(input);
+                                            }
+
+                                            function debounceTrigger(input) {
+                                                clearTimeout(debounceTimer);
+                                                debounceTimer = setTimeout(() => {
+                                                    validateAndUpdate(input);
+                                                }, 300); // chờ 1000ms sau khi ngừng nhập
+                                            }
+
+                                            function validateAndUpdate(input) {
+                                                const cartItemID = input.dataset.itemid;
+                                                const price = parseFloat(input.dataset.price);
+                                                const value = input.value.trim();
+                                                const oldValue = parseInt(input.dataset.oldValue || "1");
+
+                                                // ❌ Không hợp lệ: không phải số nguyên dương
+                                                if (!/^\d+$/.test(value)) {
+                                                    Swal.fire({
+                                                        title: "Số lượng không hợp lệ!",
+                                                        text: "Vui lòng nhập một số nguyên dương.",
+                                                        icon: "error"
+                                                    });
+                                                    input.value = oldValue;
+                                                    return;
+                                                }
+
+                                                const quantity = parseInt(value);
+
+                                                // ❗ Nếu <= 0 → hỏi xoá
+                                                if (quantity <= 0) {
+                                                    if (comfirmDeletePopUp()) {
+                                                        deleteCartItem(cartItemID, input);
+                                                    } else {
+                                                        // Huỷ xoá → phục hồi số lượng cũ
+                                                        input.value = oldValue;
+                                                        const lineTotalElem = input.closest('tr').querySelector('.cart_total');
+                                                        lineTotalElem.innerHTML = `<p class="cart_total_price">` + (price * oldValue).toFixed(2) + ' VND</p>';
+
+                                                        // Cập nhật lại DB với oldValue
+                                                        const params = new URLSearchParams();
+                                                        params.append("cartItemID", cartItemID);
+                                                        params.append("quantity", oldValue);
+
+                                                        fetch('UpdateCartItem', {
+                                                            method: 'POST',
+                                                            headers: {
+                                                                'Content-Type': 'application/x-www-form-urlencoded'
+                                                            },
+                                                            body: params.toString()
+                                                        }).then(res => res.text())
+                                                                .then(data => {
+                                                                    if (data.trim() !== 'success') {
+                                                                        Swal.fire("Lỗi", "Cập nhật thất bại", "error");
+                                                                    }
+                                                                });
+                                                    }
+                                                } else {
+                                                    // ✅ Hợp lệ → gửi AJAX cập nhật
+                                                    console.log("Sending update:", {cartItemID, quantity});
+                                                    const params = new URLSearchParams();
+                                                    params.append("cartItemID", cartItemID);
+                                                    params.append("quantity", quantity);
+
+                                                    fetch('UpdateCartItem', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/x-www-form-urlencoded'
+                                                        },
+                                                        body: params.toString()
+                                                    })
+                                                            .then(res => res.text())
+                                                            .then(data => {
+                                                                if (data.trim() === 'success') {
+                                                                    const lineTotalElem = input.closest('tr').querySelector('.cart_total');
+                                                                    lineTotalElem.innerHTML = `<p class="cart_total_price">` + (price * quantity).toFixed(2) + ' VND</p>';
+                                                                    input.dataset.oldValue = quantity;
+                                                                } else {
+                                                                    Swal.fire("Lỗi", "Cập nhật thất bại", "error");
+                                                                }
+                                                            });
+                                                }
+                                            }
+                                            
+                                            function confirmDelete(button, cartItemID) {
+                                                if (comfirmDeletePopUp()) {
+                                                    
+                                                }
+                                            }
+
+                                            function comfirmDeletePopUp() {
+                                                Swal.fire({
+                                                    title: "Xoá sản phẩm?",
+                                                    text: "Bạn có muốn bỏ sản phẩm này khỏi giỏ hàng không?",
+                                                    icon: "warning",
+                                                    showCancelButton: true,
+                                                    confirmButtonText: "Có, xoá!",
+                                                    cancelButtonText: "Không"
+                                                }).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        return true;
+                                                    } else {
+                                                        return false;
+                                                    }
+                                                });
+                                            }
+
+                                            function deleteCartItem(cartItemID, element) {
+                                                const params = new URLSearchParams();
+                                                params.append("cartItemID", cartItemID);
+
+                                                fetch('DeleteCartItem', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                                    },
+                                                    body: params.toString()
+                                                })
+                                                        .then(response => response.text())
+                                                        .then(data => {
+                                                            if (data.trim() === 'success') {
+                                                                const row = element.closest('tr');
+                                                                row.parentNode.removeChild(row);
+//                                                                    updateCartTotal();
+                                                            } else {
+                                                                Swal.fire("Lỗi", "Xoá thất bại", "error");
+                                                            }
+                                                        });
+                                            }
+
+//                                                function updateCartTotal() {
+//                                                    let total = 0;
+//                                                    document.querySelectorAll('.cart_total').forEach(elem => {
+//                                                        total += parseFloat(elem.innerText);
+//                                                    });
+//                                                    const totalElem = document.getElementById('cart-total');
+//                                                    if (totalElem) {
+//                                                        totalElem.innerHTML = `<p class="cart_total_price">` + (price * quantity).toFixed(2) + ' VND</p>';
+//                                                    }
+//                                                }
+        </script>
 
         <script src="js/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
