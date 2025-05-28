@@ -45,6 +45,10 @@
         <servlet-class>controller.cart.DeleteCartItemServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>AddCartItemServlet</servlet-name>
+        <servlet-class>controller.cart.AddCartItemServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>ProductAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.ProductAdminServlet</servlet-class>
     </servlet>
@@ -99,6 +103,10 @@
     <servlet-mapping>
         <servlet-name>DeleteCartItemServlet</servlet-name>
         <url-pattern>/DeleteCartItem</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddCartItemServlet</servlet-name>
+        <url-pattern>/AddCartItem</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ProductAdminServlet</servlet-name>
