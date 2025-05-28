@@ -229,13 +229,14 @@
                     <div class="col-sm-3">
                         <div class="left-sidebar">
                             <h2 class="title text-center">CATEGORY</h2>
-                            <div class="panel-group category-products" id="accordian"><!--category-products-->
+                            <div class="panel-group category-products" id="accordian">
                                 <c:forEach var="cate" items="${categories}">
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h4 class="panel-title">
-                                                <a href="${ctx}/Product?service=categoryFilter&amp;categoryName=${fn:escapeXml(cate.categoryName)}">
-                                                    ${cate.categoryName}
+                                                <a data-toggle="collapse" href="#collapse${cate.categoryID}">
+                                                    <span class="badge pull-right"><i class="fa fa-plus"></i></span>
+                                                        ${cate.categoryName}
                                                 </a>
                                             </h4>
                                         </div>
@@ -244,15 +245,16 @@
                                                 <ul>
                                                     <c:forEach var="item" items="${BrandWithCategoryName}">
                                                         <c:if test="${item.categoryID eq cate.categoryID}">
-                                                            <li><a href="#">${item.brand}</a></li>
+                                                            <li><a href="${ctx}/Product?service=brandFilter&amp;categoryID=${cate.categoryID}&amp;brand=${fn:escapeXml(item.brand)}">${item.brand}</a></li>
                                                             </c:if>
                                                         </c:forEach>
                                                 </ul>
+                                                <a href="${ctx}/Product?service=categoryFilter&amp;categoryName=${fn:escapeXml(cate.categoryName)}" class="btn btn-link">Xem tất cả sản phẩm</a>
                                             </div>
                                         </div>
                                     </div>
                                 </c:forEach>
-                            </div><!--/category-products-->
+                            </div>
 
                             <div class="brands_products"><!--brands_products-->
                                 <h2>Brands</h2>
@@ -297,32 +299,31 @@
 
                     <div class="col-sm-9 padding-right">
                         <div class="features_items"><!--features_items-->
-                            <h2 class="title text-center">Products </h2>
+                            <h2 class="title text-center">Sản phẩm theo danh mục</h2>
 
-
-                            <c:forEach var="product" items="${requestScope.data}"> 
-
+                            <c:forEach var="product" items="${PBC}"> 
                                 <div class="col-sm-4">
                                     <div class="product-image-wrapper">
                                         <div class="single-products">
                                             <div class="productinfo text-center"> 
                                                 <a href="${pageContext.request.contextPath}/Product?service=detail&productID=${product.productID}">
-                                                    <img src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
+                                                    <img src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="${product.name}" />
                                                     <h2>${product.price}</h2>
                                                     <p>${product.name}</p>
                                                 </a>
-
-                                                <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                                <a href="#" class="btn btn-default add-to-cart">
+                                                    <i class="fa fa-shopping-cart"></i> Add to cart
+                                                </a>
                                             </div>
-
                                         </div>
-
                                     </div>
                                 </div>
-                            </c:forEach> 
-                            <c:if test="${empty data}">
-                                <p>Không có sản phẩm nào!</p>
+                            </c:forEach>
+
+                            <c:if test="${empty PBC}">
+                                <p class="text-center">Không có sản phẩm nào thuộc danh mục này!</p>
                             </c:if>
+
 
 
                             <ul class="pagination">
