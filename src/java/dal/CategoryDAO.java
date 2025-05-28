@@ -89,4 +89,13 @@ public class CategoryDAO extends DBContext {
         }
         return listBrand;
     }
+    
+     public static void main(String[] args) {
+        CategoryDAO dao = new CategoryDAO();
+        List<Categories> c = new ArrayList<>();
+        c = dao.getCategoriesName();
+          for (Categories cat : c) {
+                    System.out.println("ID: " + cat.getCategoryID() + " - Tên: " + cat.getCatagoryName());
+                }
+    }
 }
