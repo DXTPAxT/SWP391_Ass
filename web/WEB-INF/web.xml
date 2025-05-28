@@ -29,6 +29,14 @@
         <servlet-class>controller.cart.CartView</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>BlogsServlet</servlet-name>
+        <servlet-class>controller.BlogsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Blog_CateServlet</servlet-name>
+        <servlet-class>controller.Blog_CateServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>UpdateCartItemServlet</servlet-name>
         <servlet-class>controller.cart.UpdateCartItemServlet</servlet-class>
     </servlet>
@@ -39,6 +47,14 @@
     <servlet>
         <servlet-name>AddCartItemServlet</servlet-name>
         <servlet-class>controller.cart.AddCartItemServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ProductAdminServlet</servlet-name>
+        <servlet-class>controllerAdmin.ProductAdminServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminDashbordServlet</servlet-name>
+        <servlet-class>controllerAdmin.AdminDashbordServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
@@ -73,6 +89,14 @@
         <url-pattern>/Cart</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>BlogsServlet</servlet-name>
+        <url-pattern>/BlogsServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Blog_CateServlet</servlet-name>
+        <url-pattern>/blogc</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>UpdateCartItemServlet</servlet-name>
         <url-pattern>/UpdateCartItem</url-pattern>
     </servlet-mapping>
@@ -83,5 +107,13 @@
     <servlet-mapping>
         <servlet-name>AddCartItemServlet</servlet-name>
         <url-pattern>/AddCartItem</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProductAdminServlet</servlet-name>
+        <url-pattern>/ProductAdmin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminDashbordServlet</servlet-name>
+        <url-pattern>/AdminDashbordServlet</url-pattern>
     </servlet-mapping>
 </web-app>

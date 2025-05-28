@@ -66,34 +66,38 @@ public class ProductDAO extends DBContext {
         return null;
     }
 
-    public Vector<Products> getAllProductsByCategoryID(int categoryID) {
-        Vector<Products> products = new Vector<>();
-        String sql = "SELECT * FROM Products WHERE CategoryID = ?";
+   public List<Products> getAllProductsByCategoryName(String categoryName) {
+    List<Products> products = new ArrayList<>();
+    String sql = "SELECT p.* FROM Products p " +
+                 "JOIN Categories c ON p.CategoryID = c.CategoryID " +
+                 "WHERE c.CategoryName = ?";
 
-        try (PreparedStatement ptm = connection.prepareStatement(sql)) {
-            ptm.setInt(1, categoryID);
-            ResultSet rs = ptm.executeQuery();
-            while (rs.next()) {
-                Products p = new Products(
-                        rs.getInt("ProductID"),
-                        rs.getString("Name"),
-                        rs.getString("Description"),
-                        rs.getString("Brand"),
-                        rs.getDouble("Price"),
-                        rs.getInt("Quantity"),
-                        rs.getInt("WarrantyPeriod"),
-                        rs.getDate("CreatedAt"),
-                        rs.getInt("CategoryID"),
-                        rs.getInt("Status")
-                );
-                products.add(p);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+    try (PreparedStatement ptm = connection.prepareStatement(sql)) {
+        ptm.setString(1, categoryName);
+        ResultSet rs = ptm.executeQuery();
+        while (rs.next()) {
+            Products p = new Products(
+                rs.getInt("ProductID"),
+                rs.getString("Name"),
+                rs.getString("Description"),
+                rs.getString("Brand"),
+                rs.getDouble("Price"),
+                rs.getInt("Quantity"),
+                rs.getInt("WarrantyPeriod"),
+                rs.getDate("CreatedAt"),
+                rs.getInt("CategoryID"),
+                rs.getInt("Status")
+            );
+            products.add(p);
         }
-
-        return products;
+    } catch (SQLException ex) {
+        ex.printStackTrace();
     }
+
+    return products;
+}
+
+
 
     public Vector<Products> searchByName(String keyword) {
         Vector<Products> list = new Vector<>();
