@@ -105,19 +105,11 @@
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="${pageContext.request.contextPath}/HomePages" class="active">Home</a></li>
-                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="${pageContext.request.contextPath}/Product?service=list" class="active">Products</a></li>                                            <li><a href="product-details.html">Product Details</a></li> 
-                                            <li><a href="checkout.html">Checkout</a></li> 
-                                            <li><a href="cart.html">Cart</a></li> 
-                                            <li><a href="login.html">Login</a></li> 
-                                        </ul>
+
+                                    <li><a href="${pageContext.request.contextPath}/Product?service=list" class="active">Products</a></li>
                                     </li> 
-                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="blog.html">Blog List</a></li>
-                                            <li><a href="blog-single.html">Blog Single</a></li>
-                                        </ul>
+                                    <li class="dropdown"><a href="#">Blog<i class=""></i></a>
+
                                     </li> 
                                     <li><a href="404.html">404</a></li>
                                     <li><a href="contact-us.html">Contact</a></li>
@@ -181,7 +173,7 @@
                                     </div>
                                     <div class="col-sm-6 text-center">
                                         <img src="${ctx}/ShopPages/Pages/images/home/1.png"
-                                             style="height: 400px; width: auto; padding-top: 40px;"
+                                             style="height: 400px; width: auto; padding-top: 20px;"
                                              class="girl img-responsive" alt="Responsive Design" />
 
                                     </div>
@@ -201,7 +193,7 @@
                                         <img src="${ctx}/ShopPages/Pages/images/home/asus.png"
                                              style="height: 450px; width: auto; padding-top: 20px;"
                                              class="girl img-responsive" alt="Free Template" />
-                                      
+
                                     </div>
                                 </div>
                             </div>
@@ -226,14 +218,14 @@
                     <div class="col-sm-3">
                         <div class="left-sidebar">
                             <h2 class="title text-center">CATEGORY</h2>
-                            <div class="panel-group category-products" id="accordian"><!--category-products-->
+                            <div class="panel-group category-products" id="accordian">
                                 <c:forEach var="cate" items="${categories}">
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h4 class="panel-title">
                                                 <a data-toggle="collapse" href="#collapse${cate.categoryID}">
                                                     <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                                        ${cate.catagoryName}
+                                                        ${cate.categoryName}
                                                 </a>
                                             </h4>
                                         </div>
@@ -246,11 +238,12 @@
                                                             </c:if>
                                                         </c:forEach>
                                                 </ul>
+                                                <a href="${ctx}/Product?service=categoryFilter&amp;categoryName=${fn:escapeXml(cate.categoryName)}" class="btn btn-link">Xem tất cả sản phẩm</a>
                                             </div>
                                         </div>
                                     </div>
                                 </c:forEach>
-                            </div><!--/category-products-->
+                            </div>
 
 
                             <div class="brands_products"><!--brands_products-->
@@ -280,7 +273,7 @@
                         <div class="features_items">
                             <h2 class="title text-center" style="margin-top: 30px">PC</h2>
 
-                            <c:forEach var="product" items="${requestScope.pcProducts}"> 
+                            <c:forEach var="product" items="${pcProducts}"> 
                                 <div class="col-sm-4">
                                     <div class="product-image-wrapper">
                                         <div class="single-products">
@@ -307,335 +300,230 @@
                                 <ul class="pagination" style="display: inline-block; float: none;">
                                     <c:forEach begin="1" end="${totalPagesPC}" var="i">
                                         <li class="${i == currentPagePC ? 'active' : ''}">
-                                            <a href="HomePages?pagePC=${i}">${i}</a>
+                                            <a href="HomePages?pagePC=${i}&pageLaptop=${currentPageLaptop}">${i}</a>
                                         </li>
                                     </c:forEach>
                                 </ul>
                             </div>
-                        </div>
 
-                        <!-- VIEW MORE Button -->
-                        <div class="category-tab">
-                            <div class="col-sm-12 text-center">
-                                <a href="#laptop" class="btn btn-warning" style="margin-top: 20px;">VIEW MORE</a>
-                                <div style="margin-top: 8px; font-weight: bold; color: orange; text-transform: uppercase;"></div>
+                            <!-- VIEW MORE Button -->
+                            <div class="category-tab">
+                                <div class="col-sm-12 text-center">
+                                    <a href="#laptop" class="btn btn-warning" style="margin-top: 20px;">VIEW MORE</a>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Laptop Section -->
-                        <div class="features_items" id="laptop">
-                            <h2 class="title text-center" style="margin-top: 30px">Laptop</h2>
+                            <!-- Laptop Section -->
+                            <div class="features_items" id="laptop">
+                                <h2 class="title text-center" style="margin-top: 30px">Laptop</h2>
 
-                            <c:forEach var="product1" items="${requestScope.laptopProducts}"> 
-                                <div class="col-sm-4">
-                                    <div class="product-image-wrapper">
-                                        <div class="single-products">
-                                            <div class="productinfo text-center">
-                                                <img src="${ctx}/ShopPages/Pages/images/anhproduct/1.png" alt="${product1.name}" />
-                                                <h3>${product1.price}</h3>
-                                                <h2>${product1.brand}</h2>
-                                                <p>${product1.name}</p>
-                                                <a href="#" class="btn btn-default add-to-cart">
-                                                    <i class="fa fa-shopping-cart"></i>Add to cart
-                                                </a>
+                                <c:forEach var="product1" items="${laptopProducts}"> 
+                                    <div class="col-sm-4">
+                                        <div class="product-image-wrapper">
+                                            <div class="single-products">
+                                                <div class="productinfo text-center">
+                                                    <img src="${ctx}/ShopPages/Pages/images/anhproduct/1.png" alt="${product1.name}" />
+                                                    <h3>${product1.price}</h3>
+                                                    <h2>${product1.brand}</h2>
+                                                    <p>${product1.name}</p>
+                                                    <a href="#" class="btn btn-default add-to-cart">
+                                                        <i class="fa fa-shopping-cart"></i>Add to cart
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                </c:forEach>
+
+                                <c:if test="${empty laptopProducts}">
+                                    <p class="text-center">Không có sản phẩm nào!</p>
+                                </c:if>
+
+                                <!-- Pagination Laptop -->
+                                <div class="pagination-area text-center" style="margin-top: 40px; clear: both;">
+                                    <ul class="pagination" style="display: inline-block; float: none;">
+                                        <c:forEach begin="1" end="${totalPagesLaptop}" var="i">
+                                            <li class="${i == currentPageLaptop ? 'active' : ''}">
+                                                <a href="HomePages?pageLaptop=${i}&pagePC=${currentPagePC}">${i}</a>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
                                 </div>
-                            </c:forEach>
+                            </div>
 
-                            <c:if test="${empty laptopProducts}">
-                                <p class="text-center">Không có sản phẩm nào!</p>
-                            </c:if>
 
-                            <!-- Pagination Laptop -->
-                            <div class="pagination-area text-center" style="margin-top: 40px; clear: both;">
-                                <ul class="pagination" style="display: inline-block; float: none;">
-                                    <c:forEach begin="1" end="${totalPagesLaptop}" var="i">
-                                        <li class="${i == currentPageLaptop ? 'active' : ''}">
-                                            <a href="HomePages?pageLaptop=${i}">${i}</a>
-                                        </li>
-                                    </c:forEach>
+
+                        </div>
+                    </div>
+                </div>
+        </section>
+
+        <footer id="footer"><!--Footer-->
+            <div class="footer-top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="companyinfo">
+                                <h2><span>e</span>-shopper</h2>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,sed do eiusmod tempor</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-7">
+                            <div class="col-sm-3">
+                                <div class="video-gallery text-center">
+                                    <a href="#">
+                                        <div class="iframe-img">
+                                            <img src="images/home/iframe1.png" alt="" />
+                                        </div>
+                                        <div class="overlay-icon">
+                                            <i class="fa fa-play-circle-o"></i>
+                                        </div>
+                                    </a>
+                                    <p>Circle of Hands</p>
+                                    <h2>24 DEC 2014</h2>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="video-gallery text-center">
+                                    <a href="#">
+                                        <div class="iframe-img">
+                                            <img src="images/home/iframe2.png" alt="" />
+                                        </div>
+                                        <div class="overlay-icon">
+                                            <i class="fa fa-play-circle-o"></i>
+                                        </div>
+                                    </a>
+                                    <p>Circle of Hands</p>
+                                    <h2>24 DEC 2014</h2>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="video-gallery text-center">
+                                    <a href="#">
+                                        <div class="iframe-img">
+                                            <img src="images/home/iframe3.png" alt="" />
+                                        </div>
+                                        <div class="overlay-icon">
+                                            <i class="fa fa-play-circle-o"></i>
+                                        </div>
+                                    </a>
+                                    <p>Circle of Hands</p>
+                                    <h2>24 DEC 2014</h2>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="video-gallery text-center">
+                                    <a href="#">
+                                        <div class="iframe-img">
+                                            <img src="images/home/iframe4.png" alt="" />
+                                        </div>
+                                        <div class="overlay-icon">
+                                            <i class="fa fa-play-circle-o"></i>
+                                        </div>
+                                    </a>
+                                    <p>Circle of Hands</p>
+                                    <h2>24 DEC 2014</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="address">
+                                <img src="images/home/map.png" alt="" />
+                                <p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-widget">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="single-widget">
+                                <h2>Service</h2>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li><a href="#">Online Help</a></li>
+                                    <li><a href="#">Contact Us</a></li>
+                                    <li><a href="#">Order Status</a></li>
+                                    <li><a href="#">Change Location</a></li>
+                                    <li><a href="#">FAQ’s</a></li>
                                 </ul>
                             </div>
                         </div>
-                    </div>
-
-
-                    <!--recommended_items-->
-                    <div class="recommended_items">
-                        <h2 class="title text-center">recommended items</h2>
-
-                        <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
-                            <div class="carousel-inner">
-                                <div class="item active">	
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/recommend1.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/recommend2.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/recommend3.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="item">	
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/recommend1.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/recommend2.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/home/recommend3.jpg" alt="" />
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="col-sm-2">
+                            <div class="single-widget">
+                                <h2>Quock Shop</h2>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li><a href="#">T-Shirt</a></li>
+                                    <li><a href="#">Mens</a></li>
+                                    <li><a href="#">Womens</a></li>
+                                    <li><a href="#">Gift Cards</a></li>
+                                    <li><a href="#">Shoes</a></li>
+                                </ul>
                             </div>
-                            <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
-                                <i class="fa fa-angle-left"></i>
-                            </a>
-                            <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
-                                <i class="fa fa-angle-right"></i>
-                            </a>			
                         </div>
-                    </div><!--/recommended_items-->
-
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer id="footer"><!--Footer-->
-        <div class="footer-top">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-2">
-                        <div class="companyinfo">
-                            <h2><span>e</span>-shopper</h2>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,sed do eiusmod tempor</p>
+                        <div class="col-sm-2">
+                            <div class="single-widget">
+                                <h2>Policies</h2>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li><a href="#">Terms of Use</a></li>
+                                    <li><a href="#">Privecy Policy</a></li>
+                                    <li><a href="#">Refund Policy</a></li>
+                                    <li><a href="#">Billing System</a></li>
+                                    <li><a href="#">Ticket System</a></li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-7">
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="#">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe1.png" alt="" />
-                                    </div>
-                                    <div class="overlay-icon">
-                                        <i class="fa fa-play-circle-o"></i>
-                                    </div>
-                                </a>
-                                <p>Circle of Hands</p>
-                                <h2>24 DEC 2014</h2>
+                        <div class="col-sm-2">
+                            <div class="single-widget">
+                                <h2>About Shopper</h2>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li><a href="#">Company Information</a></li>
+                                    <li><a href="#">Careers</a></li>
+                                    <li><a href="#">Store Location</a></li>
+                                    <li><a href="#">Affillate Program</a></li>
+                                    <li><a href="#">Copyright</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-sm-offset-1">
+                            <div class="single-widget">
+                                <h2>About Shopper</h2>
+                                <form action="#" class="searchform">
+                                    <input type="text" placeholder="Your email address" />
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
+                                    <p>Get the most recent updates from <br />our site and be updated your self...</p>
+                                </form>
                             </div>
                         </div>
 
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="#">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe2.png" alt="" />
-                                    </div>
-                                    <div class="overlay-icon">
-                                        <i class="fa fa-play-circle-o"></i>
-                                    </div>
-                                </a>
-                                <p>Circle of Hands</p>
-                                <h2>24 DEC 2014</h2>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="#">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe3.png" alt="" />
-                                    </div>
-                                    <div class="overlay-icon">
-                                        <i class="fa fa-play-circle-o"></i>
-                                    </div>
-                                </a>
-                                <p>Circle of Hands</p>
-                                <h2>24 DEC 2014</h2>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="#">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe4.png" alt="" />
-                                    </div>
-                                    <div class="overlay-icon">
-                                        <i class="fa fa-play-circle-o"></i>
-                                    </div>
-                                </a>
-                                <p>Circle of Hands</p>
-                                <h2>24 DEC 2014</h2>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="address">
-                            <img src="images/home/map.png" alt="" />
-                            <p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
-                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="footer-widget">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-2">
-                        <div class="single-widget">
-                            <h2>Service</h2>
-                            <ul class="nav nav-pills nav-stacked">
-                                <li><a href="#">Online Help</a></li>
-                                <li><a href="#">Contact Us</a></li>
-                                <li><a href="#">Order Status</a></li>
-                                <li><a href="#">Change Location</a></li>
-                                <li><a href="#">FAQ’s</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <div class="single-widget">
-                            <h2>Quock Shop</h2>
-                            <ul class="nav nav-pills nav-stacked">
-                                <li><a href="#">T-Shirt</a></li>
-                                <li><a href="#">Mens</a></li>
-                                <li><a href="#">Womens</a></li>
-                                <li><a href="#">Gift Cards</a></li>
-                                <li><a href="#">Shoes</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <div class="single-widget">
-                            <h2>Policies</h2>
-                            <ul class="nav nav-pills nav-stacked">
-                                <li><a href="#">Terms of Use</a></li>
-                                <li><a href="#">Privecy Policy</a></li>
-                                <li><a href="#">Refund Policy</a></li>
-                                <li><a href="#">Billing System</a></li>
-                                <li><a href="#">Ticket System</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <div class="single-widget">
-                            <h2>About Shopper</h2>
-                            <ul class="nav nav-pills nav-stacked">
-                                <li><a href="#">Company Information</a></li>
-                                <li><a href="#">Careers</a></li>
-                                <li><a href="#">Store Location</a></li>
-                                <li><a href="#">Affillate Program</a></li>
-                                <li><a href="#">Copyright</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-sm-3 col-sm-offset-1">
-                        <div class="single-widget">
-                            <h2>About Shopper</h2>
-                            <form action="#" class="searchform">
-                                <input type="text" placeholder="Your email address" />
-                                <button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
-                                <p>Get the most recent updates from <br />our site and be updated your self...</p>
-                            </form>
-                        </div>
-                    </div>
+            <div class="footer-bottom">
 
-                </div>
             </div>
-        </div>
 
-        <div class="footer-bottom">
-            <div class="container">
-                <div class="row">
-                    <p class="pull-left">Copyright © 2013 E-SHOPPER Inc. All rights reserved.</p>
-                    <p class="pull-right">Designed by <span><a target="_blank" href="http://www.themeum.com">Themeum</a></span></p>
-                </div>
-            </div>
-        </div>
-
-    </footer><!--/Footer-->
+        </footer><!--/Footer-->
 
 
-    <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
-    <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
-    <script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
-    <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
-    <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
-    <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
 
-    <!-- Kích hoạt carousel nếu cần -->
-    <script>
-        $(document).ready(function () {
-            $('#slider-carousel').carousel(); // Khởi động carousel thủ công
-        });
-    </script>
-</body>
+        <!-- Kích hoạt carousel nếu cần -->
+        <script>
+            $(document).ready(function () {
+                $('#slider-carousel').carousel(); // Khởi động carousel thủ công
+            });
+        </script>
+    </body>
 </html>
