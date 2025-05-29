@@ -15,8 +15,8 @@ public class DBContext {
     public DBContext() {
         try {
             String user = "sa"; // thay bằng user của bạn
-            String pass = "1234"; // thay bằng mật khẩu thật
-            String serverName = "localhost"; // hoặc LAPTOP-8RQSUOPU nếu đúng
+            String pass = "123"; // thay bằng mật khẩu thật
+            String serverName = "LAPTOP-8RQSUOPU"; // hoặc LAPTOP-8RQSUOPU nếu đúng
             String instanceName = "SQLEXPRESS"; // nếu bạn dùng SQL Server Express
             String dbName = "ComputerOnlineShop";
 

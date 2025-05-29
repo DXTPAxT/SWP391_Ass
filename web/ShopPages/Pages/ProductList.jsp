@@ -105,19 +105,11 @@
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="${pageContext.request.contextPath}/HomePages" class="active">Home</a></li>
-                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="${pageContext.request.contextPath}/Product?service=list" class="active">Products</a></li>                                            <li><a href="product-details.html">Product Details</a></li> 
-                                            <li><a href="checkout.html">Checkout</a></li> 
-                                            <li><a href="cart.html">Cart</a></li> 
-                                            <li><a href="login.html">Login</a></li> 
-                                        </ul>
+
+                                    <li><a href="${pageContext.request.contextPath}/Product?service=list" class="active">Products</a></li>
                                     </li> 
-                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="blog.html">Blog List</a></li>
-                                            <li><a href="blog-single.html">Blog Single</a></li>
-                                        </ul>
+                                    <li class="dropdown"><a href="#">Blog<i class=""></i></a>
+
                                     </li> 
                                     <li><a href="404.html">404</a></li>
                                     <li><a href="contact-us.html">Contact</a></li>
@@ -126,18 +118,13 @@
                         </div>
                         <div class="col-sm-3">
                             <div class="search_box pull-right">
-                                <form action="Product" method="get">
-                                    <input type="hidden" name="service" value="list"/>
-                                    <input type="text" name="keyword" placeholder="Search by product name" onkeydown="if (event.key === 'Enter') {
-                                                this.form.submit();
-                                            }"/>
-                                </form>
+                                <input type="text" placeholder="Search"/>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </header>
+            </div><!--/header-bottom-->
+        </header><!--/header-->
 
         <section id="slider"><!--slider-->
             <div class="container">
@@ -171,7 +158,7 @@
                                              style="height: 450px; width: auto; padding-top: 30px;"
                                              class="girl img-responsive" alt="CyberBeast" />
                                     </div>
-                                </div> 
+                                </div>
 
                                 <!-- Slide 2 -->
                                 <div class="item">
@@ -186,7 +173,7 @@
                                     </div>
                                     <div class="col-sm-6 text-center">
                                         <img src="${ctx}/ShopPages/Pages/images/home/1.png"
-                                             style="height: 400px; width: auto; padding-top: 40px;"
+                                             style="height: 400px; width: auto; padding-top: 20px;"
                                              class="girl img-responsive" alt="Responsive Design" />
 
                                     </div>
@@ -224,19 +211,21 @@
             </div>
         </section><!--/slider-->
 
+
         <section>
             <div class="container">
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="left-sidebar">
                             <h2 class="title text-center">CATEGORY</h2>
-                            <div class="panel-group category-products" id="accordian"><!--category-products-->
+                            <div class="panel-group category-products" id="accordian">
                                 <c:forEach var="cate" items="${categories}">
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h4 class="panel-title">
-                                                <a href="${ctx}/Product?service=categoryFilter&amp;categoryName=${fn:escapeXml(cate.categoryName)}">
-                                                    ${cate.categoryName}
+                                                <a data-toggle="collapse" href="#collapse${cate.categoryID}">
+                                                    <span class="badge pull-right"><i class="fa fa-plus"></i></span>
+                                                        ${cate.categoryName}
                                                 </a>
                                             </h4>
                                         </div>
@@ -245,30 +234,34 @@
                                                 <ul>
                                                     <c:forEach var="item" items="${BrandWithCategoryName}">
                                                         <c:if test="${item.categoryID eq cate.categoryID}">
-                                                            <li><a href="#">${item.brand}</a></li>
-                                                            </c:if>
-                                                        </c:forEach>
+                                                            <li>
+                                                                <a href="${ctx}/Product?service=Brand&Brand=${fn:escapeXml(item.brand)}">
+                                                                    ${item.brand}
+                                                                </a>
+                                                            </li>
+                                                        </c:if>
+                                                    </c:forEach>
                                                 </ul>
+                                                <a href="${ctx}/Product?service=categoryFilter&amp;categoryName=${fn:escapeXml(cate.categoryName)}" class="btn btn-link">Xem tất cả sản phẩm</a>
                                             </div>
                                         </div>
                                     </div>
                                 </c:forEach>
-                            </div><!--/category-products-->
+                            </div>
+
 
                             <div class="brands_products"><!--brands_products-->
                                 <h2>Brands</h2>
                                 <div class="brands-name">
                                     <ul class="nav nav-pills nav-stacked">
-                                        <li><a href=""> <span class="pull-right">(50)</span>Acne</a></li>
-                                        <li><a href=""> <span class="pull-right">(56)</span>Grüne Erde</a></li>
-                                        <li><a href=""> <span class="pull-right">(27)</span>Albiro</a></li>
-                                        <li><a href=""> <span class="pull-right">(32)</span>Ronhill</a></li>
-                                        <li><a href=""> <span class="pull-right">(5)</span>Oddmolly</a></li>
-                                        <li><a href=""> <span class="pull-right">(9)</span>Boudestijn</a></li>
-                                        <li><a href=""> <span class="pull-right">(4)</span>Rösch creative culture</a></li>
+                                        <c:forEach var="brand" items="${listBrand}">
+                                            <li><a href="${ctx}/Product?service=Brand&Brand=${fn:escapeXml(brand)}">${brand}</a></li>
+
+                                        </c:forEach>
                                     </ul>
                                 </div>
                             </div><!--/brands_products-->
+
 
                             <div class="price-range"><!--price-range-->
                                 <h2>Price Range</h2>
@@ -309,6 +302,7 @@
                                             <div class="productinfo text-center"> 
                                                 <a href="${pageContext.request.contextPath}/Product?service=detail&productID=${product.productID}">
                                                     <img src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
+                                                    <p>${product.brand}</p>
                                                     <h2>
                                                         <fmt:formatNumber value="${product.price}" type="number" groupingUsed="true"/> VND
                                                     </h2>
@@ -337,12 +331,15 @@
                             </c:if>
 
 
-                            <ul class="pagination">
-                                <li class="active"><a href="">1</a></li>
-                                <li><a href="">2</a></li>
-                                <li><a href="">3</a></li>
-                                <li><a href="">&raquo;</a></li>
-                            </ul>
+                            <div class="pagination-area text-center" style="margin-top: 40px; clear: both;">
+                                <ul class="pagination" style="display: inline-block; float: none;">
+                                    <c:forEach begin="1" end="${totalPages}" var="i">
+                                        <li class="${i == currentPage ? 'active' : ''}">
+                                            <a href="${ctx}/Product?page=${i}">${i}</a>
+                                        </li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
                         </div><!--features_items-->
                     </div>
                 </div>
@@ -518,9 +515,9 @@
 
         <!-- Kích hoạt carousel nếu cần -->
         <script>
-                                        $(document).ready(function () {
-                                            $('#slider-carousel').carousel(); // Khởi động carousel thủ công
-                                        });
+            $(document).ready(function () {
+                $('#slider-carousel').carousel(); // Khởi động carousel thủ công
+            });
         </script>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
@@ -616,7 +613,7 @@
         <img src="` + productImageURL + `" alt="` + productName + `" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 5px;" />
         <div style="font-weight: bold; font-size: 16px;">` + productName + `</div>
         <div style="margin-top: 5px; font-size: 14px; color: #fd7e14;">Giá: 
-            <span id="unitPrice">` + Number(productPrice).toLocaleString('vi-VN', { maximumFractionDigits: 0 }).replace(/\./g, ',') + `</span> VND
+            <span id="unitPrice">` + Number(productPrice).toLocaleString('vi-VN', {maximumFractionDigits: 0}).replace(/\./g, ',') + `</span> VND
         </div>
     </div>
     <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
@@ -627,10 +624,10 @@
         <button id="increaseBtn" class="swal2-styled" style="padding: 10px; font-size: 18px;">+</button>
     </div>
     <div style="margin-top: 5px; font-size: 18px; color: #e8590c; font-weight: bold;">Tổng: 
-        <span id="totalPrice">` + Number(productPrice).toLocaleString('vi-VN', { maximumFractionDigits: 0 }).replace(/\./g, ',') + `</span> VND
+        <span id="totalPrice">` + Number(productPrice).toLocaleString('vi-VN', {maximumFractionDigits: 0}).replace(/\./g, ',') + `</span> VND
     </div>
 `,
-            
+
                     icon: "question",
                     showCancelButton: true,
                     confirmButtonText: "<span style='font-size: 18px;'>Thêm</span>",

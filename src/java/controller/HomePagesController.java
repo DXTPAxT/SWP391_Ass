@@ -29,11 +29,12 @@ public class HomePagesController extends HttpServlet {
 
         CategoryDAO dao = new CategoryDAO();
 
-        //take catagories
+        // seclectcatagories
         List<Categories> categories = dao.getCategoriesName();
-        // take brand
+        // select brand in site cagories
         List<BrandByCategoriesName> brandList = dao.getBrandWithCategoryName();
-
+        //select brand in HomePage web
+        List<String> listBrand = dao.getAllBrands();
         // PC
         List<Products> pcProducts = dao.GetCataByCategory(1, startPC, PAGE_SIZE);
         int totalPC = dao.countTotalProducts(1);
@@ -47,7 +48,7 @@ public class HomePagesController extends HttpServlet {
         // sent to PC
         request.setAttribute("categories", categories);
         request.setAttribute("BrandWithCategoryName", brandList);
-
+        request.setAttribute("listBrand", listBrand);
         request.setAttribute("pcProducts", pcProducts);
         request.setAttribute("totalPagesPC", totalPagesPC);
         request.setAttribute("currentPagePC", pagePC);
