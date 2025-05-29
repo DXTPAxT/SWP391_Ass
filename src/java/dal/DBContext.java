@@ -28,10 +28,18 @@ public class DBContext {
         // For example : StudentDBContext extends DBContext , 
         //where StudentDBContext is located in dal package, 
         try {
-            String user = "sa";
-            String pass = "123";
+            String user = "sa"; // thay bằng user của bạn
+            String pass = "123"; // thay bằng mật khẩu thật
+            String serverName = "LAPTOP-8RQSUOPU"; // hoặc LAPTOP-8RQSUOPU nếu đúng
+            String instanceName = "SQLEXPRESS"; // nếu bạn dùng SQL Server Express
+            String dbName = "ComputerOnlineShop";
+            // Nếu dùng instance
+            String url = "jdbc:sqlserver://" + serverName + "\\" + instanceName + ":1433;"
+                       + "databaseName=" + dbName + ";"
+                       + "encrypt=true;trustServerCertificate=true;";
 
-            String url = "jdbc:sqlserver://LAPTOP-GVTFVLL0\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
+            // Nếu KHÔNG dùng instance, thử dùng dòng này thay thế:
+            // String url = "jdbc:sqlserver://localhost:1433;databaseName=" + dbName + ";encrypt=true;trustServerCertificate=true;";
 
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
@@ -40,14 +48,13 @@ public class DBContext {
         }
 
     }
-
-    public ResultSet getData(String sql) {
+    public ResultSet getData(String sql){
         ResultSet rs = null;
         Statement state;
         try {
-            state = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            state = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
             rs = state.executeQuery(sql);
-
+            
         } catch (SQLException ex) {
             ex.getStackTrace();
         }
