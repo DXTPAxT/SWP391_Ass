@@ -9,6 +9,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <%@ page isErrorPage="true" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -234,9 +235,13 @@
                                                 <ul>
                                                     <c:forEach var="item" items="${BrandWithCategoryName}">
                                                         <c:if test="${item.categoryID eq cate.categoryID}">
-                                                            <li><a href="#">${item.brand}</a></li>
-                                                            </c:if>
-                                                        </c:forEach>
+                                                            <li>
+                                                                <a href="${ctx}/Product?service=Brand&Brand=${fn:escapeXml(item.brand)}">
+                                                                    ${item.brand}
+                                                                </a>
+                                                            </li>
+                                                        </c:if>
+                                                    </c:forEach>
                                                 </ul>
                                                 <a href="${ctx}/Product?service=categoryFilter&amp;categoryName=${fn:escapeXml(cate.categoryName)}" class="btn btn-link">Xem tất cả sản phẩm</a>
                                             </div>
@@ -250,13 +255,10 @@
                                 <h2>Brands</h2>
                                 <div class="brands-name">
                                     <ul class="nav nav-pills nav-stacked">
-                                        <li><a href="#"> <span class="pull-right"></span>Acer</a></li>
-                                        <li><a href="#"> <span class="pull-right"></span>Asus</a></li>
-                                        <li><a href="#"> <span class="pull-right"></span>SamSung</a></li>
-                                        <li><a href="#"> <span class="pull-right"></span>MSI</a></li>
-                                        <li><a href="#"> <span class="pull-right"></span>Xiaomi</a></li>
-                                        <li><a href="#"> <span class="pull-right"></span>LENOVO</a></li>
+                                        <c:forEach var="brand" items="${listBrand}">
+                                           <li><a href="${ctx}/Product?service=Brand&Brand=${fn:escapeXml(brand)}">${brand}</a></li>
 
+                                            </c:forEach>
                                     </ul>
                                 </div>
                             </div><!--/brands_products-->

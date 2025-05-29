@@ -28,9 +28,20 @@ public class DBContext {
         // For example : StudentDBContext extends DBContext , 
         //where StudentDBContext is located in dal package, 
         try {
-            String user = "sa";
-            String pass = "123";
-            String url = "jdbc:sqlserver://LAPTOP-63C2NPU0\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
+            String user = "sa"; // thay bằng user của bạn
+            String pass = "123"; // thay bằng mật khẩu thật
+            String serverName = "LAPTOP-8RQSUOPU"; // hoặc LAPTOP-8RQSUOPU nếu đúng
+            String instanceName = "SQLEXPRESS"; // nếu bạn dùng SQL Server Express
+            String dbName = "ComputerOnlineShop";
+
+            // Nếu dùng instance
+            String url = "jdbc:sqlserver://" + serverName + "\\" + instanceName + ":1433;"
+                       + "databaseName=" + dbName + ";"
+                       + "encrypt=true;trustServerCertificate=true;";
+
+            // Nếu KHÔNG dùng instance, thử dùng dòng này thay thế:
+            // String url = "jdbc:sqlserver://localhost:1433;databaseName=" + dbName + ";encrypt=true;trustServerCertificate=true;";
+
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException | SQLException ex) {
