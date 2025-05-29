@@ -3,3 +3,5 @@
 src/java/dal/DBContext.java
 test.jsp
 /dist/
+
+.fake

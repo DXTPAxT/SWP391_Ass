@@ -14,8 +14,8 @@ import models.Categories;
 
 public class ProductDAO extends DBContext {
 
-    public Vector<Products> getAllProduct(String sql) {
-        Vector<Products> listProduct = new Vector<>();
+    public List<Products> getAllProduct(String sql) {
+        List<Products> listProduct = new ArrayList<>();
         PreparedStatement ptm;
         try {
             ptm = connection.prepareStatement(sql);
@@ -66,43 +66,43 @@ public class ProductDAO extends DBContext {
         return null;
     }
 
-   public List<Products> getAllProductsByCategoryName(String categoryName) {
-    List<Products> products = new ArrayList<>();
-    String sql = "SELECT p.* FROM Products p " +
-                 "JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                 "WHERE c.CategoryName = ?";
+    public List<Products> getAllProductsByCategoryName(String categoryName) {
+        List<Products> products = new ArrayList<>();
+        String sql = "SELECT p.* FROM Products p "
+                + "JOIN Categories c ON p.CategoryID = c.CategoryID "
+                + "WHERE c.CategoryName = ?";
 
-    try (PreparedStatement ptm = connection.prepareStatement(sql)) {
-        ptm.setString(1, categoryName);
-        ResultSet rs = ptm.executeQuery();
-        while (rs.next()) {
-            Products p = new Products(
-                rs.getInt("ProductID"),
-                rs.getString("Name"),
-                rs.getString("Description"),
-                rs.getString("Brand"),
-                rs.getDouble("Price"),
-                rs.getInt("Quantity"),
-                rs.getInt("WarrantyPeriod"),
-                rs.getDate("CreatedAt"),
-                rs.getInt("CategoryID"),
-                rs.getInt("Status")
-            );
-            products.add(p);
+        try (
+                PreparedStatement ptm = connection.prepareStatement(sql)) {
+            ptm.setString(1, categoryName);
+            ResultSet rs = ptm.executeQuery();
+            while (rs.next()) {
+                Products p = new Products(
+                        rs.getInt("ProductID"),
+                        rs.getString("Name"),
+                        rs.getString("Description"),
+                        rs.getString("Brand"),
+                        rs.getDouble("Price"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("WarrantyPeriod"),
+                        rs.getDate("CreatedAt"),
+                        rs.getInt("CategoryID"),
+                        rs.getInt("Status")
+                );
+                products.add(p);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
-    } catch (SQLException ex) {
-        ex.printStackTrace();
+
+        return products;
     }
 
-    return products;
-}
-
-
-
-    public Vector<Products> searchByName(String keyword) {
-        Vector<Products> list = new Vector<>();
+    public List<Products> searchByName(String keyword) {
+        List<Products> list = new ArrayList<>();
         String sql = "SELECT * FROM Products WHERE Name LIKE ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, "%" + keyword + "%");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -122,6 +122,33 @@ public class ProductDAO extends DBContext {
             }
         } catch (SQLException e) {
             System.err.println("Search error: " + e.getMessage());
+        }
+        return list;
+    }
+
+    public List<Products> getProductsByBrand(String brand) {
+        List<Products> list = new ArrayList<>();
+        String sql = "SELECT * FROM Products WHERE Brand = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, brand);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Products p = new Products(
+                        rs.getInt("ProductID"),
+                        rs.getString("Name"),
+                        rs.getString("Description"),
+                        rs.getString("Brand"),
+                        rs.getDouble("Price"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("WarrantyPeriod"),
+                        rs.getDate("CreatedAt"),
+                        rs.getInt("CategoryID"),
+                        rs.getInt("Status")
+                );
+                list.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return list;
     }

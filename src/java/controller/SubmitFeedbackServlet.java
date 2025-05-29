@@ -1,61 +1,99 @@
 package controller;
 
 import dal.FeedbackDAO;
-import models.Feedback;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
-import models.User;
+import java.util.logging.Logger;
+import models.Feedback;
 
-@WebServlet(name = "SubmitFeedbackServlet", urlPatterns = {"/submitFeedback"})
+@WebServlet("/submitFeedback")
 public class SubmitFeedbackServlet extends HttpServlet {
+    private static final Logger LOGGER = Logger.getLogger(SubmitFeedbackServlet.class.getName());
+    private FeedbackDAO dao;
+
+    @Override
+    public void init() {
+        dao = new FeedbackDAO();
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        long startTime = System.currentTimeMillis();
         try {
-            // Lấy userID từ session, tránh người dùng giả mạo
-            HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
+            String productIdParam = request.getParameter("productId");
+            String content = request.getParameter("content");
+            String ratingParam = request.getParameter("rating");
 
-            if (user == null) {
-                // chưa đăng nhập -> chuyển về trang login hoặc báo lỗi
-                response.sendRedirect("Login");
+            LOGGER.info("Submitting feedback for productID: " + productIdParam);
+
+            if (productIdParam == null || content == null || ratingParam == null ||
+                productIdParam.trim().isEmpty() || content.trim().isEmpty() || ratingParam.trim().isEmpty()) {
+                request.getSession().setAttribute("error", "Vui lòng điền đầy đủ thông tin");
+                LOGGER.warning("Missing parameters: productId=" + productIdParam + ", content=" + content + ", rating=" + ratingParam);
+                response.sendRedirect(request.getContextPath() + "/feedback?action=product&productID=" + productIdParam);
                 return;
             }
 
-            // Lấy thông tin từ form
-//            int productID = Integer.parseInt(request.getParameter("productId"));  // chú ý tên phải đúng với form
-            int productID = 1;
-            int rate = Integer.parseInt(request.getParameter("rating"));          // tương ứng với name="rating"
-            String content = request.getParameter("content");
+            int productId;
+            int rating;
+            try {
+                productId = Integer.parseInt(productIdParam);
+                rating = Integer.parseInt(ratingParam);
+            } catch (NumberFormatException e) {
+                request.getSession().setAttribute("error", "Dữ liệu đầu vào không hợp lệ");
+                LOGGER.warning("Invalid format: productId=" + productIdParam + ", rating=" + ratingParam);
+                response.sendRedirect(request.getContextPath() + "/feedback?action=product&productID=" + productIdParam);
+                return;
+            }
 
-            // Lấy thời gian hiện tại và chuyển sang java.util.Date
-//            LocalDateTime now = LocalDateTime.now();
-//            Date createdAt = Date.from(now.atZone(ZoneId.systemDefault()).toInstant());
+            if (rating < 1 || rating > 5) {
+                request.getSession().setAttribute("error", "Đánh giá phải từ 1 đến 5 sao");
+                LOGGER.warning("Invalid rating: " + rating);
+                response.sendRedirect(request.getContextPath() + "/feedback?action=product&productID=" + productId);
+                return;
+            }
 
-            // Tạo đối tượng Feedback
-            Feedback feedback = new Feedback(0, user.getUserID(), content, productID, rate);
-
-            // Thêm feedback vào DB
-            FeedbackDAO dao = new FeedbackDAO();
-            dao.insertFeedback(feedback);
-
-            // Chuyển hướng về trang chi tiết sản phẩm
-//            response.sendRedirect("Product?service=Detail&ProductID=" + productID);
-            response.sendRedirect("feedback");
-
-        } catch (Exception e) {
             HttpSession session = request.getSession();
-            session.setAttribute("error", e.getMessage());  
-            // Redirect về trang lỗi nếu có exception
-            response.sendRedirect("test.jsp");
+            models.User user = (models.User) session.getAttribute("user");
+            if (user == null) {
+                request.getSession().setAttribute("error", "Vui lòng đăng nhập để gửi feedback");
+                LOGGER.warning("User not logged in");
+                response.sendRedirect(request.getContextPath() + "/Login");
+                return;
+            }
+
+            if (!dao.isValidProductId(productId)) {
+                request.getSession().setAttribute("error", "Sản phẩm không tồn tại");
+                LOGGER.warning("Invalid productID: " + productId);
+                response.sendRedirect(request.getContextPath() + "/Home");
+                return;
+            }
+
+            Feedback feedback = new Feedback();
+            feedback.setUserID(user.getUserID());
+            feedback.setProductID(productId);
+            feedback.setContent(content);
+            feedback.setRate(rating);
+            feedback.setStatus(1);
+
+            boolean success = dao.insertFeedback(feedback);
+            if (success) {
+                request.getSession().setAttribute("message", "Gửi feedback thành công");
+                LOGGER.info("Feedback submitted: userID=" + user.getUserID() + ", productID=" + productId);
+            } else {
+                request.getSession().setAttribute("error", "Không thể gửi feedback");
+                LOGGER.severe("Failed to insert feedback: userID=" + user.getUserID() + ", productID=" + productId);
+            }
+            long duration = System.currentTimeMillis() - startTime;
+            LOGGER.info("Feedback submission took " + duration + "ms");
+            response.sendRedirect(request.getContextPath() + "/feedback?action=product&productID=" + productId);
+        } catch (Exception e) {
+            LOGGER.severe("Error: " + e.getMessage());
+            request.getSession().setAttribute("error", "Lỗi server khi gửi feedback");
+            response.sendRedirect(request.getContextPath() + "/feedback?action=product&productID=" + request.getParameter("productId"));
         }
     }
 }

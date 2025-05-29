@@ -90,12 +90,18 @@ public class CategoryDAO extends DBContext {
         return listBrand;
     }
     
-     public static void main(String[] args) {
-        CategoryDAO dao = new CategoryDAO();
-        List<Categories> c = new ArrayList<>();
-        c = dao.getCategoriesName();
-          for (Categories cat : c) {
-                    System.out.println("ID: " + cat.getCategoryID() + " - Tên: " + cat.getCategoryName());
-                }
+  public List<String> getAllBrands() {
+    List<String> brands = new ArrayList<>();
+    String sql = "SELECT DISTINCT Brand FROM Products";
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            brands.add(rs.getString("Brand"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+
     }
+    return brands;
+}
 }
