@@ -67,8 +67,8 @@ public class Blog_CateDAO extends DBContext {
 
     public static void main(String[] args) {
         Blog_CateDAO dao = new Blog_CateDAO();
-//        System.out.println(dao.getAllBlogCategory());
-        System.out.println(dao.getAllPost());
+        System.out.println(dao.getAllBlogCategory());
+//        System.out.println(dao.getAllPost());
     }
 
 }

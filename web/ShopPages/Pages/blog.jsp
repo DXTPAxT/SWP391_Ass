@@ -150,32 +150,62 @@
                     </div>
                     <div class="col-sm-9">
                         <div class="blog-post-area">
-                            <h2 class="title text-center">Latest From our Blog</h2>
+                            <div>
+                                <h2 class="title text-center">Latest From our Blog</h2>
 
-                            <c:forEach var="post" items="${postList}">
-                                <div style="border:1px solid #ccc; padding:10px; margin-bottom:15px;">
-                                    <h3>${post.title}</h3>
-                                    <p>${post.author}</p>
-                                    <p>${post.updatedDate}</p>
-                                    <p>${post.brief}</p>
-                                    <c:if test="${not empty post.thumbnail}">
-                                        <img src="${post.thumbnail}" alt="Thumbnail" width="200"/>
+                                <style>
+                                    .brief-text {
+                                        display: -webkit-box;
+                                        -webkit-line-clamp: 2;
+                                        -webkit-box-orient: vertical;
+                                        overflow: hidden;
+                                        min-height: 3em; /* đảm bảo chiếm 2 dòng */
+                                    }
+                                </style>
+
+                                <c:forEach var="post" items="${postList}" varStatus="status">
+                                    <c:if test="${status.index % 2 == 0}">
+                                        <div class="row gx-4 gy-4">
+                                        </c:if>
+
+                                        <div class="col-sm-6 d-flex" style="padding-bottom: 20px">
+                                            <div class="w-100 d-flex flex-column mb-4" style="border:1px solid #ccc; padding:15px; height:100%;">
+                                                <h3>${post.title}</h3>
+                                                <p>${post.author}</p>
+                                                <p>${post.updated_date}</p>
+                                                <p class="brief-text">${post.brief}</p>
+
+                                                <c:if test="${not empty post.thumbnail}">
+                                                    <img 
+                                                        src="${post.thumbnail}" 
+                                                        alt="Thumbnail" 
+                                                        style="width:100%; height:200px; object-fit:cover; margin-top:auto;" />
+                                                </c:if>
+
+                                            </div>
+                                        </div>
+
+                                        <c:if test="${status.index % 2 == 1 || status.last}">
+                                        </div>
                                     </c:if>
-                                </div>
-                            </c:forEach>
+                                    
 
-                            <div class="pagination-area">
-                                <ul class="pagination">
-                                    <li><a href="" class="active">1</a></li>
-                                    <li><a href="">2</a></li>
-                                    <li><a href="">3</a></li>
-                                    <li><a href=""><i class="fa fa-angle-double-right"></i></a></li>
-                                </ul>
+                                </c:forEach>
+
+
+
+                                <div class="pagination-area">
+                                    <ul class="pagination">
+                                        <li><a href="" class="active">1</a></li>
+                                        <li><a href="">2</a></li>
+                                        <li><a href="">3</a></li>
+                                        <li><a href=""><i class="fa fa-angle-double-right"></i></a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
         </section>
 
         <footer id="footer"><!--Footer-->
