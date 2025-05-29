@@ -158,3 +158,204 @@ input[type="number"] {
     text-align: center;
     font-size: 16px;
 }
+
+.cart_product {
+    margin: 10px -30px 10px 0px;
+    width: 128px;
+}
+
+.cart_product img {
+    width: 100px;
+}
+
+.cart_description {
+    max-width: none; /* hoặc bỏ hẳn dòng này */
+    width: auto;
+}
+
+.cart_description h4 {
+    white-space: normal;     /* Cho phép xuống dòng */
+    overflow: visible;
+    text-overflow: unset;
+    display: block;          /* Bỏ -webkit-box nếu không dùng clamp */
+}
+
+.scrollable-table {
+    max-height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden; /* Ẩn thanh cuộn ngang */
+    border: 1px solid #ccc;
+}
+
+.scrollable-table table {
+    width: 100%; /* Bắt buộc bảng co theo div */
+    table-layout: auto;
+}
+
+@media (max-width: 768px) {
+    .cart_info {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .cart_info table {
+        width: 800px; /* hoặc lớn hơn chiều rộng container nhỏ nhất */
+    }
+}
+
+@media (max-width: 576px) {
+    .cart_info table thead {
+        display: none;
+    }
+
+    .cart_info table tbody tr {
+        display: block;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .cart_info table tbody tr td {
+        display: block;
+        width: 100%;
+        text-align: right;
+        position: relative;
+        padding-left: 50%;
+        padding-right: 10px;
+        box-sizing: border-box;
+    }
+
+    .cart_info table tbody tr td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        top: 10px;
+        font-weight: bold;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .cart_info table tbody tr td.cart_delete {
+        padding-left: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .cart_quantity_button {
+        display: flex;
+        justify-content: space-between;
+        gap: 5px;
+    }
+
+    .cart_quantity_button input {
+        width: 50px;
+        text-align: center;
+    }
+
+    .cart_quantity_button button {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+.select-item {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    transform: scale(1.5); /* Phóng to checkbox */
+    accent-color: #28a745; /* Màu xanh lá (nếu trình duyệt hỗ trợ) */
+}
+
+#checkAll {
+    width: 20px;
+    height: 20px;
+    transform: scale(1.5);
+    cursor: pointer;
+    accent-color: #007bff; /* Màu xanh dương */
+}
+
+.cart_quantity_button button {
+    margin: 4px;
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 18px;
+    width: 32px;
+    height: 32px;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart_quantity_button button:hover {
+    background-color: #e65100;
+}
+
+.cart_quantity_button button:active {
+    background-color: #d84315;
+    transform: scale(0.95);
+}
+
+.cart_delete button {
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.cart_delete button:hover {
+    background-color: #e65100;
+}
+
+.cart_delete button:active {
+    background-color: #d84315;
+    transform: scale(0.95);
+}
+
+.cart_delete button i {
+    pointer-events: none; /* Tránh click trúng icon gây lỗi */
+}
+
+.cart_total {
+    min-width: 150px;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.cart_total_price {
+    display: inline-block;
+    min-width: 150px; /* giữ ổn định chiều rộng */
+}
+
+.cart_menu td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 12px 10px;
+    font-weight: bold;
+}
+
+.cartTableTitle {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 0.5rem;
+}
+
+
+
+
+
+
