@@ -1,6 +1,6 @@
 package models;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 public class Feedback {
 
@@ -8,36 +8,29 @@ public class Feedback {
     private int userID;
     private String content;
     private int productID;
-    private Date createdAt;
-    private int rate; // ✅ Thêm trường rate
+    private Timestamp createdAt;
+    private int rate;
+    private int status;
 
     public Feedback() {
     }
 
-    // ✅ Constructor đầy đủ
-    public Feedback(int feedbackID, int userID, String content, int productID, Date createdAt, int rate) {
+    public Feedback(int feedbackID, int userID, String content, int productID, Timestamp createdAt, int rate, int status) {
         this.feedbackID = feedbackID;
         this.userID = userID;
         this.content = content;
         this.productID = productID;
         this.createdAt = createdAt;
         this.rate = rate;
+        this.status = status;
     }
 
-    public Feedback(int feedbackID, int userID, String content, int productID, int rate) {
-        this.feedbackID = feedbackID;
+    public Feedback(int userID, String content, int productID, int rate, int status) {
         this.userID = userID;
         this.content = content;
         this.productID = productID;
         this.rate = rate;
-    }
-
-    // ✅ Constructor dùng cho insert (không cần ID, createdAt)
-    public Feedback(int userID, String content, int productID, int rate) {
-        this.userID = userID;
-        this.content = content;
-        this.productID = productID;
-        this.rate = rate;
+        this.status = status;
     }
 
     public int getFeedbackID() {
@@ -72,11 +65,11 @@ public class Feedback {
         this.productID = productID;
     }
 
-    public Date getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -86,5 +79,13 @@ public class Feedback {
 
     public void setRate(int rate) {
         this.rate = rate;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }
