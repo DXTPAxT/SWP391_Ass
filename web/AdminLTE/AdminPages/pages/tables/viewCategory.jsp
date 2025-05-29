@@ -1,5 +1,5 @@
 <%-- 
-    Document   : insertProduct
+    Document   : insertCategory
     Created on : May 28, 2025, 9:48:28 PM
     Author     : Admin
 --%>
@@ -41,7 +41,7 @@
 
             <header class="main-header">
                 <!-- Logo -->
-                <a href="${ctx}/AdminLTE/AdminPages//index2.html" class="logo">
+                <a href="${ctx}/AdminDashbordServlet" class="logo">
                     <!-- mini logo for sidebar mini 50x50 pixels -->
                     <span class="logo-mini"><b>A</b>LT</span>
                     <!-- logo for regular state and mobile devices -->
@@ -331,6 +331,17 @@
                     <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu">
                         <li class="header">MAIN NAVIGATION</li>
+                         <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Category</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">                               
+                                    <li><a href="${ctx}/CateAdmin"><i class="fa fa-circle-o"></i>View Category</a></li>                                
+                            </ul>
+                        </li>
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-table"></i> <span>Products</span>
@@ -339,7 +350,7 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu">
-                                <c:forEach var="cate" items="${list}">
+                                <c:forEach var="cate" items="${requestScope.data}">
                                     <li><a href="${ctx}/ProductAdmin?service=list&categoryID=${cate.categoryID}"><i class="fa fa-circle-o"></i> ${cate.categoryName}</a></li>
                                     </c:forEach>
                             </ul>
@@ -370,18 +381,16 @@
                         <div class="col-xs-12">
                             <div class="box">
                                 <div class="box-header">
-                                    <h3 class="box-title">PC</h3>
+                                    <h3 class="box-title">Category</h3>
                                 </div>
                                 <!-- /.box-header -->
                                 <div class="box-body">
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Product ID</th>
-                                                <th>Name</th>
-                                                <th>Price</th>
-                                                <th>Quantity</th>
                                                 <th>Category ID</th>
+                                                <th>Name</th>
+                                                <th>Quantity</th>                                               
                                                 <th>Status</th>
                                                 <th>Update</th>
                                                 <th>Delete</th>
@@ -389,14 +398,12 @@
                                         </thead>
                                         <tbody>
                                             <c:if test="${not empty requestScope.data}">
-                                                <c:forEach var="product" items="${requestScope.data}">
+                                                <c:forEach var="cate" items="${requestScope.data}">
                                                     <tr>
-                                                        <td>${product.productID}</td>
-                                                        <td>${product.name}</td>
-                                                        <td>${product.price}</td>
-                                                        <td>${product.quantity}</td>
-                                                        <td>${product.categoryID}</td>
-                                                        <td>${product.status}</td>
+                                                        <td>${cate.categoryID}</td>
+                                                        <td>${cate.categoryName}</td>
+                                                        <td>${cate.quantity}</td>
+                                                        <td>${cate.status}</td>
                                                         <td>
                                                             <a href="ServletProduct_JSP?service=updateProduct&productID=${product.productID}" 
                                                                class="btn btn-warning btn-sm">Update</a>
@@ -628,55 +635,34 @@
                     </div>
                     <!-- ./wrapper -->
 
+                    <!-- jQuery 2.2.3 -->
                     <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
-                    <!-- jQuery UI 1.11.4 -->
-                    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-                    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-                    <script>
-                                           $.widget.bridge('uibutton', $.ui.button);
-                    </script>
                     <!-- Bootstrap 3.3.6 -->
                     <script src="${ctx}/AdminLTE/AdminPages/bootstrap/js/bootstrap.min.js"></script>
-                    <!-- Morris.js charts -->
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-                    <script src="${ctx}/AdminLTE/AdminPages/plugins/morris/morris.min.js"></script>
-                    <!-- Sparkline -->
-                    <script src="${ctx}/AdminLTE/AdminPages/plugins/sparkline/jquery.sparkline.min.js"></script>
-                    <!-- jvectormap -->
-                    <script src="${ctx}/AdminLTE/AdminPages/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-                    <script src="${ctx}/AdminLTE/AdminPages/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-                    <!-- jQuery Knob Chart -->
-                    <script src="${ctx}/AdminLTE/AdminPages/plugins/knob/jquery.knob.js"></script>
-                    <!-- daterangepicker -->
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
-                    <script src="${ctx}/AdminLTE/AdminPages/plugins/daterangepicker/daterangepicker.js"></script>
-                    <!-- datepicker -->
-                    <script src="${ctx}/AdminLTE/AdminPages/plugins/datepicker/bootstrap-datepicker.js"></script>
-                    <!-- Bootstrap WYSIHTML5 -->
-                    <script src="${ctx}/AdminLTE/AdminPages/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-                    <!-- Slimscroll -->
+                    <!-- DataTables -->
+                    <script src="${ctx}/AdminLTE/AdminPages/plugins/datatables/jquery.dataTables.min.js"></script>
+                    <script src="${ctx}/AdminLTE/AdminPages/plugins/datatables/dataTables.bootstrap.min.js"></script>
+                    <!-- SlimScroll -->
                     <script src="${ctx}/AdminLTE/AdminPages/plugins/slimScroll/jquery.slimscroll.min.js"></script>
                     <!-- FastClick -->
                     <script src="${ctx}/AdminLTE/AdminPages/plugins/fastclick/fastclick.js"></script>
                     <!-- AdminLTE App -->
                     <script src="${ctx}/AdminLTE/AdminPages/dist/js/app.min.js"></script>
-                    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-                    <script src="${ctx}/AdminLTE/AdminPages/dist/js/pages/dashboard.js"></script>
                     <!-- AdminLTE for demo purposes -->
                     <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
                     <!-- page script -->
                     <script>
-                                           $(function () {
-                                               $("#example1").DataTable();
-                                               $('#example2').DataTable({
-                                                   "paging": true,
-                                                   "lengthChange": false,
-                                                   "searching": false,
-                                                   "ordering": true,
-                                                   "info": true,
-                                                   "autoWidth": false
-                                               });
-                                           });
+                                                                   $(function () {
+                                                                       $("#example1").DataTable();
+                                                                       $('#example2').DataTable({
+                                                                           "paging": true,
+                                                                           "lengthChange": false,
+                                                                           "searching": false,
+                                                                           "ordering": true,
+                                                                           "info": true,
+                                                                           "autoWidth": false
+                                                                       });
+                                                                   });
                     </script>
                     <script>
                         $(function () {

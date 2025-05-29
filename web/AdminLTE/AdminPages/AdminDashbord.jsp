@@ -51,7 +51,7 @@
 
             <header class="main-header">
                 <!-- Logo -->
-                <a href="${ctx}/AdminLTE/AdminPages/index2.html" class="logo">
+                <a href="${ctx}/AdminDashbordServlet" class="logo">
                     <!-- mini logo for sidebar mini 50x50 pixels -->
                     <span class="logo-mini"><b>A</b>LT</span>
                     <!-- logo for regular state and mobile devices -->
@@ -339,6 +339,17 @@
                         <li class="header">MAIN NAVIGATION</li>
                         <li class="treeview">
                             <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Category</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">                               
+                                    <li><a href="${ctx}/CateAdmin"><i class="fa fa-circle-o"></i>View Category</a></li>                                
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
                                 <i class="fa fa-table"></i> <span>Products</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
@@ -347,7 +358,7 @@
                             <ul class="treeview-menu">
                                 <c:forEach var="cate" items="${list}">
                                     <li><a href="${ctx}/ProductAdmin?service=list&categoryID=${cate.categoryID}"><i class="fa fa-circle-o"></i> ${cate.categoryName}</a></li>
-                                    </c:forEach>
+                                    </c:forEach>                               
                             </ul>
                         </li>                       
                     </ul>
