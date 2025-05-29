@@ -95,7 +95,7 @@ public class CategoryDAO extends DBContext {
         List<Categories> c = new ArrayList<>();
         c = dao.getCategoriesName();
           for (Categories cat : c) {
-                    System.out.println("ID: " + cat.getCategoryID() + " - Tên: " + cat.getCatagoryName());
+                    System.out.println("ID: " + cat.getCategoryID() + " - Tên: " + cat.getCategoryName());
                 }
     }
 }
