@@ -100,6 +100,7 @@ public class CategoryDAO extends DBContext {
         }
     } catch (SQLException e) {
         e.printStackTrace();
+
     }
     return brands;
 }
