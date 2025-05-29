@@ -33,7 +33,6 @@ public class DBContext {
             String serverName = "LAPTOP-8RQSUOPU"; // hoặc LAPTOP-8RQSUOPU nếu đúng
             String instanceName = "SQLEXPRESS"; // nếu bạn dùng SQL Server Express
             String dbName = "ComputerOnlineShop";
-
             // Nếu dùng instance
             String url = "jdbc:sqlserver://" + serverName + "\\" + instanceName + ":1433;"
                        + "databaseName=" + dbName + ";"
