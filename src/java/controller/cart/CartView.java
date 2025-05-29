@@ -63,10 +63,10 @@ public class CartView extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        
+
         CartItemDAO dao = new CartItemDAO();
         ArrayList<CartItem> cart = dao.getCartItemsByUserId(user.getUserID());
-        
+
         session.setAttribute("cart", cart);
         RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/cart.jsp");
         rs.forward(request, response);
