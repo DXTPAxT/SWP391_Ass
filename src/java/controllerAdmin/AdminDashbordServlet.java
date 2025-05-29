@@ -32,7 +32,7 @@ public class AdminDashbordServlet extends HttpServlet {
             List<Categories> Categories = dao.getCategoriesName();
             request.setAttribute("list", Categories);
             //request.getRequestDispatcher("/AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);
-            request.getRequestDispatcher("AdminLTE/AdminPages/test.jsp").forward(request, response);
+            request.getRequestDispatcher("AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);
         }
     }
 
