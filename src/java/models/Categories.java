@@ -10,16 +10,17 @@ package models;
  */
 public class Categories {
     private int categoryID;
-    private String catagoryName;
+    private String categoryName;
     private int quantity;
     private int status;
+   
 
     public Categories() {
     }
 
-    public Categories(int catagoryID, String catagoryName, int quantity, int status) {
-        this.categoryID = catagoryID;
-        this.catagoryName = catagoryName;
+    public Categories(int categoryID, String categoryName, int quantity, int status) {
+        this.categoryID = categoryID;
+        this.categoryName = categoryName;
         this.quantity = quantity;
         this.status = status;
     }
@@ -28,16 +29,16 @@ public class Categories {
         return categoryID;
     }
 
-    public void setCategoryID(int catagoryID) {
+    public void setCategoryID(int categoryID) {
         this.categoryID = categoryID;
     }
 
-    public String getCatagoryName() {
-        return catagoryName;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setCatagoryName(String catagoryName) {
-        this.catagoryName = catagoryName;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public int getQuantity() {
@@ -56,9 +57,4 @@ public class Categories {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return "Catagorys{" + "catagoryID=" + categoryID + ", catagoryName=" + catagoryName + ", quantity=" + quantity + ", status=" + status + '}';
-    }
-    
 }

@@ -108,11 +108,53 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     margin-right: 3rem !important;
 }
 
+.fs-1 {
+    font-size: 2.5rem; /* khoảng 40px */
+}
+
+.fs-2 {
+    font-size: 2rem; /* khoảng 32px */
+}
+
+.fs-3 {
+    font-size: 1.75rem; /* khoảng 28px */
+}
+
+.fs-4 {
+    font-size: 1.5rem; /* khoảng 24px */
+}
+
+.fs-5 {
+    font-size: 1.25rem; /* khoảng 20px */
+}
+
+.fs-6 {
+    font-size: 1rem; /* khoảng 16px */
+}
+
+
 .is-invalid {
     border: 1px solid  !important;
     color: #ff0000 !important;
 }
 
+/* Chrome, Safari, Edge */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
 
+/* Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
 
-
+input[type="number"] {
+    width: 60px;
+    padding: 2px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 16px;
+}
