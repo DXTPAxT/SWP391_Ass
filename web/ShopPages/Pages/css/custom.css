@@ -354,6 +354,156 @@ input[type="number"] {
     padding-bottom: 0.5rem;
 }
 
+/* Canh giữa form */
+.custom-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+}
+
+/* Khung form */
+.login-form {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Tiêu đề */
+.login-form h2 {
+    margin-bottom: 25px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+#loginButton {
+    width: 100%;
+    background-color: #fd7e14; /* Màu cam Bootstrap */
+    border-radius: 8px;
+    border: none;
+    color: white;
+    padding: 10px;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+
+#loginButton:hover {
+    background-color: #e66a00; /* Màu cam đậm hơn khi hover */
+}
+
+/* Khoảng cách giữa các phần */
+.login-form input {
+    margin-bottom: 15px;
+}
+
+/* Lỗi */
+.error-messager {
+    color: red;
+    font-size: 0.9em;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+/* Dòng chứa nút và đăng ký */
+.custom-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Checkbox giữ đăng nhập */
+.checkbox {
+    margin-right: 5px;
+}
+
+/* Logo và form bao trong vùng tương đối */
+#login-section {
+    position: relative;
+    padding-top: 20px;
+}
+
+.logo img {
+    max-width: 100%;
+    height: auto;
+}
+
+.form-wrapper {
+    transform: translateY(-25%);
+}
+
+/* iPad (769px–1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .form-wrapper {
+        transform: translateY(-10%);
+    }
+
+    .login-form {
+        padding: 25px;
+    }
+
+    .custom-between {
+        gap: 10px;
+    }
+
+    #loginButton {
+        width: 100%;
+    }
+}
+
+/* Responsive cho form login */
+@media (max-width: 768px) {
+    .form-wrapper {
+        transform: none;
+        transform: translateY(-10%);
+    }
+
+    .custom-center {
+        display: block;
+    }
+
+    .login-form {
+        padding: 20px 10px;
+    }
+
+    .col-sm-4,
+    .col-sm-offset-1 {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+
+    .custom-between {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    #loginButton {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-wrapper {
+        transform: none;
+    }
+
+    .login-form h2 {
+        font-size: 18px;
+    }
+
+    #loginButton {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    input.form-control {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+
 
 
 

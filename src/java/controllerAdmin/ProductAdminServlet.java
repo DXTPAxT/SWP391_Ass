@@ -40,7 +40,7 @@ public class ProductAdminServlet extends HttpServlet {
 
             ProductDAO dao = new ProductDAO();
             CategoryDAO cate = new CategoryDAO();
-            Vector<Products> list;
+            List<Products> list;
 
             if ("list".equals(service)) {
                 String id = request.getParameter("categoryID");
