@@ -2,19 +2,25 @@ package controller;
 
 import dal.FeedbackDAO;
 import jakarta.servlet.RequestDispatcher;
-import models.Feedback;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import models.Feedback;
+import models.User;
+
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @WebServlet("/feedback")
 public class FeedbackServlet extends HttpServlet {
 
-    private static final Logger LOGGER = Logger.getLogger(FeedbackServlet.class.getName());
     private FeedbackDAO dao;
+    private static final Logger LOGGER = Logger.getLogger(FeedbackServlet.class.getName());
 
     @Override
     public void init() {
@@ -22,229 +28,253 @@ public class FeedbackServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
-        LOGGER.info("Processing GET action: " + action);
+        String action = req.getParameter("action");
+
         try {
-            if (action == null || action.equals("list")) {
-                List<Feedback> feedbackList = dao.getAllFeedbacks();
-                request.setAttribute("feedbackList", feedbackList);
-                LOGGER.info("Forwarding to /ShopPages/Pages/feedback.jsp for list action");
-                RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/feedback.jsp");
-                rs.forward(request, response);
-            } else if (action.equals("product")) {
-                String productIdParam = request.getParameter("productID");
-                if (productIdParam == null || productIdParam.trim().isEmpty()) {
-                    request.getSession().setAttribute("error", "Thiếu ID sản phẩm");
-                    LOGGER.warning("Missing productID, redirecting to /Home");
-                    response.sendRedirect(request.getContextPath() + "/Home");
-                    return;
-                }
-                int productId;
-                try {
-                    productId = Integer.parseInt(productIdParam);
-                } catch (NumberFormatException e) {
-                    request.getSession().setAttribute("error", "ID sản phẩm không hợp lệ");
-                    LOGGER.warning("Invalid productID format: " + productIdParam);
-                    response.sendRedirect(request.getContextPath() + "/Home");
-                    return;
-                }
-                if (!dao.isValidProductId(productId)) {
-                    request.getSession().setAttribute("error", "ID sản phẩm không hợp lệ");
-                    LOGGER.warning("Invalid productID: " + productId);
-                    response.sendRedirect(request.getContextPath() + "/Home");
-                    return;
-                }
-                List<Feedback> productFeedback = dao.getFeedbackByProductId(productId);
-                request.setAttribute("feedbackList", productFeedback);
-                request.setAttribute("productID", productId);
-                LOGGER.info("Forwarding to /ShopPages/Pages/feedback.jsp for product action, productID: " + productId);
-                RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/feedback.jsp");
-                rs.forward(request, response);
-            } else if (action.equals("edit")) {
-                String idParam = request.getParameter("id");
-                String productIdParam = request.getParameter("productID");
-                if (idParam == null || productIdParam == null || idParam.trim().isEmpty() || productIdParam.trim().isEmpty()) {
-                    request.getSession().setAttribute("error", "Thiếu thông tin hoặc sản phẩm");
-                    LOGGER.warning("Missing id or productID for edit action");
-                    response.sendRedirect(request.getContextPath() + "/feedback?action=list");
-                    return;
-                }
-                int id;
-                int productId;
-                try {
-                    id = Integer.parseInt(idParam);
-                    productId = Integer.parseInt(productIdParam);
-                } catch (NumberFormatException e) {
-                    request.getSession().setAttribute("error", "ID feedback hoặc sản phẩm không hợp lệ");
-                    LOGGER.warning("Invalid id or productID format: id=" + idParam + ", productID=" + productIdParam);
-                    response.sendRedirect(request.getContextPath() + "/feedback?action=list");
-                    return;
-                }
-                Feedback feedback = dao.getFeedbackById(id);
-                if (feedback == null) {
-                    request.getSession().setAttribute("error", "Không tìm thấy feedback");
-                    LOGGER.warning("Feedback not found: id=" + id);
-                    response.sendRedirect(request.getContextPath() + "/feedback?action=product&productID=" + productId);
-                    return;
-                }
-                HttpSession session = request.getSession();
-                models.User user = (models.User) session.getAttribute("user");
-                if (user == null || (user.getUserID() != feedback.getUserID() && user.getRoleID() != 1)) {
-                    session.setAttribute("error", "Bạn không có quyền sửa feedback này");
-                    LOGGER.warning("Unauthorized edit attempt: userID=" + (user != null ? user.getUserID() : "null") + ", feedbackID=" + id);
-                    response.sendRedirect(request.getContextPath() + "/feedback?action=product&productID=" + productId);
-                    return;
-                }
-                request.setAttribute("feedback", feedback);
-                request.setAttribute("productID", productId);
-                LOGGER.info("Forwarding to /ShopPages/Pages/edit-feedback.jsp for edit action");
-                RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/edit-feedback.jsp");
-                rs.forward(request, response);
-            } else if (action.equals("delete")) {
-                String idParam = request.getParameter("id");
-                String productIdParam = request.getParameter("productID");
-                if (idParam == null || productIdParam == null || idParam.trim().isEmpty() || productIdParam.trim().isEmpty()) {
-                    request.getSession().setAttribute("error", "Thiếu thông tin feedback hoặc sản phẩm");
-                    LOGGER.warning("Missing id or productID for delete action");
-                    response.sendRedirect(request.getContextPath() + "/feedback?action=list");
-                    return;
-                }
-                int id;
-                int productId;
-                try {
-                    id = Integer.parseInt(idParam);
-                    productId = Integer.parseInt(productIdParam);
-                } catch (NumberFormatException e) {
-                    request.getSession().setAttribute("error", "ID feedback hoặc sản phẩm không hợp lệ");
-                    LOGGER.warning("Invalid id or productID format: id=" + idParam + ", productID=" + productIdParam);
-                    response.sendRedirect(request.getContextPath() + "/feedback?action=list");
-                    return;
-                }
-                Feedback feedback = dao.getFeedbackById(id);
-                if (feedback == null) {
-                    request.getSession().setAttribute("error", "Không tìm thấy feedback");
-                    LOGGER.warning("Feedback not found: id=" + id);
-                    response.sendRedirect(request.getContextPath() + "/feedback?action=product&productID=" + productId);
-                    return;
-                }
-                HttpSession session = request.getSession();
-                models.User user = (models.User) session.getAttribute("user");
-                if (user == null || (user.getUserID() != feedback.getUserID() && user.getRoleID() != 1)) {
-                    session.setAttribute("error", "Bạn không có quyền xóa feedback này");
-                    LOGGER.warning("Unauthorized delete attempt: userID=" + (user != null ? user.getUserID() : "null") + ", feedbackID=" + id);
-                    response.sendRedirect(request.getContextPath() + "/feedback?action=product&productID=" + productId);
-                    return;
-                }
-                boolean success = dao.deleteFeedback(id);
-                if (success) {
-                    request.getSession().setAttribute("message", "Xóa feedback thành công");
-                    LOGGER.info("Feedback deleted successfully: id=" + id);
-                } else {
-                    request.getSession().setAttribute("error", "Không thể xóa feedback");
-                    LOGGER.severe("Failed to delete feedback: id=" + id);
-                }
-                response.sendRedirect(request.getContextPath() + "/feedback?action=product&productID=" + productId);
+            if (action == null) {
+                List<Feedback> allFeedback = dao.getAllFeedbacks();
+                req.setAttribute("feedbackList", allFeedback);
+                RequestDispatcher rs = req.getRequestDispatcher("/ShopPages/Pages/feedback.jsp");
+                rs.forward(req, res);
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Hành động không hợp lệ");
-                LOGGER.warning("Invalid action: " + action);
+                switch (action) {
+                    case "delete":
+                        handleDeleteFeedback(req, res);
+                        break;
+                    case "edit":
+                        handleEditFeedback(req, res);
+                        break;
+                    case "product":
+                        handleProductFeedback(req, res);
+                        break;
+                    case "user":
+                        handleUserFeedback(req, res);
+                        break;
+                    default:
+                        List<Feedback> allFeedback = dao.getAllFeedbacks();
+                        req.setAttribute("feedbackList", allFeedback);
+                        RequestDispatcher rs = req.getRequestDispatcher("/ShopPages/Pages/feedback.jsp");
+                        rs.forward(req, res);
+                        break;
+                }
             }
         } catch (Exception e) {
-            LOGGER.severe("Server error: " + e.getMessage());
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi server");
+            LOGGER.log(Level.SEVERE, "Error in doGet: " + e.getMessage(), e);
+            res.sendRedirect("errorPage.jsp");
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
+        String action = req.getParameter("action");
         try {
-            String action = request.getParameter("action");
-            LOGGER.info("Processing POST action: " + action);
             if ("update".equals(action)) {
-                String feedbackIdParam = request.getParameter("feedbackId");
-                String productIdParam = request.getParameter("productId");
-                String content = request.getParameter("content");
-                String ratingParam = request.getParameter("rating");
-                String statusParam = request.getParameter("status");
-
-                if (feedbackIdParam == null || productIdParam == null || content == null || ratingParam == null || statusParam == null
-                        || feedbackIdParam.trim().isEmpty() || productIdParam.trim().isEmpty() || content.trim().isEmpty()) {
-                    request.getSession().setAttribute("error", "Vui lòng điền đầy đủ thông tin");
-                    LOGGER.warning("Missing required parameters for update action");
-                    response.sendRedirect(request.getContextPath() + "/feedback?action=edit&id=" + feedbackIdParam + "&productID=" + productIdParam);
-                    return;
-                }
-
-                int feedbackId;
-                int productId;
-                int rate;
-                int status;
-                try {
-                    feedbackId = Integer.parseInt(feedbackIdParam);
-                    productId = Integer.parseInt(productIdParam);
-                    rate = Integer.parseInt(ratingParam);
-                    status = Integer.parseInt(statusParam);
-                } catch (NumberFormatException e) {
-                    request.getSession().setAttribute("error", "Dữ liệu đầu vào không hợp lệ");
-                    LOGGER.warning("Invalid parameter format: feedbackId=" + feedbackIdParam + ", productId=" + productIdParam);
-                    response.sendRedirect(request.getContextPath() + "/feedback?action=edit&id=" + feedbackIdParam + "&productID=" + productIdParam);
-                    return;
-                }
-
-                if (rate < 1 || rate > 5) {
-                    request.getSession().setAttribute("error", "Đánh giá phải từ 1 đến 5 sao");
-                    LOGGER.warning("Invalid rating: " + rate);
-                    response.sendRedirect(request.getContextPath() + "/feedback?action=edit&id=" + feedbackId + "&productID=" + productId);
-                    return;
-                }
-                if (status != 0 && status != 1) {
-                    request.getSession().setAttribute("error", "Trạng thái không hợp lệ");
-                    LOGGER.warning("Invalid status: " + status);
-                    response.sendRedirect(request.getContextPath() + "/feedback?action=edit&id=" + feedbackId + "&productID=" + productId);
-                    return;
-                }
-
-                Feedback feedback = dao.getFeedbackById(feedbackId);
-                if (feedback == null) {
-                    request.getSession().setAttribute("error", "Không tìm thấy feedback");
-                    LOGGER.warning("Feedback not found: id=" + feedbackId);
-                    response.sendRedirect(request.getContextPath() + "/feedback?action=product&productID=" + productId);
-                    return;
-                }
-
-                HttpSession session = request.getSession();
-                models.User user = (models.User) session.getAttribute("user");
-                if (user == null || (user.getUserID() != feedback.getUserID() && user.getRoleID() != 1)) {
-                    session.setAttribute("error", "Bạn không có quyền cập nhật feedback này");
-                    LOGGER.warning("Unauthorized update attempt: userID=" + (user != null ? user.getUserID() : "null") + ", feedbackID=" + feedbackId);
-                    response.sendRedirect(request.getContextPath() + "/feedback?action=product&productID=" + productId);
-                    return;
-                }
-
-                feedback.setContent(content);
-                feedback.setRate(rate);
-                feedback.setStatus(status);
-                boolean success = dao.updateFeedback(feedback);
-                if (success) {
-                    request.getSession().setAttribute("message", "Cập nhật feedback thành công");
-                    LOGGER.info("Feedback updated successfully: id=" + feedbackId);
-                } else {
-                    request.getSession().setAttribute("error", "Không thể cập nhật feedback");
-                    LOGGER.severe("Failed to update feedback: id=" + feedbackId);
-                }
-                response.sendRedirect(request.getContextPath() + "/feedback?action=product&productID=" + productId);
+                handleUpdateFeedback(req, res);
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Hành động không hợp lệ");
-                LOGGER.warning("Invalid POST action: " + action);
+                HttpSession session = req.getSession();
+                User currentUser = (User) session.getAttribute("user");
+                if (currentUser == null) {
+                    res.sendRedirect("Login");
+                    return;
+                }
+                int userID = currentUser.getUserID();
+                int productID = Integer.parseInt(req.getParameter("productID"));
+                String content = req.getParameter("content");
+                int rate = Integer.parseInt(req.getParameter("rate"));
+
+                // Validate input
+                if (content == null || content.trim().isEmpty() || rate < 1 || rate > 5) {
+                    session.setAttribute("error", "Invalid content or rating");
+                    res.sendRedirect("feedback?action=product&productID=" + productID);
+                    return;
+                }
+
+                Feedback fb = new Feedback(userID, content, productID, rate);
+                boolean success = dao.insertFeedback(fb);
+
+                if (success) {
+                    session.setAttribute("message", "Feedback submitted successfully");
+                    res.sendRedirect("feedback?action=product&productID=" + productID);
+                } else {
+                    session.setAttribute("error", "Failed to save feedback");
+                    res.sendRedirect("feedback?action=product&productID=" + productID);
+                }
             }
         } catch (Exception e) {
-            LOGGER.severe("Server error in POST: " + e.getMessage());
-            e.printStackTrace();
-            request.getSession().setAttribute("error", "Lỗi server khi cập nhật feedback");
-            response.sendRedirect(request.getContextPath() + "/feedback?action=list");
+            LOGGER.log(Level.SEVERE, "Error in doPost: " + e.getMessage(), e);
+            res.sendRedirect("errorPage.jsp");
         }
+    }
+
+    private void handleDeleteFeedback(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
+        HttpSession session = req.getSession();
+        User currentUser = (User) session.getAttribute("user");
+        int feedbackId;
+        try {
+            feedbackId = Integer.parseInt(req.getParameter("id"));
+        } catch (NumberFormatException e) {
+            session.setAttribute("error", "Invalid feedback ID");
+            res.sendRedirect("feedback");
+            return;
+        }
+
+        Feedback feedback = dao.getFeedbackById(feedbackId);
+        if (feedback == null) {
+            session.setAttribute("error", "Feedback not found");
+            res.sendRedirect("feedback");
+            return;
+        }
+
+        // Kiểm tra quyền
+        if (currentUser == null || (currentUser.getUserID() != feedback.getUserID() && currentUser.getRoleID() != 1)) {
+            session.setAttribute("error", "You are not authorized to delete this feedback");
+            res.sendRedirect("feedback");
+            return;
+        }
+
+        boolean success = dao.deleteFeedback(feedbackId);
+        if (success) {
+            session.setAttribute("message", "Feedback deleted successfully");
+        } else {
+            session.setAttribute("error", "Failed to delete feedback");
+        }
+
+        // Chuyển hướng về trang feedback của sản phẩm
+        int productId = feedback.getProductID();
+        res.sendRedirect("feedback?action=product&productID=" + productId);
+    }
+
+    private void handleEditFeedback(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
+        HttpSession session = req.getSession();
+        User currentUser = (User) session.getAttribute("user");
+        int feedbackId;
+        try {
+            feedbackId = Integer.parseInt(req.getParameter("id"));
+        } catch (NumberFormatException e) {
+            session.setAttribute("error", "Invalid feedback ID");
+            res.sendRedirect("feedback");
+            return;
+        }
+
+        Feedback feedback = dao.getFeedbackById(feedbackId);
+        if (feedback == null) {
+            session.setAttribute("error", "Feedback not found");
+            res.sendRedirect("feedback");
+            return;
+        }
+
+        // Kiểm tra quyền
+        if (currentUser == null || (currentUser.getUserID() != feedback.getUserID() && currentUser.getRoleID() != 1)) {
+            session.setAttribute("error", "You are not authorized to edit this feedback");
+            res.sendRedirect("feedback");
+            return;
+        }
+
+        req.setAttribute("feedback", feedback);
+        req.getRequestDispatcher("/ShopPages/Pages/edit-feedback.jsp").forward(req, res);
+    }
+
+    private void handleUpdateFeedback(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
+        HttpSession session = req.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        if (currentUser == null) {
+            res.sendRedirect("Login");
+            return;
+        }
+
+        int feedbackId;
+        try {
+            feedbackId = Integer.parseInt(req.getParameter("feedbackID"));
+        } catch (NumberFormatException e) {
+            session.setAttribute("error", "Invalid feedback ID");
+            res.sendRedirect("feedback");
+            return;
+        }
+
+        Feedback feedback = dao.getFeedbackById(feedbackId);
+        if (feedback == null) {
+            session.setAttribute("error", "Feedback not found");
+            res.sendRedirect("feedback");
+            return;
+        }
+
+        // Kiểm tra quyền
+        if (currentUser.getUserID() != feedback.getUserID() && currentUser.getRoleID() != 1) {
+            session.setAttribute("error", "You are not authorized to edit this feedback");
+            res.sendRedirect("feedback");
+            return;
+        }
+
+        String content = req.getParameter("content");
+        int rate;
+        int productID;
+        try {
+            rate = Integer.parseInt(req.getParameter("rate"));
+            productID = Integer.parseInt(req.getParameter("productID"));
+        } catch (NumberFormatException e) {
+            session.setAttribute("error", "Invalid rating or product ID");
+            req.setAttribute("feedback", feedback);
+            req.getRequestDispatcher("/ShopPages/Pages/edit-feedback.jsp").forward(req, res);
+            return;
+        }
+
+        // Validate dữ liệu
+        if (content == null || content.trim().isEmpty() || rate < 1 || rate > 5) {
+            session.setAttribute("error", "Invalid content or rating");
+            req.setAttribute("feedback", feedback);
+            req.getRequestDispatcher("/ShopPages/Pages/edit-feedback.jsp").forward(req, res);
+            return;
+        }
+
+        feedback.setContent(content);
+        feedback.setRate(rate);
+        boolean success = dao.updateFeedback(feedback);
+
+        if (success) {
+            session.setAttribute("message", "Feedback updated successfully");
+            res.sendRedirect("feedback?action=product&productID=" + productID);
+        } else {
+            session.setAttribute("error", "Failed to update feedback");
+            req.setAttribute("feedback", feedback);
+            req.getRequestDispatcher("/ShopPages/Pages/edit-feedback.jsp").forward(req, res);
+        }
+    }
+
+    private void handleProductFeedback(HttpServletRequest req, HttpServletResponse res)
+            throws ServletException, IOException {
+        int productId;
+        try {
+            productId = Integer.parseInt(req.getParameter("productID"));
+        } catch (NumberFormatException e) {
+            req.getSession().setAttribute("error", "Invalid product ID");
+            res.sendRedirect("feedback");
+            return;
+        }
+        List<Feedback> productFeedback = dao.getFeedbackByProductId(productId);
+        req.setAttribute("feedbackList", productFeedback);
+        req.setAttribute("productID", productId);
+        req.getRequestDispatcher("/ShopPages/Pages/feedback.jsp").forward(req, res);
+    }
+
+    private void handleUserFeedback(HttpServletRequest req, HttpServletResponse res)
+            throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        if (currentUser == null) {
+            res.sendRedirect("Login");
+            return;
+        }
+
+        List<Feedback> userFeedback = dao.getFeedbackByUserId(currentUser.getUserID());
+        req.setAttribute("feedbackList", userFeedback);
+        req.getRequestDispatcher("/ShopPages/Pages/my-feedback.jsp").forward(req, res);
     }
 }
