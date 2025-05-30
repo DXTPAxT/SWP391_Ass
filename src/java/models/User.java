@@ -106,6 +106,10 @@ public class User {
     public void setStatus(int Status) {
         this.Status = Status;
     }
-    
+
+    @Override
+    public String toString() {
+        return "User{" + "UserID=" + UserID + ", RoleID=" + RoleID + ", Fullname=" + Fullname + ", Email=" + Email + ", PhoneNumber=" + PhoneNumber + ", Address=" + Address + ", Password=" + Password + ", CreatedAt=" + CreatedAt + ", Status=" + Status + '}';
+    }
     
 }
