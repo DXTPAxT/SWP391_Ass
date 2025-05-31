@@ -382,6 +382,9 @@
                             <div class="box">
                                 <div class="box-header">
                                     <h3 class="box-title">Category</h3>
+                                    <a href="CateAdmin?service=insert" 
+                                       class="btn btn-warning btn-sm" 
+                                       style="float: right;">ADD</a>
                                 </div>
                                 <!-- /.box-header -->
                                 <div class="box-body">
@@ -393,7 +396,7 @@
                                                 <th>Quantity</th>                                               
                                                 <th>Status</th>
                                                 <th>Update</th>
-                                                <th>Delete</th>
+                                               
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -405,14 +408,10 @@
                                                         <td>${cate.quantity}</td>
                                                         <td>${cate.status}</td>
                                                         <td>
-                                                            <a href="ServletProduct_JSP?service=updateProduct&productID=${product.productID}" 
+                                                            <a href="CateAdmin?service=update&categoryID=${cate.categoryID}" 
                                                                class="btn btn-warning btn-sm">Update</a>
                                                         </td>
-                                                        <td>
-                                                            <a href="ServletProduct_JSP?service=deleteProduct&productID=${product.productID}"
-                                                               onclick="return confirm('Are you sure to delete?');"
-                                                               class="btn btn-danger btn-sm">Delete</a>
-                                                        </td>
+                                                        
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>

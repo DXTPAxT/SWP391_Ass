@@ -28,7 +28,7 @@ public class MailUtils {
         Session session = Session.getInstance(props,
                 new jakarta.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(from, password);
+               return new PasswordAuthentication(from, password);
             }
         });
 
