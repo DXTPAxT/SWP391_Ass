@@ -331,15 +331,37 @@
                             </c:if>
 
 
-                            <div class="pagination-area text-center" style="margin-top: 40px; clear: both;">
-                                <ul class="pagination" style="display: inline-block; float: none;">
-                                    <c:forEach begin="1" end="${totalPages}" var="i">
-                                        <li class="${i == currentPage ? 'active' : ''}">
-                                            <a href="${ctx}/Product?page=${i}">${i}</a>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
-                            </div>
+                            <c:if test="${totalPages gt 1}">
+                                <div class="pagination-area text-center" style="margin-top: 40px; clear: both;">
+                                    <ul class="pagination" style="display: inline-block; float: none;">
+                                        <c:forEach begin="1" end="${totalPages}" var="i">
+                                            <c:url var="pageURL" value="Product">
+                                                <c:param name="page" value="${i}" />
+                                                <c:param name="service" value="${currentService}" />
+                                                <c:if test="${not empty currentBrand}">
+                                                    <c:param name="Brand" value="${currentBrand}" />
+                                                </c:if>
+                                                <c:if test="${not empty currentCategory}">
+                                                    <c:param name="categoryName" value="${currentCategory}" />
+                                                </c:if>
+                                                <c:if test="${not empty currentKeyword}">
+                                                    <c:param name="keyword" value="${currentKeyword}" />
+                                                </c:if>
+                                                <c:if test="${not empty minPrice}">
+                                                    <c:param name="minPrice" value="${minPrice}" />
+                                                </c:if>
+                                                <c:if test="${not empty maxPrice}">
+                                                    <c:param name="maxPrice" value="${maxPrice}" />
+                                                </c:if>
+                                            </c:url>
+                                            <li class="${i == currentPage ? 'active' : ''}">
+                                                <a href="${pageContext.request.contextPath}/${pageURL}">${i}</a>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                </div>
+                            </c:if>
+
                         </div><!--features_items-->
                     </div>
                 </div>
