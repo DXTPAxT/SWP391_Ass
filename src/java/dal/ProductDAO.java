@@ -153,6 +153,70 @@ public class ProductDAO extends DBContext {
         return list;
     }
 
+    public void insertProduct(Products p) {
+        String sql = "INSERT INTO Products (Name, Description, Brand, Price, Quantity, WarrantyPeriod, CreatedAt, CategoryID, Status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, p.getName());
+            ps.setString(2, p.getDescription());
+            ps.setString(3, p.getBrand());
+            ps.setDouble(4, p.getPrice());
+            ps.setInt(5, p.getQuantity());
+            ps.setInt(6, p.getWarrantyPeriod());
+            ps.setDate(7, (Date) p.getCreatedAt());
+            ps.setInt(8, p.getCategoryID());
+            ps.setInt(9, p.getStatus());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateProduct(Products p) {
+        String sql = "UPDATE Products SET Name = ?, Description = ?, Brand = ?, Price = ?, Quantity = ?, WarrantyPeriod = ?, "
+                + "CreatedAt = ?, CategoryID = ?, Status = ? WHERE ProductID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, p.getName());
+            ps.setString(2, p.getDescription());
+            ps.setString(3, p.getBrand());
+            ps.setDouble(4, p.getPrice());
+            ps.setInt(5, p.getQuantity());
+            ps.setInt(6, p.getWarrantyPeriod());
+            ps.setDate(7, (Date) p.getCreatedAt());
+            ps.setInt(8, p.getCategoryID());
+            ps.setInt(9, p.getStatus());
+            ps.setInt(10, p.getProductID());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Products searchProductByID(int id) {
+        String sql = "SELECT * FROM Products WHERE ProductID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Products p = new Products();
+                p.setProductID(rs.getInt("ProductID"));
+                p.setName(rs.getString("Name"));
+                p.setDescription(rs.getString("Description"));
+                p.setBrand(rs.getString("Brand"));
+                p.setPrice(rs.getDouble("Price"));
+                p.setQuantity(rs.getInt("Quantity"));
+                p.setWarrantyPeriod(rs.getInt("WarrantyPeriod"));
+                p.setCreatedAt(rs.getDate("CreatedAt"));
+                p.setCategoryID(rs.getInt("CategoryID"));
+                p.setStatus(rs.getInt("Status"));
+                return p;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
         Products p = new Products();
