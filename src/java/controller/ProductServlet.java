@@ -18,7 +18,6 @@ import java.util.List;
 @WebServlet(name = "ProductServlet", urlPatterns = {"/Product"})
 public class ProductServlet extends HttpServlet {
 
-    private static final String SQL = "SELECT * FROM Products";
     private static final int PAGE_SIZE = 6;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -32,7 +31,6 @@ public class ProductServlet extends HttpServlet {
             service = "list";
         }
 
-        // Lấy số trang hiện tại
         int page = 1;
         String pageParam = request.getParameter("page");
         if (pageParam != null) {
@@ -44,88 +42,80 @@ public class ProductServlet extends HttpServlet {
         }
 
         List<Products> list = new ArrayList<>();
+        int totalProducts = 0;
 
         try {
-            // take product by Brand
-            if ("Brand".equals(service)) {
-                String brand = request.getParameter("Brand");
-                if (brand != null && !brand.trim().isEmpty()) {
-                    list = dao.getProductsByBrand(brand);
-                    request.setAttribute("brandName", brand);
+            switch (service) {
+                case "Brand": {
+                    String brand = request.getParameter("Brand");
+                    if (brand != null && !brand.trim().isEmpty()) {
+                        String where = "WHERE Brand = '" + brand + "'";
+                        totalProducts = dao.countByCondition(where);
+                        String baseSQL = "SELECT * FROM Products " + where;
+                        list = dao.getProductsByPage(baseSQL, page, PAGE_SIZE);
+                        request.setAttribute("brandName", brand);
+                        request.setAttribute("currentBrand", brand);
+                    }
+                    break;
                 }
-                request.setAttribute("data", list);
-            } 
-            // take product by Categories
-            else if ("categoryFilter".equals(service)) {
-                String categoryName = request.getParameter("categoryName");
-                if (categoryName != null && !categoryName.trim().isEmpty()) {
-                    list = dao.getAllProductsByCategoryName(categoryName);
+                case "categoryFilter": {
+                    String categoryName = request.getParameter("categoryName");
+                    if (categoryName != null && !categoryName.trim().isEmpty()) {
+                        String where = "JOIN Categories c ON p.CategoryID = c.CategoryID WHERE c.CategoryName = '" + categoryName + "'";
+                        totalProducts = dao.countByCondition("JOIN Categories c ON Products.CategoryID = c.CategoryID WHERE c.CategoryName = '" + categoryName + "'");
+                        String baseSQL = "SELECT Products.* FROM Products JOIN Categories c ON Products.CategoryID = c.CategoryID WHERE c.CategoryName = '" + categoryName + "'";
+                        list = dao.getProductsByPage(baseSQL, page, PAGE_SIZE);
+                        request.setAttribute("currentCategory", categoryName);
+                    }
+                    break;
                 }
-                request.setAttribute("data", list);
-            }
-            // Product detail
-            else if ("detail".equals(service)) {
-                try {
+                case "detail": {
                     int id = Integer.parseInt(request.getParameter("productID"));
                     Products product = dao.getProductByID(id);
                     request.setAttribute("p", product);
                     request.getRequestDispatcher("ShopPages/Pages/ProductDetail.jsp").forward(request, response);
                     return;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    request.setAttribute("error", "Lỗi khi hiển thị chi tiết sản phẩm.");
                 }
-            } 
-            else if ("priceFilter".equals(service)) {
-                double minPrice = 0;
-                double maxPrice = Double.MAX_VALUE;
-                try {
+                case "priceFilter": {
+                    double minPrice = 0, maxPrice = Double.MAX_VALUE;
                     String minStr = request.getParameter("minPrice");
                     String maxStr = request.getParameter("maxPrice");
-                    if (minStr != null) minPrice = Double.parseDouble(minStr);
-                    if (maxStr != null) maxPrice = Double.parseDouble(maxStr);
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
+                    try {
+                        if (minStr != null) minPrice = Double.parseDouble(minStr);
+                        if (maxStr != null) maxPrice = Double.parseDouble(maxStr);
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                    String where = "WHERE Price BETWEEN " + minPrice + " AND " + maxPrice;
+                    totalProducts = dao.countByCondition(where);
+                    String baseSQL = "SELECT * FROM Products " + where;
+                    list = dao.getProductsByPage(baseSQL, page, PAGE_SIZE);
+                    request.setAttribute("minPrice", minStr);
+                    request.setAttribute("maxPrice", maxStr);
+                    break;
                 }
-                // Áp dụng phân trang cho price filter
-                String sqlPricePaged = "SELECT * FROM Products WHERE Price BETWEEN " + minPrice + " AND " + maxPrice
-                        + " ORDER BY ProductID OFFSET " + ((page - 1) * PAGE_SIZE)
-                        + " ROWS FETCH NEXT " + PAGE_SIZE + " ROWS ONLY";
-                list = dao.getAllProduct(sqlPricePaged);
-                request.setAttribute("pageTitle", "Search Results");
-                request.setAttribute("tableTitle", "Products from "
-                        + String.format("%,.0f VND", minPrice) + " to "
-                        + String.format("%,.0f VND", maxPrice));
-                request.setAttribute("data", list);
-            } 
-            // find Product by Name hoặc list all với phân trang
-            else {
-                String keyword = request.getParameter("keyword");
-                String sqlPaged;
-                if (keyword == null || keyword.trim().isEmpty()) {
-                    sqlPaged = "SELECT * FROM Products ORDER BY ProductID OFFSET "
-                            + ((page - 1) * PAGE_SIZE) + " ROWS FETCH NEXT " + PAGE_SIZE + " ROWS ONLY";
-                } else {
-                    sqlPaged = "SELECT * FROM Products WHERE Name LIKE N'%" + keyword + "%' ORDER BY ProductID OFFSET "
-                            + ((page - 1) * PAGE_SIZE) + " ROWS FETCH NEXT " + PAGE_SIZE + " ROWS ONLY";
-                    request.setAttribute("pageTitle", "Search Results");
-                    request.setAttribute("tableTitle", "Matching Products");
+                default: {
+                    String keyword = request.getParameter("keyword");
+                    String where = "";
+                    if (keyword != null && !keyword.trim().isEmpty()) {
+                        where = "WHERE Name LIKE N'%" + keyword + "%'";
+                        request.setAttribute("currentKeyword", keyword);
+                    }
+                    totalProducts = dao.countByCondition(where);
+                    String baseSQL = "SELECT * FROM Products " + where;
+                    list = dao.getProductsByPage(baseSQL, page, PAGE_SIZE);
                 }
-                list = dao.getAllProduct(sqlPaged);
-                request.setAttribute("data", list);
             }
 
-            // Tính tổng số trang
-            int totalProducts = dao.getAllProduct(SQL).size();
+            request.setAttribute("data", list);
+            request.setAttribute("currentService", service);
             int totalPages = (int) Math.ceil((double) totalProducts / PAGE_SIZE);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
 
-            // select categories and brand
             List<Categories> listcate = cate.getCategoriesName();
             List<BrandByCategoriesName> BWCN = cate.getBrandWithCategoryName();
             List<String> listBrand = cate.getAllBrands();
-
             request.setAttribute("categories", listcate);
             request.setAttribute("BrandWithCategoryName", BWCN);
             request.setAttribute("listBrand", listBrand);
