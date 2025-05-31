@@ -331,7 +331,7 @@
                     <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu">
                         <li class="header">MAIN NAVIGATION</li>
-                         <li class="treeview">
+                        <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-laptop"></i> <span>Category</span>
                                 <span class="pull-right-container">
@@ -339,7 +339,7 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu">                               
-                                    <li><a href="${ctx}/CateAdmin"><i class="fa fa-circle-o"></i>View Category</a></li>                                
+                                <li><a href="${ctx}/CateAdmin"><i class="fa fa-circle-o"></i>View Category</a></li>                                
                             </ul>
                         </li>
                         <li class="treeview">
@@ -382,6 +382,9 @@
                             <div class="box">
                                 <div class="box-header">
                                     <h3 class="box-title">PC</h3>
+                                    <a href="ProductAdmin?service=insert" 
+                                       class="btn btn-warning btn-sm" 
+                                       style="float: right;">ADD</a>
                                 </div>
                                 <!-- /.box-header -->
                                 <div class="box-body">
@@ -390,12 +393,15 @@
                                             <tr>
                                                 <th>Product ID</th>
                                                 <th>Name</th>
+                                                <th>Description</th>
+                                                <th>Brand</th>
                                                 <th>Price</th>
                                                 <th>Quantity</th>
+                                                <th>WarrantyPeriod</th>
+                                                <th>CreatedAt</th>
                                                 <th>Category ID</th>
                                                 <th>Status</th>
                                                 <th>Update</th>
-                                                <th>Delete</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -404,30 +410,33 @@
                                                     <tr>
                                                         <td>${product.productID}</td>
                                                         <td>${product.name}</td>
+                                                        <td>${product.description}</td>
+                                                        <td>${product.brand}</td>
                                                         <td>${product.price}</td>
                                                         <td>${product.quantity}</td>
+                                                        <td>${product.warrantyPeriod}</td>
+                                                        <td>${product.createdAt}</td>
                                                         <td>${product.categoryID}</td>
-                                                        <td>${product.status}</td>
                                                         <td>
-                                                            <a href="ServletProduct_JSP?service=updateProduct&productID=${product.productID}" 
-                                                               class="btn btn-warning btn-sm">Update</a>
+                                                            <c:choose>
+                                                                <c:when test="${product.status == 0}">Disable</c:when>
+                                                                <c:when test="${product.status == 1}">Active</c:when>
+                                                                <c:when test="${product.status == 2}">On Sale</c:when>
+                                                                <c:when test="${product.status == 3}">Coming Soon</c:when>
+                                                                <c:otherwise>Unknown</c:otherwise>
+                                                            </c:choose>
                                                         </td>
                                                         <td>
-                                                            <a href="ServletProduct_JSP?service=deleteProduct&productID=${product.productID}"
-                                                               onclick="return confirm('Are you sure to delete?');"
-                                                               class="btn btn-danger btn-sm">Delete</a>
+                                                            <a href="ProductAdmin?service=update&productID=${product.productID}" 
+                                                               class="btn btn-warning btn-sm">Update</a>
                                                         </td>
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
-                                            <c:if test="${empty requestScope.data}">
-                                                <tr>
-                                                    <td colspan="8" style="text-align:center;">Không có d? li?u ?? hi?n th?</td>
-                                                </tr>
-                                            </c:if>
                                         </tbody>
                                     </table>
                                 </div>
+
 
                             </div>
                             <!-- /.box-body -->
@@ -656,17 +665,17 @@
                     <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
                     <!-- page script -->
                     <script>
-                                                                   $(function () {
-                                                                       $("#example1").DataTable();
-                                                                       $('#example2').DataTable({
-                                                                           "paging": true,
-                                                                           "lengthChange": false,
-                                                                           "searching": false,
-                                                                           "ordering": true,
-                                                                           "info": true,
-                                                                           "autoWidth": false
-                                                                       });
-                                                                   });
+                        $(function () {
+                            $("#example1").DataTable();
+                            $('#example2').DataTable({
+                                "paging": true,
+                                "lengthChange": false,
+                                "searching": false,
+                                "ordering": true,
+                                "info": true,
+                                "autoWidth": false
+                            });
+                        });
                     </script>
                     <script>
                         $(function () {

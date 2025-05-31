@@ -89,19 +89,63 @@ public class CategoryDAO extends DBContext {
         }
         return listBrand;
     }
-    
-  public List<String> getAllBrands() {
-    List<String> brands = new ArrayList<>();
-    String sql = "SELECT DISTINCT Brand FROM Products";
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            brands.add(rs.getString("Brand"));
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
 
+    public List<String> getAllBrands() {
+        List<String> brands = new ArrayList<>();
+        String sql = "SELECT DISTINCT Brand FROM Products";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                brands.add(rs.getString("Brand"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+        }
+        return brands;
     }
-    return brands;
-}
+
+    public void insertCategory(Categories category) {
+        String sql = "INSERT INTO Categories (CategoryName, Quantity, Status) VALUES (?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, category.getCategoryName());
+            ps.setInt(2, category.getQuantity());
+            ps.setInt(3, category.getStatus());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateCategory(Categories category) {
+        String sql = "UPDATE Categories SET CategoryName = ?, Quantity = ?, Status = ? WHERE CategoryID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, category.getCategoryName());
+            ps.setInt(2, category.getQuantity());
+            ps.setInt(3, category.getStatus());
+            ps.setInt(4, category.getCategoryID());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Categories searchCategoryByID(int id) {
+        String sql = "SELECT * FROM Categories WHERE CategoryID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Categories(
+                        rs.getInt("CategoryID"),
+                        rs.getString("CategoryName"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("Status")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
