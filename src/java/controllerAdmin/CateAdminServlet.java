@@ -42,8 +42,8 @@ public class CateAdminServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             String service = request.getParameter("service");
-            if(service == null){
-                service="listall";
+            if (service == null) {
+                service = "listall";
             }
             if ("listall".equals(service)) {
                 ComponentDAO dao = new ComponentDAO();
@@ -99,42 +99,34 @@ public class CateAdminServlet extends HttpServlet {
                     cate.updateCategory(updatedCategory);
 
                     response.sendRedirect(request.getContextPath() + "/CateAdmin?service=listbycom&componentID=" + componentID);
-                    //response.sendRedirect(request.getContextPath() + "/AdminDashbordServlet");
-                  
                 }
 
             } else if (service.equals("insert")) {
                 ComponentDAO dao = new ComponentDAO();
                 CategoryAdminDAO cate = new CategoryAdminDAO();
-                List<Categories> list;
                 String submit = request.getParameter("submit");
 
                 if (submit == null) {
+                    BrandAdminDAO brand = new BrandAdminDAO();
                     List<Components> components = dao.getAllComponent("SELECT * FROM Components");
+                    List<Brands> brands = brand.getAllBrands();
 
                     request.setAttribute("data", components);
-                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertProduct.jsp").forward(request, response);
-                    return; // ✅ Dừng xử lý nếu đã forward
+                    request.setAttribute("brands", brands);
+                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertCate.jsp").forward(request, response);
                 } else {
-                    try {
-                        int categoryID = Integer.parseInt(request.getParameter("categoryID"));
-                        String categoryName = request.getParameter("categoryName");
-                        int componentID = Integer.parseInt(request.getParameter("componentID"));
-                        int brandID = Integer.parseInt(request.getParameter("brandID"));
-                        int quantity = Integer.parseInt(request.getParameter("quantity"));
-                        int price = Integer.parseInt(request.getParameter("price"));
-                        String description = request.getParameter("description");
-                        int status = Integer.parseInt(request.getParameter("status"));
+                    String categoryName = request.getParameter("categoryName");
+                    int componentID = Integer.parseInt(request.getParameter("componentID"));
+                    int brandID = Integer.parseInt(request.getParameter("brandID"));
+                    int quantity = Integer.parseInt(request.getParameter("quantity"));
+                    int price = Integer.parseInt(request.getParameter("price"));
+                    String description = request.getParameter("description");
+                    int status = Integer.parseInt(request.getParameter("status"));
 
-                        Categories updatedCategory = new Categories(categoryID, categoryName, componentID, brandID, quantity, price, description, status);
+                    Categories newCategory = new Categories( categoryName, componentID, brandID, quantity, price, description, status);
+                    cate.insertCategory(newCategory);
 
-                        // ✅ Redirect và return ngay
-                        response.sendRedirect(request.getContextPath() + "/ProductAdmin?service=list&categoryID=" + categoryID);
-                        return;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        response.getWriter().println("Error while inserting product: " + e.getMessage());
-                    }
+                    response.sendRedirect(request.getContextPath() + "/CateAdmin?service=listbycom&componentID=" + componentID);
                 }
             }
 

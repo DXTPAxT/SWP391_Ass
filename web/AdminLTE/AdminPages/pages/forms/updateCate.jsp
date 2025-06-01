@@ -210,7 +210,6 @@
                                                     <section class="content-header">
                                                         <h1>
                                                             UPDATE CATEGORY
-
                                                         </h1>
                                                         <ol class="breadcrumb">
                                                             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -225,8 +224,8 @@
                                                         <!-- /.box-header -->
                                                         <div class="box-body">
                                                             <form role="form" method="post" action="CateAdmin">
-                                                                <input type="hidden" name="service" value="updateCate">
-                                                                
+                                                                <input type="hidden" name="service" value="update">
+                                                                <input type="hidden" name="submit" value="submit">
                                                                 <!-- CategoryID (readonly) -->
                                                                 <div class="form-group">
                                                                     <label>Category ID</label>
