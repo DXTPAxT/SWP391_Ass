@@ -175,13 +175,13 @@
                                                             <li class="header">MAIN NAVIGATION</li>
                                                             <li class="treeview">
                                                                 <a href="#">
-                                                                    <i class="fa fa-laptop"></i> <span>Category</span>
+                                                                    <i class="fa fa-laptop"></i> <span>Component</span>
                                                                     <span class="pull-right-container">
                                                                         <i class="fa fa-angle-left pull-right"></i>
                                                                     </span>
                                                                 </a>
                                                                 <ul class="treeview-menu">                               
-                                                                    <li><a href="${ctx}/CateAdmin"><i class="fa fa-circle-o"></i>View Category</a></li>                                
+                                                                    <li><a href="${ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>                                
                                                                 </ul>
                                                             </li>
                                                             <li class="treeview">
@@ -192,11 +192,23 @@
                                                                     </span>
                                                                 </a>
                                                                 <ul class="treeview-menu">
-                                                                    <c:forEach var="cate" items="${list}">
-                                                                        <li><a href="${ctx}/ProductAdmin?service=list&categoryID=${cate.categoryID}"><i class="fa fa-circle-o"></i> ${cate.categoryName}</a></li>
+                                                                    <c:forEach var="com" items="${requestScope.data}">
+                                                                        <li><a href=""><i class="fa fa-circle-o"></i> ${com.componentName}</a></li>
                                                                         </c:forEach>                               
                                                                 </ul>
-                                                            </li>
+                                                            </li>                 
+                                                            <li class="treeview">
+                                                                <a href="#">
+                                                                    <i class="fa fa-laptop"></i> <span>User</span>
+                                                                    <span class="pull-right-container">
+                                                                        <i class="fa fa-angle-left pull-right"></i>
+                                                                    </span>
+                                                                </a>
+                                                                <ul class="treeview-menu">                               
+                                                                    <li><a href="${ctx}/Admin/user"><i class="fa fa-circle-o"></i>View Users</a></li>                                  
+                                                                    <li><a href="${ctx}/Admin/user/add"><i class="fa fa-circle-o"></i>Add Users</a></li>                              
+                                                                </ul>
+                                                            </li>                  
                                                     </section>
                                                     <!-- /.sidebar -->
                                                 </aside>
@@ -206,13 +218,13 @@
                                                     <!-- Content Header (Page header) -->
                                                     <section class="content-header">
                                                         <h1>
-                                                            UPDATE PRODUCT
+                                                            UPDATE COMPONENT
 
                                                         </h1>
                                                         <ol class="breadcrumb">
                                                             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                                                            <li><a href="#">Product</a></li>
-                                                            <li class="active">Update Product</li>
+                                                            <li><a href="#">Component</a></li>
+                                                            <li class="active">Update Component</li>
                                                         </ol>
                                                     </section>
 
@@ -221,33 +233,40 @@
 
                                                         <!-- /.box-header -->                                                       
                                                         <div class="box-body">
-                                                            <form role="form" method="post" action="CateAdmin">
-                                                                <input type="hidden" name="service" value="insert">
+                                                            <form role="form" method="post" action="ComAdmin">
+                                                                <input type="hidden" name="service" value="update">
                                                                 <input type="hidden" name="submit" value="submit">
+
+                                                               
+                                                                <c:if test="${not empty component}">
+                                                                    <div class="form-group">
+                                                                        <label>Component ID</label>
+                                                                        <input type="text" name="component_id" class="form-control" value="${component.componentID}" readonly>
+                                                                    </div>
+                                                                </c:if>
 
                                                                 <!-- Category Name -->
                                                                 <div class="form-group">
-                                                                    <label>Category Name</label>
-                                                                    <input type="text" name="category_name" class="form-control" placeholder="Enter category name" required>
+                                                                    <label>Component Name</label>
+                                                                    <input type="text" name="component_name" class="form-control" value="${component.componentName}" required>
                                                                 </div>
 
                                                                 <!-- Quantity -->
                                                                 <div class="form-group">
                                                                     <label>Quantity</label>
-                                                                    <input type="number" name="quantity" class="form-control" placeholder="Enter quantity" required>
+                                                                    <input type="number" name="quantity" class="form-control" value="${component.quantity}" required>
                                                                 </div>
 
                                                                 <!-- Status -->
                                                                 <div class="form-group">
                                                                     <label>Status</label>
                                                                     <select name="status" class="form-control">
-                                                                        <option value="0">Inactive</option>
-                                                                        <option value="1" selected>Active</option>
+                                                                        <option value="0" ${component.status == 0 ? 'selected' : ''}>Inactive</option>
+                                                                        <option value="1" ${component.status == 1 ? 'selected' : ''}>Active</option>
                                                                     </select>
                                                                 </div>
-
                                                                 <!-- Submit -->
-                                                                <button type="submit" class="btn btn-success">Add Category</button>
+                                                                <button type="submit" class="btn btn-success">Update Component</button>
                                                             </form>
                                                         </div>
 

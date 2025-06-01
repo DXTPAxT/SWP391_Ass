@@ -57,12 +57,12 @@
         <servlet-class>controllerAdmin.AdminDashbordServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>CateAdminServlet</servlet-name>
-        <servlet-class>controllerAdmin.CateAdminServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>UserViewServlet</servlet-name>
         <servlet-class>controllerAdmin.UserViewServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ComAdminServlet</servlet-name>
+        <servlet-class>controllerAdmin.ComAdminServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
@@ -125,11 +125,11 @@
         <url-pattern>/AdminDashbordServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>CateAdminServlet</servlet-name>
-        <url-pattern>/CateAdmin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>UserViewServlet</servlet-name>
         <url-pattern>/Admin/user</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ComAdminServlet</servlet-name>
+        <url-pattern>/ComAdmin</url-pattern>
     </servlet-mapping>
 </web-app>
