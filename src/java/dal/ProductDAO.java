@@ -38,7 +38,7 @@ public class ProductDAO extends DBContext {
                         rs.getDate("CreatedAt"),
                         rs.getInt("CategoryID"),
                         rs.getInt("Status"));
-            }
+            }   
         } catch (SQLException ex) {
             Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
         }

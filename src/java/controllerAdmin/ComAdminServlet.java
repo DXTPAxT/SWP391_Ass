@@ -4,7 +4,7 @@
  */
 package controllerAdmin;
 
-import dal.CategoryDAO;
+import dal.ComponentDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,12 +13,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import models.Categories;
+import models.Components;
 
 /**
  *
  * @author Admin
  */
-public class CateAdminServlet extends HttpServlet {
+public class ComAdminServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,56 +35,59 @@ public class CateAdminServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             String service = request.getParameter("service");
+            
             if (service == null) {
                 service = "list";
             }
-            CategoryDAO dao = new CategoryDAO();
+            ComponentDAO dao = new ComponentDAO();
+            dao.updateAllComponentQuantities();
+
             if (service.equals("list")) {
 
-                List<Categories> Categories = dao.getCategoriesName();
-                request.setAttribute("data", Categories);
+                List<Components> components = dao.getAllComponent("SELECT * FROM Components");
+                request.setAttribute("data", components);
                 //request.getRequestDispatcher("/AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);
-                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewCategory.jsp").forward(request, response);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewComponent.jsp").forward(request, response);
             } else if (service.equals("update")) {
                 String submit = request.getParameter("submit");
                 if (submit == null) {
-                    int categoryID = Integer.parseInt(request.getParameter("categoryID"));
-                    Categories category = dao.searchCategoryByID(categoryID);
-                    List<Categories> Categories = dao.getCategoriesName();
-                    request.setAttribute("list", Categories);
-                    request.setAttribute("category", category);
-                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateCategory.jsp").forward(request, response);
+                    int componentID = Integer.parseInt(request.getParameter("componentID"));
+                    Components component = dao.searchComponentByID(componentID);
+                    List<Components> components = dao.getAllComponent("SELECT * FROM Components");
+                    request.setAttribute("list", components);
+                    request.setAttribute("component", component);
+                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateComponent.jsp").forward(request, response);
                 } else {
-                    int categoryID = Integer.parseInt(request.getParameter("category_id"));
-                    String categoryName = request.getParameter("category_name");
+                    int componentID = Integer.parseInt(request.getParameter("component_id"));
+                    String componentName = request.getParameter("component_name");
                     int quantity = Integer.parseInt(request.getParameter("quantity"));
                     int status = Integer.parseInt(request.getParameter("status"));
 
-                    Categories category = new Categories(categoryID, categoryName, quantity, status);
-                    dao.updateCategory(category);
+                    Components component = new Components(componentID, componentName, quantity, status);
+                    dao.updateComponent(component);
 
-                    response.sendRedirect(request.getContextPath() + "/CateAdmin?service=list");
+                    response.sendRedirect(request.getContextPath() + "/ComAdmin?service=list");
                 }
             } else if (service.equals("insert")) {
                 String submit = request.getParameter("submit");
                 if (submit == null) {
-                    List<Categories> Categories = dao.getCategoriesName();
-                    request.setAttribute("data", Categories);
-                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertCategory.jsp").forward(request, response);
+                    List<Components> components = dao.getAllComponent("SELECT * FROM Components");
+                    request.setAttribute("data", components);
+                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertComponent.jsp").forward(request, response);
                 } else {
 
-                    String name = request.getParameter("category_name");
-                    int quantity = Integer.parseInt(request.getParameter("quantity"));
-                    int status = Integer.parseInt(request.getParameter("status"));
+                    String name = request.getParameter("component_name");
+                    int Quantity = Integer.parseInt(request.getParameter("quantity"));
+                    int Status = Integer.parseInt(request.getParameter("status"));
 
-                    Categories category = new Categories(); // Giả sử có constructor rỗng
-                    category.setCategoryName(name);
-                    category.setQuantity(quantity);
-                    category.setStatus(status);
+                    Components component = new Components(); // Giả sử có constructor rỗng
+                    component.setComponentName(name);
+                    component.setQuantity(Quantity);
+                    component.setStatus(Status);
 
-                    dao.insertCategory(category);
+                    dao.insertComponent(component);
 
-                    response.sendRedirect(request.getContextPath() + "/CateAdmin?service=list");
+                    response.sendRedirect(request.getContextPath() + "/ComAdmin?service=list");
                 }
             }
 

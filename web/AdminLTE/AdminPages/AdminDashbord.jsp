@@ -339,13 +339,13 @@
                         <li class="header">MAIN NAVIGATION</li>
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-laptop"></i> <span>Category</span>
+                                <i class="fa fa-laptop"></i> <span>Component</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
                             </a>
                             <ul class="treeview-menu">                               
-                                    <li><a href="${ctx}/CateAdmin"><i class="fa fa-circle-o"></i>View Category</a></li>                                
+                                    <li><a href="${ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>                                
                             </ul>
                         </li>
                         <li class="treeview">
@@ -356,8 +356,8 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu">
-                                <c:forEach var="cate" items="${list}">
-                                    <li><a href="${ctx}/ProductAdmin?service=list&categoryID=${cate.categoryID}"><i class="fa fa-circle-o"></i> ${cate.categoryName}</a></li>
+                                <c:forEach var="com" items="${list}">
+                                    <li><a href=""><i class="fa fa-circle-o"></i> ${com.componentName}</a></li>
                                     </c:forEach>                               
                             </ul>
                         </li>                 

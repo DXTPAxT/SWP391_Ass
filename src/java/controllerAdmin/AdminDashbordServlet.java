@@ -4,7 +4,7 @@
  */
 package controllerAdmin;
 
-import dal.CategoryDAO;
+import dal.ComponentDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import models.Categories;
+import models.Components;
 
 /**
  *
@@ -27,10 +27,10 @@ public class AdminDashbordServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
           
-            CategoryDAO dao = new CategoryDAO();
+            ComponentDAO dao = new ComponentDAO();
 
-            List<Categories> Categories = dao.getCategoriesName();
-            request.setAttribute("list", Categories);
+            List<Components> Components = dao.getAllComponent("SELECT * FROM Components");
+            request.setAttribute("list", Components);
             //request.getRequestDispatcher("/AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);
             request.getRequestDispatcher("AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);
         }

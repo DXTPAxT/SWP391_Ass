@@ -331,15 +331,15 @@
                     <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu">
                         <li class="header">MAIN NAVIGATION</li>
-                         <li class="treeview">
+                        <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-laptop"></i> <span>Category</span>
+                                <i class="fa fa-laptop"></i> <span>Component</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
                             </a>
                             <ul class="treeview-menu">                               
-                                    <li><a href="${ctx}/CateAdmin"><i class="fa fa-circle-o"></i>View Category</a></li>                                
+                                <li><a href="${ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>                                
                             </ul>
                         </li>
                         <li class="treeview">
@@ -350,9 +350,21 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu">
-                                <c:forEach var="cate" items="${requestScope.data}">
-                                    <li><a href="${ctx}/ProductAdmin?service=list&categoryID=${cate.categoryID}"><i class="fa fa-circle-o"></i> ${cate.categoryName}</a></li>
-                                    </c:forEach>
+                                <c:forEach var="com" items="${requestScope.data}">
+                                    <li><a href=""><i class="fa fa-circle-o"></i> ${com.componentName}</a></li>
+                                    </c:forEach>                               
+                            </ul>
+                        </li>                 
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>User</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">                               
+                                <li><a href="${ctx}/Admin/user"><i class="fa fa-circle-o"></i>View Users</a></li>                                  
+                                <li><a href="${ctx}/Admin/user/add"><i class="fa fa-circle-o"></i>Add Users</a></li>                              
                             </ul>
                         </li>                       
                     </ul>
@@ -381,8 +393,8 @@
                         <div class="col-xs-12">
                             <div class="box">
                                 <div class="box-header">
-                                    <h3 class="box-title">Category</h3>
-                                    <a href="CateAdmin?service=insert" 
+                                    <h3 class="box-title">Component</h3>
+                                    <a href="ComAdmin?service=insert" 
                                        class="btn btn-warning btn-sm" 
                                        style="float: right;">ADD</a>
                                 </div>
@@ -391,27 +403,27 @@
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Category ID</th>
+                                                <th>Component ID</th>
                                                 <th>Name</th>
                                                 <th>Quantity</th>                                               
                                                 <th>Status</th>
                                                 <th>Update</th>
-                                               
+
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <c:if test="${not empty requestScope.data}">
-                                                <c:forEach var="cate" items="${requestScope.data}">
+                                                <c:forEach var="com" items="${requestScope.data}">
                                                     <tr>
-                                                        <td>${cate.categoryID}</td>
-                                                        <td>${cate.categoryName}</td>
-                                                        <td>${cate.quantity}</td>
-                                                        <td>${cate.status}</td>
+                                                        <td>${com.componentID}</td>
+                                                        <td>${com.componentName}</td>
+                                                        <td>${com.quantity}</td>
+                                                        <td>${com.status}</td>
                                                         <td>
-                                                            <a href="CateAdmin?service=update&categoryID=${cate.categoryID}" 
+                                                            <a href="ComAdmin?service=update&componentID=${com.componentID}" 
                                                                class="btn btn-warning btn-sm">Update</a>
                                                         </td>
-                                                        
+
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
@@ -651,17 +663,17 @@
                     <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
                     <!-- page script -->
                     <script>
-                                                                   $(function () {
-                                                                       $("#example1").DataTable();
-                                                                       $('#example2').DataTable({
-                                                                           "paging": true,
-                                                                           "lengthChange": false,
-                                                                           "searching": false,
-                                                                           "ordering": true,
-                                                                           "info": true,
-                                                                           "autoWidth": false
-                                                                       });
-                                                                   });
+                        $(function () {
+                            $("#example1").DataTable();
+                            $('#example2').DataTable({
+                                "paging": true,
+                                "lengthChange": false,
+                                "searching": false,
+                                "ordering": true,
+                                "info": true,
+                                "autoWidth": false
+                            });
+                        });
                     </script>
                     <script>
                         $(function () {
