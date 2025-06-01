@@ -129,4 +129,13 @@ public class CategoryAdminDAO extends DBContext {
             Logger.getLogger(CategoryDAO.class.getName()).log(Level.SEVERE, null, e);
         }
     }
+
+    public static void main(String[] args) {
+        CategoryAdminDAO dao = new CategoryAdminDAO(); // hoặc BrandAdminDAO nếu tên vậy
+
+        int testComponentID = 2; // thay đổi ID này tùy dữ liệu có trong DB
+        Categories categories = dao.getCategoryByID(testComponentID);
+
+        System.out.println(categories.getCategoryName());
+    }
 }

@@ -422,7 +422,7 @@
                                                             </c:choose>
                                                         </td>
                                                         <td>
-                                                            <a href="CategoryAdmin?service=update&categoryID=${category.categoryID}" 
+                                                            <a href="CateAdmin?service=update&categoryID=${category.categoryID}" 
                                                                class="btn btn-warning btn-sm">Update</a>
                                                         </td>
                                                     </tr>

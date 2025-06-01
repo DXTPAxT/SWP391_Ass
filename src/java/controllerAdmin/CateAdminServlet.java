@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controllerAdmin;
 
+import dal.BrandAdminDAO;
 import dal.CategoryAdminDAO;
 import dal.CategoryDAO;
 import dal.ComponentDAO;
@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Date;
 import java.util.List;
+import models.Brands;
 import models.Categories;
 import models.Components;
 import models.Products;
@@ -26,36 +27,40 @@ import models.Products;
  * @author Admin
  */
 public class CateAdminServlet extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-           String service = request.getParameter("service");
-
-            ComponentDAO dao = new ComponentDAO();
-            CategoryAdminDAO cate = new CategoryAdminDAO();
-            List<Categories> list;
-
+            String service = request.getParameter("service");
+            if(service == null){
+                service="listall";
+            }
             if ("listall".equals(service)) {
-
+                ComponentDAO dao = new ComponentDAO();
+                CategoryAdminDAO cate = new CategoryAdminDAO();
+                List<Categories> list;
                 list = cate.getAllCategories("SELECT * FROM Categories");
-
                 List<Components> components = dao.getAllComponent("SELECT * FROM Components");
                 request.setAttribute("data", components);
                 request.setAttribute("list", list);
                 //request.getRequestDispatcher("/AdminLTE/AdminPages/test.jsp").forward(request, response);            
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewCate.jsp").forward(request, response);
             } else if ("listbycom".equals(service)) {
-                int id = Integer.parseInt( request.getParameter("componentID"));
-                list = cate.getCategoriesByComponentID(id);    
+                ComponentDAO dao = new ComponentDAO();
+                CategoryAdminDAO cate = new CategoryAdminDAO();
+                List<Categories> list;
+                int id = Integer.parseInt(request.getParameter("componentID"));
+                list = cate.getCategoriesByComponentID(id);
                 List<Components> components = dao.getAllComponent("SELECT * FROM Components");
                 Components c = dao.searchComponentByID(id);
                 String name = c.getComponentName();
@@ -64,68 +69,82 @@ public class CateAdminServlet extends HttpServlet {
                 request.setAttribute("list", list);
                 //request.getRequestDispatcher("/AdminLTE/AdminPages/test.jsp").forward(request, response);            
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewCate.jsp").forward(request, response);
-            } /*else if (service.equals("update")) {
+            } else if (service.equals("update")) {
+                ComponentDAO dao = new ComponentDAO();
+                CategoryAdminDAO cate = new CategoryAdminDAO();
+                List<Categories> list;
                 String submit = request.getParameter("submit");
                 if (submit == null) {
-                    int productID = Integer.parseInt(request.getParameter("productID"));
-                    Products product = dao.getProductByID(productID);
-                    CategoryDAO dao1 = new CategoryDAO();
+                    BrandAdminDAO brand = new BrandAdminDAO();
+                    int categoryID = Integer.parseInt(request.getParameter("categoryID"));
+                    Categories category = cate.getCategoryByID(categoryID);
+                    List<Components> components = dao.getAllComponent("SELECT * FROM Components");
+                    List<Brands> brands = brand.getAllBrands(); // nếu có chọn brand
 
-                    List<Categories> Categories = dao1.getCategoriesName();
-
-                    request.setAttribute("list", Categories);
-
-                    request.setAttribute("product", product);
-                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateProduct.jsp").forward(request, response);
-                    //request.getRequestDispatcher("AdminLTE/AdminPages/test.jsp").forward(request, response);
+                    request.setAttribute("category", category);
+                    request.setAttribute("data", components);
+                    request.setAttribute("brands", brands); // nếu có
+                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateCate.jsp").forward(request, response);
                 } else {
-                    int productID = Integer.parseInt(request.getParameter("product_id"));
-                    String name = request.getParameter("name");
-                    String description = request.getParameter("description");
-                    String brand = request.getParameter("brand");
-                    double price = Double.parseDouble(request.getParameter("price"));
+                    int categoryID = Integer.parseInt(request.getParameter("categoryID"));
+                    String categoryName = request.getParameter("categoryName");
+                    int componentID = Integer.parseInt(request.getParameter("componentID"));
+                    int brandID = Integer.parseInt(request.getParameter("brandID"));
                     int quantity = Integer.parseInt(request.getParameter("quantity"));
-                    int warranty = Integer.parseInt(request.getParameter("warranty"));
-                    Date createdAt = Date.valueOf(request.getParameter("created_at")); // định dạng yyyy-[m]m-[d]d
-                    int categoryID = Integer.parseInt(request.getParameter("category_id"));
+                    int price = Integer.parseInt(request.getParameter("price"));
+                    String description = request.getParameter("description");
                     int status = Integer.parseInt(request.getParameter("status"));
-                    Products p = new Products(productID, name, description, brand, price, quantity, warranty, createdAt, categoryID, status);
-                    dao.updateProduct(p);
-                    response.sendRedirect(request.getContextPath() + "/ProductAdmin?service=list&categoryID=" + p.getCategoryID());
+
+                    Categories updatedCategory = new Categories(categoryID, categoryName, componentID, brandID, quantity, price, description, status);
+                    cate.updateCategory(updatedCategory);
+
+                    response.sendRedirect(request.getContextPath() + "/CateAdmin?service=listbycom&componentID=" + componentID);
+                    //response.sendRedirect(request.getContextPath() + "/AdminDashbordServlet");
+                  
                 }
+
             } else if (service.equals("insert")) {
+                ComponentDAO dao = new ComponentDAO();
+                CategoryAdminDAO cate = new CategoryAdminDAO();
+                List<Categories> list;
                 String submit = request.getParameter("submit");
+
                 if (submit == null) {
-                    
-                    List<Categories> categories = cate.getCategoriesName();
-                    request.setAttribute("list", categories);
+                    List<Components> components = dao.getAllComponent("SELECT * FROM Components");
+
+                    request.setAttribute("data", components);
                     request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertProduct.jsp").forward(request, response);
+                    return; // ✅ Dừng xử lý nếu đã forward
                 } else {
-                
-                    String name = request.getParameter("name");
-                    String description = request.getParameter("description");
-                    String brand = request.getParameter("brand");
-                    double price = Double.parseDouble(request.getParameter("price"));
-                    int quantity = Integer.parseInt(request.getParameter("quantity"));
-                    int warranty = Integer.parseInt(request.getParameter("warranty"));
-                    Date createdAt = Date.valueOf(request.getParameter("created_at"));
-                    int categoryID = Integer.parseInt(request.getParameter("category_id"));
-                    int status = Integer.parseInt(request.getParameter("status"));
+                    try {
+                        int categoryID = Integer.parseInt(request.getParameter("categoryID"));
+                        String categoryName = request.getParameter("categoryName");
+                        int componentID = Integer.parseInt(request.getParameter("componentID"));
+                        int brandID = Integer.parseInt(request.getParameter("brandID"));
+                        int quantity = Integer.parseInt(request.getParameter("quantity"));
+                        int price = Integer.parseInt(request.getParameter("price"));
+                        String description = request.getParameter("description");
+                        int status = Integer.parseInt(request.getParameter("status"));
 
-                    
-                    Products p = new Products(name, description, brand, price, quantity, warranty, createdAt, categoryID, status);
-                    dao.insertProduct(p);
+                        Categories updatedCategory = new Categories(categoryID, categoryName, componentID, brandID, quantity, price, description, status);
 
-                   
-                    response.sendRedirect(request.getContextPath() + "/ProductAdmin?service=list&categoryID=" + categoryID);
+                        // ✅ Redirect và return ngay
+                        response.sendRedirect(request.getContextPath() + "/ProductAdmin?service=list&categoryID=" + categoryID);
+                        return;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        response.getWriter().println("Error while inserting product: " + e.getMessage());
+                    }
                 }
-            }*/
-        }
-    } 
+            }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+        }
+    }
+
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -133,12 +152,13 @@ public class CateAdminServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
-    } 
+    }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -146,12 +166,13 @@ public class CateAdminServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override
