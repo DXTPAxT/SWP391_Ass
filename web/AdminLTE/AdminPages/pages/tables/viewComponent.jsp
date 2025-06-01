@@ -339,22 +339,12 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu">                               
-                                <li><a href="${ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>                                
+                                <li><a href="${ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>   
+                                    <c:forEach var="com" items="${data}">
+                                    <li><a href="${ctx}/CateAdmin?service=listbycom&componentID=${com.componentID}"><i class="fa fa-circle-o"></i> ${com.componentName}</a></li>
+                                    </c:forEach>    
                             </ul>
-                        </li>
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-table"></i> <span>Products</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span>
-                            </a>
-                            <ul class="treeview-menu">
-                                <c:forEach var="com" items="${requestScope.data}">
-                                    <li><a href=""><i class="fa fa-circle-o"></i> ${com.componentName}</a></li>
-                                    </c:forEach>                               
-                            </ul>
-                        </li>                 
+                        </li>                                 
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-laptop"></i> <span>User</span>
@@ -366,7 +356,7 @@
                                 <li><a href="${ctx}/Admin/user"><i class="fa fa-circle-o"></i>View Users</a></li>                                  
                                 <li><a href="${ctx}/Admin/user/add"><i class="fa fa-circle-o"></i>Add Users</a></li>                              
                             </ul>
-                        </li>                       
+                        </li>                          
                     </ul>
                 </section>
                 <!-- /.sidebar -->

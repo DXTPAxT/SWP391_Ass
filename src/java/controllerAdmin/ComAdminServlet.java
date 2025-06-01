@@ -54,7 +54,7 @@ public class ComAdminServlet extends HttpServlet {
                     int componentID = Integer.parseInt(request.getParameter("componentID"));
                     Components component = dao.searchComponentByID(componentID);
                     List<Components> components = dao.getAllComponent("SELECT * FROM Components");
-                    request.setAttribute("list", components);
+                    request.setAttribute("data", components);
                     request.setAttribute("component", component);
                     request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateComponent.jsp").forward(request, response);
                 } else {
