@@ -1,8 +1,3 @@
-<%-- 
-    Document   : homepages
-    Created on : May 22, 2025, 11:04:18 AM
-    Author     : PC
---%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -219,8 +214,8 @@
                     <div class="col-sm-3">
                         <div class="left-sidebar">
                             <h2 class="title text-center">CATEGORY</h2>
-                            <div class="panel-group category-products">
-                                <c:forEach var="comp" items="${Components}">
+                            <div class="panel-group category-products" id="accordian">
+                               <c:forEach var="comp" items="${Components}">
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h4 class="panel-title">
@@ -264,101 +259,109 @@
                                 </div>
                             </div><!--/brands_products-->
 
+                            <div class="price-range"><!--price-range-->
+                                <h2>Price Range</h2>
+                                <div class="well">
+                                    <form action="Product" method="get">
+                                        <input type="hidden" name="service" value="priceFilter"/>
 
+                                        <div class="form-group">
+                                            <label for="minPrice">Minimum Price (VND):</label>
+                                            <input type="number" id="minPrice" name="minPrice" class="form-control"
+                                                   placeholder="e.g. 10,000,000" min="0" />
+                                        </div>
 
+                                        <div class="form-group">
+                                            <label for="maxPrice">Maximum Price (VND):</label>
+                                            <input type="number" id="maxPrice" name="maxPrice" class="form-control"
+                                                   placeholder="e.g. 50,000,000" min="0"/>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-warning btn-block">Search by Price</button>
+                                    </form>
+                                </div>
+                            </div><!--/price-range-->
 
                         </div>
                     </div>
 
                     <div class="col-sm-9 padding-right">
+                        <div class="features_items"><!--features_items-->
+                            <h2 class="title text-center">Products </h2>
 
-                        <!-- PC Section -->
-                        <div class="features_items">
-                            <h2 class="title text-center" style="margin-top: 30px">PC</h2>
 
-                            <c:forEach var="product" items="${pcProducts}"> 
+                            <c:forEach var="product" items="${requestScope.data}"> 
+
                                 <div class="col-sm-4">
                                     <div class="product-image-wrapper">
                                         <div class="single-products">
-                                            <div class="productinfo text-center">
-                                                <img src="${ctx}/ShopPages/Pages/images/anhproduct/1.png" alt="${product.name}" />
-                                                <h3>${product.price}</h3>
-                                                <h2>${product.brand}</h2>
-                                                <p>${product.name}</p>
-                                                <a href="#" class="btn btn-default add-to-cart">
-                                                    <i class="fa fa-shopping-cart"></i>Add to cart
+                                            <div class="productinfo text-center"> 
+                                                <a href="${pageContext.request.contextPath}/Product?service=detail&productID=${product.productID}">
+                                                    <img src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
+                                                    <p>${product.brand}</p>
+                                                    <h2>
+                                                        <fmt:formatNumber value="${product.price}" type="number" groupingUsed="true"/> VND
+                                                    </h2>
+                                                    <p>${product.name}</p>
                                                 </a>
+                                                <button class="add-to-cart"
+                                                        data-userid="${user.getUserID()}"
+                                                        data-productid="${product.getProductID()}"
+                                                        data-name="${product.name}"
+                                                        data-image="${ctx}/ShopPages/Pages/images/shop/product12.jpg"
+                                                        data-price="${product.price}"
+                                                        class="btn btn-default add-to-cart"
+                                                        >
+                                                    <i class="fa fa-shopping-cart"></i>
+                                                    Add to cart
+                                                </button>
                                             </div>
+
                                         </div>
+
                                     </div>
                                 </div>
-                            </c:forEach>
-
-                            <c:if test="${empty pcProducts}">
-                                <p class="text-center">Không có sản phẩm nào!</p>
+                            </c:forEach> 
+                            <c:if test="${empty data}">
+                                <p>Không có sản phẩm nào!</p>
                             </c:if>
 
-                            <!-- Pagination PC -->
-                            <div class="pagination-area text-center" style="margin-top: 40px; clear: both;">
-                                <ul class="pagination" style="display: inline-block; float: none;">
-                                    <c:forEach begin="1" end="${totalPagesPC}" var="i">
-                                        <li class="${i == currentPagePC ? 'active' : ''}">
-                                            <a href="HomePages?pagePC=${i}&pageLaptop=${currentPageLaptop}">${i}</a>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
-                            </div>
 
-                            <!-- VIEW MORE Button -->
-                            <div class="category-tab">
-                                <div class="col-sm-12 text-center">
-                                    <a href="#laptop" class="btn btn-warning" style="margin-top: 20px;">VIEW MORE</a>
-                                </div>
-                            </div>
-
-                            <!-- Laptop Section -->
-                            <div class="features_items" id="laptop">
-                                <h2 class="title text-center" style="margin-top: 30px">Laptop</h2>
-
-                                <c:forEach var="product1" items="${laptopProducts}"> 
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="${ctx}/ShopPages/Pages/images/anhproduct/1.png" alt="${product1.name}" />
-                                                    <h3>${product1.price}</h3>
-                                                    <h2>${product1.brand}</h2>
-                                                    <p>${product1.name}</p>
-                                                    <a href="#" class="btn btn-default add-to-cart">
-                                                        <i class="fa fa-shopping-cart"></i>Add to cart
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </c:forEach>
-
-                                <c:if test="${empty laptopProducts}">
-                                    <p class="text-center">Không có sản phẩm nào!</p>
-                                </c:if>
-
-                                <!-- Pagination Laptop -->
+                            <c:if test="${totalPages gt 1}">
                                 <div class="pagination-area text-center" style="margin-top: 40px; clear: both;">
                                     <ul class="pagination" style="display: inline-block; float: none;">
-                                        <c:forEach begin="1" end="${totalPagesLaptop}" var="i">
-                                            <li class="${i == currentPageLaptop ? 'active' : ''}">
-                                                <a href="HomePages?pageLaptop=${i}&pagePC=${currentPagePC}">${i}</a>
+                                        <c:forEach begin="1" end="${totalPages}" var="i">
+                                            <c:url var="pageURL" value="Product">
+                                                <c:param name="page" value="${i}" />
+                                                <c:param name="service" value="${currentService}" />
+                                                <c:if test="${not empty currentBrand}">
+                                                    <c:param name="Brand" value="${currentBrand}" />
+                                                </c:if>
+                                                <c:if test="${not empty currentCategory}">
+                                                    <c:param name="categoryName" value="${currentCategory}" />
+                                                </c:if>
+                                                <c:if test="${not empty currentKeyword}">
+                                                    <c:param name="keyword" value="${currentKeyword}" />
+                                                </c:if>
+                                                <c:if test="${not empty minPrice}">
+                                                    <c:param name="minPrice" value="${minPrice}" />
+                                                </c:if>
+                                                <c:if test="${not empty maxPrice}">
+                                                    <c:param name="maxPrice" value="${maxPrice}" />
+                                                </c:if>
+                                            </c:url>
+                                            <li class="${i == currentPage ? 'active' : ''}">
+                                                <a href="${pageContext.request.contextPath}/${pageURL}">${i}</a>
                                             </li>
                                         </c:forEach>
                                     </ul>
                                 </div>
-                            </div>
+                            </c:if>
 
-
-
-                        </div>
+                        </div><!--features_items-->
                     </div>
                 </div>
+            </div>
         </section>
 
         <footer id="footer"><!--Footer-->
@@ -449,11 +452,11 @@
                             <div class="single-widget">
                                 <h2>Service</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">Online Help</a></li>
-                                    <li><a href="#">Contact Us</a></li>
-                                    <li><a href="#">Order Status</a></li>
-                                    <li><a href="#">Change Location</a></li>
-                                    <li><a href="#">FAQ’s</a></li>
+                                    <li><a href="">Online Help</a></li>
+                                    <li><a href="">Contact Us</a></li>
+                                    <li><a href="">Order Status</a></li>
+                                    <li><a href="">Change Location</a></li>
+                                    <li><a href="">FAQ’s</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -461,11 +464,11 @@
                             <div class="single-widget">
                                 <h2>Quock Shop</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">T-Shirt</a></li>
-                                    <li><a href="#">Mens</a></li>
-                                    <li><a href="#">Womens</a></li>
-                                    <li><a href="#">Gift Cards</a></li>
-                                    <li><a href="#">Shoes</a></li>
+                                    <li><a href="">T-Shirt</a></li>
+                                    <li><a href="">Mens</a></li>
+                                    <li><a href="">Womens</a></li>
+                                    <li><a href="">Gift Cards</a></li>
+                                    <li><a href="">Shoes</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -473,11 +476,11 @@
                             <div class="single-widget">
                                 <h2>Policies</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">Terms of Use</a></li>
-                                    <li><a href="#">Privecy Policy</a></li>
-                                    <li><a href="#">Refund Policy</a></li>
-                                    <li><a href="#">Billing System</a></li>
-                                    <li><a href="#">Ticket System</a></li>
+                                    <li><a href="">Terms of Use</a></li>
+                                    <li><a href="">Privecy Policy</a></li>
+                                    <li><a href="">Refund Policy</a></li>
+                                    <li><a href="">Billing System</a></li>
+                                    <li><a href="">Ticket System</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -485,11 +488,11 @@
                             <div class="single-widget">
                                 <h2>About Shopper</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">Company Information</a></li>
-                                    <li><a href="#">Careers</a></li>
-                                    <li><a href="#">Store Location</a></li>
-                                    <li><a href="#">Affillate Program</a></li>
-                                    <li><a href="#">Copyright</a></li>
+                                    <li><a href="">Company Information</a></li>
+                                    <li><a href="">Careers</a></li>
+                                    <li><a href="">Store Location</a></li>
+                                    <li><a href="">Affillate Program</a></li>
+                                    <li><a href="">Copyright</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -509,11 +512,15 @@
             </div>
 
             <div class="footer-bottom">
-
+                <div class="container">
+                    <div class="row">
+                        <p class="pull-left">Copyright © 2013 E-Shopper. All rights reserved.</p>
+                        <p class="pull-right">Designed by <span><a target="_blank" href="http://www.themeum.com">Themeum</a></span></p>
+                    </div>
+                </div>
             </div>
 
         </footer><!--/Footer-->
-
 
         <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
         <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
@@ -521,6 +528,8 @@
         <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
         <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
         <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
+        <!-- SweetAlert2 CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <!-- Kích hoạt carousel nếu cần -->
         <script>
@@ -528,5 +537,165 @@
                 $('#slider-carousel').carousel(); // Khởi động carousel thủ công
             });
         </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const form = document.querySelector("form[action='Product']");
+                const minInput = document.getElementById("minPrice");
+                const maxInput = document.getElementById("maxPrice");
+
+                // Ngăn nhập chữ cái và ký tự không hợp lệ
+                function preventNonNumericInput(e) {
+                    const invalidChars = ['e', 'E', '+', '-', ','];
+                    if (invalidChars.includes(e.key)) {
+                        e.preventDefault();
+                    }
+                }
+
+                minInput.addEventListener('keydown', preventNonNumericInput);
+                maxInput.addEventListener('keydown', preventNonNumericInput);
+
+                // Validate khi submit form
+                form.addEventListener("submit", function (e) {
+                    const min = parseInt(minInput.value);
+                    const max = parseInt(maxInput.value);
+
+                    if (isNaN(min) || isNaN(max)) {
+                        alert("Please enter both minimum and maximum prices.");
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (min < 0 || max < 0) {
+                        alert("Price cannot be negative.");
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (max < min) {
+                        alert("Maximum price must be greater than or equal to minimum price.");
+                        e.preventDefault();
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const userID = btn.dataset.userid;
+                    const productID = btn.dataset.productid;
+                    const name = btn.dataset.name;
+                    const image = btn.dataset.image;
+                    const price = btn.dataset.price;
+                    console.log("Tên:", name, "Ảnh:", image);
+                    addItem(userID, productID, name, image, price);
+                });
+            });
+
+            function addItem(userID, productID, productName, productImageURL, productPrice) {
+                confirmAddProductToCart(productName, productImageURL, productPrice).then(quantity => {
+                    if (quantity !== null && quantity > 0) {
+                        const params = new URLSearchParams();
+                        params.append("userID", userID);
+                        params.append("productID", productID);
+                        params.append("quantity", quantity);
+
+                        fetch('AddCartItem', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: params.toString()
+                        })
+                                .then(response => response.text())
+                                .then(data => {
+                                    if (data.trim() === 'success') {
+                                        Swal.fire("Thành công", "Sản phẩm đã được thêm vào giỏ", "success");
+                                        // updateCartTotal(); // nếu có
+                                    } else {
+                                        Swal.fire("Lỗi", "Thêm thất bại", "error");
+                                    }
+                                });
+                    } else {
+                        console.log("Người dùng hủy thêm sản phẩm hoặc nhập sai số lượng");
+                    }
+                });
+            }
+
+
+            function confirmAddProductToCart(productName, productImageURL, productPrice) {
+                return Swal.fire({
+                    title: "Thêm sản phẩm vào giỏ hàng",
+                    html: `
+    <div style="text-align: center; margin-bottom: 10px;">
+        <img src="` + productImageURL + `" alt="` + productName + `" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 5px;" />
+        <div style="font-weight: bold; font-size: 16px;">` + productName + `</div>
+        <div style="margin-top: 5px; font-size: 14px; color: #fd7e14;">Giá: 
+            <span id="unitPrice">` + Number(productPrice).toLocaleString('vi-VN', {maximumFractionDigits: 0}).replace(/\./g, ',') + `</span> VND
+        </div>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+        <button id="decreaseBtn" class="swal2-styled" style="padding: 10px; font-size: 18px;">–</button>
+        <input id="quantity" type="number" min="1" value="1"
+               class="swal2-input"
+               style="width: 60px; text-align: center; font-size: 18px; height: 40px; padding: 0; margin: 0;" />
+        <button id="increaseBtn" class="swal2-styled" style="padding: 10px; font-size: 18px;">+</button>
+    </div>
+    <div style="margin-top: 5px; font-size: 18px; color: #e8590c; font-weight: bold;">Tổng: 
+        <span id="totalPrice">` + Number(productPrice).toLocaleString('vi-VN', {maximumFractionDigits: 0}).replace(/\./g, ',') + `</span> VND
+    </div>
+`,
+
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "<span style='font-size: 18px;'>Thêm</span>",
+                    cancelButtonText: "<span style='font-size: 18px;'>Hủy</span>",
+                    didOpen: () => {
+                        const qtyInput = document.getElementById('quantity');
+                        const totalElem = document.getElementById('totalPrice');
+
+                        const updateTotal = () => {
+                            const qty = parseInt(qtyInput.value);
+                            totalElem.textContent = (qty * productPrice).toLocaleString();
+                        };
+
+                        document.getElementById('increaseBtn').addEventListener('click', () => {
+                            qtyInput.value = parseInt(qtyInput.value) + 1;
+                            updateTotal();
+                        });
+
+                        document.getElementById('decreaseBtn').addEventListener('click', () => {
+                            const current = parseInt(qtyInput.value);
+                            if (current > 1) {
+                                qtyInput.value = current - 1;
+                                updateTotal();
+                            }
+                        });
+
+                        qtyInput.addEventListener('input', () => {
+                            const val = parseInt(qtyInput.value);
+                            if (val >= 1)
+                                updateTotal();
+                        });
+                    },
+                    preConfirm: () => {
+                        const qty = document.getElementById('quantity').value;
+                        if (!qty || qty <= 0) {
+                            Swal.showValidationMessage("Vui lòng nhập số lượng hợp lệ");
+                            return false;
+                        }
+                        return parseInt(qty);
+                    }
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        return result.value;
+                    }
+                    return null;
+                });
+            }
+
+
+        </script>
+
     </body>
 </html>

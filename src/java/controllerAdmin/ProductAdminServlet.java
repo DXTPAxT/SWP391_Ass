@@ -4,7 +4,7 @@
  */
 package controllerAdmin;
 
-import dal.CategoryDAO;
+import dal.CategoriesDAO;
 import dal.ProductDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -40,14 +40,14 @@ public class ProductAdminServlet extends HttpServlet {
             String service = request.getParameter("service");
 
             ProductDAO dao = new ProductDAO();
-            CategoryDAO cate = new CategoryDAO();
+            CategoriesDAO cate = new CategoriesDAO();
             List<Products> list;
 
             if ("list".equals(service)) {
                 String id = request.getParameter("categoryID");
                 list = dao.getAllProduct("SELECT * FROM Products WHERE categoryID = " + id);
 
-                CategoryDAO dao1 = new CategoryDAO();
+                CategoriesDAO dao1 = new CategoriesDAO();
 
                 List<Categories> Categories = dao1.getCategoriesName();
                 request.setAttribute("data", list);
@@ -55,7 +55,7 @@ public class ProductAdminServlet extends HttpServlet {
                 //request.getRequestDispatcher("/AdminLTE/AdminPages/test.jsp").forward(request, response);            
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewProduct.jsp").forward(request, response);
             } else if ("cate".equals(service)) {
-                CategoryDAO dao1 = new CategoryDAO();
+                CategoriesDAO dao1 = new CategoriesDAO();
                 List<Categories> Categories = dao1.getCategoriesName();
 
                 request.setAttribute("list", Categories);
@@ -64,7 +64,7 @@ public class ProductAdminServlet extends HttpServlet {
                 if (submit == null) {
                     int productID = Integer.parseInt(request.getParameter("productID"));
                     Products product = dao.getProductByID(productID);
-                    CategoryDAO dao1 = new CategoryDAO();
+                    CategoriesDAO dao1 = new CategoriesDAO();
 
                     List<Categories> Categories = dao1.getCategoriesName();
 

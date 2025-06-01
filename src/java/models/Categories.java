@@ -5,6 +5,7 @@ public class Categories {
     private String categoryName;
     private int componentID;
     private int brandID;
+    private String brandName;
     private int quantity;
     private int price;
     private String description;
@@ -13,21 +14,12 @@ public class Categories {
     public Categories() {
     }
 
-    public Categories(String categoryName, int componentID, int brandID, int quantity, int price, String description, int status) {
-        this.categoryName = categoryName;
-        this.componentID = componentID;
-        this.brandID = brandID;
-        this.quantity = quantity;
-        this.price = price;
-        this.description = description;
-        this.status = status;
-    }
-
-    public Categories(int categoryID, String categoryName, int componentID, int brandID, int quantity, int price, String description, int status) {
+    public Categories(int categoryID, String categoryName, int componentID, int brandID, String brandName, int quantity, int price, String description, int status) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
         this.componentID = componentID;
         this.brandID = brandID;
+        this.brandName = brandName;
         this.quantity = quantity;
         this.price = price;
         this.description = description;
@@ -66,6 +58,14 @@ public class Categories {
         this.brandID = brandID;
     }
 
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
+
     public int getQuantity() {
         return quantity;
     }
@@ -97,4 +97,6 @@ public class Categories {
     public void setStatus(int status) {
         this.status = status;
     }
+    
 }
+    
