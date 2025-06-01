@@ -123,7 +123,7 @@ public class ComponentDAO extends DBContext {
         } catch (SQLException e) {
             Logger.getLogger(ComponentDAO.class.getName()).log(Level.SEVERE, null, e);
         }
-    }
+    }    
 
     public static void main(String[] args) {
         ComponentDAO dao = new ComponentDAO();
