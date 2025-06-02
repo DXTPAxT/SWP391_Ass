@@ -400,7 +400,9 @@
                                                 <th>Price</th>
                                                 <th>Description</th>
                                                 <th>Status</th>
+                                                <th>Toggle</th>
                                                 <th>Update</th>
+                                                <th>View</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -418,12 +420,26 @@
                                                             <c:choose>
                                                                 <c:when test="${category.status == 0}">Disable</c:when>
                                                                 <c:when test="${category.status == 1}">Active</c:when>
+                                                                <c:when test="${category.status == 2}">On Sale</c:when>
                                                                 <c:otherwise>Unknown</c:otherwise>
                                                             </c:choose>
                                                         </td>
                                                         <td>
+                                                            <a href="CateAdmin?service=changestatus&categoryID=${category.categoryID}" 
+                                                               class="btn btn-info btn-sm">
+                                                                <c:choose>
+                                                                    <c:when test="${category.status == 0}">Activate</c:when>
+                                                                    <c:otherwise>Disable</c:otherwise>
+                                                                </c:choose>
+                                                            </a>
+                                                        </td>
+                                                        <td>
                                                             <a href="CateAdmin?service=update&categoryID=${category.categoryID}" 
                                                                class="btn btn-warning btn-sm">Update</a>
+                                                        </td>
+                                                        <td>
+                                                            <a href="ProductAdmin?service=listbycate&categoryID=${category.categoryID}" 
+                                                               class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                     </tr>
                                                 </c:forEach>
@@ -442,13 +458,13 @@
                         <!-- /.box -->
 
                         <!-- /.content-wrapper -->
-                        <footer class="main-footer">
+                        <footer class="main-footer fixed-bottom full-width">
                             <div class="pull-right hidden-xs">
                                 <b>Version</b> 2.3.12
                             </div>
-                            <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights
-                            reserved.
+                            <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights reserved.
                         </footer>
+
 
                         <!-- Control Sidebar -->
                         <aside class="control-sidebar control-sidebar-dark">

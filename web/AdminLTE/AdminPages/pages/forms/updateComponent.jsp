@@ -181,22 +181,12 @@
                                                                     </span>
                                                                 </a>
                                                                 <ul class="treeview-menu">                               
-                                                                    <li><a href="${ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>                                
+                                                                    <li><a href="${ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>   
+                                                                        <c:forEach var="com" items="${data}">
+                                                                        <li><a href="${ctx}/CateAdmin?service=listbycom&componentID=${com.componentID}"><i class="fa fa-circle-o"></i> ${com.componentName}</a></li>
+                                                                        </c:forEach>    
                                                                 </ul>
-                                                            </li>
-                                                            <li class="treeview">
-                                                                <a href="#">
-                                                                    <i class="fa fa-table"></i> <span>Products</span>
-                                                                    <span class="pull-right-container">
-                                                                        <i class="fa fa-angle-left pull-right"></i>
-                                                                    </span>
-                                                                </a>
-                                                                <ul class="treeview-menu">
-                                                                    <c:forEach var="com" items="${requestScope.data}">
-                                                                        <li><a href=""><i class="fa fa-circle-o"></i> ${com.componentName}</a></li>
-                                                                        </c:forEach>                               
-                                                                </ul>
-                                                            </li>                 
+                                                            </li>                                 
                                                             <li class="treeview">
                                                                 <a href="#">
                                                                     <i class="fa fa-laptop"></i> <span>User</span>
@@ -208,7 +198,7 @@
                                                                     <li><a href="${ctx}/Admin/user"><i class="fa fa-circle-o"></i>View Users</a></li>                                  
                                                                     <li><a href="${ctx}/Admin/user/add"><i class="fa fa-circle-o"></i>Add Users</a></li>                              
                                                                 </ul>
-                                                            </li>                  
+                                                            </li>              
                                                     </section>
                                                     <!-- /.sidebar -->
                                                 </aside>
@@ -237,7 +227,7 @@
                                                                 <input type="hidden" name="service" value="update">
                                                                 <input type="hidden" name="submit" value="submit">
 
-                                                               
+
                                                                 <c:if test="${not empty component}">
                                                                     <div class="form-group">
                                                                         <label>Component ID</label>
@@ -254,7 +244,7 @@
                                                                 <!-- Quantity -->
                                                                 <div class="form-group">
                                                                     <label>Quantity</label>
-                                                                    <input type="number" name="quantity" class="form-control" value="${component.quantity}" required>
+                                                                    <input type="number" name="quantity" class="form-control" value="${component.quantity}" readonly>
                                                                 </div>
 
                                                                 <!-- Status -->
@@ -278,13 +268,13 @@
 
 
                                                 <!-- /.content-wrapper -->
-                                                <footer class="main-footer">
+                                                <footer class="main-footer fixed-bottom full-width">
                                                     <div class="pull-right hidden-xs">
                                                         <b>Version</b> 2.3.12
                                                     </div>
-                                                    <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights
-                                                    reserved.
+                                                    <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights reserved.
                                                 </footer>
+
 
                                                 <!-- Control Sidebar -->
                                                 <aside class="control-sidebar control-sidebar-dark">

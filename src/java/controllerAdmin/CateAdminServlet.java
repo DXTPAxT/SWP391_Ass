@@ -41,14 +41,17 @@ public class CateAdminServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+
             String service = request.getParameter("service");
+            ComponentDAO dao = new ComponentDAO();
+            CategoryAdminDAO cate = new CategoryAdminDAO();
+            List<Categories> list;
+            cate.updateAllCategoryQuantities();
             if (service == null) {
-                service = "listall";
+                service = "list";
             }
-            if ("listall".equals(service)) {
-                ComponentDAO dao = new ComponentDAO();
-                CategoryAdminDAO cate = new CategoryAdminDAO();
-                List<Categories> list;
+            if ("list".equals(service)) {
+
                 list = cate.getAllCategories("SELECT * FROM Categories");
                 List<Components> components = dao.getAllComponent("SELECT * FROM Components");
                 request.setAttribute("data", components);
@@ -56,9 +59,7 @@ public class CateAdminServlet extends HttpServlet {
                 //request.getRequestDispatcher("/AdminLTE/AdminPages/test.jsp").forward(request, response);            
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewCate.jsp").forward(request, response);
             } else if ("listbycom".equals(service)) {
-                ComponentDAO dao = new ComponentDAO();
-                CategoryAdminDAO cate = new CategoryAdminDAO();
-                List<Categories> list;
+
                 int id = Integer.parseInt(request.getParameter("componentID"));
                 list = cate.getCategoriesByComponentID(id);
                 List<Components> components = dao.getAllComponent("SELECT * FROM Components");
@@ -70,9 +71,7 @@ public class CateAdminServlet extends HttpServlet {
                 //request.getRequestDispatcher("/AdminLTE/AdminPages/test.jsp").forward(request, response);            
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewCate.jsp").forward(request, response);
             } else if (service.equals("update")) {
-                ComponentDAO dao = new ComponentDAO();
-                CategoryAdminDAO cate = new CategoryAdminDAO();
-                List<Categories> list;
+
                 String submit = request.getParameter("submit");
                 if (submit == null) {
                     BrandAdminDAO brand = new BrandAdminDAO();
@@ -90,7 +89,7 @@ public class CateAdminServlet extends HttpServlet {
                     String categoryName = request.getParameter("categoryName");
                     int componentID = Integer.parseInt(request.getParameter("componentID"));
                     int brandID = Integer.parseInt(request.getParameter("brandID"));
-                    int quantity = Integer.parseInt(request.getParameter("quantity"));
+                    int quantity = 0;
                     int price = Integer.parseInt(request.getParameter("price"));
                     String description = request.getParameter("description");
                     int status = Integer.parseInt(request.getParameter("status"));
@@ -102,8 +101,7 @@ public class CateAdminServlet extends HttpServlet {
                 }
 
             } else if (service.equals("insert")) {
-                ComponentDAO dao = new ComponentDAO();
-                CategoryAdminDAO cate = new CategoryAdminDAO();
+
                 String submit = request.getParameter("submit");
 
                 if (submit == null) {
@@ -118,16 +116,28 @@ public class CateAdminServlet extends HttpServlet {
                     String categoryName = request.getParameter("categoryName");
                     int componentID = Integer.parseInt(request.getParameter("componentID"));
                     int brandID = Integer.parseInt(request.getParameter("brandID"));
-                    int quantity = Integer.parseInt(request.getParameter("quantity"));
+                    int quantity = 0;
                     int price = Integer.parseInt(request.getParameter("price"));
                     String description = request.getParameter("description");
                     int status = Integer.parseInt(request.getParameter("status"));
 
-                    Categories newCategory = new Categories( categoryName, componentID, brandID, quantity, price, description, status);
+                    Categories newCategory = new Categories(categoryName, componentID, brandID, quantity, price, description, status);
                     cate.insertCategory(newCategory);
 
                     response.sendRedirect(request.getContextPath() + "/CateAdmin?service=listbycom&componentID=" + componentID);
                 }
+            } else if (service.equals("changestatus")) {
+                int categoryID = Integer.parseInt(request.getParameter("categoryID"));
+
+                Categories category = cate.getCategoryByID(categoryID);
+                int componentID = category.getComponentID();
+                if (category != null) {
+                    int newStatus = (category.getStatus() == 0) ? 1 : 0;
+                    cate.updateStatus(categoryID, newStatus);
+                }
+
+            response.sendRedirect(request.getContextPath() + "/CateAdmin?service=listbycom&componentID=" + componentID);
+
             }
 
         }

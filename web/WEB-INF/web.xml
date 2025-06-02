@@ -68,6 +68,10 @@
         <servlet-name>CateAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.CateAdminServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>BrandAdminServlet</servlet-name>
+        <servlet-class>controllerAdmin.BrandAdminServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
         <url-pattern>/Demo</url-pattern>
@@ -139,5 +143,9 @@
     <servlet-mapping>
         <servlet-name>CateAdminServlet</servlet-name>
         <url-pattern>/CateAdmin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BrandAdminServlet</servlet-name>
+        <url-pattern>/BrandAdmin</url-pattern>
     </servlet-mapping>
 </web-app>
