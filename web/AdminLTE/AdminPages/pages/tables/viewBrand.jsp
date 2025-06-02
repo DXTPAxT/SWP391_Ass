@@ -1,5 +1,5 @@
 <%-- 
-    Document   : insertCategory
+    Document   : insertProduct
     Created on : May 28, 2025, 9:48:28 PM
     Author     : Admin
 --%>
@@ -344,7 +344,32 @@
                                     <li><a href="${ctx}/CateAdmin?service=listbycom&componentID=${com.componentID}"><i class="fa fa-circle-o"></i> ${com.componentName}</a></li>
                                     </c:forEach>    
                             </ul>
-                        </li>                                 
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Category</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">                               
+                                <li><a href="${ctx}/CateAdmin&service=listall"><i class="fa fa-circle-o"></i>View Category</a></li>                                         
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Brand</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">                               
+                                <li><a href="${ctx}/BanAdmin&service=listall"><i class="fa fa-circle-o"></i>View Brand</a></li>   
+                                    <c:forEach var="ban" items="${brand}">
+                                    <li><a href="${ctx}/CateAdmin?service=listbybrand&brandID=${ban.brandID}"><i class="fa fa-circle-o"></i> ${ban.brandName}</a></li>
+                                    </c:forEach>    
+                            </ul>
+                        </li>
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-laptop"></i> <span>User</span>
@@ -356,7 +381,7 @@
                                 <li><a href="${ctx}/Admin/user"><i class="fa fa-circle-o"></i>View Users</a></li>                                  
                                 <li><a href="${ctx}/Admin/user/add"><i class="fa fa-circle-o"></i>Add Users</a></li>                              
                             </ul>
-                        </li>                          
+                        </li>                 
                     </ul>
                 </section>
                 <!-- /.sidebar -->
@@ -368,12 +393,11 @@
                 <section class="content-header">
                     <h1>
                         Data Tables
-                        <small>advanced tables</small>
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Tables</a></li>
-                        <li class="active">Data tables</li>
+                        <li><a href="#">Component</a></li>
+                        <li class="active">${n}</li>
                     </ol>
                 </section>
 
@@ -383,8 +407,8 @@
                         <div class="col-xs-12">
                             <div class="box">
                                 <div class="box-header">
-                                    <h3 class="box-title">Component</h3>
-                                    <a href="ComAdmin?service=insert" 
+                                    <h3 class="box-title">${n}</h3>
+                                    <a href="CateAdmin?service=insert" 
                                        class="btn btn-warning btn-sm" 
                                        style="float: right;">ADD</a>
                                 </div>
@@ -393,304 +417,299 @@
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
+                                                <th>Category ID</th>
+                                                <th>Category Name</th>
                                                 <th>Component ID</th>
-                                                <th>Name</th>
-                                                <th>Quantity</th>                                               
+                                                <th>Brand ID</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Description</th>
                                                 <th>Status</th>
-                                                <th>Toggle</th>
                                                 <th>Update</th>
                                                 <th>View</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <c:if test="${not empty requestScope.data}">
-                                                <c:forEach var="com" items="${requestScope.data}">
+                                                <c:forEach var="category" items="${list}">
                                                     <tr>
-                                                        <td>${com.componentID}</td>
-                                                        <td>${com.componentName}</td>
-                                                        <td>${com.quantity}</td>
+                                                        <td>${category.categoryID}</td>
+                                                        <td>${category.categoryName}</td>
+                                                        <td>${category.componentID}</td>
+                                                        <td>${category.brandID}</td>
+                                                        <td>${category.quantity}</td>
+                                                        <td>${category.price}</td>
+                                                        <td>${category.description}</td>
                                                         <td>
                                                             <c:choose>
-                                                                <c:when test="${com.status == 1}">
-                                                                    <span class="label label-success">Active</span>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <span class="label label-danger">Disable</span>
-                                                                </c:otherwise>
+                                                                <c:when test="${category.status == 0}">Disable</c:when>
+                                                                <c:when test="${category.status == 1}">Active</c:when>
+                                                                <c:otherwise>Unknown</c:otherwise>
                                                             </c:choose>
                                                         </td>
                                                         <td>
-                                                            <a href="ComAdmin?service=changestatus&componentID=${com.componentID}" 
-                                                               class="btn btn-info btn-sm">
-                                                                <c:choose>
-                                                                    <c:when test="${com.status == 1}">Disable</c:when>
-                                                                    <c:otherwise>Activate</c:otherwise>
-                                                                </c:choose>
-                                                            </a>
-                                                        </td>
-                                                        <td>
-                                                            <a href="ComAdmin?service=update&componentID=${com.componentID}" 
+                                                            <a href="CateAdmin?service=update&categoryID=${category.categoryID}" 
                                                                class="btn btn-warning btn-sm">Update</a>
                                                         </td>
                                                         <td>
-                                                            <a href="CateAdmin?service=listbycom&componentID=${com.componentID}" 
+                                                            <a href="ProductAdmin?service=listbycate&categoryID=${category.categoryID}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
-                                           
                                         </tbody>
                                     </table>
+
+                                    </tbody>
+                                    </table>
                                 </div>
+
+
                             </div>
                             <!-- /.box-body -->
                         </div>
+                        <!-- /.box -->
+
+                        <!-- /.content-wrapper -->
+                        <footer class="main-footer fixed-bottom full-width">
+                            <div class="pull-right hidden-xs">
+                                <b>Version</b> 2.3.12
+                            </div>
+                            <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights reserved.
+                        </footer>
+
+
+                        <!-- Control Sidebar -->
+                        <aside class="control-sidebar control-sidebar-dark">
+                            <!-- Create the tabs -->
+                            <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+                                <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+                                <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+                            </ul>
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <!-- Home tab content -->
+                                <div class="tab-pane" id="control-sidebar-home-tab">
+                                    <h3 class="control-sidebar-heading">Recent Activity</h3>
+                                    <ul class="control-sidebar-menu">
+                                        <li>
+                                            <a href="javascript:void(0)">
+                                                <i class="menu-icon fa fa-birthday-cake bg-red"></i>
+
+                                                <div class="menu-info">
+                                                    <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
+
+                                                    <p>Will be 23 on April 24th</p>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">
+                                                <i class="menu-icon fa fa-user bg-yellow"></i>
+
+                                                <div class="menu-info">
+                                                    <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
+
+                                                    <p>New phone +1(800)555-1234</p>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">
+                                                <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
+
+                                                <div class="menu-info">
+                                                    <h4 class="control-sidebar-subheading">Nora Joined Mailing List</h4>
+
+                                                    <p>nora@example.com</p>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">
+                                                <i class="menu-icon fa fa-file-code-o bg-green"></i>
+
+                                                <div class="menu-info">
+                                                    <h4 class="control-sidebar-subheading">Cron Job 254 Executed</h4>
+
+                                                    <p>Execution time 5 seconds</p>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <!-- /.control-sidebar-menu -->
+
+                                    <h3 class="control-sidebar-heading">Tasks Progress</h3>
+                                    <ul class="control-sidebar-menu">
+                                        <li>
+                                            <a href="javascript:void(0)">
+                                                <h4 class="control-sidebar-subheading">
+                                                    Custom Template Design
+                                                    <span class="label label-danger pull-right">70%</span>
+                                                </h4>
+
+                                                <div class="progress progress-xxs">
+                                                    <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">
+                                                <h4 class="control-sidebar-subheading">
+                                                    Update Resume
+                                                    <span class="label label-success pull-right">95%</span>
+                                                </h4>
+
+                                                <div class="progress progress-xxs">
+                                                    <div class="progress-bar progress-bar-success" style="width: 95%"></div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">
+                                                <h4 class="control-sidebar-subheading">
+                                                    Laravel Integration
+                                                    <span class="label label-warning pull-right">50%</span>
+                                                </h4>
+
+                                                <div class="progress progress-xxs">
+                                                    <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">
+                                                <h4 class="control-sidebar-subheading">
+                                                    Back End Framework
+                                                    <span class="label label-primary pull-right">68%</span>
+                                                </h4>
+
+                                                <div class="progress progress-xxs">
+                                                    <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <!-- /.control-sidebar-menu -->
+
+                                </div>
+                                <!-- /.tab-pane -->
+                                <!-- Stats tab content -->
+                                <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div>
+                                <!-- /.tab-pane -->
+                                <!-- Settings tab content -->
+                                <div class="tab-pane" id="control-sidebar-settings-tab">
+                                    <form method="post">
+                                        <h3 class="control-sidebar-heading">General Settings</h3>
+
+                                        <div class="form-group">
+                                            <label class="control-sidebar-subheading">
+                                                Report panel usage
+                                                <input type="checkbox" class="pull-right" checked>
+                                            </label>
+
+                                            <p>
+                                                Some information about this general settings option
+                                            </p>
+                                        </div>
+                                        <!-- /.form-group -->
+
+                                        <div class="form-group">
+                                            <label class="control-sidebar-subheading">
+                                                Allow mail redirect
+                                                <input type="checkbox" class="pull-right" checked>
+                                            </label>
+
+                                            <p>
+                                                Other sets of options are available
+                                            </p>
+                                        </div>
+                                        <!-- /.form-group -->
+
+                                        <div class="form-group">
+                                            <label class="control-sidebar-subheading">
+                                                Expose author name in posts
+                                                <input type="checkbox" class="pull-right" checked>
+                                            </label>
+
+                                            <p>
+                                                Allow the user to show his name in blog posts
+                                            </p>
+                                        </div>
+                                        <!-- /.form-group -->
+
+                                        <h3 class="control-sidebar-heading">Chat Settings</h3>
+
+                                        <div class="form-group">
+                                            <label class="control-sidebar-subheading">
+                                                Show me as online
+                                                <input type="checkbox" class="pull-right" checked>
+                                            </label>
+                                        </div>
+                                        <!-- /.form-group -->
+
+                                        <div class="form-group">
+                                            <label class="control-sidebar-subheading">
+                                                Turn off notifications
+                                                <input type="checkbox" class="pull-right">
+                                            </label>
+                                        </div>
+                                        <!-- /.form-group -->
+
+                                        <div class="form-group">
+                                            <label class="control-sidebar-subheading">
+                                                Delete chat history
+                                                <a href="javascript:void(0)" class="text-red pull-right"><i class="fa fa-trash-o"></i></a>
+                                            </label>
+                                        </div>
+                                        <!-- /.form-group -->
+                                    </form>
+                                </div>
+                                <!-- /.tab-pane -->
+                            </div>
+                        </aside>
+                        <!-- /.control-sidebar -->
+                        <!-- Add the sidebar's background. This div must be placed
+                             immediately after the control sidebar -->
+                        <div class="control-sidebar-bg"></div>
                     </div>
+                    <!-- ./wrapper -->
 
-                    <!-- /.box-body -->
-            </div>
-            <!-- /.box -->
-
-            <!-- /.content-wrapper -->
-            <footer class="main-footer fixed-bottom full-width">
-                <div class="pull-right hidden-xs">
-                    <b>Version</b> 2.3.12
-                </div>
-                <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights reserved.
-            </footer>
-
-
-            <!-- Control Sidebar -->
-            <aside class="control-sidebar control-sidebar-dark">
-                <!-- Create the tabs -->
-                <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
-                    <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
-                    <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
-                </ul>
-                <!-- Tab panes -->
-                <div class="tab-content">
-                    <!-- Home tab content -->
-                    <div class="tab-pane" id="control-sidebar-home-tab">
-                        <h3 class="control-sidebar-heading">Recent Activity</h3>
-                        <ul class="control-sidebar-menu">
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <i class="menu-icon fa fa-birthday-cake bg-red"></i>
-
-                                    <div class="menu-info">
-                                        <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
-
-                                        <p>Will be 23 on April 24th</p>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <i class="menu-icon fa fa-user bg-yellow"></i>
-
-                                    <div class="menu-info">
-                                        <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
-
-                                        <p>New phone +1(800)555-1234</p>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
-
-                                    <div class="menu-info">
-                                        <h4 class="control-sidebar-subheading">Nora Joined Mailing List</h4>
-
-                                        <p>nora@example.com</p>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <i class="menu-icon fa fa-file-code-o bg-green"></i>
-
-                                    <div class="menu-info">
-                                        <h4 class="control-sidebar-subheading">Cron Job 254 Executed</h4>
-
-                                        <p>Execution time 5 seconds</p>
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                        <!-- /.control-sidebar-menu -->
-
-                        <h3 class="control-sidebar-heading">Tasks Progress</h3>
-                        <ul class="control-sidebar-menu">
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h4 class="control-sidebar-subheading">
-                                        Custom Template Design
-                                        <span class="label label-danger pull-right">70%</span>
-                                    </h4>
-
-                                    <div class="progress progress-xxs">
-                                        <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h4 class="control-sidebar-subheading">
-                                        Update Resume
-                                        <span class="label label-success pull-right">95%</span>
-                                    </h4>
-
-                                    <div class="progress progress-xxs">
-                                        <div class="progress-bar progress-bar-success" style="width: 95%"></div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h4 class="control-sidebar-subheading">
-                                        Laravel Integration
-                                        <span class="label label-warning pull-right">50%</span>
-                                    </h4>
-
-                                    <div class="progress progress-xxs">
-                                        <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h4 class="control-sidebar-subheading">
-                                        Back End Framework
-                                        <span class="label label-primary pull-right">68%</span>
-                                    </h4>
-
-                                    <div class="progress progress-xxs">
-                                        <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                        <!-- /.control-sidebar-menu -->
-
-                    </div>
-                    <!-- /.tab-pane -->
-                    <!-- Stats tab content -->
-                    <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div>
-                    <!-- /.tab-pane -->
-                    <!-- Settings tab content -->
-                    <div class="tab-pane" id="control-sidebar-settings-tab">
-                        <form method="post">
-                            <h3 class="control-sidebar-heading">General Settings</h3>
-
-                            <div class="form-group">
-                                <label class="control-sidebar-subheading">
-                                    Report panel usage
-                                    <input type="checkbox" class="pull-right" checked>
-                                </label>
-
-                                <p>
-                                    Some information about this general settings option
-                                </p>
-                            </div>
-                            <!-- /.form-group -->
-
-                            <div class="form-group">
-                                <label class="control-sidebar-subheading">
-                                    Allow mail redirect
-                                    <input type="checkbox" class="pull-right" checked>
-                                </label>
-
-                                <p>
-                                    Other sets of options are available
-                                </p>
-                            </div>
-                            <!-- /.form-group -->
-
-                            <div class="form-group">
-                                <label class="control-sidebar-subheading">
-                                    Expose author name in posts
-                                    <input type="checkbox" class="pull-right" checked>
-                                </label>
-
-                                <p>
-                                    Allow the user to show his name in blog posts
-                                </p>
-                            </div>
-                            <!-- /.form-group -->
-
-                            <h3 class="control-sidebar-heading">Chat Settings</h3>
-
-                            <div class="form-group">
-                                <label class="control-sidebar-subheading">
-                                    Show me as online
-                                    <input type="checkbox" class="pull-right" checked>
-                                </label>
-                            </div>
-                            <!-- /.form-group -->
-
-                            <div class="form-group">
-                                <label class="control-sidebar-subheading">
-                                    Turn off notifications
-                                    <input type="checkbox" class="pull-right">
-                                </label>
-                            </div>
-                            <!-- /.form-group -->
-
-                            <div class="form-group">
-                                <label class="control-sidebar-subheading">
-                                    Delete chat history
-                                    <a href="javascript:void(0)" class="text-red pull-right"><i class="fa fa-trash-o"></i></a>
-                                </label>
-                            </div>
-                            <!-- /.form-group -->
-                        </form>
-                    </div>
-                    <!-- /.tab-pane -->
-                </div>
-            </aside>
-            <!-- /.control-sidebar -->
-            <!-- Add the sidebar's background. This div must be placed
-                 immediately after the control sidebar -->
-            <div class="control-sidebar-bg"></div>
-        </div>
-        <!-- ./wrapper -->
-
-        <!-- jQuery 2.2.3 -->
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
-        <!-- Bootstrap 3.3.6 -->
-        <script src="${ctx}/AdminLTE/AdminPages/bootstrap/js/bootstrap.min.js"></script>
-        <!-- DataTables -->
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/datatables/jquery.dataTables.min.js"></script>
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/datatables/dataTables.bootstrap.min.js"></script>
-        <!-- SlimScroll -->
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-        <!-- FastClick -->
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/fastclick/fastclick.js"></script>
-        <!-- AdminLTE App -->
-        <script src="${ctx}/AdminLTE/AdminPages/dist/js/app.min.js"></script>
-        <!-- AdminLTE for demo purposes -->
-        <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
-        <!-- page script -->
-        <script>
-            $(function () {
-                $("#example1").DataTable();
-                $('#example2').DataTable({
-                    "paging": true,
-                    "lengthChange": false,
-                    "searching": false,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": false
-                });
-            });
-        </script>
-        <script>
-            $(function () {
-                $('.sidebar-menu').tree();
-            });
-        </script>
-    </body>
-</html>
+                    <!-- jQuery 2.2.3 -->
+                    <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
+                    <!-- Bootstrap 3.3.6 -->
+                    <script src="${ctx}/AdminLTE/AdminPages/bootstrap/js/bootstrap.min.js"></script>
+                    <!-- DataTables -->
+                    <script src="${ctx}/AdminLTE/AdminPages/plugins/datatables/jquery.dataTables.min.js"></script>
+                    <script src="${ctx}/AdminLTE/AdminPages/plugins/datatables/dataTables.bootstrap.min.js"></script>
+                    <!-- SlimScroll -->
+                    <script src="${ctx}/AdminLTE/AdminPages/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+                    <!-- FastClick -->
+                    <script src="${ctx}/AdminLTE/AdminPages/plugins/fastclick/fastclick.js"></script>
+                    <!-- AdminLTE App -->
+                    <script src="${ctx}/AdminLTE/AdminPages/dist/js/app.min.js"></script>
+                    <!-- AdminLTE for demo purposes -->
+                    <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
+                    <!-- page script -->
+                    <script>
+                        $(function () {
+                            $("#example1").DataTable();
+                            $('#example2').DataTable({
+                                "paging": true,
+                                "lengthChange": false,
+                                "searching": false,
+                                "ordering": true,
+                                "info": true,
+                                "autoWidth": false
+                            });
+                        });
+                    </script>
+                    <script>
+                        $(function () {
+                            $('.sidebar-menu').tree();
+                        });
+                    </script>
+                    </body>
+                    </html>
 

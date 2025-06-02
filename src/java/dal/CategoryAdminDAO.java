@@ -133,6 +133,35 @@ public class CategoryAdminDAO extends DBContext {
         }
     }
 
+    public void updateAllCategoryQuantities() {
+        String sql = """
+        UPDATE Categories
+        SET Quantity = (
+            SELECT COUNT(*) 
+            FROM Products 
+            WHERE Products.CategoryID = Categories.CategoryID
+        )
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.executeUpdate();
+            System.out.println("Cập nhật số lượng sản phẩm cho các Category thành công.");
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi cập nhật số lượng sản phẩm: " + e.getMessage());
+        }
+    }
+
+    public void updateStatus(int categoryID, int newStatus) {
+        String sql = "UPDATE Categories SET Status = ? WHERE CategoryID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, newStatus);
+            ps.setInt(2, categoryID);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         CategoryAdminDAO dao = new CategoryAdminDAO(); // hoặc BrandAdminDAO nếu tên vậy
 

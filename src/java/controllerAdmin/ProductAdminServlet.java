@@ -44,8 +44,8 @@ public class ProductAdminServlet extends HttpServlet {
             List<Products> list;
 
             if ("list".equals(service)) {
-                String id = request.getParameter("categoryID");
-                list = dao.getAllProduct("SELECT * FROM Products WHERE categoryID = " + id);
+                
+                list = dao.getAllProduct("SELECT * FROM Products ");
 
                 CategoriesDAO dao1 = new CategoriesDAO();
 
@@ -54,12 +54,11 @@ public class ProductAdminServlet extends HttpServlet {
                 request.setAttribute("list", Categories);
                 //request.getRequestDispatcher("/AdminLTE/AdminPages/test.jsp").forward(request, response);            
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewProduct.jsp").forward(request, response);
-            } else if ("cate".equals(service)) {
-                CategoriesDAO dao1 = new CategoriesDAO();
+
                 List<Categories> Categories = dao1.getCategoriesName();
 
                 request.setAttribute("list", Categories);
-            } else if (service.equals("update")) {
+            } /*else if (service.equals("update")) {
                 String submit = request.getParameter("submit");
                 if (submit == null) {
                     int productID = Integer.parseInt(request.getParameter("productID"));
@@ -114,7 +113,7 @@ public class ProductAdminServlet extends HttpServlet {
                    
                     response.sendRedirect(request.getContextPath() + "/ProductAdmin?service=list&categoryID=" + categoryID);
                 }
-            }
+            }*/
 
         }
     }

@@ -252,12 +252,6 @@
                                                                     </select>
                                                                 </div>
 
-                                                                <!-- Quantity -->
-                                                                <div class="form-group">
-                                                                    <label>Quantity</label>
-                                                                    <input type="number" name="quantity" class="form-control" placeholder="Enter quantity" required>
-                                                                </div>
-
                                                                 <!-- Price -->
                                                                 <div class="form-group">
                                                                     <label>Price</label>
@@ -276,6 +270,7 @@
                                                                     <select name="status" class="form-control">
                                                                         <option value="0">Disable</option>
                                                                         <option value="1">Active</option>
+                                                                        <option value="2">On Sale</option>
                                                                     </select>
                                                                 </div>
 
@@ -292,13 +287,13 @@
 
 
                                                 <!-- /.content-wrapper -->
-                                                <footer class="main-footer">
+                                                <footer class="main-footer fixed-bottom full-width">
                                                     <div class="pull-right hidden-xs">
                                                         <b>Version</b> 2.3.12
                                                     </div>
-                                                    <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights
-                                                    reserved.
+                                                    <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights reserved.
                                                 </footer>
+
 
                                                 <!-- Control Sidebar -->
                                                 <aside class="control-sidebar control-sidebar-dark">
