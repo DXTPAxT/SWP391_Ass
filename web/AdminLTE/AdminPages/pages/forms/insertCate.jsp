@@ -175,28 +175,30 @@
                                                             <li class="header">MAIN NAVIGATION</li>
                                                             <li class="treeview">
                                                                 <a href="#">
-                                                                    <i class="fa fa-laptop"></i> <span>Category</span>
+                                                                    <i class="fa fa-laptop"></i> <span>Component</span>
                                                                     <span class="pull-right-container">
                                                                         <i class="fa fa-angle-left pull-right"></i>
                                                                     </span>
                                                                 </a>
                                                                 <ul class="treeview-menu">                               
-                                                                    <li><a href="${ctx}/CateAdmin"><i class="fa fa-circle-o"></i>View Category</a></li>                                
+                                                                    <li><a href="${ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>   
+                                                                        <c:forEach var="com" items="${data}">
+                                                                        <li><a href="${ctx}/CateAdmin?service=listbycom&componentID=${com.componentID}"><i class="fa fa-circle-o"></i> ${com.componentName}</a></li>
+                                                                        </c:forEach>    
                                                                 </ul>
-                                                            </li>
+                                                            </li>                                 
                                                             <li class="treeview">
                                                                 <a href="#">
-                                                                    <i class="fa fa-table"></i> <span>Products</span>
+                                                                    <i class="fa fa-laptop"></i> <span>User</span>
                                                                     <span class="pull-right-container">
                                                                         <i class="fa fa-angle-left pull-right"></i>
                                                                     </span>
                                                                 </a>
-                                                                <ul class="treeview-menu">
-                                                                    <c:forEach var="cate" items="${list}">
-                                                                        <li><a href="${ctx}/ProductAdmin?service=list&categoryID=${cate.categoryID}"><i class="fa fa-circle-o"></i> ${cate.categoryName}</a></li>
-                                                                        </c:forEach>                               
+                                                                <ul class="treeview-menu">                               
+                                                                    <li><a href="${ctx}/Admin/user"><i class="fa fa-circle-o"></i>View Users</a></li>                                  
+                                                                    <li><a href="${ctx}/Admin/user/add"><i class="fa fa-circle-o"></i>Add Users</a></li>                              
                                                                 </ul>
-                                                            </li>
+                                                            </li>  
                                                     </section>
                                                     <!-- /.sidebar -->
                                                 </aside>
@@ -206,13 +208,12 @@
                                                     <!-- Content Header (Page header) -->
                                                     <section class="content-header">
                                                         <h1>
-                                                            UPDATE PRODUCT
-
+                                                            INSERT CATEGORY
                                                         </h1>
                                                         <ol class="breadcrumb">
                                                             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                                                            <li><a href="#">Product</a></li>
-                                                            <li class="active">Update Product</li>
+                                                            <li><a href="#">Category</a></li>
+                                                            <li class="active">Insert Category</li>
                                                         </ol>
                                                     </section>
 
@@ -221,95 +222,68 @@
 
                                                         <!-- /.box-header -->
                                                         <div class="box-body">
-                                                            <form role="form" method="post" action="ProductAdmin">
-                                                                <input type="hidden" name="service" value="update">
+                                                            <form role="form" method="post" action="CateAdmin">
+                                                                <input type="hidden" name="service" value="insert">
                                                                 <input type="hidden" name="submit" value="submit">
 
-                                                                <!-- ProductID (readonly) -->
+                                                                <!-- Category Name -->
                                                                 <div class="form-group">
-                                                                    <label>ProductID</label>
-                                                                    <input type="text" name="product_id" class="form-control" value="${product.productID}" readonly>
+                                                                    <label>Category Name</label>
+                                                                    <input type="text" name="categoryName" class="form-control" placeholder="Enter category name" required>
                                                                 </div>
 
-                                                                <!-- ProductName -->
+                                                                <!-- Component -->
                                                                 <div class="form-group">
-                                                                    <label>ProductName</label>
-                                                                    <input type="text" name="name" class="form-control" value="${product.name}" required>
-                                                                </div>
-
-                                                                <!-- Description -->
-                                                                <div class="form-group">
-                                                                    <label>Description</label>
-                                                                    <input type="text" name="description" class="form-control" value="${product.description}">
+                                                                    <label>Component</label>
+                                                                    <select name="componentID" class="form-control">
+                                                                        <c:forEach var="c" items="${data}">
+                                                                            <option value="${c.componentID}">${c.componentName}</option>
+                                                                        </c:forEach>
+                                                                    </select>
                                                                 </div>
 
                                                                 <!-- Brand -->
                                                                 <div class="form-group">
                                                                     <label>Brand</label>
-                                                                    <input type="text" name="brand" class="form-control" value="${product.brand}">
+                                                                    <select name="brandID" class="form-control">
+                                                                        <c:forEach var="b" items="${brands}">
+                                                                            <option value="${b.brandID}">${b.brandName}</option>
+                                                                        </c:forEach>
+                                                                    </select>
+                                                                </div>
+
+                                                                <!-- Quantity -->
+                                                                <div class="form-group">
+                                                                    <label>Quantity</label>
+                                                                    <input type="number" name="quantity" class="form-control" placeholder="Enter quantity" required>
                                                                 </div>
 
                                                                 <!-- Price -->
                                                                 <div class="form-group">
                                                                     <label>Price</label>
-                                                                    <input type="number" name="price" class="form-control" step="0.01" value="${product.price}" required>
+                                                                    <input type="number" name="price" class="form-control" placeholder="Enter price" required>
                                                                 </div>
-                                                                <!-- Quantity -->
+
+                                                                <!-- Description -->
                                                                 <div class="form-group">
-                                                                    <label>Quantity</label>
-                                                                    <input type="number" name="quantity" class="form-control" value="${product.quantity}" required>
+                                                                    <label>Description</label>
+                                                                    <textarea name="description" class="form-control" placeholder="Enter description"></textarea>
                                                                 </div>
-
-
-                                                                <!-- WarrantyPeriod -->
-                                                                <div class="form-group">
-                                                                    <label>WarrantyPeriod</label>
-                                                                    <select name="warranty" class="form-control">
-                                                                        <c:forEach var="m" items="${[3,6,12,18,24]}">
-                                                                            <option value="${m}" ${product.warrantyPeriod == m ? 'selected' : ''}>${m}</option>
-                                                                        </c:forEach>
-                                                                    </select>
-                                                                </div>
-
-                                                                <!-- CreatedAt -->
-                                                                <div class="form-group">
-                                                                    <label>Created At</label>
-                                                                    <div class="input-group date">
-                                                                        <div class="input-group-addon">
-                                                                            <i class="fa fa-calendar"></i>
-                                                                        </div>
-                                                                        <input type="date" name="created_at" class="form-control" value="${product.createdAt}" readonly>
-                                                                    </div>
-                                                                </div>
-
-                                                                <!-- CategoryID -->
-                                                                <div class="form-group">
-                                                                    <label>Category</label>
-                                                                    <select name="category_id" class="form-control">
-                                                                        <c:forEach var="cate" items="${list}">
-                                                                            <option value="${cate.categoryID}" ${product.categoryID == cate.categoryID ? 'selected' : ''}>
-                                                                                ${cate.categoryName}
-                                                                            </option>
-                                                                        </c:forEach>
-                                                                    </select>
-                                                                </div>
-
 
                                                                 <!-- Status -->
                                                                 <div class="form-group">
                                                                     <label>Status</label>
                                                                     <select name="status" class="form-control">
-                                                                        <option value="0" ${product.status == 0 ? 'selected' : ''}>Disable</option>
-                                                                        <option value="1" ${product.status == 1 ? 'selected' : ''}>Active</option>
-                                                                        <option value="2" ${product.status == 2 ? 'selected' : ''}>On Sale</option>
-                                                                        <option value="3" ${product.status == 3 ? 'selected' : ''}>Coming Soon</option>
+                                                                        <option value="0">Disable</option>
+                                                                        <option value="1">Active</option>
                                                                     </select>
                                                                 </div>
 
                                                                 <!-- Submit -->
-                                                                <button type="submit" class="btn btn-primary">Update Product</button>
+                                                                <button type="submit" class="btn btn-success float-end">Add Category</button>
                                                             </form>
                                                         </div>
+
 
                                                         <!-- /.box-body -->
                                                     </div>

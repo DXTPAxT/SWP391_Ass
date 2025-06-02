@@ -333,28 +333,30 @@
                         <li class="header">MAIN NAVIGATION</li>
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-laptop"></i> <span>Category</span>
+                                <i class="fa fa-laptop"></i> <span>Component</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
                             </a>
                             <ul class="treeview-menu">                               
-                                <li><a href="${ctx}/CateAdmin"><i class="fa fa-circle-o"></i>View Category</a></li>                                
+                                <li><a href="${ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>   
+                                    <c:forEach var="com" items="${data}">
+                                    <li><a href="${ctx}/CateAdmin?service=listbycom&componentID=${com.componentID}"><i class="fa fa-circle-o"></i> ${com.componentName}</a></li>
+                                    </c:forEach>    
                             </ul>
-                        </li>
+                        </li>                                 
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-table"></i> <span>Products</span>
+                                <i class="fa fa-laptop"></i> <span>User</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
                             </a>
-                            <ul class="treeview-menu">
-                                <c:forEach var="cate" items="${list}">
-                                    <li><a href="${ctx}/ProductAdmin?service=list&categoryID=${cate.categoryID}"><i class="fa fa-circle-o"></i> ${cate.categoryName}</a></li>
-                                    </c:forEach>
+                            <ul class="treeview-menu">                               
+                                <li><a href="${ctx}/Admin/user"><i class="fa fa-circle-o"></i>View Users</a></li>                                  
+                                <li><a href="${ctx}/Admin/user/add"><i class="fa fa-circle-o"></i>Add Users</a></li>                              
                             </ul>
-                        </li>                       
+                        </li>                 
                     </ul>
                 </section>
                 <!-- /.sidebar -->
@@ -366,12 +368,11 @@
                 <section class="content-header">
                     <h1>
                         Data Tables
-                        <small>advanced tables</small>
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Tables</a></li>
-                        <li class="active">Data tables</li>
+                        <li><a href="#">Component</a></li>
+                        <li class="active">${n}</li>
                     </ol>
                 </section>
 
@@ -381,8 +382,8 @@
                         <div class="col-xs-12">
                             <div class="box">
                                 <div class="box-header">
-                                    <h3 class="box-title">PC</h3>
-                                    <a href="ProductAdmin?service=insert" 
+                                    <h3 class="box-title">${n}</h3>
+                                    <a href="CateAdmin?service=insert" 
                                        class="btn btn-warning btn-sm" 
                                        style="float: right;">ADD</a>
                                 </div>
@@ -391,49 +392,46 @@
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Product ID</th>
-                                                <th>Name</th>
-                                                <th>Description</th>
-                                                <th>Brand</th>
-                                                <th>Price</th>
-                                                <th>Quantity</th>
-                                                <th>WarrantyPeriod</th>
-                                                <th>CreatedAt</th>
                                                 <th>Category ID</th>
+                                                <th>Category Name</th>
+                                                <th>Component ID</th>
+                                                <th>Brand ID</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Description</th>
                                                 <th>Status</th>
                                                 <th>Update</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <c:if test="${not empty requestScope.data}">
-                                                <c:forEach var="product" items="${requestScope.data}">
+                                                <c:forEach var="category" items="${list}">
                                                     <tr>
-                                                        <td>${product.productID}</td>
-                                                        <td>${product.name}</td>
-                                                        <td>${product.description}</td>
-                                                        <td>${product.brand}</td>
-                                                        <td>${product.price}</td>
-                                                        <td>${product.quantity}</td>
-                                                        <td>${product.warrantyPeriod}</td>
-                                                        <td>${product.createdAt}</td>
-                                                        <td>${product.categoryID}</td>
+                                                        <td>${category.categoryID}</td>
+                                                        <td>${category.categoryName}</td>
+                                                        <td>${category.componentID}</td>
+                                                        <td>${category.brandID}</td>
+                                                        <td>${category.quantity}</td>
+                                                        <td>${category.price}</td>
+                                                        <td>${category.description}</td>
                                                         <td>
                                                             <c:choose>
-                                                                <c:when test="${product.status == 0}">Disable</c:when>
-                                                                <c:when test="${product.status == 1}">Active</c:when>
-                                                                <c:when test="${product.status == 2}">On Sale</c:when>
-                                                                <c:when test="${product.status == 3}">Coming Soon</c:when>
+                                                                <c:when test="${category.status == 0}">Disable</c:when>
+                                                                <c:when test="${category.status == 1}">Active</c:when>
                                                                 <c:otherwise>Unknown</c:otherwise>
                                                             </c:choose>
                                                         </td>
                                                         <td>
-                                                            <a href="ProductAdmin?service=update&productID=${product.productID}" 
+                                                            <a href="CateAdmin?service=update&categoryID=${category.categoryID}" 
                                                                class="btn btn-warning btn-sm">Update</a>
                                                         </td>
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
                                         </tbody>
+                                    </table>
+
+                                    </tbody>
                                     </table>
                                 </div>
 
