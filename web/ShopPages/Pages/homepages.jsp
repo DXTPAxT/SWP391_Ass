@@ -219,24 +219,31 @@
                     <div class="col-sm-3">
                         <div class="left-sidebar">
                             <h2 class="title text-center">CATEGORY</h2>
-                            <div class="panel-group category-products">
+                            <div class="panel-group category-products" id="accordian">
                                 <c:forEach var="comp" items="${Components}">
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
-                                            <h4 class="panel-title">
-                                                <a data-toggle="collapse" href="#comp${comp.componentID}">
-                                                    <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                                        ${comp.componentName}
+                                            <h4 class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
+                                                <!-- Link: lọc theo Component -->
+                                                <a href="${ctx}/CategoriesController?service=filter&component=${fn:escapeXml(comp.componentName)}" style="flex-grow: 1;">
+                                                    ${comp.componentName}
+                                                </a>
+
+                                                <!-- Dấu + để mở brand list -->
+                                                <a data-toggle="collapse" href="#comp${comp.componentID}" style="margin-left: 10px;">
+                                                    <i class="fa fa-plus"></i> <!-- luôn là dấu + -->
                                                 </a>
                                             </h4>
                                         </div>
+
+                                        <!-- Brand list bên trong component -->
                                         <div id="comp${comp.componentID}" class="panel-collapse collapse">
                                             <div class="panel-body">
                                                 <ul>
                                                     <c:forEach var="item" items="${BrandWithComponent}">
                                                         <c:if test="${item.componentID == comp.componentID}">
                                                             <li>
-                                                                <a href="${ctx}/Product?service=Brand&Brand=${fn:escapeXml(item.brandName)}">
+                                                                <a href="${ctx}/CategoriesController?service=filter&component=${fn:escapeXml(comp.componentName)}&brand=${fn:escapeXml(item.brandName)}">
                                                                     ${item.brandName}
                                                                 </a>
                                                             </li>
@@ -250,19 +257,22 @@
                             </div>
 
 
+
                             <div class="brands_products"><!--brands_products-->
                                 <h2>Brands</h2>
                                 <div class="brands-name">
                                     <ul class="nav nav-pills nav-stacked">
                                         <c:forEach var="brand" items="${listBrand}">
-                                            <li><a href="${ctx}/Product?service=Brand&Brand=${fn:escapeXml(brand.brandName)}">
+                                            <li>
+                                                <a href="${ctx}/CategoriesController?service=filter&brand=${fn:escapeXml(brand.brandName)}">
                                                     ${brand.brandName}
-                                                </a></li>
-                                            </c:forEach>
-
+                                                </a>
+                                            </li>
+                                        </c:forEach>
                                     </ul>
                                 </div>
                             </div><!--/brands_products-->
+                            C
 
 
 
@@ -312,7 +322,8 @@
                             <!-- VIEW MORE Button -->
                             <div class="category-tab">
                                 <div class="col-sm-12 text-center">
-                                    <a href="#laptop" class="btn btn-warning" style="margin-top: 20px;">VIEW MORE</a>
+                                    <a href="${ctx}/CategoriesController?service=filter&component=pc"
+                                       class="btn btn-warning" style="margin-top: 20px;">VIEW MORE</a>
                                 </div>
                             </div>
 
@@ -342,15 +353,11 @@
                                     <p class="text-center">Không có sản phẩm nào!</p>
                                 </c:if>
 
-                                <!-- Pagination Laptop -->
-                                <div class="pagination-area text-center" style="margin-top: 40px; clear: both;">
-                                    <ul class="pagination" style="display: inline-block; float: none;">
-                                        <c:forEach begin="1" end="${totalPagesLaptop}" var="i">
-                                            <li class="${i == currentPageLaptop ? 'active' : ''}">
-                                                <a href="HomePages?pageLaptop=${i}&pagePC=${currentPagePC}">${i}</a>
-                                            </li>
-                                        </c:forEach>
-                                    </ul>
+                              <!-- VIEW MORE Button -->
+                            <div class="category-tab">
+                                <div class="col-sm-12 text-center">
+                                    <a href="${ctx}/CategoriesController?service=filter&component=laptop"
+                                       class="btn btn-warning" style="margin-top: 20px;">VIEW MORE</a>
                                 </div>
                             </div>
 

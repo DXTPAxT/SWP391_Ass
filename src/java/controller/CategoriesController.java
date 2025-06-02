@@ -1,107 +1,95 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
-
 package controller;
 
 import dal.CategoriesDAO;
-import dal.ProductDAO;
-import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import models.BrandByComponentName;
+import models.Brands;
+import models.Categories;
+import models.Components;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import models.Categories;
-import models.Products;
 
-/**
- *
- * @author PC
- */
-@WebServlet(name="CategoriesController", urlPatterns={"/CategoriesController"})
+@WebServlet(name = "CategoriesController", urlPatterns = {"/CategoriesController"})
 public class CategoriesController extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-      response.setContentType("text/html;charset=UTF-8");
 
-      
-        CategoriesDAO cate = new CategoriesDAO();
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        response.setContentType("text/html;charset=UTF-8");
+        CategoriesDAO dao = new CategoriesDAO();
+
         String service = request.getParameter("service");
         if (service == null) {
             service = "list";
         }
 
-        int page = 1;
-        String pageParam = request.getParameter("page");
-        if (pageParam != null) {
+        List<Categories> list = new ArrayList<>();
+
+        String componentName = request.getParameter("component");
+        String brandName = request.getParameter("brand");
+        String minStr = request.getParameter("minPrice");
+        String maxStr = request.getParameter("maxPrice");
+        Integer minPrice = null, maxPrice = null;
+
+        if ("list".equals(service)) {
+            list = dao.getAllCategories();
+        } else if ("filter".equals(service)) {
             try {
-                page = Integer.parseInt(pageParam);
+                if (minStr != null && !minStr.isEmpty()) {
+                    minPrice = Integer.parseInt(minStr);
+                }
+                if (maxStr != null && !maxStr.isEmpty()) {
+                    maxPrice = Integer.parseInt(maxStr);
+                }
             } catch (NumberFormatException e) {
-                page = 1;
-            }
+                e.printStackTrace();
+            }    
+
+            list = dao.getCategoriesFiltered(componentName, brandName, minPrice, maxPrice);
+
+            // Truyền lại để giữ giá trị đã lọc trong UI
+            request.setAttribute("currentComponent", componentName);
+            request.setAttribute("currentBrand", brandName);
+            request.setAttribute("minPrice", minStr);
+            request.setAttribute("maxPrice", maxStr);
+            request.setAttribute("currentService", "filter");
         }
 
-        
-        
+        // Dữ liệu danh mục sản phẩm
         request.setAttribute("data", list);
-          request.getRequestDispatcher("ShopPages/Pages/Categories.jsp").forward(request, response);
-        
-       
-        
-    } 
 
-    
-    
-    
-    
-    
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
-     * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+        // Dữ liệu sidebar
+        List<Components> components = dao.GetAllComponents();
+        List<BrandByComponentName> brandComponentList = dao.getBrandInSiteComponents();
+        List<Brands> listBrand = dao.getBrands();
+
+        request.setAttribute("Components", components);
+        request.setAttribute("BrandWithComponent", brandComponentList);
+        request.setAttribute("listBrand", listBrand);
+
+        request.getRequestDispatcher("ShopPages/Pages/ProductList.jsp").forward(request, response);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
-    } 
-
-    /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /** 
-     * Returns a short description of the servlet.
-     * @return a String containing servlet description
-     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Handles filtering product categories by component, brand, price.";
+    }
 }

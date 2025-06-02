@@ -12,7 +12,7 @@ public class CategoriesDAO extends DBContext {
 
     public List<Categories> getAllCategories() {
         List<Categories> list = new ArrayList<>();
-       String sql = """
+        String sql = """
         SELECT 
             c.CategoryID, c.CategoryName, c.ComponentID, c.BrandID,
             c.Quantity, c.Price, c.Description, c.Status,
@@ -141,5 +141,132 @@ public class CategoriesDAO extends DBContext {
         return null;
     }
 
-  
+    public List<Categories> getCategoriesByBrandName(String brandName) {
+        List<Categories> list = new ArrayList<>();
+        String sql = """
+        SELECT 
+            c.CategoryID, c.CategoryName, c.ComponentID, c.BrandID,
+            c.Quantity, c.Price, c.Description, c.Status,
+            b.BrandName
+        FROM Categories c
+        JOIN Brands b ON c.BrandID = b.BrandID
+        WHERE b.BrandName = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, brandName);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Categories c = new Categories(
+                        rs.getInt("CategoryID"),
+                        rs.getString("CategoryName"),
+                        rs.getInt("ComponentID"),
+                        rs.getInt("BrandID"),
+                        rs.getString("BrandName"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("Price"),
+                        rs.getString("Description"),
+                        rs.getInt("Status")
+                );
+                list.add(c);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public List<Categories> getCategoriesByComponentName(String componentName) {
+        List<Categories> list = new ArrayList<>();
+        String sql = """
+        SELECT c.*, b.BrandName
+        FROM Categories c
+        JOIN Brands b ON c.BrandID = b.BrandID
+        JOIN Components comp ON c.ComponentID = comp.ComponentID
+        WHERE comp.ComponentName = ?
+    """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, componentName);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new Categories(
+                        rs.getInt("CategoryID"),
+                        rs.getString("CategoryName"),
+                        rs.getInt("ComponentID"),
+                        rs.getInt("BrandID"),
+                        rs.getString("BrandName"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("Price"),
+                        rs.getString("Description"),
+                        rs.getInt("Status")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+   
+
+    public List<Categories> getCategoriesFiltered(String componentName, String brandName, Integer minPrice, Integer maxPrice) {
+        List<Categories> list = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder("""
+        SELECT c.*, b.BrandName, comp.ComponentName
+        FROM Categories c
+        JOIN Brands b ON c.BrandID = b.BrandID
+        JOIN Components comp ON c.ComponentID = comp.ComponentID
+        WHERE 1 = 1
+    """);
+
+        List<Object> params = new ArrayList<>();
+             // loc gia theo componentName 
+        if (componentName != null && !componentName.isEmpty()) {
+            sql.append(" AND comp.ComponentName = ? ");
+            params.add(componentName);
+        }
+              // loc gia theo brand
+        if (brandName != null && !brandName.isEmpty()) {
+            sql.append(" AND b.BrandName = ? ");
+            params.add(brandName);
+        }
+
+        if (minPrice != null) {
+            sql.append(" AND c.Price >= ? ");
+            params.add(minPrice);
+        }
+
+        if (maxPrice != null) {
+            sql.append(" AND c.Price <= ? ");
+            params.add(maxPrice);
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new Categories(
+                        rs.getInt("CategoryID"),
+                        rs.getString("CategoryName"),
+                        rs.getInt("ComponentID"),
+                        rs.getInt("BrandID"),
+                        rs.getString("BrandName"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("Price"),
+                        rs.getString("Description"),
+                        rs.getInt("Status")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
 }
