@@ -251,21 +251,21 @@
                                                                 <!-- Brand -->
                                                                 <div class="form-group">
                                                                     <label>Brand</label>
-                                                                    
+
                                                                     <select name="brandID" class="form-control">
                                                                         <c:forEach var="b" items="${brands}">
                                                                             <option value="${b.brandID}" ${category.brandID == b.brandID ? 'selected' : ''}>${b.brandName} ${b.brandID}  ${category.brandID}</option>
-                                                                            
+
                                                                         </c:forEach>
                                                                     </select>
                                                                 </div>
-                                                                
+
                                                                 <!-- Quantity -->
                                                                 <div class="form-group">
                                                                     <label>Quantity</label>
-                                                                    <input type="number" name="quantity" class="form-control" value="${category.quantity}" required>
+                                                                    <input type="number" name="quantity" class="form-control" value="${category.quantity}" readonly>
                                                                 </div>
-                                                                
+
                                                                 <!-- Price -->
                                                                 <div class="form-group">
                                                                     <label>Price</label>
@@ -284,6 +284,7 @@
                                                                     <select name="status" class="form-control">
                                                                         <option value="0" ${category.status == 0 ? 'selected' : ''}>Disable</option>
                                                                         <option value="1" ${category.status == 1 ? 'selected' : ''}>Active</option>
+                                                                        <option value="2" ${category.status == 2 ? 'selected' : ''}>On Sale</option>
                                                                     </select>
                                                                 </div>
 
@@ -297,13 +298,13 @@
 
 
                                                     <!-- /.content-wrapper -->
-                                                    <footer class="main-footer">
+                                                    <footer class="main-footer fixed-bottom full-width">
                                                         <div class="pull-right hidden-xs">
                                                             <b>Version</b> 2.3.12
                                                         </div>
-                                                        <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights
-                                                        reserved.
+                                                        <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights reserved.
                                                     </footer>
+
 
                                                     <!-- Control Sidebar -->
                                                     <aside class="control-sidebar control-sidebar-dark">

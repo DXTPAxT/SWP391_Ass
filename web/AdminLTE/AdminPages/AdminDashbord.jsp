@@ -346,11 +346,36 @@
                             </a>
                             <ul class="treeview-menu">                               
                                     <li><a href="${ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>   
-                                    <c:forEach var="com" items="${list}">
+                                    <c:forEach var="com" items="${data}">
                                     <li><a href="${ctx}/CateAdmin?service=listbycom&componentID=${com.componentID}"><i class="fa fa-circle-o"></i> ${com.componentName}</a></li>
                                     </c:forEach>    
                             </ul>
-                        </li>                                 
+                        </li>
+                         <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Category</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">                               
+                                    <li><a href="${ctx}/CateAdmin"><i class="fa fa-circle-o"></i>View Category</a></li>                                         
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Brand</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">                               
+                                    <li><a href="${ctx}/BanAdmin&service=listall"><i class="fa fa-circle-o"></i>View Brand</a></li>   
+                                    <c:forEach var="ban" items="${brand}">
+                                    <li><a href="${ctx}/CateAdmin?service=listbybrand&brandID=${ban.brandID}"><i class="fa fa-circle-o"></i> ${ban.brandName}</a></li>
+                                    </c:forEach>    
+                            </ul>
+                        </li>
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-laptop"></i> <span>User</span>

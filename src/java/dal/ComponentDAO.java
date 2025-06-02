@@ -123,7 +123,18 @@ public class ComponentDAO extends DBContext {
         } catch (SQLException e) {
             Logger.getLogger(ComponentDAO.class.getName()).log(Level.SEVERE, null, e);
         }
-    }    
+    }
+
+    public void updateStatus(int componentID, int newStatus) {
+        String sql = "UPDATE Components SET Status = ? WHERE ComponentID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, newStatus);
+            ps.setInt(2, componentID);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
         ComponentDAO dao = new ComponentDAO();

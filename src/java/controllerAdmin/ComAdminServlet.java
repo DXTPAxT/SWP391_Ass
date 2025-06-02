@@ -35,7 +35,7 @@ public class ComAdminServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             String service = request.getParameter("service");
-            
+
             if (service == null) {
                 service = "list";
             }
@@ -60,7 +60,7 @@ public class ComAdminServlet extends HttpServlet {
                 } else {
                     int componentID = Integer.parseInt(request.getParameter("component_id"));
                     String componentName = request.getParameter("component_name");
-                    int quantity = Integer.parseInt(request.getParameter("quantity"));
+                    int quantity = 0;
                     int status = Integer.parseInt(request.getParameter("status"));
 
                     Components component = new Components(componentID, componentName, quantity, status);
@@ -77,7 +77,7 @@ public class ComAdminServlet extends HttpServlet {
                 } else {
 
                     String name = request.getParameter("component_name");
-                    int Quantity = Integer.parseInt(request.getParameter("quantity"));
+                    int Quantity = 0;
                     int Status = Integer.parseInt(request.getParameter("status"));
 
                     Components component = new Components(); // Giả sử có constructor rỗng
@@ -89,6 +89,19 @@ public class ComAdminServlet extends HttpServlet {
 
                     response.sendRedirect(request.getContextPath() + "/ComAdmin?service=list");
                 }
+            } else if (service.equals("changestatus")) {
+                int componentID = Integer.parseInt(request.getParameter("componentID"));
+
+                // Lấy component hiện tại
+                Components com = dao.searchComponentByID(componentID);
+                if (com != null) {
+                    // Đảo ngược trạng thái: nếu đang là 1 thì đổi thành 0, ngược lại
+                    int newStatus = (com.getStatus() == 1) ? 0 : 1;
+                    dao.updateStatus(componentID, newStatus);
+                }
+
+                // Quay lại trang danh sách
+                response.sendRedirect(request.getContextPath() + "/ComAdmin?service=list");
             }
 
         }
