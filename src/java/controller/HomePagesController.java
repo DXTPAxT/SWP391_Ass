@@ -1,9 +1,10 @@
 package controller;
 
-import dal.CategoryDAO;
-import models.BrandByCategoriesName;
+import dal.CategoriesDAO;
+import models.BrandByComponentName;
+import models.Brands;
 import models.Categories;
-import models.Products;
+import models.Components;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,7 +15,7 @@ import java.util.List;
 @WebServlet(name = "HomePagesController", urlPatterns = {"/HomePages"})
 public class HomePagesController extends HttpServlet {
 
-    private static final int PAGE_SIZE = 3;
+    private static final int PAGE_SIZE = 6;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -27,28 +28,24 @@ public class HomePagesController extends HttpServlet {
         int startPC = (pagePC - 1) * PAGE_SIZE;
         int startLaptop = (pageLaptop - 1) * PAGE_SIZE;
 
-        CategoryDAO dao = new CategoryDAO();
+        CategoriesDAO dao = new CategoriesDAO();
 
-        // seclectcatagories
-        List<Categories> categories = dao.getCategoriesName();
-        // select brand in site cagories
-        List<BrandByCategoriesName> brandList = dao.getBrandWithCategoryName();
-        //select brand in HomePage web
-        List<String> listBrand = dao.getAllBrands();
-        // PC
-        List<Products> pcProducts = dao.GetCataByCategory(1, startPC, PAGE_SIZE);
+        List<Components> components = dao.GetAllComponents();
+        List<BrandByComponentName> brandComponentList = dao.getBrandInSiteComponents();
+        List<Brands> listBrand = dao.getBrands();
+
+        List<Categories> pcProducts = dao.getCategoriesByComponentName(1, startPC, PAGE_SIZE);
         int totalPC = dao.countTotalProducts(1);
-        int totalPagesPC = (int) Math.ceil(totalPC * 1.0 / PAGE_SIZE);
+        int totalPagesPC = (int) Math.ceil((double) totalPC / PAGE_SIZE);
 
-        // Laptop
-        List<Products> laptopProducts = dao.GetCataByCategory(2, startLaptop, PAGE_SIZE);
+        List<Categories> laptopProducts = dao.getCategoriesByComponentName(2, startLaptop, PAGE_SIZE);
         int totalLaptop = dao.countTotalProducts(2);
-        int totalPagesLaptop = (int) Math.ceil(totalLaptop * 1.0 / PAGE_SIZE);
+        int totalPagesLaptop = (int) Math.ceil((double) totalLaptop / PAGE_SIZE);
 
-        // sent to PC
-        request.setAttribute("categories", categories);
-        request.setAttribute("BrandWithCategoryName", brandList);
+        request.setAttribute("Components", components);
+        request.setAttribute("BrandWithComponent", brandComponentList);
         request.setAttribute("listBrand", listBrand);
+
         request.setAttribute("pcProducts", pcProducts);
         request.setAttribute("totalPagesPC", totalPagesPC);
         request.setAttribute("currentPagePC", pagePC);

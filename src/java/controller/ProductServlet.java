@@ -1,13 +1,13 @@
 package controller;
 
-import dal.CategoryDAO;
+import dal.CategoriesDAO;
 import dal.ProductDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import models.BrandByCategoriesName;
+import models.BrandByComponentName;
 import models.Categories;
 import models.Products;
 
@@ -25,10 +25,10 @@ public class ProductServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         ProductDAO dao = new ProductDAO();
-        CategoryDAO cate = new CategoryDAO();
+        CategoriesDAO cate = new CategoriesDAO();
         String service = request.getParameter("service");
         if (service == null) {
-            service = "list";
+            service = "list";                       
         }
 
         int page = 1;
@@ -114,7 +114,7 @@ public class ProductServlet extends HttpServlet {
             request.setAttribute("totalPages", totalPages);
 
             List<Categories> listcate = cate.getCategoriesName();
-            List<BrandByCategoriesName> BWCN = cate.getBrandWithCategoryName();
+            List<BrandByComponentName> BWCN = cate.getBrandWithCategoryName();
             List<String> listBrand = cate.getAllBrands();
             request.setAttribute("categories", listcate);
             request.setAttribute("BrandWithCategoryName", BWCN);
