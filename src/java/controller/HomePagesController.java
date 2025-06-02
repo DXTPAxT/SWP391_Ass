@@ -2,21 +2,20 @@ package controller;
 
 import dal.CategoriesDAO;
 import models.BrandByComponentName;
+import models.Brands;
 import models.Categories;
-import models.Products;
+import models.Components;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
-import models.Brands;
-import models.Components;
 
 @WebServlet(name = "HomePagesController", urlPatterns = {"/HomePages"})
 public class HomePagesController extends HttpServlet {
 
-    private static final int PAGE_SIZE = 3;
+    private static final int PAGE_SIZE = 6;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -31,36 +30,31 @@ public class HomePagesController extends HttpServlet {
 
         CategoriesDAO dao = new CategoriesDAO();
 
-        // seclect Components
-        List<Components> Components = dao.GetAllComponents();
-        // select brand in site cagories
+        List<Components> components = dao.GetAllComponents();
         List<BrandByComponentName> brandComponentList = dao.getBrandInSiteComponents();
-        //select brand in HomePage web
         List<Brands> listBrand = dao.getBrands();
-        // PC
-     
+
+        List<Categories> pcProducts = dao.getCategoriesByComponentName(1, startPC, PAGE_SIZE);
         int totalPC = dao.countTotalProducts(1);
-        int totalPagesPC = (int) Math.ceil(totalPC * 1.0 / PAGE_SIZE);
+        int totalPagesPC = (int) Math.ceil((double) totalPC / PAGE_SIZE);
 
-        // Laptop
-       
+        List<Categories> laptopProducts = dao.getCategoriesByComponentName(2, startLaptop, PAGE_SIZE);
         int totalLaptop = dao.countTotalProducts(2);
-        int totalPagesLaptop = (int) Math.ceil(totalLaptop * 1.0 / PAGE_SIZE);
+        int totalPagesLaptop = (int) Math.ceil((double) totalLaptop / PAGE_SIZE);
 
-        // sent to PC
-        request.setAttribute("Components", Components);
+        request.setAttribute("Components", components);
         request.setAttribute("BrandWithComponent", brandComponentList);
         request.setAttribute("listBrand", listBrand);
-       
+
+        request.setAttribute("pcProducts", pcProducts);
         request.setAttribute("totalPagesPC", totalPagesPC);
         request.setAttribute("currentPagePC", pagePC);
 
-       
+        request.setAttribute("laptopProducts", laptopProducts);
         request.setAttribute("totalPagesLaptop", totalPagesLaptop);
         request.setAttribute("currentPageLaptop", pageLaptop);
 
         request.getRequestDispatcher("/ShopPages/Pages/homepages.jsp").forward(request, response);
-         
     }
 
     private int parsePageParam(String param) {
