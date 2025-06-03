@@ -380,6 +380,8 @@
                             <div class="box">
                                 <!-- /.box-header -->
                                 <div class="box-body">
+                                    <a href="${ctx}/Admin/user/add"
+                                       class="btn btn-success btn">Add new user</a>
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
@@ -405,10 +407,19 @@
                                                         <td>${user.phoneNumber}</td>
                                                         <td>${user.address}</td>
                                                         <td>${user.createdAt}</td>
-                                                        <td>${user.status}</td>
+                                                        <td>
+                                                            <c:if test="${user.status == 1}">
+                                                                <a href="${ctx}/User?service=toggleStatus&userID=${user.userID}"
+                                                                   class="btn btn-success btn-sm">Active</a>
+                                                            </c:if>
+                                                            <c:if test="${user.status == 0}">
+                                                                <a href="${ctx}/User?service=toggleStatus&userID=${user.userID}"
+                                                                   class="btn btn-warning btn-sm">Disable</a>
+                                                            </c:if>
+                                                        </td>
                                                         <td>
                                                             <button
-                                                                class="btn btn-warning btn-sm"
+                                                                class="btn btn-primary btn-sm"
                                                                 data-toggle="modal"
                                                                 data-target="#updateUserModal"
                                                                 data-userid="${user.userID}"
@@ -825,11 +836,22 @@
                         });
                     </script>
                     </body>
-                    <c:if test="${not empty requestScope.toast}">
+                    <c:if test="${not empty toast}">
                         <script>
-                            showToast("${requestScope.toast}", "${requestScope.toastType}");
+                            showToast("${toast}", "${toastType}");
                         </script>
                     </c:if>
+                    <%
+                        String toast = (String) session.getAttribute("toast");
+                        String toastType = (String) session.getAttribute("toastType");
+                        if (toast != null) {
+                            // Xoá sau khi hiển thị
+                            session.removeAttribute("toast");
+                            session.removeAttribute("toastType");
+                        }
+                    %>
+
+
 
 
 
