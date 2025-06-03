@@ -26,63 +26,63 @@ public class SubmitFeedbackServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         try {
-            // Kiểm tra người dùng đã đăng nhập
+            // Kiểm tra đăng nhập
             User user = (User) session.getAttribute("user");
             if (user == null) {
-                session.setAttribute("error", "Please login to submit feedback");
-                response.sendRedirect("Login");
+                session.setAttribute("error", "Vui lòng đăng nhập để gửi feedback");
+                response.sendRedirect(request.getContextPath() + "/Login");
                 return;
             }
 
             // Lấy thông tin từ form
-            int productID;
+            int categoryID;
             int rate;
             String content = request.getParameter("content");
             try {
-                productID = Integer.parseInt(request.getParameter("productId"));
+                categoryID = Integer.parseInt(request.getParameter("categoryID"));
                 rate = Integer.parseInt(request.getParameter("rating"));
             } catch (NumberFormatException e) {
-                session.setAttribute("error", "Invalid product ID or rating");
-                response.sendRedirect("feedback?action=product&productID=" + request.getParameter("productId"));
+                session.setAttribute("error", "ID danh mục hoặc đánh giá không hợp lệ");
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + request.getParameter("categoryID"));
                 return;
             }
 
-            // Validate dữ liệu
+            // Xác thực dữ liệu
             if (content == null || content.trim().isEmpty()) {
-                session.setAttribute("error", "Content cannot be empty");
-                response.sendRedirect("feedback?action=product&productID=" + productID);
+                session.setAttribute("error", "Nội dung không được để trống");
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryID);
                 return;
             }
             if (rate < 1 || rate > 5) {
-                session.setAttribute("error", "Rating must be between 1 and 5");
-                response.sendRedirect("feedback?action=product&productID=" + productID);
+                session.setAttribute("error", "Đánh giá phải từ 1 đến 5");
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryID);
                 return;
             }
             if (content.length() > 500) {
-                session.setAttribute("error", "Content cannot exceed 500 characters");
-                response.sendRedirect("feedback?action=product&productID=" + productID);
+                session.setAttribute("error", "Nội dung không được vượt quá 500 ký tự");
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryID);
                 return;
             }
 
-            // Tạo đối tượng Feedback
-            Feedback feedback = new Feedback(user.getUserID(), content, productID, rate);
+            // Tạo Feedback
+            Feedback feedback = new Feedback(user.getUserID(), content, categoryID, rate);
             feedback.setCreatedAt(new Date());
 
-            // Thêm feedback vào DB
+            // Thêm vào cơ sở dữ liệu
             FeedbackDAO dao = new FeedbackDAO();
             boolean success = dao.insertFeedback(feedback);
 
             if (success) {
-                session.setAttribute("message", "Feedback submitted successfully");
-                response.sendRedirect("feedback?action=product&productID=" + productID);
+                session.setAttribute("message", "Gửi feedback thành công");
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryID);
             } else {
-                session.setAttribute("error", "Failed to save feedback");
-                response.sendRedirect("feedback?action=product&productID=" + productID);
+                session.setAttribute("error", "Không lưu được feedback");
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryID);
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error in SubmitFeedbackServlet: " + e.getMessage(), e);
-            session.setAttribute("error", "An error occurred while submitting feedback");
-            response.sendRedirect("errorPage.jsp");
+            LOGGER.log(Level.SEVERE, "Lỗi trong SubmitFeedbackServlet: " + e.getMessage(), e);
+            session.setAttribute("error", "Đã xảy ra lỗi khi gửi feedback: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/feedback");
         }
     }
 }
