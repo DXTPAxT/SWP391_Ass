@@ -12,6 +12,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import models.User;
 import utils.MailUtils;
@@ -97,6 +98,21 @@ public class UserServlet extends HttpServlet {
                 request.setAttribute("toastType", "error"); // error | warning
                 request.getRequestDispatcher("/AdminLTE/AdminPages/pages/tables/viewUser.jsp").forward(request, response);
             }
+        } else if ("toggleStatus".equals(service)) {
+            int userID = Integer.parseInt(request.getParameter("userID"));
+            UserDAO dao = new UserDAO();
+            boolean toggle = dao.toggleStatus(userID);
+            if (toggle) {
+                HttpSession session = request.getSession();
+                session.setAttribute("toast", "Update user succesfully!");
+                session.setAttribute("toastType", "success");
+                response.sendRedirect("Admin/user"); // redirect lại để load danh sách mới
+            } else {
+                HttpSession session = request.getSession();
+                session.setAttribute("toast", "Update user failed!");
+                session.setAttribute("toastType", "error");
+                response.sendRedirect("Admin/user"); // redirect lại để load danh sách mới
+            }
         }
     }
 
@@ -128,6 +144,9 @@ public class UserServlet extends HttpServlet {
                 boolean updated = dao.updateUser(userID, fullName, email, phone, address, status);
 
                 if (updated) {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("toast", "Update user succesfully!");
+                    session.setAttribute("toastType", "success");
                     response.sendRedirect("Admin/user"); // redirect lại để load danh sách mới
                 } else {
                     request.setAttribute("error", "Cập nhật thất bại!");
@@ -139,7 +158,6 @@ public class UserServlet extends HttpServlet {
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewUser.jsp").forward(request, response);
             }
         }
-
     }
 
     /**

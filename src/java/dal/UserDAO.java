@@ -211,36 +211,56 @@ public class UserDAO extends DBContext {
             System.out.println("❌ Cập nhật user thất bại hoặc không có dòng nào được thay đổi.");
         }
     }
-    
+
     public User getUserByID(int userID) {
-    String sql = "SELECT * FROM Users WHERE UserID = ?";
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, userID);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            return new User(
-                rs.getInt("UserID"),
-                rs.getInt("RoleID"),
-                rs.getString("FullName"),
-                rs.getString("Email"),
-                rs.getString("PhoneNumber"),
-                rs.getString("Address"),
-                rs.getString("PasswordHash"),
-                rs.getString("CreatedAt"),
-                rs.getInt("Status")
-            );
+        String sql = "SELECT * FROM Users WHERE UserID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new User(
+                        rs.getInt("UserID"),
+                        rs.getInt("RoleID"),
+                        rs.getString("FullName"),
+                        rs.getString("Email"),
+                        rs.getString("PhoneNumber"),
+                        rs.getString("Address"),
+                        rs.getString("PasswordHash"),
+                        rs.getString("CreatedAt"),
+                        rs.getInt("Status")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return null;
     }
-    return null;
-}
 
     public boolean resetPassword(int userID, String newPasswordHash) {
         String sql = "UPDATE Users SET PasswordHash = ? WHERE UserID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, newPasswordHash);
             ps.setInt(2, userID);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean toggleStatus(int userID) {
+        String sql = """
+        UPDATE Users
+        SET Status = 
+            CASE 
+                WHEN Status = 1 THEN 0 
+                ELSE 1 
+            END
+        WHERE UserID = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userID);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
