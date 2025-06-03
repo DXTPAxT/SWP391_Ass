@@ -18,7 +18,6 @@ public class CategoryAdminDAO extends DBContext {
                         rs.getString("CategoryName"),
                         rs.getInt("ComponentID"),
                         rs.getInt("BrandID"),
-                        rs.getString("BrandName"),
                         rs.getInt("Quantity"),
                         rs.getInt("Price"),
                         rs.getString("Description"),
@@ -28,7 +27,7 @@ public class CategoryAdminDAO extends DBContext {
             }
 
         } catch (SQLException e) {
-         
+            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
         }
 
         return list;
@@ -48,7 +47,6 @@ public class CategoryAdminDAO extends DBContext {
                         rs.getString("CategoryName"),
                         rs.getInt("ComponentID"),
                         rs.getInt("BrandID"),
-                         rs.getString("BrandName"),
                         rs.getInt("Quantity"),
                         rs.getInt("Price"),
                         rs.getString("Description"),
@@ -58,7 +56,7 @@ public class CategoryAdminDAO extends DBContext {
             }
 
         } catch (SQLException e) {
-            
+            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
         }
 
         return list;
@@ -75,7 +73,6 @@ public class CategoryAdminDAO extends DBContext {
                         rs.getString("CategoryName"),
                         rs.getInt("ComponentID"),
                         rs.getInt("BrandID"),
-                         rs.getString("BrandName"),
                         rs.getInt("Quantity"),
                         rs.getInt("Price"),
                         rs.getString("Description"),
@@ -83,7 +80,7 @@ public class CategoryAdminDAO extends DBContext {
                 );
             }
         } catch (SQLException e) {
-         
+            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return null;
     }
@@ -101,7 +98,7 @@ public class CategoryAdminDAO extends DBContext {
             ps.setInt(7, c.getStatus());
             ps.executeUpdate();
         } catch (SQLException e) {
-           
+            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -119,7 +116,7 @@ public class CategoryAdminDAO extends DBContext {
             ps.setInt(8, c.getCategoryID());
             ps.executeUpdate();
         } catch (SQLException e) {
-
+            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -129,7 +126,7 @@ public class CategoryAdminDAO extends DBContext {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
-          
+            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
