@@ -73,6 +73,10 @@
         <servlet-class>controllerAdmin.BrandAdminServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>AddUserServlet</servlet-name>
+        <servlet-class>controllerAdmin.AddUserServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>FeedbackServlet</servlet-name>
         <servlet-class>controller.FeedbackServlet</servlet-class>
     </servlet>
@@ -151,6 +155,10 @@
     <servlet-mapping>
         <servlet-name>BrandAdminServlet</servlet-name>
         <url-pattern>/BrandAdmin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddUserServlet</servlet-name>
+        <url-pattern>/Admin/user/add</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>FeedbackServlet</servlet-name>
