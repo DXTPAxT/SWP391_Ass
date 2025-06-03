@@ -6,7 +6,6 @@ package controllerAdmin;
 
 import dal.BrandAdminDAO;
 import dal.CategoryAdminDAO;
-import dal.CategoryDAO;
 import dal.ComponentDAO;
 import dal.ProductDAO;
 import java.io.IOException;
