@@ -97,7 +97,7 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="${pageContext.request.contextPath}/HomePages" class="active">Home</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/blog.jsp" class="active">Blog</a></li>
                                     <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="${pageContext.request.contextPath}/Product?service=listProduct" class="active">Products</a></li>                                            <li><a href="product-details.html">Product Details</a></li> 
@@ -125,6 +125,7 @@
                     </div>
                 </div>
             </div><!--/header-bottom-->
+            
         </header><!--/header-->
 
 
@@ -136,46 +137,85 @@
                             <h2>Blog Categories</h2>
                             <div>
                                 <ul>
+                                    <li><a href="blogc" style="color: black">All</a></li> 
                                     <c:forEach var="cat" items="${blog_categories}">
-                                        <li>${cat.bc_name}</li>
-                                        </c:forEach>
+                                        <li>
+                                            <a href="blogc?Bc_id=${cat.bc_id}" style="color: black;">${cat.bc_name}</a>
+                                        </li>
+                                    </c:forEach>
+
                                 </ul>
                             </div>
 
 
                             <div class="shipping text-center"><!--shipping-->
-                                <img src="images/home/shipping.jpg" alt="" />
+                                <img src="images/home/Top-5-Cau-Hinh-May-Tinh-Ban-Van-Phong-Dang-Mua-Nhat.jpg" alt="" />
                             </div><!--/shipping-->
                         </div>
                     </div>
                     <div class="col-sm-9">
                         <div class="blog-post-area">
-                            <h2 class="title text-center">Latest From our Blog</h2>
+                            <div>
+                                <h2 class="title text-center">Latest From our Blog</h2>
 
-                            <c:forEach var="post" items="${postList}">
-                                <div style="border:1px solid #ccc; padding:10px; margin-bottom:15px;">
-                                    <h3>${post.title}</h3>
-                                    <p>${post.author}</p>
-                                    <p>${post.updatedDate}</p>
-                                    <p>${post.brief}</p>
-                                    <c:if test="${not empty post.thumbnail}">
-                                        <img src="${post.thumbnail}" alt="Thumbnail" width="200"/>
+                                <style>
+                                    .brief-text {
+                                        display: -webkit-box;
+                                        -webkit-line-clamp: 2;
+                                        -webkit-box-orient: vertical;
+                                        overflow: hidden;
+                                        min-height: 3em; /* đảm bảo chiếm 2 dòng */
+                                    }
+                                </style>
+
+                                <c:forEach var="post" items="${postList}" varStatus="status">
+                                    <c:if test="${status.index % 2 == 0}">
+                                        <div class="row gx-4 gy-4">
+                                        </c:if>
+
+                                        <div class="col-sm-6 d-flex" style="padding-bottom: 20px">
+                                            <div class="w-100 d-flex flex-column mb-4" style="border:1px solid #ccc; padding:15px; height:100%;">
+                                                <h3>${post.title}</h3>
+                                                <p>${post.author}</p>
+                                                <p>${post.updated_date}</p>
+                                                <p class="brief-text">${post.brief}</p>
+
+                                                <c:if test="${not empty post.thumbnail}">
+                                                    <img 
+                                                        src="${post.thumbnail}" 
+                                                        alt="Thumbnail" 
+                                                        style="width:100%; height:200px; object-fit:cover; margin-top:auto;" />
+                                                </c:if>
+
+                                            </div>
+                                        </div>
+
+                                        <c:if test="${status.index % 2 == 1 || status.last}">
+                                        </div>
                                     </c:if>
-                                </div>
-                            </c:forEach>
 
-                            <div class="pagination-area">
-                                <ul class="pagination">
-                                    <li><a href="" class="active">1</a></li>
-                                    <li><a href="">2</a></li>
-                                    <li><a href="">3</a></li>
-                                    <li><a href=""><i class="fa fa-angle-double-right"></i></a></li>
-                                </ul>
+
+                                </c:forEach>
+
+                                <div class="pagination-area">
+                                    <ul class="pagination">
+                                        <c:forEach begin="1" end="${endP}" var="i">
+                                            <li>
+                                                <a href="blogc=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
+                                            </li>
+                                        </c:forEach>
+                                        <li>
+                                            <a href="blogc=${endP + 1}">
+                                                <i class="fa fa-angle-double-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
         </section>
 
         <footer id="footer"><!--Footer-->
