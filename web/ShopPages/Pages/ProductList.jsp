@@ -272,28 +272,38 @@
                                 </div>
                             </div><!--/brands_products-->
 
-                            <div class="price-range"><!--price-range-->
-                                <h2>Price Range</h2>
-                                <div class="well">
+                            <div class="brands_products"><!-- price range styled like brands box -->
+                                <h2 style="color: orange; font-weight: bold; text-align: center; position: relative;">
+                                    <span style="background: #fff; padding: 0 10px; z-index: 2; position: relative;">PRICE RANGE</span>
+                                </h2>
+                                <div class="brands-name" style="border: 1px solid #f0f0f0; padding: 20px;">
                                     <form action="${ctx}/CategoriesController" method="get">
                                         <input type="hidden" name="service" value="filter" />
+                                        <input type="hidden" name="component" value="${currentComponent}" />
+                                        <input type="hidden" name="brand" value="${currentBrand}" />
 
                                         <div class="form-group">
-                                            <label for="minPrice">Minimum Price (VND):</label>
-                                            <input type="number" id="minPrice" name="minPrice" class="form-control"
-                                                   placeholder="e.g. 10000000" min="0" />
+                                            <label style="font-weight: bold;">Min Price:</label>
+                                            <input type="number" name="minPrice" class="form-control"
+                                                   placeholder="e.g. 10000000"
+                                                   value="${not empty minPrice ? minPrice : ''}" min="0" />
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="maxPrice">Maximum Price (VND):</label>
-                                            <input type="number" id="maxPrice" name="maxPrice" class="form-control"
-                                                   placeholder="e.g. 50000000" min="0"/>
+                                        <div class="form-group" style="margin-top: 10px;">
+                                            <label style="font-weight: bold;">Max Price:</label>
+                                            <input type="number" name="maxPrice" class="form-control"
+                                                   placeholder="e.g. 50000000"
+                                                   value="${not empty maxPrice ? maxPrice : ''}" min="0" />
                                         </div>
 
-                                        <button type="submit" class="btn btn-warning btn-block">Search by Price</button>
+                                        <button type="submit" class="btn btn-warning btn-block" style="margin-top: 15px;">
+                                            Search by Price
+                                        </button>
                                     </form>
                                 </div>
-                            </div><!--/price-range-->
+                            </div><!-- /price-range -->
+
+
 
                         </div>
                     </div>
@@ -305,19 +315,19 @@
                                 <div class="col-sm-4">
                                     <div class="product-image-wrapper">
                                         <div class="single-products">
-                                            
+
                                             <div   class="productinfo text-center"> 
-                                                 <a href="${ctx}/ProductDetail.jsp?id=${cat.categoryID}" style="text-decoration: none; color: inherit;">
-                                                <img  src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
+                                                <a href="${ctx}/ProductDetail.jsp?id=${cat.categoryID}" style="text-decoration: none; color: inherit;">
+                                                    <img  src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
 
-                                                <p> ${cat.brandName}</p>
+                                                    <p> ${cat.brandName}</p>
 
-                                                <h2>
-                                                    <fmt:formatNumber value="${cat.price}" type="number" groupingUsed="true"/> VND
-                                                </h2>
+                                                    <h2>
+                                                        <fmt:formatNumber value="${cat.price}" type="number" groupingUsed="true"/> VND
+                                                    </h2>
 
-                                                <p>${cat.categoryName}</p>
-                                                 </a>
+                                                    <p>${cat.categoryName}</p>
+                                                </a>
                                                 <button class="add-to-cart"
                                                         data-userid="${user.getUserID()}"
                                                         data-productid="${cat.categoryID}"
@@ -338,7 +348,7 @@
                             </c:if>
 
 
-                            
+
                         </div><!--features_items-->
                     </div>
                 </div>
@@ -518,7 +528,7 @@
                 $('#slider-carousel').carousel(); // Khởi động carousel thủ công
             });
         </script>
-     
+
 
         <script>
             document.querySelectorAll('.add-to-cart').forEach(btn => {
