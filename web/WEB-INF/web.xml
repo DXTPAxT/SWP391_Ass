@@ -52,6 +52,14 @@
         <servlet-name>AdminDashbordServlet</servlet-name>
         <servlet-class>controllerAdmin.AdminDashbordServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>BlogAdminServlet</servlet-name>
+        <servlet-class>controllerAdmin.BlogAdminServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>BlogDetailServlet</servlet-name>
+        <servlet-class>controller.BlogDetailServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
         <url-pattern>/Demo</url-pattern>
@@ -107,5 +115,13 @@
     <servlet-mapping>
         <servlet-name>AdminDashbordServlet</servlet-name>
         <url-pattern>/AdminDashbordServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BlogAdminServlet</servlet-name>
+        <url-pattern>/bloga</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BlogDetailServlet</servlet-name>
+        <url-pattern>/blogdetail</url-pattern>
     </servlet-mapping>
 </web-app>

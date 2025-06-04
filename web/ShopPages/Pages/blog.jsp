@@ -97,7 +97,7 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="${pageContext.request.contextPath}/HomePages" class="active">Home</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/blog.jsp" class="active">Blog</a></li>
                                     <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="${pageContext.request.contextPath}/Product?service=listProduct" class="active">Products</a></li>                                            <li><a href="product-details.html">Product Details</a></li> 
@@ -125,6 +125,7 @@
                     </div>
                 </div>
             </div><!--/header-bottom-->
+            
         </header><!--/header-->
 
 
@@ -136,15 +137,19 @@
                             <h2>Blog Categories</h2>
                             <div>
                                 <ul>
+                                    <li><a href="blogc" style="color: black">All</a></li> 
                                     <c:forEach var="cat" items="${blog_categories}">
-                                        <li>${cat.bc_name}</li>
-                                        </c:forEach>
+                                        <li>
+                                            <a href="blogc?Bc_id=${cat.bc_id}" style="color: black;">${cat.bc_name}</a>
+                                        </li>
+                                    </c:forEach>
+
                                 </ul>
                             </div>
 
 
                             <div class="shipping text-center"><!--shipping-->
-                                <img src="images/home/shipping.jpg" alt="" />
+                                <img src="images/home/Top-5-Cau-Hinh-May-Tinh-Ban-Van-Phong-Dang-Mua-Nhat.jpg" alt="" />
                             </div><!--/shipping-->
                         </div>
                     </div>
@@ -188,20 +193,25 @@
                                         <c:if test="${status.index % 2 == 1 || status.last}">
                                         </div>
                                     </c:if>
-                                    
+
 
                                 </c:forEach>
 
-
-
                                 <div class="pagination-area">
                                     <ul class="pagination">
-                                        <li><a href="" class="active">1</a></li>
-                                        <li><a href="">2</a></li>
-                                        <li><a href="">3</a></li>
-                                        <li><a href=""><i class="fa fa-angle-double-right"></i></a></li>
+                                        <c:forEach begin="1" end="${endP}" var="i">
+                                            <li>
+                                                <a href="blogc=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
+                                            </li>
+                                        </c:forEach>
+                                        <li>
+                                            <a href="blogc=${endP + 1}">
+                                                <i class="fa fa-angle-double-right"></i>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
+
                             </div>
                         </div>
                     </div>
