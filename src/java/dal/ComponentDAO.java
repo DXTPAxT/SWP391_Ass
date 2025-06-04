@@ -138,9 +138,9 @@ public class ComponentDAO extends DBContext {
 
     public static void main(String[] args) {
         ComponentDAO dao = new ComponentDAO();
-
+        String keyword = "pC";
         // Truy vấn tất cả
-        List<Components> all = dao.getAllComponent("SELECT * FROM Components");
+        List<Components> all = dao.getAllComponent("SELECT * FROM Components WHERE ComponentName LIKE '" + keyword + "'");
 
         for (Components c : all) {
             System.out.println(c.getComponentID() + " - " + c.getComponentName() + " - " + c.getStatus());

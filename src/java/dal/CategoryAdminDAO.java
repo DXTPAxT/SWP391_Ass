@@ -18,7 +18,6 @@ public class CategoryAdminDAO extends DBContext {
                         rs.getString("CategoryName"),
                         rs.getInt("ComponentID"),
                         rs.getInt("BrandID"),
-                        rs.getString("BrandName"),
                         rs.getInt("Quantity"),
                         rs.getInt("Price"),
                         rs.getString("Description"),
@@ -28,7 +27,7 @@ public class CategoryAdminDAO extends DBContext {
             }
 
         } catch (SQLException e) {
-         
+            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
         }
 
         return list;
@@ -48,7 +47,6 @@ public class CategoryAdminDAO extends DBContext {
                         rs.getString("CategoryName"),
                         rs.getInt("ComponentID"),
                         rs.getInt("BrandID"),
-                         rs.getString("BrandName"),
                         rs.getInt("Quantity"),
                         rs.getInt("Price"),
                         rs.getString("Description"),
@@ -58,7 +56,36 @@ public class CategoryAdminDAO extends DBContext {
             }
 
         } catch (SQLException e) {
-            
+            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        return list;
+    }
+    public List<Categories> getCategoriesByComponentIDAndComponentName(int id, String name) {
+        List<Categories> list = new ArrayList<>();
+        String sql = "SELECT * FROM Categories WHERE ComponentID = ? and CategoryName = ' % ? % ' ";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.setString(2, name);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Categories c = new Categories(
+                        rs.getInt("CategoryID"),
+                        rs.getString("CategoryName"),
+                        rs.getInt("ComponentID"),
+                        rs.getInt("BrandID"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("Price"),
+                        rs.getString("Description"),
+                        rs.getInt("Status")
+                );
+                list.add(c);
+            }
+
+        } catch (SQLException e) {
+            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
         }
 
         return list;
@@ -75,7 +102,6 @@ public class CategoryAdminDAO extends DBContext {
                         rs.getString("CategoryName"),
                         rs.getInt("ComponentID"),
                         rs.getInt("BrandID"),
-                         rs.getString("BrandName"),
                         rs.getInt("Quantity"),
                         rs.getInt("Price"),
                         rs.getString("Description"),
@@ -83,11 +109,11 @@ public class CategoryAdminDAO extends DBContext {
                 );
             }
         } catch (SQLException e) {
-         
+            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return null;
     }
-
+    
     public void insertCategory(Categories c) {
         String sql = "INSERT INTO Categories (CategoryName, ComponentID, BrandID, Quantity, Price, Description, Status) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -101,7 +127,7 @@ public class CategoryAdminDAO extends DBContext {
             ps.setInt(7, c.getStatus());
             ps.executeUpdate();
         } catch (SQLException e) {
-           
+            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -119,7 +145,7 @@ public class CategoryAdminDAO extends DBContext {
             ps.setInt(8, c.getCategoryID());
             ps.executeUpdate();
         } catch (SQLException e) {
-
+            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -129,7 +155,7 @@ public class CategoryAdminDAO extends DBContext {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
-          
+            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 

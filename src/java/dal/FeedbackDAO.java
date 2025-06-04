@@ -11,7 +11,6 @@ public class FeedbackDAO extends DBContext {
 
     private static final Logger LOGGER = Logger.getLogger(FeedbackDAO.class.getName());
 
-    // Lấy tất cả feedback
     public List<Feedback> getAllFeedbacks() {
         List<Feedback> list = new ArrayList<>();
         String sql = "SELECT * FROM Feedbacks WHERE Status = 1";
@@ -21,21 +20,20 @@ public class FeedbackDAO extends DBContext {
                 list.add(f);
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error in getAllFeedbacks: " + e.getMessage(), e);
-            throw new RuntimeException("Failed to retrieve feedbacks", e);
+            LOGGER.log(Level.SEVERE, "Lỗi trong getAllFeedbacks: " + e.getMessage(), e);
+            throw new RuntimeException("Không lấy được feedback", e);
         }
         return list;
     }
 
-    // Lấy feedback theo productID
-    public List<Feedback> getFeedbackByProductId(int productId) {
-        if (productId <= 0) {
-            throw new IllegalArgumentException("ProductID must be positive");
+    public List<Feedback> getFeedbackByCategoryId(int categoryId) {
+        if (categoryId <= 0) {
+            throw new IllegalArgumentException("CategoryID phải là số dương");
         }
         List<Feedback> list = new ArrayList<>();
-        String sql = "SELECT * FROM Feedbacks WHERE ProductID = ? AND Status = 1";
+        String sql = "SELECT * FROM Feedbacks WHERE CategoryID = ? AND Status = 1";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, productId);
+            ps.setInt(1, categoryId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Feedback f = extractFeedbackFromResultSet(rs);
@@ -43,64 +41,61 @@ public class FeedbackDAO extends DBContext {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error in getFeedbackByProductId: " + e.getMessage(), e);
-            throw new RuntimeException("Failed to retrieve feedbacks for productID: " + productId, e);
+            LOGGER.log(Level.SEVERE, "Lỗi trong getFeedbackByCategoryId: " + e.getMessage(), e);
+            throw new RuntimeException("Không lấy được feedback cho CategoryID: " + categoryId, e);
         }
         return list;
     }
 
-    // Thêm feedback mới
     public boolean insertFeedback(Feedback f) {
         if (f == null) {
-            throw new IllegalArgumentException("Feedback cannot be null");
+            throw new IllegalArgumentException("Feedback không được null");
         }
-        String sql = "INSERT INTO Feedbacks (UserID, Content, ProductID, CreatedAt, Rate, Status) VALUES (?, ?, ?, ?, ?, 1)";
+        String sql = "INSERT INTO Feedbacks (UserID, Content, CategoryID, CreatedAt, Rate, Status) VALUES (?, ?, ?, ?, ?, 1)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, f.getUserID());
             ps.setString(2, f.getContent());
-            ps.setInt(3, f.getProductID());
+            ps.setInt(3, f.getCategoryID());
             ps.setTimestamp(4, new Timestamp(f.getCreatedAt() != null ? f.getCreatedAt().getTime() : System.currentTimeMillis()));
             ps.setInt(5, f.getRate());
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected > 0) {
-                LOGGER.info("Feedback inserted successfully for userID: " + f.getUserID());
+                LOGGER.info("Thêm feedback thành công cho userID: " + f.getUserID());
                 return true;
             } else {
-                LOGGER.warning("Failed to insert feedback for userID: " + f.getUserID());
+                LOGGER.warning("Không thêm được feedback cho userID: " + f.getUserID());
                 return false;
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error in insertFeedback: " + e.getMessage(), e);
-            throw new RuntimeException("Failed to insert feedback", e);
+            LOGGER.log(Level.SEVERE, "Lỗi trong insertFeedback: " + e.getMessage(), e);
+            throw new RuntimeException("Không thêm được feedback", e);
         }
     }
 
-    // Xóa feedback
     public boolean deleteFeedback(int id) {
         if (id <= 0) {
-            throw new IllegalArgumentException("FeedbackID must be positive");
+            throw new IllegalArgumentException("FeedbackID phải là số dương");
         }
         String sql = "UPDATE Feedbacks SET Status = 0 WHERE FeedbackID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected > 0) {
-                LOGGER.info("Feedback with ID " + id + " deleted successfully");
+                LOGGER.info("Xóa feedback ID " + id + " thành công");
                 return true;
             } else {
-                LOGGER.warning("No feedback found with ID " + id);
+                LOGGER.warning("Không tìm thấy feedback ID " + id);
                 return false;
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error in deleteFeedback: " + e.getMessage(), e);
-            throw new RuntimeException("Failed to delete feedback with ID: " + id, e);
+            LOGGER.log(Level.SEVERE, "Lỗi trong deleteFeedback: " + e.getMessage(), e);
+            throw new RuntimeException("Không xóa được feedback ID: " + id, e);
         }
     }
 
-    // Cập nhật nội dung feedback
     public boolean updateFeedback(Feedback f) {
         if (f == null || f.getFeedbackID() <= 0) {
-            throw new IllegalArgumentException("Feedback or FeedbackID is invalid");
+            throw new IllegalArgumentException("Feedback hoặc FeedbackID không hợp lệ");
         }
         String sql = "UPDATE Feedbacks SET Content = ?, Rate = ? WHERE FeedbackID = ? AND Status = 1";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -109,22 +104,21 @@ public class FeedbackDAO extends DBContext {
             ps.setInt(3, f.getFeedbackID());
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected > 0) {
-                LOGGER.info("Feedback with ID " + f.getFeedbackID() + " updated successfully");
+                LOGGER.info("Cập nhật feedback ID " + f.getFeedbackID() + " thành công");
                 return true;
             } else {
-                LOGGER.warning("No active feedback found with ID " + f.getFeedbackID());
+                LOGGER.warning("Không tìm thấy feedback đang hoạt động ID " + f.getFeedbackID());
                 return false;
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error in updateFeedback: " + e.getMessage(), e);
-            throw new RuntimeException("Failed to update feedback with ID: " + f.getFeedbackID(), e);
+            LOGGER.log(Level.SEVERE, "Lỗi trong updateFeedback: " + e.getMessage(), e);
+            throw new RuntimeException("Không cập nhật được feedback ID: " + f.getFeedbackID(), e);
         }
     }
 
-    // Lấy feedback theo userID
     public List<Feedback> getFeedbackByUserId(int userId) {
         if (userId <= 0) {
-            throw new IllegalArgumentException("UserID must be positive");
+            throw new IllegalArgumentException("UserID phải là số dương");
         }
         List<Feedback> list = new ArrayList<>();
         String sql = "SELECT * FROM Feedbacks WHERE UserID = ? AND Status = 1";
@@ -137,16 +131,15 @@ public class FeedbackDAO extends DBContext {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error in getFeedbackByUserId: " + e.getMessage(), e);
-            throw new RuntimeException("Failed to retrieve feedbacks for userID: " + userId, e);
+            LOGGER.log(Level.SEVERE, "Lỗi trong getFeedbackByUserId: " + e.getMessage(), e);
+            throw new RuntimeException("Không lấy được feedback cho userID: " + userId, e);
         }
         return list;
     }
 
-    // Lấy một feedback theo ID
     public Feedback getFeedbackById(int feedbackId) {
         if (feedbackId <= 0) {
-            throw new IllegalArgumentException("FeedbackID must be positive");
+            throw new IllegalArgumentException("FeedbackID phải là số dương");
         }
         String sql = "SELECT * FROM Feedbacks WHERE FeedbackID = ? AND Status = 1";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -154,30 +147,38 @@ public class FeedbackDAO extends DBContext {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Feedback f = extractFeedbackFromResultSet(rs);
-                    LOGGER.info("Feedback with ID " + feedbackId + " retrieved successfully");
+                    LOGGER.info("Lấy feedback ID " + feedbackId + " thành công");
                     return f;
                 } else {
-                    LOGGER.warning("No active feedback found with ID " + feedbackId);
+                    LOGGER.warning("Không tìm thấy feedback đang hoạt động ID " + feedbackId);
                     return null;
                 }
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error in getFeedbackById: " + e.getMessage(), e);
-            throw new RuntimeException("Failed to retrieve feedback with ID: " + feedbackId, e);
+            LOGGER.log(Level.SEVERE, "Lỗi trong getFeedbackById: " + e.getMessage(), e);
+            throw new RuntimeException("Không lấy được feedback ID: " + feedbackId, e);
         }
     }
 
-    // Helper method to extract Feedback object from ResultSet
     private Feedback extractFeedbackFromResultSet(ResultSet rs) throws SQLException {
         Feedback f = new Feedback(
                 rs.getInt("FeedbackID"),
                 rs.getInt("UserID"),
                 rs.getString("Content"),
-                rs.getInt("ProductID"),
+                rs.getInt("CategoryID"),
                 rs.getTimestamp("CreatedAt"),
                 rs.getInt("Rate"),
                 rs.getInt("Status")
         );
         return f;
+    }
+
+    public boolean isConnected() {
+        try {
+            return connection != null && !connection.isClosed();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Lỗi kiểm tra kết nối: " + e.getMessage(), e);
+            return false;
+        }
     }
 }

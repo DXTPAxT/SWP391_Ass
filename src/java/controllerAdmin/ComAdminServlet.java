@@ -21,15 +21,6 @@ import models.Components;
  */
 public class ComAdminServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -43,10 +34,17 @@ public class ComAdminServlet extends HttpServlet {
             dao.updateAllComponentQuantities();
 
             if (service.equals("list")) {
+                String keyword = request.getParameter("search");                
+                List<Components> components;
+                if (keyword != null && !keyword.trim().isEmpty()) {
+                    // Giả sử bạn có hàm getComponentByName(String name) trong DAO
+                    components = dao.getAllComponent("SELECT * FROM Components WHERE ComponentName LIKE '" + keyword + "' ");
+                } else {
+                    components = dao.getAllComponent("SELECT * FROM Components");
+                }
 
-                List<Components> components = dao.getAllComponent("SELECT * FROM Components");
                 request.setAttribute("data", components);
-                //request.getRequestDispatcher("/AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);
+                request.setAttribute("search", keyword); // để hiển thị lại keyword trên input nếu cần
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewComponent.jsp").forward(request, response);
             } else if (service.equals("update")) {
                 String submit = request.getParameter("submit");
@@ -99,7 +97,6 @@ public class ComAdminServlet extends HttpServlet {
                     int newStatus = (com.getStatus() == 1) ? 0 : 1;
                     dao.updateStatus(componentID, newStatus);
                 }
-
                 // Quay lại trang danh sách
                 response.sendRedirect(request.getContextPath() + "/ComAdmin?service=list");
             }

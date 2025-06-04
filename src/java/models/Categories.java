@@ -26,8 +26,29 @@ public class Categories {
         this.status = status;
     }
 
+    public Categories(int categoryID, String categoryName, int componentID, int brandID, int quantity, int price, String description, int status) {
+        this.categoryID = categoryID;
+        this.categoryName = categoryName;
+        this.componentID = componentID;
+        this.brandID = brandID;
+        this.quantity = quantity;
+        this.price = price;
+        this.description = description;
+        this.status = status;
+    }
+
+    public Categories(String categoryName, int componentID, int brandID, int quantity, int price, String description, int status) {
+        this.categoryName = categoryName;
+        this.componentID = componentID;
+        this.brandID = brandID;
+        this.quantity = quantity;
+        this.price = price;
+        this.description = description;
+        this.status = status;
+    }
+
     public int getCategoryID() {
-        return categoryID;
+      return categoryID;
     }
 
     public void setCategoryID(int categoryID) {

@@ -35,6 +35,8 @@ public class CategoriesController extends HttpServlet {
         String brandName = request.getParameter("brand");
         String minStr = request.getParameter("minPrice");
         String maxStr = request.getParameter("maxPrice");
+        String keyword = request.getParameter("keyword");
+
         Integer minPrice = null, maxPrice = null;
 
         if ("list".equals(service)) {
@@ -47,24 +49,29 @@ public class CategoriesController extends HttpServlet {
                 if (maxStr != null && !maxStr.isEmpty()) {
                     maxPrice = Integer.parseInt(maxStr);
                 }
+                if (keyword != null) {
+                    keyword = keyword.trim().toLowerCase(); // xử lý keyword
+                }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
-            }    
+            }
 
-            list = dao.getCategoriesFiltered(componentName, brandName, minPrice, maxPrice);
+            // Gọi hàm DAO có keyword
+            list = dao.getCategoriesFiltered(componentName, brandName, minPrice, maxPrice, keyword);
 
-            // Truyền lại để giữ giá trị đã lọc trong UI
+            // Truyền lại dữ liệu để hiển thị lại trên UI
             request.setAttribute("currentComponent", componentName);
             request.setAttribute("currentBrand", brandName);
             request.setAttribute("minPrice", minStr);
             request.setAttribute("maxPrice", maxStr);
+            request.setAttribute("currentKeyword", keyword);
             request.setAttribute("currentService", "filter");
         }
 
-        // Dữ liệu danh mục sản phẩm
+        // Truyền dữ liệu sản phẩm lọc được
         request.setAttribute("data", list);
 
-        // Dữ liệu sidebar
+        // Truyền dữ liệu sidebar
         List<Components> components = dao.GetAllComponents();
         List<BrandByComponentName> brandComponentList = dao.getBrandInSiteComponents();
         List<Brands> listBrand = dao.getBrands();
@@ -73,7 +80,7 @@ public class CategoriesController extends HttpServlet {
         request.setAttribute("BrandWithComponent", brandComponentList);
         request.setAttribute("listBrand", listBrand);
 
-        request.getRequestDispatcher("ShopPages/Pages/ProductList.jsp").forward(request, response);
+        request.getRequestDispatcher("ShopPages/Pages/Categories.jsp").forward(request, response);
     }
 
     @Override
@@ -90,6 +97,7 @@ public class CategoriesController extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Handles filtering product categories by component, brand, price.";
+        return "Handles filtering product categories by component, brand, price and keyword.";
     }
 }
+    

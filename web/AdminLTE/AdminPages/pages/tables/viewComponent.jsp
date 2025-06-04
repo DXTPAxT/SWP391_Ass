@@ -382,12 +382,27 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="box">
-                                <div class="box-header">
-                                    <h3 class="box-title">Component</h3>
-                                    <a href="ComAdmin?service=insert" 
-                                       class="btn btn-warning btn-sm" 
-                                       style="float: right;">ADD</a>
+                                <div class="box-header with-border">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-4">
+                                            <h3 class="box-title">Component</h3>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <form action="ComAdmin" method="get" class="input-group">
+                                                <input type="hidden" name="service" value="list">
+                                                <input type="text" name="search" class="form-control" placeholder="Enter component name">
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-primary" type="submit">Search</button>
+                                                </span>
+                                            </form>
+                                        </div>
+                                        <div class="col-md-3 text-right">
+                                            <a href="ComAdmin?service=insert" class="btn btn-warning btn-sm">ADD</a>
+                                        </div>
+                                    </div>
                                 </div>
+
+
                                 <!-- /.box-header -->
                                 <div class="box-body">
                                     <table id="example2" class="table table-bordered table-hover">
@@ -421,13 +436,15 @@
                                                         </td>
                                                         <td>
                                                             <a href="ComAdmin?service=changestatus&componentID=${com.componentID}" 
-                                                               class="btn btn-info btn-sm">
+                                                               class="btn btn-info btn-sm"
+                                                               onclick="return confirm('Are you sure you want to change the status?');">
                                                                 <c:choose>
                                                                     <c:when test="${com.status == 1}">Disable</c:when>
                                                                     <c:otherwise>Activate</c:otherwise>
                                                                 </c:choose>
                                                             </a>
                                                         </td>
+
                                                         <td>
                                                             <a href="ComAdmin?service=update&componentID=${com.componentID}" 
                                                                class="btn btn-warning btn-sm">Update</a>
@@ -439,7 +456,7 @@
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
-                                           
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -674,17 +691,17 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- page script -->
         <script>
-            $(function () {
-                $("#example1").DataTable();
-                $('#example2').DataTable({
-                    "paging": true,
-                    "lengthChange": false,
-                    "searching": false,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": false
-                });
-            });
+                                                                   $(function () {
+                                                                       $("#example1").DataTable();
+                                                                       $('#example2').DataTable({
+                                                                           "paging": true,
+                                                                           "lengthChange": false,
+                                                                           "searching": false,
+                                                                           "ordering": true,
+                                                                           "info": true,
+                                                                           "autoWidth": false
+                                                                       });
+                                                                   });
         </script>
         <script>
             $(function () {

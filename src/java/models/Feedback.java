@@ -7,39 +7,34 @@ public class Feedback {
     private int feedbackID;
     private int userID;
     private String content;
-    private int productID;
+    private int categoryID;
     private Date createdAt;
     private int rate;
     private int status; // 1: active, 0: inactive/deleted
 
-    // Constructor mặc định
     public Feedback() {
-        this.status = 1; // Mặc định status = 1 (active)
+        this.status = 1;
     }
 
-    // Constructor đầy đủ (bao gồm status)
-    public Feedback(int feedbackID, int userID, String content, int productID,
+    public Feedback(int feedbackID, int userID, String content, int categoryID,
             Date createdAt, int rate, int status) {
         this.feedbackID = feedbackID;
         this.userID = userID;
-        setContent(content); // Sử dụng setter để validate
-        this.productID = productID;
+        setContent(content);
+        this.categoryID = categoryID;
         this.createdAt = createdAt;
-        setRate(rate); // Sử dụng setter để validate
+        setRate(rate);
         this.status = status;
     }
 
-    // Constructor không có createdAt và status
-    public Feedback(int feedbackID, int userID, String content, int productID, int rate) {
-        this(feedbackID, userID, content, productID, null, rate, 1);
+    public Feedback(int feedbackID, int userID, String content, int categoryID, int rate) {
+        this(feedbackID, userID, content, categoryID, null, rate, 1);
     }
 
-    // Constructor dùng cho insert (không cần ID, createdAt)
-    public Feedback(int userID, String content, int productID, int rate) {
-        this(0, userID, content, productID, null, rate, 1);
+    public Feedback(int userID, String content, int categoryID, int rate) {
+        this(0, userID, content, categoryID, null, rate, 1);
     }
 
-    // Getter và Setter
     public int getFeedbackID() {
         return feedbackID;
     }
@@ -54,7 +49,7 @@ public class Feedback {
 
     public void setUserID(int userID) {
         if (userID <= 0) {
-            throw new IllegalArgumentException("UserID must be positive");
+            throw new IllegalArgumentException("UserID phải là số dương");
         }
         this.userID = userID;
     }
@@ -65,23 +60,23 @@ public class Feedback {
 
     public void setContent(String content) {
         if (content == null || content.trim().isEmpty()) {
-            throw new IllegalArgumentException("Content cannot be null or empty");
+            throw new IllegalArgumentException("Nội dung không được null hoặc trống");
         }
         if (content.length() > 500) {
-            throw new IllegalArgumentException("Content cannot exceed 500 characters");
+            throw new IllegalArgumentException("Nội dung không được vượt quá 500 ký tự");
         }
         this.content = content.trim();
     }
 
-    public int getProductID() {
-        return productID;
+    public int getCategoryID() {
+        return categoryID;
     }
 
-    public void setProductID(int productID) {
-        if (productID <= 0) {
-            throw new IllegalArgumentException("ProductID must be positive");
+    public void setCategoryID(int categoryID) {
+        if (categoryID <= 0) {
+            throw new IllegalArgumentException("CategoryID phải là số dương");
         }
-        this.productID = productID;
+        this.categoryID = categoryID;
     }
 
     public Date getCreatedAt() {
@@ -98,7 +93,7 @@ public class Feedback {
 
     public void setRate(int rate) {
         if (rate < 1 || rate > 5) {
-            throw new IllegalArgumentException("Rate must be between 1 and 5");
+            throw new IllegalArgumentException("Đánh giá phải từ 1 đến 5");
         }
         this.rate = rate;
     }
@@ -109,7 +104,7 @@ public class Feedback {
 
     public void setStatus(int status) {
         if (status != 0 && status != 1) {
-            throw new IllegalArgumentException("Status must be 0 (inactive) or 1 (active)");
+            throw new IllegalArgumentException("Status phải là 0 (không hoạt động) hoặc 1 (hoạt động)");
         }
         this.status = status;
     }
@@ -120,7 +115,7 @@ public class Feedback {
                 + "feedbackID=" + feedbackID
                 + ", userID=" + userID
                 + ", content='" + content + '\''
-                + ", productID=" + productID
+                + ", categoryID=" + categoryID
                 + ", createdAt=" + createdAt
                 + ", rate=" + rate
                 + ", status=" + status

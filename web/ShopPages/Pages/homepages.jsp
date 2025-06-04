@@ -117,11 +117,15 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
-                            </div>
+                         <div class="search_box pull-right">
+                            <form action="${ctx}/CategoriesController" method="get" style="display: flex;">
+                                <input type="hidden" name="service" value="filter"/>
+                                <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm theo tên (VD: Acer, Asus...)"
+                                       value="${not empty param.keyword ? param.keyword : ''}" style="width: 180px;" />
+                            </form>
                         </div>
+                       
+                          
                     </div>
                 </div>
             </div><!--/header-bottom-->
@@ -272,7 +276,7 @@
                                     </ul>
                                 </div>
                             </div><!--/brands_products-->
-                            C
+                            
 
 
 

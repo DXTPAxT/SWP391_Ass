@@ -173,7 +173,7 @@ public class CategoriesDAO extends DBContext {
         return list;
     }
 
-    public List<Categories> getCategoriesFiltered(String componentName, String brandName, Integer minPrice, Integer maxPrice) {
+    public List<Categories> getCategoriesFiltered(String componentName, String brandName, Integer minPrice, Integer maxPrice, String keyword) {
         List<Categories> list = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder("""
@@ -182,7 +182,7 @@ public class CategoriesDAO extends DBContext {
         JOIN Brands b ON c.BrandID = b.BrandID
         JOIN Components comp ON c.ComponentID = comp.ComponentID
         WHERE 1 = 1
-        """);
+    """);
 
         List<Object> params = new ArrayList<>();
 
@@ -204,6 +204,11 @@ public class CategoriesDAO extends DBContext {
         if (maxPrice != null) {
             sql.append(" AND c.Price <= ? ");
             params.add(maxPrice);
+        }
+
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND LOWER(c.CategoryName) LIKE ? ");
+            params.add("%" + keyword.toLowerCase() + "%");
         }
 
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
@@ -231,4 +236,5 @@ public class CategoriesDAO extends DBContext {
 
         return list;
     }
+
 }
