@@ -115,7 +115,7 @@
                         <div class="search_box pull-right">
                             <form action="${ctx}/CategoriesController" method="get" style="display: flex;">
                                 <input type="hidden" name="service" value="filter"/>
-                                <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm theo tên (VD: Acer, Asus...)"
+                                <input type="text" name="keyword" class="form-control" placeholder="Insert name product"
                                        value="${not empty param.keyword ? param.keyword : ''}" style="width: 180px;" />
 
                             </form>
@@ -212,7 +212,7 @@
 
 
         <section>
-          <div class="container">
+            <div class="container">
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="left-sidebar">
@@ -271,28 +271,36 @@
                                 </div>
                             </div><!--/brands_products-->
 
-                            <div class="price-range"><!--price-range-->
-                                <h2>Price Range</h2>
-                                <div class="well">
-                                    <form action="Product" method="get">
-                                        <input type="hidden" name="service" value="priceFilter"/>
+                            <div class="brands_products"><!-- price range styled like brands box -->
+                                <h2 style="color: orange; font-weight: bold; text-align: center; position: relative;">
+                                    <span style="background: #fff; padding: 0 10px; z-index: 2; position: relative;">PRICE RANGE</span>
+                                </h2>
+                                <div class="brands-name" style="border: 1px solid #f0f0f0; padding: 20px;">
+                                    <form action="${ctx}/CategoriesController" method="get">
+                                        <input type="hidden" name="service" value="filter" />
+                                        <input type="hidden" name="component" value="${currentComponent}" />
+                                        <input type="hidden" name="brand" value="${currentBrand}" />
 
                                         <div class="form-group">
-                                            <label for="minPrice">Minimum Price (VND):</label>
-                                            <input type="number" id="minPrice" name="minPrice" class="form-control"
-                                                   placeholder="e.g. 10,000,000" min="0" />
+                                            <label style="font-weight: bold;">Min Price:</label>
+                                            <input type="number" name="minPrice" class="form-control"
+                                                   placeholder="e.g. 10000000"
+                                                   value="${not empty minPrice ? minPrice : ''}" min="0" />
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="maxPrice">Maximum Price (VND):</label>
-                                            <input type="number" id="maxPrice" name="maxPrice" class="form-control"
-                                                   placeholder="e.g. 50,000,000" min="0"/>
+                                        <div class="form-group" style="margin-top: 10px;">
+                                            <label style="font-weight: bold;">Max Price:</label>
+                                            <input type="number" name="maxPrice" class="form-control"
+                                                   placeholder="e.g. 50000000"
+                                                   value="${not empty maxPrice ? maxPrice : ''}" min="0" />
                                         </div>
 
-                                        <button type="submit" class="btn btn-warning btn-block">Search by Price</button>
+                                        <button type="submit" class="btn btn-warning btn-block" style="margin-top: 15px;">
+                                            Search by Price
+                                        </button>
                                     </form>
                                 </div>
-                            </div><!--/price-range-->
+                            </div><!-- /price-range -->
 
                         </div>
                     </div>
@@ -338,14 +346,14 @@
                                 <div class="pagination-area text-center" style="margin-top: 40px; clear: both;">
                                     <ul class="pagination" style="display: inline-block; float: none;">
                                         <c:forEach begin="1" end="${totalPages}" var="i">
-                                            <c:url var="pageURL" value="Product">
+                                            <c:url var="pageURL" value="CategoriesController">
+                                                <c:param name="service" value="filter" />
                                                 <c:param name="page" value="${i}" />
-                                                <c:param name="service" value="${currentService}" />
                                                 <c:if test="${not empty currentBrand}">
-                                                    <c:param name="Brand" value="${currentBrand}" />
+                                                    <c:param name="brand" value="${currentBrand}" />
                                                 </c:if>
-                                                <c:if test="${not empty currentCategory}">
-                                                    <c:param name="categoryName" value="${currentCategory}" />
+                                                <c:if test="${not empty currentComponent}">
+                                                    <c:param name="component" value="${currentComponent}" />
                                                 </c:if>
                                                 <c:if test="${not empty currentKeyword}">
                                                     <c:param name="keyword" value="${currentKeyword}" />
@@ -358,12 +366,13 @@
                                                 </c:if>
                                             </c:url>
                                             <li class="${i == currentPage ? 'active' : ''}">
-                                                <a href="${pageContext.request.contextPath}/${pageURL}">${i}</a>
+                                                <a href="${pageURL}">${i}</a>
                                             </li>
                                         </c:forEach>
                                     </ul>
                                 </div>
                             </c:if>
+
 
                         </div><!--features_items-->
                     </div>

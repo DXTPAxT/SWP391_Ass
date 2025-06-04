@@ -12,11 +12,12 @@ import models.Categories;
 import models.Components;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "CategoriesController", urlPatterns = {"/CategoriesController"})
 public class CategoriesController extends HttpServlet {
+
+    private static final int PAGE_SIZE = 9;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -24,63 +25,71 @@ public class CategoriesController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         CategoriesDAO dao = new CategoriesDAO();
 
+        // --- Get service ---
         String service = request.getParameter("service");
-        if (service == null) {
-            service = "list";
-        }
+        if (service == null) service = "list";
 
-        List<Categories> list = new ArrayList<>();
-
+        // --- Get filters from request ---
         String componentName = request.getParameter("component");
         String brandName = request.getParameter("brand");
-        String minStr = request.getParameter("minPrice");
-        String maxStr = request.getParameter("maxPrice");
         String keyword = request.getParameter("keyword");
 
-        Integer minPrice = null, maxPrice = null;
+        Integer minPrice = parseInteger(request.getParameter("minPrice"));
+        Integer maxPrice = parseInteger(request.getParameter("maxPrice"));
+        int page = parseIntegerOrDefault(request.getParameter("page"), 1);
+        int start = (page - 1) * PAGE_SIZE;
 
-        if ("list".equals(service)) {
-            list = dao.getAllCategories();
-        } else if ("filter".equals(service)) {
-            try {
-                if (minStr != null && !minStr.isEmpty()) {
-                    minPrice = Integer.parseInt(minStr);
-                }
-                if (maxStr != null && !maxStr.isEmpty()) {
-                    maxPrice = Integer.parseInt(maxStr);
-                }
-                if (keyword != null) {
-                    keyword = keyword.trim().toLowerCase(); // xử lý keyword
-                }
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
+        // --- Data holders ---
+        List<Categories> categories;
+        int totalItems;
+        int totalPages;
 
-            // Gọi hàm DAO có keyword
-            list = dao.getCategoriesFiltered(componentName, brandName, minPrice, maxPrice, keyword);
+        if ("filter".equals(service)) {
+            totalItems = dao.countFiltered(componentName, brandName, minPrice, maxPrice, keyword);
+            totalPages = (int) Math.ceil(totalItems * 1.0 / PAGE_SIZE);
 
-            // Truyền lại dữ liệu để hiển thị lại trên UI
+            categories = dao.getCategoriesFiltered(componentName, brandName, minPrice, maxPrice, keyword, start, PAGE_SIZE);
+
             request.setAttribute("currentComponent", componentName);
             request.setAttribute("currentBrand", brandName);
-            request.setAttribute("minPrice", minStr);
-            request.setAttribute("maxPrice", maxStr);
+            request.setAttribute("minPrice", request.getParameter("minPrice"));
+            request.setAttribute("maxPrice", request.getParameter("maxPrice"));
             request.setAttribute("currentKeyword", keyword);
             request.setAttribute("currentService", "filter");
+        } else {
+            totalItems = dao.countAllCategories();
+            totalPages = (int) Math.ceil(totalItems * 1.0 / PAGE_SIZE);
+
+            categories = dao.getAllCategoriesPaginated(page, PAGE_SIZE);
+            request.setAttribute("currentService", "list");
         }
 
-        // Truyền dữ liệu sản phẩm lọc được
-        request.setAttribute("data", list);
+        // --- Set common attributes ---
+        request.setAttribute("data", categories);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("Components", dao.getAllComponents());
+        request.setAttribute("BrandWithComponent", dao.getBrandsGroupedByComponent());
+        request.setAttribute("listBrand", dao.getAllBrands());
 
-        // Truyền dữ liệu sidebar
-        List<Components> components = dao.GetAllComponents();
-        List<BrandByComponentName> brandComponentList = dao.getBrandInSiteComponents();
-        List<Brands> listBrand = dao.getBrands();
-
-        request.setAttribute("Components", components);
-        request.setAttribute("BrandWithComponent", brandComponentList);
-        request.setAttribute("listBrand", listBrand);
-
+        // --- Forward to JSP ---
         request.getRequestDispatcher("ShopPages/Pages/Categories.jsp").forward(request, response);
+    }
+
+    private Integer parseInteger(String str) {
+        try {
+            return (str != null && !str.isEmpty()) ? Integer.parseInt(str) : null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private int parseIntegerOrDefault(String str, int defaultValue) {
+        try {
+            return (str != null) ? Integer.parseInt(str) : defaultValue;
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
 
     @Override
@@ -97,7 +106,6 @@ public class CategoriesController extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Handles filtering product categories by component, brand, price and keyword.";
+        return "Handles category filtering, listing, and pagination.";
     }
 }
-    

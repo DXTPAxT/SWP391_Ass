@@ -120,7 +120,7 @@
                          <div class="search_box pull-right">
                             <form action="${ctx}/CategoriesController" method="get" style="display: flex;">
                                 <input type="hidden" name="service" value="filter"/>
-                                <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm theo tên (VD: Acer, Asus...)"
+                                <input type="text" name="keyword" class="form-control" placeholder="Insert name product"
                                        value="${not empty param.keyword ? param.keyword : ''}" style="width: 180px;" />
                             </form>
                         </div>
