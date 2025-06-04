@@ -112,10 +112,13 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
-                            </div>
+                        <div class="search_box pull-right">
+                            <form action="${ctx}/CategoriesController" method="get" style="display: flex;">
+                                <input type="hidden" name="service" value="filter"/>
+                                <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm theo tên (VD: Acer, Asus...)"
+                                       value="${not empty param.keyword ? param.keyword : ''}" style="width: 180px;" />
+
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -209,29 +212,36 @@
 
 
         <section>
-            <div class="container">
+          <div class="container">
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="left-sidebar">
                             <h2 class="title text-center">CATEGORY</h2>
                             <div class="panel-group category-products" id="accordian">
-                               <c:forEach var="comp" items="${Components}">
+                                <c:forEach var="comp" items="${Components}">
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
-                                            <h4 class="panel-title">
-                                                <a data-toggle="collapse" href="#comp${comp.componentID}">
-                                                    <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                                        ${comp.componentName}
+                                            <h4 class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
+                                                <!-- Link: lọc theo Component -->
+                                                <a href="${ctx}/CategoriesController?service=filter&component=${fn:escapeXml(comp.componentName)}" style="flex-grow: 1;">
+                                                    ${comp.componentName}
+                                                </a>
+
+                                                <!-- Dấu + để mở brand list -->
+                                                <a data-toggle="collapse" href="#comp${comp.componentID}" style="margin-left: 10px;">
+                                                    <i class="fa fa-plus"></i> <!-- luôn là dấu + -->
                                                 </a>
                                             </h4>
                                         </div>
+
+                                        <!-- Brand list bên trong component -->
                                         <div id="comp${comp.componentID}" class="panel-collapse collapse">
                                             <div class="panel-body">
                                                 <ul>
                                                     <c:forEach var="item" items="${BrandWithComponent}">
                                                         <c:if test="${item.componentID == comp.componentID}">
                                                             <li>
-                                                                <a href="${ctx}/Product?service=Brand&Brand=${fn:escapeXml(item.brandName)}">
+                                                                <a href="${ctx}/CategoriesController?service=filter&component=${fn:escapeXml(comp.componentName)}&brand=${fn:escapeXml(item.brandName)}">
                                                                     ${item.brandName}
                                                                 </a>
                                                             </li>
@@ -245,16 +255,18 @@
                             </div>
 
 
+
                             <div class="brands_products"><!--brands_products-->
                                 <h2>Brands</h2>
                                 <div class="brands-name">
                                     <ul class="nav nav-pills nav-stacked">
                                         <c:forEach var="brand" items="${listBrand}">
-                                            <li><a href="${ctx}/Product?service=Brand&Brand=${fn:escapeXml(brand.brandName)}">
+                                            <li>
+                                                <a href="${ctx}/CategoriesController?service=filter&brand=${fn:escapeXml(brand.brandName)}">
                                                     ${brand.brandName}
-                                                </a></li>
-                                            </c:forEach>
-
+                                                </a>
+                                            </li>
+                                        </c:forEach>
                                     </ul>
                                 </div>
                             </div><!--/brands_products-->
@@ -289,43 +301,38 @@
                         <div class="features_items"><!--features_items-->
                             <h2 class="title text-center">Products </h2>
 
-
-                            <c:forEach var="product" items="${requestScope.data}"> 
-
+                            <c:forEach var="product" items="${requestScope.data}">
                                 <div class="col-sm-4">
                                     <div class="product-image-wrapper">
                                         <div class="single-products">
-                                            <div class="productinfo text-center"> 
-                                                <a href="${pageContext.request.contextPath}/Product?service=detail&productID=${product.productID}">
+                                            <div class="productinfo text-center">
+                                                <a href="${ctx}/CategoriesController?service=detail&categoryID=${product.categoryID}">
                                                     <img src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
-                                                    <p>${product.brand}</p>
+                                                    <p>${product.brandName}</p>
                                                     <h2>
-                                                        <fmt:formatNumber value="${product.price}" type="number" groupingUsed="true"/> VND
+                                                        <fmt:formatNumber value="${product.price}" type="number" groupingUsed="true" /> VND
                                                     </h2>
-                                                    <p>${product.name}</p>
+                                                    <p>${product.categoryName}</p>
                                                 </a>
                                                 <button class="add-to-cart"
-                                                        data-userid="${user.getUserID()}"
-                                                        data-productid="${product.getProductID()}"
-                                                        data-name="${product.name}"
+                                                        data-userid="${user.userID}"
+                                                        data-productid="${product.categoryID}"
+                                                        data-name="${product.categoryName}"
                                                         data-image="${ctx}/ShopPages/Pages/images/shop/product12.jpg"
                                                         data-price="${product.price}"
-                                                        class="btn btn-default add-to-cart"
-                                                        >
+                                                        class="btn btn-default add-to-cart">
                                                     <i class="fa fa-shopping-cart"></i>
                                                     Add to cart
                                                 </button>
                                             </div>
-
                                         </div>
-
                                     </div>
                                 </div>
-                            </c:forEach> 
-                            <c:if test="${empty data}">
+                            </c:forEach>
+
+                            <c:if test="${empty requestScope.data}">
                                 <p>Không có sản phẩm nào!</p>
                             </c:if>
-
 
                             <c:if test="${totalPages gt 1}">
                                 <div class="pagination-area text-center" style="margin-top: 40px; clear: both;">
