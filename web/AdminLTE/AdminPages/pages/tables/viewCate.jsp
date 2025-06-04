@@ -381,12 +381,27 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="box">
-                                <div class="box-header">
-                                    <h3 class="box-title">${n}</h3>
-                                    <a href="CateAdmin?service=insert" 
-                                       class="btn btn-warning btn-sm" 
-                                       style="float: right;">ADD</a>
+                                <div class="box-header with-border">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-4">
+                                            <h3 class="box-title">${n}</h3>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <form action="CateAdmin" method="get" class="input-group">
+                                                <input type="hidden" name="service" value="list">
+                                                <input type="text" name="keyword" class="form-control" placeholder="Enter category name">
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-primary" type="submit">Search</button>
+                                                </span>
+                                            </form>
+                                        </div>
+                                        <div class="col-md-3 text-right">
+                                            <a href="CateAdmin?service=insert" class="btn btn-warning btn-sm">ADD</a>
+                                        </div>
+                                    </div>
                                 </div>
+
+
                                 <!-- /.box-header -->
                                 <div class="box-body">
                                     <table id="example2" class="table table-bordered table-hover">
@@ -406,44 +421,56 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:if test="${not empty requestScope.data}">
-                                                <c:forEach var="category" items="${list}">
-                                                    <tr>
-                                                        <td>${category.categoryID}</td>
-                                                        <td>${category.categoryName}</td>
-                                                        <td>${category.componentID}</td>
-                                                        <td>${category.brandID}</td>
-                                                        <td>${category.quantity}</td>
-                                                        <td>${category.price}</td>
-                                                        <td>${category.description}</td>
-                                                        <td>
-                                                            <c:choose>
-                                                                <c:when test="${category.status == 0}">Disable</c:when>
-                                                                <c:when test="${category.status == 1}">Active</c:when>
-                                                                <c:when test="${category.status == 2}">On Sale</c:when>
-                                                                <c:otherwise>Unknown</c:otherwise>
-                                                            </c:choose>
-                                                        </td>
-                                                        <td>
-                                                            <a href="CateAdmin?service=changestatus&categoryID=${category.categoryID}" 
-                                                               class="btn btn-info btn-sm">
+                                            <c:choose>
+                                                <c:when test="${not empty list}">
+                                                    <c:forEach var="category" items="${list}">
+                                                        <tr>
+                                                            <td>${category.categoryID}</td>
+                                                            <td>${category.categoryName}</td>
+                                                            <td>${category.componentID}</td>
+                                                            <td>${category.brandID}</td>
+                                                            <td>${category.quantity}</td>
+                                                            <td>${category.price}</td>
+                                                            <td>${category.description}</td>
+                                                            <td>
                                                                 <c:choose>
-                                                                    <c:when test="${category.status == 0}">Activate</c:when>
-                                                                    <c:otherwise>Disable</c:otherwise>
+                                                                    <c:when test="${category.status == 0}">Disable</c:when>
+                                                                    <c:when test="${category.status == 1}">Active</c:when>
+                                                                    <c:when test="${category.status == 2}">On Sale</c:when>
+                                                                    <c:otherwise>Unknown</c:otherwise>
                                                                 </c:choose>
-                                                            </a>
-                                                        </td>
-                                                        <td>
-                                                            <a href="CateAdmin?service=update&categoryID=${category.categoryID}" 
-                                                               class="btn btn-warning btn-sm">Update</a>
-                                                        </td>
-                                                        <td>
-                                                            <a href="ProductAdmin?service=listbycate&categoryID=${category.categoryID}" 
-                                                               class="btn btn-warning btn-sm">View</a>
+                                                            </td>
+                                                            <td>
+                                                                <a href="CateAdmin?service=changestatus&categoryID=${category.categoryID}" 
+                                                                   class="btn btn-info btn-sm"
+                                                                   onclick="return confirm('Are you sure you want to change the status?');">
+                                                                    <c:choose>
+                                                                        <c:when test="${category.status == 0}">Activate</c:when>
+                                                                        <c:otherwise>Disable</c:otherwise>
+                                                                    </c:choose>
+                                                                </a>
+                                                            </td>
+
+                                                            <td>
+                                                                <a href="CateAdmin?service=update&categoryID=${category.categoryID}" 
+                                                                   class="btn btn-warning btn-sm">Update</a>
+                                                            </td>
+                                                            <td>
+                                                                <a href="ProductAdmin?service=listbycate&categoryID=${category.categoryID}" 
+                                                                   class="btn btn-warning btn-sm">View</a>
+                                                            </td>
+                                                        </tr>
+                                                    </c:forEach>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <tr>
+                                                        <td colspan="11" class="text-center text-muted">
+                                                            No categories found.
                                                         </td>
                                                     </tr>
-                                                </c:forEach>
-                                            </c:if>
+                                                </c:otherwise>
+
+                                            </c:choose>
                                         </tbody>
                                     </table>
 
@@ -679,17 +706,17 @@
                     <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
                     <!-- page script -->
                     <script>
-                        $(function () {
-                            $("#example1").DataTable();
-                            $('#example2').DataTable({
-                                "paging": true,
-                                "lengthChange": false,
-                                "searching": false,
-                                "ordering": true,
-                                "info": true,
-                                "autoWidth": false
-                            });
-                        });
+                                                                       $(function () {
+                                                                           $("#example1").DataTable();
+                                                                           $('#example2').DataTable({
+                                                                               "paging": true,
+                                                                               "lengthChange": false,
+                                                                               "searching": false,
+                                                                               "ordering": true,
+                                                                               "info": true,
+                                                                               "autoWidth": false
+                                                                           });
+                                                                       });
                     </script>
                     <script>
                         $(function () {

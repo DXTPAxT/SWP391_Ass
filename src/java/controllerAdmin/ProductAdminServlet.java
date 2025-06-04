@@ -5,6 +5,7 @@
 package controllerAdmin;
 
 import dal.CategoriesDAO;
+import dal.CategoryAdminDAO;
 import dal.ProductDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -40,24 +41,21 @@ public class ProductAdminServlet extends HttpServlet {
             String service = request.getParameter("service");
 
             ProductDAO dao = new ProductDAO();
-            CategoriesDAO cate = new CategoriesDAO();
             List<Products> list;
-
+            CategoryAdminDAO cate = new CategoryAdminDAO();
             if ("list".equals(service)) {
                 
                 list = dao.getAllProduct("SELECT * FROM Products ");
 
-                CategoriesDAO dao1 = new CategoriesDAO();
-
-                List<Categories> Categories = dao1.getCategoriesName();
+                List<Categories> Categories = cate.getAllCategories(service);
                 request.setAttribute("data", list);
                 request.setAttribute("list", Categories);
                 //request.getRequestDispatcher("/AdminLTE/AdminPages/test.jsp").forward(request, response);            
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewProduct.jsp").forward(request, response);
 
-                List<Categories> Categories = dao1.getCategoriesName();
+                List<Categories> Category = cate.getAllCategories("SELECT * FROM Categories ");
 
-                request.setAttribute("list", Categories);
+                request.setAttribute("list", Category);
             } /*else if (service.equals("update")) {
                 String submit = request.getParameter("submit");
                 if (submit == null) {
