@@ -60,6 +60,10 @@
         <servlet-name>BlogDetailServlet</servlet-name>
         <servlet-class>controller.BlogDetailServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>BlogAddServlet</servlet-name>
+        <servlet-class>controllerAdmin.BlogAddServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
         <url-pattern>/Demo</url-pattern>
@@ -123,5 +127,9 @@
     <servlet-mapping>
         <servlet-name>BlogDetailServlet</servlet-name>
         <url-pattern>/blogdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BlogAddServlet</servlet-name>
+        <url-pattern>/blogadd</url-pattern>
     </servlet-mapping>
 </web-app>

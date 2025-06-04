@@ -19,7 +19,7 @@ public class Blog_CateDAO extends DBContext {
         String sql = "SELECT Bc_id, Bc_name FROM Blogs_category";
 
         try {
-            Connection conn = connection; // sử dụng connection từ DBContext
+            Connection conn = connection; 
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
@@ -67,7 +67,8 @@ public class Blog_CateDAO extends DBContext {
         List<Post> list = new ArrayList<>();
         String sql = "SELECT * FROM Post";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); 
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Post post = new Post();
@@ -220,7 +221,7 @@ public class Blog_CateDAO extends DBContext {
         //            System.out.println(o);
         //        }
         //        System.out.println(dao.getAllBlogCategory());
-        //        System.out.println(dao.getAllPost());
+                System.out.println(dao.getAllPost());
         //        System.out.println(dao.countAllPosts());
         //        Post p = new Post();
         //        p.setTitle("Giới thiệu Laptop mới");
@@ -252,7 +253,7 @@ public class Blog_CateDAO extends DBContext {
 //        dao.deletePost(postIdToDelete);
 //
 //        System.out.println("Đã xoá bài viết có ID = " + postIdToDelete);
-                System.out.println(dao.getPostsByCategoryId(1));
+//                System.out.println(dao.getPostsByCategoryId(1));
 
     }
 
