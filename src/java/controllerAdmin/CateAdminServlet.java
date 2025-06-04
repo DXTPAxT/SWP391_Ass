@@ -40,7 +40,6 @@ public class CateAdminServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-
             String service = request.getParameter("service");
             ComponentDAO dao = new ComponentDAO();
             CategoryAdminDAO cate = new CategoryAdminDAO();
@@ -50,17 +49,23 @@ public class CateAdminServlet extends HttpServlet {
                 service = "list";
             }
             if ("list".equals(service)) {
-
-                list = cate.getAllCategories("SELECT * FROM Categories");
+                String keyword = request.getParameter("keyword");
+                if (keyword != null && !keyword.trim().isEmpty()) {
+                    list = cate.getAllCategories("SELECT * FROM Categories WHERE CategoryName LIKE '%" + keyword + "%'");
+                } else {
+                    list = cate.getAllCategories("SELECT * FROM Categories");
+                }
                 List<Components> components = dao.getAllComponent("SELECT * FROM Components");
+                String name = "Category";
                 request.setAttribute("data", components);
+                request.setAttribute("n", name);
                 request.setAttribute("list", list);
-                //request.getRequestDispatcher("/AdminLTE/AdminPages/test.jsp").forward(request, response);            
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewCate.jsp").forward(request, response);
             } else if ("listbycom".equals(service)) {
-
                 int id = Integer.parseInt(request.getParameter("componentID"));
-                list = cate.getCategoriesByComponentID(id);
+                String keyword = request.getParameter("keyword");               
+                   list = cate.getCategoriesByComponentID(id);
+                
                 List<Components> components = dao.getAllComponent("SELECT * FROM Components");
                 Components c = dao.searchComponentByID(id);
                 String name = c.getComponentName();
@@ -135,7 +140,7 @@ public class CateAdminServlet extends HttpServlet {
                     cate.updateStatus(categoryID, newStatus);
                 }
 
-            response.sendRedirect(request.getContextPath() + "/CateAdmin?service=listbycom&componentID=" + componentID);
+                response.sendRedirect(request.getContextPath() + "/CateAdmin?service=listbycom&componentID=" + componentID);
 
             }
 
