@@ -9,14 +9,14 @@ public class ProductDAO extends DBContext {
 
     public List<Products> getAllProduct(String sql) {
         List<Products> listProduct = new ArrayList<>();
-        try (PreparedStatement ptm = connection.prepareStatement(sql);
-             ResultSet rs = ptm.executeQuery()) {
+        try (PreparedStatement ptm = connection.prepareStatement(sql); ResultSet rs = ptm.executeQuery()) {
             while (rs.next()) {
                 Products p = new Products(
                         rs.getInt("ProductID"),
                         rs.getString("Name"),
                         rs.getDate("CreatedAt"),
                         rs.getInt("CategoryID"),
+                        rs.getString("ProductCode"),
                         rs.getInt("Status"));
                 listProduct.add(p);
             }
@@ -37,8 +37,9 @@ public class ProductDAO extends DBContext {
                         rs.getString("Name"),
                         rs.getDate("CreatedAt"),
                         rs.getInt("CategoryID"),
+                        rs.getString("ProductCode"),
                         rs.getInt("Status"));
-            }   
+            }
         } catch (SQLException ex) {
             Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -46,12 +47,13 @@ public class ProductDAO extends DBContext {
     }
 
     public void insertProduct(Products p) {
-        String sql = "INSERT INTO Products (Name, CreatedAt, CategoryID, Status) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Products (Name, CreatedAt, CategoryID, ProductCode, Status) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, p.getName());
             ps.setDate(2, p.getCreatedAt());
             ps.setInt(3, p.getCategoryID());
-            ps.setInt(4, p.getStatus());
+            ps.setString(4, p.getProductCode());
+            ps.setInt(5, p.getStatus());
             ps.executeUpdate();
         } catch (SQLException e) {
             Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
@@ -59,13 +61,14 @@ public class ProductDAO extends DBContext {
     }
 
     public void updateProduct(Products p) {
-        String sql = "UPDATE Products SET Name = ?, CreatedAt = ?, CategoryID = ?, Status = ? WHERE ProductID = ?";
+        String sql = "UPDATE Products SET Name = ?, CreatedAt = ?, CategoryID = ?, ProductCode = ?,  Status = ? WHERE ProductID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, p.getName());
             ps.setDate(2, p.getCreatedAt());
             ps.setInt(3, p.getCategoryID());
-            ps.setInt(4, p.getStatus());
-            ps.setInt(5, p.getProductID());
+            ps.setString(4, p.getProductCode());
+            ps.setInt(5, p.getStatus());
+            ps.setInt(6, p.getProductID());
             ps.executeUpdate();
         } catch (SQLException e) {
             Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
@@ -94,6 +97,7 @@ public class ProductDAO extends DBContext {
                         rs.getString("Name"),
                         rs.getDate("CreatedAt"),
                         rs.getInt("CategoryID"),
+                        rs.getString("ProductCode"),
                         rs.getInt("Status"));
                 list.add(p);
             }
@@ -101,6 +105,16 @@ public class ProductDAO extends DBContext {
             Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return list;
+    }
+
+    public void syncProductNameWithCategoryName() {
+        String sql = "UPDATE Products "
+                + "SET Name = (SELECT CategoryName FROM Categories WHERE Categories.CategoryID = Products.CategoryID)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
 
     public static void main(String[] args) {

@@ -42,79 +42,76 @@ public class ProductAdminServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             String service = request.getParameter("service");
 
-            ProductDAO pro = new ProductDAO();
-            ComponentDAO dao = new ComponentDAO();
-            List<Products> product;
             CategoryAdminDAO cate = new CategoryAdminDAO();
+            ComponentDAO dao = new ComponentDAO();
+            ProductDAO pro = new ProductDAO();
+            pro.syncProductNameWithCategoryName();
+
+            List<Products> product;
             List<Categories> list = cate.getAllCategories("SELECT * FROM Categories");
             List<Components> components = dao.getAllComponent("SELECT * FROM Components");
-            if(service == null){
+            if (service == null) {
                 service = "list";
             }
-            if ("list".equals(service)) {                
-                product = pro.getAllProduct("SELECT * FROM Products ");
-                List<Categories> Categories = cate.getAllCategories(service);
+            if ("list".equals(service)) {
+                String keyword = request.getParameter("keyword");
+                if (keyword != null && !keyword.trim().isEmpty()) {
+                    product = pro.getAllProduct("SELECT * FROM Products WHERE ProductName LIKE '%" + keyword + "%'");
+                } else {
+                    product = pro.getAllProduct("SELECT * FROM Products ");
+                }
+
                 request.setAttribute("product", product);
                 request.setAttribute("data", components);
                 request.setAttribute("list", list);
-           
+
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewProduct.jsp").forward(request, response);
-            } /*else if (service.equals("update")) {
+            } else if (service.equals("update")) {
                 String submit = request.getParameter("submit");
                 if (submit == null) {
                     int productID = Integer.parseInt(request.getParameter("productID"));
-                    Products product = dao.getProductByID(productID);
-                    CategoriesDAO dao1 = new CategoriesDAO();
+                    Products products = pro.getProductByID(productID);
 
-                    List<Categories> Categories = dao1.getCategoriesName();
+                    request.setAttribute("product", products);
+                    request.setAttribute("data", components);
+                    request.setAttribute("list", list);
 
-                    request.setAttribute("list", Categories);
-
-                    request.setAttribute("product", product);
                     request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateProduct.jsp").forward(request, response);
-                    //request.getRequestDispatcher("AdminLTE/AdminPages/test.jsp").forward(request, response);
                 } else {
-                    int productID = Integer.parseInt(request.getParameter("product_id"));
+                    int productID = Integer.parseInt(request.getParameter("productID"));
                     String name = request.getParameter("name");
-                    String description = request.getParameter("description");
-                    String brand = request.getParameter("brand");
-                    double price = Double.parseDouble(request.getParameter("price"));
-                    int quantity = Integer.parseInt(request.getParameter("quantity"));
-                    int warranty = Integer.parseInt(request.getParameter("warranty"));
-                    Date createdAt = Date.valueOf(request.getParameter("created_at")); // định dạng yyyy-[m]m-[d]d
-                    int categoryID = Integer.parseInt(request.getParameter("category_id"));
+                    String productCode = request.getParameter("productCode");
+                    Date createdAt = Date.valueOf(request.getParameter("createdAt")); 
+                    int categoryID = Integer.parseInt(request.getParameter("categoryID"));
                     int status = Integer.parseInt(request.getParameter("status"));
-                    Products p = new Products(productID, name, description, brand, price, quantity, warranty, createdAt, categoryID, status);
-                    dao.updateProduct(p);
-                    response.sendRedirect(request.getContextPath() + "/ProductAdmin?service=list&categoryID=" + p.getCategoryID());
+
+                    Products updatedProduct = new Products(productID, name, createdAt, categoryID, productCode, status);
+                    pro.updateProduct(updatedProduct);
+
+                    response.sendRedirect(request.getContextPath() + "/ProductAdmin?service=list");
                 }
             } else if (service.equals("insert")) {
                 String submit = request.getParameter("submit");
                 if (submit == null) {
-                    
-                    List<Categories> categories = cate.getCategoriesName();
-                    request.setAttribute("list", categories);
+                    request.setAttribute("data", components);
+                    request.setAttribute("list", list);
                     request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertProduct.jsp").forward(request, response);
                 } else {
-                
+                    // Xử lý thêm sản phẩm mới
                     String name = request.getParameter("name");
-                    String description = request.getParameter("description");
-                    String brand = request.getParameter("brand");
-                    double price = Double.parseDouble(request.getParameter("price"));
-                    int quantity = Integer.parseInt(request.getParameter("quantity"));
-                    int warranty = Integer.parseInt(request.getParameter("warranty"));
-                    Date createdAt = Date.valueOf(request.getParameter("created_at"));
-                    int categoryID = Integer.parseInt(request.getParameter("category_id"));
+                    String productCode = request.getParameter("productCode");
+                    Date createdAt = Date.valueOf(java.time.LocalDate.now());
+                    int categoryID = Integer.parseInt(request.getParameter("categoryID"));
                     int status = Integer.parseInt(request.getParameter("status"));
 
-                    
-                    Products p = new Products(name, description, brand, price, quantity, warranty, createdAt, categoryID, status);
-                    dao.insertProduct(p);
+                    // Tạo đối tượng Products và insert
+                    Products p = new Products(name, createdAt, categoryID, productCode, status);
+                    pro.insertProduct(p);
 
-                   
-                    response.sendRedirect(request.getContextPath() + "/ProductAdmin?service=list&categoryID=" + categoryID);
+                    // Redirect sau khi thêm
+                    response.sendRedirect(request.getContextPath() + "/ProductAdmin?service=list");
                 }
-            }*/
+            }
 
         }
     }
