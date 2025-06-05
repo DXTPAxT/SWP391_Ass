@@ -231,11 +231,6 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>BlogAddServlet</servlet-name>
-        <url-pattern>/blogadd</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>AddUserServlet</servlet-name>
         <url-pattern>/Admin/user/add</url-pattern>
     </servlet-mapping>
