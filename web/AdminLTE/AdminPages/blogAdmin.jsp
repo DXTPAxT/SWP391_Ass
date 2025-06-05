@@ -6,6 +6,8 @@
 
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <!DOCTYPE html>
@@ -407,11 +409,15 @@
                                                 <td><fmt:formatDate value="${po.updated_date}" pattern="dd/MM/yyyy HH:mm:ss" /></td>
                                                 <td>${po.content}</td> 
                                                 <td>${po.bc_name}</td>
-                                            <a href="blogc?Bc_id=${po.bc_id}">${po.bc_name}</a>
 
-                                            <td>${po.thumbnail}</td> 
-                                            <td>${po.brief}</td> 
-                                            <td>${po.add_id}</td> 
+                                                <td>${po.thumbnail}</td> 
+                                                <td>${po.brief}</td> 
+                                                <td>${po.add_id}</td> 
+                                                <tD>
+                                                    <a href="#">Update</a>
+                                                    <a href="#">Delete</a>
+
+                                                </tD>
                                             </tr>
                                         </c:forEach>
 
