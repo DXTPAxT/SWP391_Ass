@@ -2,60 +2,87 @@ package controller;
 
 import dal.FeedbackDAO;
 import models.Feedback;
+import models.User;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
-import models.User;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "SubmitFeedbackServlet", urlPatterns = {"/submitFeedback"})
 public class SubmitFeedbackServlet extends HttpServlet {
 
+    private static final Logger LOGGER = Logger.getLogger(SubmitFeedbackServlet.class.getName());
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
         try {
-            // Lấy userID từ session, tránh người dùng giả mạo
-            HttpSession session = request.getSession();
+            // Kiểm tra đăng nhập
             User user = (User) session.getAttribute("user");
-
             if (user == null) {
-                // chưa đăng nhập -> chuyển về trang login hoặc báo lỗi
-                response.sendRedirect("Login");
+                session.setAttribute("error", "Vui lòng đăng nhập để gửi feedback");
+                response.sendRedirect(request.getContextPath() + "/Login");
                 return;
             }
 
             // Lấy thông tin từ form
-//            int productID = Integer.parseInt(request.getParameter("productId"));  // chú ý tên phải đúng với form
-            int productID = 1;
-            int rate = Integer.parseInt(request.getParameter("rating"));          // tương ứng với name="rating"
+            int categoryID;
+            int rate;
             String content = request.getParameter("content");
+            try {
+                categoryID = Integer.parseInt(request.getParameter("categoryID"));
+                rate = Integer.parseInt(request.getParameter("rating"));
+            } catch (NumberFormatException e) {
+                session.setAttribute("error", "ID danh mục hoặc đánh giá không hợp lệ");
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + request.getParameter("categoryID"));
+                return;
+            }
 
-            // Lấy thời gian hiện tại và chuyển sang java.util.Date
-//            LocalDateTime now = LocalDateTime.now();
-//            Date createdAt = Date.from(now.atZone(ZoneId.systemDefault()).toInstant());
+            // Xác thực dữ liệu
+            if (content == null || content.trim().isEmpty()) {
+                session.setAttribute("error", "Nội dung không được để trống");
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryID);
+                return;
+            }
+            if (rate < 1 || rate > 5) {
+                session.setAttribute("error", "Đánh giá phải từ 1 đến 5");
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryID);
+                return;
+            }
+            if (content.length() > 500) {
+                session.setAttribute("error", "Nội dung không được vượt quá 500 ký tự");
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryID);
+                return;
+            }
 
-            // Tạo đối tượng Feedback
-            Feedback feedback = new Feedback(0, user.getUserID(), content, productID, rate);
+            // Tạo Feedback
+            Feedback feedback = new Feedback(user.getUserID(), content, categoryID, rate);
+            feedback.setCreatedAt(new Date());
 
-            // Thêm feedback vào DB
+            // Thêm vào cơ sở dữ liệu
             FeedbackDAO dao = new FeedbackDAO();
-            dao.insertFeedback(feedback);
+            boolean success = dao.insertFeedback(feedback);
 
-            // Chuyển hướng về trang chi tiết sản phẩm
-//            response.sendRedirect("Product?service=Detail&ProductID=" + productID);
-            response.sendRedirect("feedback");
-
+            if (success) {
+                session.setAttribute("message", "Gửi feedback thành công");
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryID);
+            } else {
+                session.setAttribute("error", "Không lưu được feedback");
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryID);
+            }
         } catch (Exception e) {
-            HttpSession session = request.getSession();
-            session.setAttribute("error", e.getMessage());  
-            // Redirect về trang lỗi nếu có exception
-            response.sendRedirect("test.jsp");
+            LOGGER.log(Level.SEVERE, "Lỗi trong SubmitFeedbackServlet: " + e.getMessage(), e);
+            session.setAttribute("error", "Đã xảy ra lỗi khi gửi feedback: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/feedback");
         }
     }
 }

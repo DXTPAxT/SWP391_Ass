@@ -1,73 +1,75 @@
 package controller;
 
-import dal.CategoryDAO;
-import models.BrandByCategoriesName;
+import dal.CategoriesDAO;
+import models.BrandByComponentName;
+import models.Brands;
 import models.Categories;
-import models.Products;
+import models.Components;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+
 import java.io.IOException;
 import java.util.List;
 
 @WebServlet(name = "HomePagesController", urlPatterns = {"/HomePages"})
 public class HomePagesController extends HttpServlet {
 
-    private static final int PAGE_SIZE = 3;
+    private static final int PAGE_SIZE = 6;
+    private static final int COMPONENT_PC = 1;
+    private static final int COMPONENT_LAPTOP = 2;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         response.setContentType("text/html;charset=UTF-8");
+        CategoriesDAO dao = new CategoriesDAO();
 
-        int pagePC = parsePageParam(request.getParameter("pagePC"));
-        int pageLaptop = parsePageParam(request.getParameter("pageLaptop"));
+        // parameter
+        int pagePC = parsePage(request.getParameter("pagePC"));
+        int pageLaptop = parsePage(request.getParameter("pageLaptop"));
 
         int startPC = (pagePC - 1) * PAGE_SIZE;
         int startLaptop = (pageLaptop - 1) * PAGE_SIZE;
 
-        CategoryDAO dao = new CategoryDAO();
-
-        //take catagories
-        List<Categories> categories = dao.getCategoriesName();
-        // take brand
-        List<BrandByCategoriesName> brandList = dao.getBrandWithCategoryName();
-
-        // PC
-        List<Products> pcProducts = dao.GetCataByCategory(1, startPC, PAGE_SIZE);
-        int totalPC = dao.countTotalProducts(1);
+        //  pc list
+        List<Categories> pcProducts = dao.getCategoriesByComponent(COMPONENT_PC, startPC, PAGE_SIZE);
+        int totalPC = dao.countTotalProducts(COMPONENT_PC);
         int totalPagesPC = (int) Math.ceil(totalPC * 1.0 / PAGE_SIZE);
-
-        // Laptop
-        List<Products> laptopProducts = dao.GetCataByCategory(2, startLaptop, PAGE_SIZE);
-        int totalLaptop = dao.countTotalProducts(2);
+        // laptop list
+        List<Categories> laptopProducts = dao.getCategoriesByComponent(COMPONENT_LAPTOP, startLaptop, PAGE_SIZE);
+        int totalLaptop = dao.countTotalProducts(COMPONENT_LAPTOP);
         int totalPagesLaptop = (int) Math.ceil(totalLaptop * 1.0 / PAGE_SIZE);
 
-        // sent to PC
-        request.setAttribute("categories", categories);
-        request.setAttribute("BrandWithCategoryName", brandList);
+        // slide bar
+        request.setAttribute("Components", dao.getAllComponents());
+        request.setAttribute("BrandWithComponent", dao.getBrandsGroupedByComponent());
+        request.setAttribute("listBrand", dao.getAllBrands());
 
+        // pc data
         request.setAttribute("pcProducts", pcProducts);
         request.setAttribute("totalPagesPC", totalPagesPC);
         request.setAttribute("currentPagePC", pagePC);
 
+        // laptop data
         request.setAttribute("laptopProducts", laptopProducts);
         request.setAttribute("totalPagesLaptop", totalPagesLaptop);
         request.setAttribute("currentPageLaptop", pageLaptop);
 
+       
         request.getRequestDispatcher("/ShopPages/Pages/homepages.jsp").forward(request, response);
     }
 
-    private int parsePageParam(String param) {
+    private int parsePage(String param) {
         try {
-            return (param != null) ? Integer.parseInt(param) : 1;
+            return (param != null && !param.isEmpty()) ? Integer.parseInt(param) : 1;
         } catch (NumberFormatException e) {
             return 1;
         }
     }
 
-    @Override
+      @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
@@ -81,6 +83,6 @@ public class HomePagesController extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Home page controller with category-based pagination";
+        return "Controller for homepage product display by component with pagination.";
     }
 }

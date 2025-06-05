@@ -3,3 +3,6 @@
 src/java/dal/DBContext.java
 test.jsp
 /dist/
+/src/java/config/mail.properties
+
+.fake

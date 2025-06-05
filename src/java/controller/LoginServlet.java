@@ -65,7 +65,7 @@ public class LoginServlet extends HttpServlet {
             RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/login.jsp");
             rs.forward(request, response);
         } else {
-            if (user.getRoleID() != 1) {
+            if (user.getRoleID() == 3) {
                 String redirectURL = (String) session.getAttribute("redirectAfterLogin");
                 if (redirectURL == null) {
                     redirectURL = "Home";
@@ -73,7 +73,7 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("redirectAfterLogin", null);
                 response.sendRedirect(redirectURL);
             } else {
-                response.sendRedirect("Admin");
+                response.sendRedirect("AdminDashbordServlet");
             }
         }
     }
@@ -115,7 +115,7 @@ public class LoginServlet extends HttpServlet {
                     session.setAttribute("redirectAfterLogin", null);
                     response.sendRedirect(redirectURL);
                 } else {
-                    response.sendRedirect("Admin");
+                    response.sendRedirect("AdminDashbordServlet");
                 }
             } else {
                 error = "Incorrect password!";

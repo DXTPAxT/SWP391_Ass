@@ -4,7 +4,7 @@
  */
 package controller.cart;
 
-import dal.CartDAO;
+import dal.CartItemDAO;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,7 +13,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import models.Cart;
+import java.util.ArrayList;
+import models.CartItem;
 import models.User;
 
 /**
@@ -62,11 +63,11 @@ public class CartView extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        
-        CartDAO dao = new CartDAO();
-        Cart cart = dao.getCartByUserId(user.getUserID());
-        
-        session.setAttribute("cart", cart.getItems());
+
+        CartItemDAO dao = new CartItemDAO();
+        ArrayList<CartItem> cart = dao.getCartItemsByUserId(user.getUserID());
+
+        session.setAttribute("cart", cart);
         RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/cart.jsp");
         rs.forward(request, response);
     }

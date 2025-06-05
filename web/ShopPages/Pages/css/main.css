@@ -1579,7 +1579,7 @@ h2.title {
 
 
 #cart_items .cart_info .table.table-condensed tr {
-  border-bottom: 1px solid#F7F7F0
+  border-bottom: 1px solid#a1a1a1;
 }
 
 #cart_items .cart_info .table.table-condensed tr:last-child {
@@ -1623,6 +1623,7 @@ h2.title {
 #cart_items .cart_info .cart_total_price {
   color: #FE980F;
   font-size: 24px;
+  margin-bottom: 0;
 }
 
 .cart_product {

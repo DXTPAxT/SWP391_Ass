@@ -164,9 +164,108 @@ public class UserDAO extends DBContext {
         return n > 0;
     }
 
+    public boolean updateUser(int userID, String fullName, String email,
+            String phoneNumber, String address, int status) {
+        String sql = """
+        UPDATE Users
+        SET
+            FullName = ?,
+            Email = ?, 
+            PhoneNumber = ?, 
+            Address = ?, 
+            Status = ?
+        WHERE UserID = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, fullName);
+            ps.setString(2, email);
+            ps.setString(3, phoneNumber);
+            ps.setString(4, address);
+            ps.setInt(5, status);
+            ps.setInt(6, userID);
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         UserDAO dao = new UserDAO();
-        System.out.println(dao.getUsers());
+
+        // Dữ liệu test giả định
+        int userID = 1; // ID của user muốn cập nhật, phải tồn tại trong DB
+        String fullName = "Nguyen Van Test";
+        String email = "testuser@example.com";
+        String phoneNumber = "0909123456";
+        String address = "123 Test Street, HCM City";
+        int status = 1;
+
+        boolean result = dao.updateUser(userID, fullName, email, phoneNumber, address, status);
+
+        if (result) {
+            System.out.println("✅ Cập nhật user thành công.");
+        } else {
+            System.out.println("❌ Cập nhật user thất bại hoặc không có dòng nào được thay đổi.");
+        }
+    }
+
+    public User getUserByID(int userID) {
+        String sql = "SELECT * FROM Users WHERE UserID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new User(
+                        rs.getInt("UserID"),
+                        rs.getInt("RoleID"),
+                        rs.getString("FullName"),
+                        rs.getString("Email"),
+                        rs.getString("PhoneNumber"),
+                        rs.getString("Address"),
+                        rs.getString("PasswordHash"),
+                        rs.getString("CreatedAt"),
+                        rs.getInt("Status")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean resetPassword(int userID, String newPasswordHash) {
+        String sql = "UPDATE Users SET PasswordHash = ? WHERE UserID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, newPasswordHash);
+            ps.setInt(2, userID);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean toggleStatus(int userID) {
+        String sql = """
+        UPDATE Users
+        SET Status = 
+            CASE 
+                WHEN Status = 1 THEN 0 
+                ELSE 1 
+            END
+        WHERE UserID = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userID);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

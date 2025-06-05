@@ -8,6 +8,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <%@ page isErrorPage="true" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -104,19 +105,11 @@
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="${pageContext.request.contextPath}/HomePages" class="active">Home</a></li>
-                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="${pageContext.request.contextPath}/Product?service=list" class="active">Products</a></li>                                            <li><a href="product-details.html">Product Details</a></li> 
-                                            <li><a href="checkout.html">Checkout</a></li> 
-                                            <li><a href="cart.html">Cart</a></li> 
-                                            <li><a href="login.html">Login</a></li> 
-                                        </ul>
+
+                                    <li><a href="${pageContext.request.contextPath}/CategoriesController?service=list" class="active">Products</a></li>
                                     </li> 
-                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="blog.html">Blog List</a></li>
-                                            <li><a href="blog-single.html">Blog Single</a></li>
-                                        </ul>
+                                    <li class="dropdown"><a href="#">Blog<i class=""></i></a>
+
                                     </li> 
                                     <li><a href="404.html">404</a></li>
                                     <li><a href="contact-us.html">Contact</a></li>
@@ -125,18 +118,13 @@
                         </div>
                         <div class="col-sm-3">
                             <div class="search_box pull-right">
-                                <form action="Product" method="get">
-                                    <input type="hidden" name="service" value="list"/>
-                                    <input type="text" name="keyword" placeholder="Search by product name" onkeydown="if (event.key === 'Enter') {
-                                                this.form.submit();
-                                            }"/>
-                                </form>
+                                <input type="text" placeholder="Search"/>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </header>
+            </div><!--/header-bottom-->
+        </header><!--/header-->
 
         <section id="slider"><!--slider-->
             <div class="container">
@@ -170,7 +158,7 @@
                                              style="height: 450px; width: auto; padding-top: 30px;"
                                              class="girl img-responsive" alt="CyberBeast" />
                                     </div>
-                                </div> 
+                                </div>
 
                                 <!-- Slide 2 -->
                                 <div class="item">
@@ -185,7 +173,7 @@
                                     </div>
                                     <div class="col-sm-6 text-center">
                                         <img src="${ctx}/ShopPages/Pages/images/home/1.png"
-                                             style="height: 400px; width: auto; padding-top: 40px;"
+                                             style="height: 400px; width: auto; padding-top: 20px;"
                                              class="girl img-responsive" alt="Responsive Design" />
 
                                     </div>
@@ -223,74 +211,99 @@
             </div>
         </section><!--/slider-->
 
+
         <section>
             <div class="container">
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="left-sidebar">
                             <h2 class="title text-center">CATEGORY</h2>
-                            <div class="panel-group category-products" id="accordian"><!--category-products-->
-                                <c:forEach var="cate" items="${categories}">
+                            <div class="panel-group category-products" id="accordian">
+                                <c:forEach var="comp" items="${Components}">
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
-                                            <h4 class="panel-title">
-                                                <a href="${ctx}/Product?service=categoryFilter&amp;categoryName=${fn:escapeXml(cate.categoryName)}">
-                                                    ${cate.categoryName}
+                                            <h4 class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
+                                                <!-- list component -->
+                                                <a href="${ctx}/CategoriesController?service=filter&component=${fn:escapeXml(comp.componentName)}" style="flex-grow: 1;">
+                                                    ${comp.componentName}
+                                                </a>
+
+                                                <!-- "+" to open brand list -->
+                                                <a data-toggle="collapse" href="#comp${comp.componentID}" style="margin-left: 10px;">
+                                                    <i class="fa fa-plus"></i> <!-- luôn là dấu + -->
                                                 </a>
                                             </h4>
                                         </div>
-                                        <div id="collapse${cate.categoryID}" class="panel-collapse collapse">
+
+                                        <!-- Brand list in site component list -->
+                                        <div id="comp${comp.componentID}" class="panel-collapse collapse">
                                             <div class="panel-body">
                                                 <ul>
-                                                    <c:forEach var="item" items="${BrandWithCategoryName}">
-                                                        <c:if test="${item.categoryID eq cate.categoryID}">
-                                                            <li><a href="#">${item.brand}</a></li>
-                                                            </c:if>
-                                                        </c:forEach>
+                                                    <c:forEach var="item" items="${BrandWithComponent}">
+                                                        <c:if test="${item.componentID == comp.componentID}">
+                                                            <li>
+                                                                <a href="${ctx}/CategoriesController?service=filter&component=${fn:escapeXml(comp.componentName)}&brand=${fn:escapeXml(item.brandName)}">
+                                                                    ${item.brandName}
+                                                                </a>
+                                                            </li>
+                                                        </c:if>
+                                                    </c:forEach>
                                                 </ul>
                                             </div>
                                         </div>
                                     </div>
                                 </c:forEach>
-                            </div><!--/category-products-->
+                            </div>
+
+
 
                             <div class="brands_products"><!--brands_products-->
                                 <h2>Brands</h2>
                                 <div class="brands-name">
                                     <ul class="nav nav-pills nav-stacked">
-                                        <li><a href=""> <span class="pull-right">(50)</span>Acne</a></li>
-                                        <li><a href=""> <span class="pull-right">(56)</span>Grüne Erde</a></li>
-                                        <li><a href=""> <span class="pull-right">(27)</span>Albiro</a></li>
-                                        <li><a href=""> <span class="pull-right">(32)</span>Ronhill</a></li>
-                                        <li><a href=""> <span class="pull-right">(5)</span>Oddmolly</a></li>
-                                        <li><a href=""> <span class="pull-right">(9)</span>Boudestijn</a></li>
-                                        <li><a href=""> <span class="pull-right">(4)</span>Rösch creative culture</a></li>
+                                        <c:forEach var="brand" items="${listBrand}">
+                                            <li>
+                                                <a href="${ctx}/CategoriesController?service=filter&brand=${fn:escapeXml(brand.brandName)}">
+                                                    ${brand.brandName}
+                                                </a>
+                                            </li>
+                                        </c:forEach>
                                     </ul>
                                 </div>
                             </div><!--/brands_products-->
 
-                            <div class="price-range"><!--price-range-->
-                                <h2>Price Range</h2>
-                                <div class="well">
-                                    <form action="Product" method="get">
-                                        <input type="hidden" name="service" value="priceFilter"/>
+                            <div class="brands_products"><!-- price range styled like brands box -->
+                                <h2 style="color: orange; font-weight: bold; text-align: center; position: relative;">
+                                    <span style="background: #fff; padding: 0 10px; z-index: 2; position: relative;">PRICE RANGE</span>
+                                </h2>
+                                <div class="brands-name" style="border: 1px solid #f0f0f0; padding: 20px;">
+                                    <form action="${ctx}/CategoriesController" method="get">
+                                        <input type="hidden" name="service" value="filter" />
+                                        <input type="hidden" name="component" value="${currentComponent}" />
+                                        <input type="hidden" name="brand" value="${currentBrand}" />
 
                                         <div class="form-group">
-                                            <label for="minPrice">Minimum Price (VND):</label>
-                                            <input type="number" id="minPrice" name="minPrice" class="form-control"
-                                                   placeholder="e.g. 10,000,000" min="0" />
+                                            <label style="font-weight: bold;">Min Price:</label>
+                                            <input type="number" name="minPrice" class="form-control"
+                                                   placeholder="e.g. 10000000"
+                                                   value="${not empty minPrice ? minPrice : ''}" min="0" />
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="maxPrice">Maximum Price (VND):</label>
-                                            <input type="number" id="maxPrice" name="maxPrice" class="form-control"
-                                                   placeholder="e.g. 50,000,000" min="0"/>
+                                        <div class="form-group" style="margin-top: 10px;">
+                                            <label style="font-weight: bold;">Max Price:</label>
+                                            <input type="number" name="maxPrice" class="form-control"
+                                                   placeholder="e.g. 50000000"
+                                                   value="${not empty maxPrice ? maxPrice : ''}" min="0" />
                                         </div>
 
-                                        <button type="submit" class="btn btn-warning btn-block">Search by Price</button>
+                                        <button type="submit" class="btn btn-warning btn-block" style="margin-top: 15px;">
+                                            Search by Price
+                                        </button>
                                     </form>
                                 </div>
-                            </div><!--/price-range-->
+                            </div><!-- /price-range -->
+
+
 
                         </div>
                     </div>
@@ -298,39 +311,44 @@
                     <div class="col-sm-9 padding-right">
                         <div class="features_items"><!--features_items-->
                             <h2 class="title text-center">Products </h2>
-
-
-                            <c:forEach var="product" items="${requestScope.data}"> 
-
+                            <c:forEach var="cat" items="${requestScope.data}">
                                 <div class="col-sm-4">
                                     <div class="product-image-wrapper">
                                         <div class="single-products">
-                                            <div class="productinfo text-center"> 
-                                                <a href="${pageContext.request.contextPath}/Product?service=detail&productID=${product.productID}">
-                                                    <img src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
-                                                    <h2>${product.price}</h2>
-                                                    <p>${product.name}</p>
+
+                                            <div   class="productinfo text-center"> 
+                                                <a href="${ctx}/ProductDetail.jsp?id=${cat.categoryID}" style="text-decoration: none; color: inherit;">
+                                                    <img  src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
+
+                                                    <p> ${cat.brandName}</p>
+
+                                                    <h2>
+                                                        <fmt:formatNumber value="${cat.price}" type="number" groupingUsed="true"/> VND
+                                                    </h2>
+
+                                                    <p>${cat.categoryName}</p>
                                                 </a>
-
-                                                <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                                <button class="add-to-cart"
+                                                        data-userid="${user.getUserID()}"
+                                                        data-productid="${cat.categoryID}"
+                                                        data-name="${cat.categoryName}"
+                                                        data-image="${ctx}/ShopPages/Pages/images/shop/product12.jpg"
+                                                        data-price="${cat.price}">
+                                                    <i class="fa fa-shopping-cart"></i>
+                                                    Add to cart
+                                                </button>
                                             </div>
-
                                         </div>
-
                                     </div>
                                 </div>
-                            </c:forEach> 
+                            </c:forEach>
+
                             <c:if test="${empty data}">
                                 <p>Không có sản phẩm nào!</p>
                             </c:if>
 
 
-                            <ul class="pagination">
-                                <li class="active"><a href="">1</a></li>
-                                <li><a href="">2</a></li>
-                                <li><a href="">3</a></li>
-                                <li><a href="">&raquo;</a></li>
-                            </ul>
+
                         </div><!--features_items-->
                     </div>
                 </div>
@@ -495,62 +513,140 @@
 
         </footer><!--/Footer-->
 
-
-
         <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
         <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
         <script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
         <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
         <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
         <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
+        <!-- SweetAlert2 CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <!-- Kích hoạt carousel nếu cần -->
         <script>
-                                        $(document).ready(function () {
-                                            $('#slider-carousel').carousel(); // Khởi động carousel thủ công
-                                        });
-        </script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const form = document.querySelector("form[action='Product']");
-                const minInput = document.getElementById("minPrice");
-                const maxInput = document.getElementById("maxPrice");
-
-                // Ngăn nhập chữ cái và ký tự không hợp lệ
-                function preventNonNumericInput(e) {
-                    const invalidChars = ['e', 'E', '+', '-', ','];
-                    if (invalidChars.includes(e.key)) {
-                        e.preventDefault();
-                    }
-                }
-
-                minInput.addEventListener('keydown', preventNonNumericInput);
-                maxInput.addEventListener('keydown', preventNonNumericInput);
-
-                // Validate khi submit form
-                form.addEventListener("submit", function (e) {
-                    const min = parseInt(minInput.value);
-                    const max = parseInt(maxInput.value);
-
-                    if (isNaN(min) || isNaN(max)) {
-                        alert("Please enter both minimum and maximum prices.");
-                        e.preventDefault();
-                        return;
-                    }
-
-                    if (min < 0 || max < 0) {
-                        alert("Price cannot be negative.");
-                        e.preventDefault();
-                        return;
-                    }
-
-                    if (max < min) {
-                        alert("Maximum price must be greater than or equal to minimum price.");
-                        e.preventDefault();
-                    }
-                });
+            $(document).ready(function () {
+                $('#slider-carousel').carousel(); // Khởi động carousel thủ công
             });
         </script>
+
+
+        <script>
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const userID = btn.dataset.userid;
+                    const productID = btn.dataset.productid;
+                    const name = btn.dataset.name;
+                    const image = btn.dataset.image;
+                    const price = btn.dataset.price;
+                    console.log("Tên:", name, "Ảnh:", image);
+                    addItem(userID, productID, name, image, price);
+                });
+            });
+
+            function addItem(userID, productID, productName, productImageURL, productPrice) {
+                confirmAddProductToCart(productName, productImageURL, productPrice).then(quantity => {
+                    if (quantity !== null && quantity > 0) {
+                        const params = new URLSearchParams();
+                        params.append("userID", userID);
+                        params.append("productID", productID);
+                        params.append("quantity", quantity);
+
+                        fetch('AddCartItem', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: params.toString()
+                        })
+                                .then(response => response.text())
+                                .then(data => {
+                                    if (data.trim() === 'success') {
+                                        Swal.fire("Thành công", "Sản phẩm đã được thêm vào giỏ", "success");
+                                        // updateCartTotal(); // nếu có
+                                    } else {
+                                        Swal.fire("Lỗi", "Thêm thất bại", "error");
+                                    }
+                                });
+                    } else {
+                        console.log("Người dùng hủy thêm sản phẩm hoặc nhập sai số lượng");
+                    }
+                });
+            }
+
+
+            function confirmAddProductToCart(productName, productImageURL, productPrice) {
+                return Swal.fire({
+                    title: "Thêm sản phẩm vào giỏ hàng",
+                    html: `
+    <div style="text-align: center; margin-bottom: 10px;">
+        <img src="` + productImageURL + `" alt="` + productName + `" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 5px;" />
+        <div style="font-weight: bold; font-size: 16px;">` + productName + `</div>
+        <div style="margin-top: 5px; font-size: 14px; color: #fd7e14;">Giá: 
+            <span id="unitPrice">` + Number(productPrice).toLocaleString('vi-VN', {maximumFractionDigits: 0}).replace(/\./g, ',') + `</span> VND
+        </div>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+        <button id="decreaseBtn" class="swal2-styled" style="padding: 10px; font-size: 18px;">–</button>
+        <input id="quantity" type="number" min="1" value="1"
+               class="swal2-input"
+               style="width: 60px; text-align: center; font-size: 18px; height: 40px; padding: 0; margin: 0;" />
+        <button id="increaseBtn" class="swal2-styled" style="padding: 10px; font-size: 18px;">+</button>
+    </div>
+    <div style="margin-top: 5px; font-size: 18px; color: #e8590c; font-weight: bold;">Tổng: 
+        <span id="totalPrice">` + Number(productPrice).toLocaleString('vi-VN', {maximumFractionDigits: 0}).replace(/\./g, ',') + `</span> VND
+    </div>
+`,
+
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "<span style='font-size: 18px;'>Thêm</span>",
+                    cancelButtonText: "<span style='font-size: 18px;'>Hủy</span>",
+                    didOpen: () => {
+                        const qtyInput = document.getElementById('quantity');
+                        const totalElem = document.getElementById('totalPrice');
+
+                        const updateTotal = () => {
+                            const qty = parseInt(qtyInput.value);
+                            totalElem.textContent = (qty * productPrice).toLocaleString();
+                        };
+
+                        document.getElementById('increaseBtn').addEventListener('click', () => {
+                            qtyInput.value = parseInt(qtyInput.value) + 1;
+                            updateTotal();
+                        });
+
+                        document.getElementById('decreaseBtn').addEventListener('click', () => {
+                            const current = parseInt(qtyInput.value);
+                            if (current > 1) {
+                                qtyInput.value = current - 1;
+                                updateTotal();
+                            }
+                        });
+
+                        qtyInput.addEventListener('input', () => {
+                            const val = parseInt(qtyInput.value);
+                            if (val >= 1)
+                                updateTotal();
+                        });
+                    },
+                    preConfirm: () => {
+                        const qty = document.getElementById('quantity').value;
+                        if (!qty || qty <= 0) {
+                            Swal.showValidationMessage("Vui lòng nhập số lượng hợp lệ");
+                            return false;
+                        }
+                        return parseInt(qty);
+                    }
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        return result.value;
+                    }
+                    return null;
+                });
+            }
+
+
+        </script>      
 
     </body>
 </html>

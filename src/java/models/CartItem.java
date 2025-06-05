@@ -9,6 +9,8 @@ package models;
  * @author PC ASUS
  */
 public class CartItem {
+
+    private int userID;
     private int cartItemID;
     private int quantity;
 
@@ -17,10 +19,19 @@ public class CartItem {
     public CartItem() {
     }
 
-    public CartItem(int cartItemID, int quantity, Products product) {
+    public CartItem(int userID, int cartItemID, int quantity, Products product) {
+        this.userID = userID;
         this.cartItemID = cartItemID;
         this.quantity = quantity;
         this.product = product;
+    }
+
+    public int getUserID() {
+        return userID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
     }
 
     public int getCartItemID() {
@@ -46,4 +57,5 @@ public class CartItem {
     public void setProduct(Products product) {
         this.product = product;
     }
+
 }

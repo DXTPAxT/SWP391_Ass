@@ -1,41 +1,27 @@
 package dal;
 
-import java.util.Vector;
+import java.sql.*;
+import java.util.*;
+import java.util.logging.*;
 import models.Products;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import models.Categories;
 
 public class ProductDAO extends DBContext {
 
-    public Vector<Products> getAllProduct(String sql) {
-        Vector<Products> listProduct = new Vector<>();
-        PreparedStatement ptm;
-        try {
-            ptm = connection.prepareStatement(sql);
-            ResultSet rs = ptm.executeQuery();
+    public List<Products> getAllProduct(String sql) {
+        List<Products> listProduct = new ArrayList<>();
+        try (PreparedStatement ptm = connection.prepareStatement(sql);
+             ResultSet rs = ptm.executeQuery()) {
             while (rs.next()) {
                 Products p = new Products(
-                        rs.getInt(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getString(4),
-                        rs.getDouble(5),
-                        rs.getInt(6),
-                        rs.getInt(7),
-                        rs.getDate(8),
-                        rs.getInt(9),
-                        rs.getInt(10));
+                        rs.getInt("ProductID"),
+                        rs.getString("Name"),
+                        rs.getDate("CreatedAt"),
+                        rs.getInt("CategoryID"),
+                        rs.getInt("Status"));
                 listProduct.add(p);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace(); // hoặc log nếu dùng Logger
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listProduct;
     }
@@ -46,61 +32,58 @@ public class ProductDAO extends DBContext {
             ptm.setInt(1, id);
             ResultSet rs = ptm.executeQuery();
             if (rs.next()) {
-                Products p = new Products(
+                return new Products(
                         rs.getInt("ProductID"),
                         rs.getString("Name"),
-                        rs.getString("Description"),
-                        rs.getString("Brand"),
-                        rs.getDouble("Price"),
-                        rs.getInt("Quantity"),
-                        rs.getInt("WarrantyPeriod"),
                         rs.getDate("CreatedAt"),
                         rs.getInt("CategoryID"),
-                        rs.getInt("Status")
-                );
-                return p;
-            }
+                        rs.getInt("Status"));
+            }   
         } catch (SQLException ex) {
             Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
 
-   public List<Products> getAllProductsByCategoryName(String categoryName) {
-    List<Products> products = new ArrayList<>();
-    String sql = "SELECT p.* FROM Products p " +
-                 "JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                 "WHERE c.CategoryName = ?";
-
-    try (PreparedStatement ptm = connection.prepareStatement(sql)) {
-        ptm.setString(1, categoryName);
-        ResultSet rs = ptm.executeQuery();
-        while (rs.next()) {
-            Products p = new Products(
-                rs.getInt("ProductID"),
-                rs.getString("Name"),
-                rs.getString("Description"),
-                rs.getString("Brand"),
-                rs.getDouble("Price"),
-                rs.getInt("Quantity"),
-                rs.getInt("WarrantyPeriod"),
-                rs.getDate("CreatedAt"),
-                rs.getInt("CategoryID"),
-                rs.getInt("Status")
-            );
-            products.add(p);
+    public void insertProduct(Products p) {
+        String sql = "INSERT INTO Products (Name, CreatedAt, CategoryID, Status) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, p.getName());
+            ps.setDate(2, p.getCreatedAt());
+            ps.setInt(3, p.getCategoryID());
+            ps.setInt(4, p.getStatus());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
         }
-    } catch (SQLException ex) {
-        ex.printStackTrace();
     }
 
-    return products;
-}
+    public void updateProduct(Products p) {
+        String sql = "UPDATE Products SET Name = ?, CreatedAt = ?, CategoryID = ?, Status = ? WHERE ProductID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, p.getName());
+            ps.setDate(2, p.getCreatedAt());
+            ps.setInt(3, p.getCategoryID());
+            ps.setInt(4, p.getStatus());
+            ps.setInt(5, p.getProductID());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
 
+    public void deleteProduct(int id) {
+        String sql = "DELETE FROM Products WHERE ProductID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
 
-
-    public Vector<Products> searchByName(String keyword) {
-        Vector<Products> list = new Vector<>();
+    public List<Products> searchByName(String keyword) {
+        List<Products> list = new ArrayList<>();
         String sql = "SELECT * FROM Products WHERE Name LIKE ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, "%" + keyword + "%");
@@ -109,27 +92,24 @@ public class ProductDAO extends DBContext {
                 Products p = new Products(
                         rs.getInt("ProductID"),
                         rs.getString("Name"),
-                        rs.getString("Description"),
-                        rs.getString("Image"), // hoặc đúng tên cột ảnh
-                        rs.getDouble("Price"),
-                        rs.getInt("Quantity"),
-                        rs.getInt("CategoryID"),
                         rs.getDate("CreatedAt"),
-                        rs.getInt("BrandID"),
-                        rs.getInt("Status")
-                );
+                        rs.getInt("CategoryID"),
+                        rs.getInt("Status"));
                 list.add(p);
             }
         } catch (SQLException e) {
-            System.err.println("Search error: " + e.getMessage());
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return list;
     }
 
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
-        Products p = new Products();
-        p = dao.getProductByID(1);
-        System.out.println(p.getName());
+        Products p = dao.getProductByID(60);
+        if (p != null) {
+            System.out.println(p.getName());
+        } else {
+            System.out.println("Product not found.");
+        }
     }
 }

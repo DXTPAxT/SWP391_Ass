@@ -1,133 +1,70 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package models;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Products {
-    private int ProductID ;
-    private String Name ;
-    private String Description ;
-    private String Brand;
-    private Double Price ;
-    private int Quantity ;
-    private int WarrantyPeriod ;
-    private Date CreatedAt ;
-    private int CategoryID ;
-    private int Status ;
+
+    private int productID;
+    private String name;
+    private Date createdAt;
+    private int categoryID;
+    private int status;
 
     public Products() {
     }
-    
-    public Products(int ProductID, String Name, String Description, String Brand, Double Price, int Quantity, int WarrantyPeriod, Date CreatedAt, int CategoryID, int Status) {
-        this.ProductID = ProductID;
-        this.Name = Name;
-        this.Description = Description;
-        this.Brand = Brand;
-        this.Price = Price;
-        this.Quantity = Quantity;
-        this.WarrantyPeriod = WarrantyPeriod;
-        this.CreatedAt = CreatedAt;
-        this.CategoryID = CategoryID;
-        this.Status = Status;
+
+    public Products(String name, Date createdAt, int categoryID, int status) {
+        this.name = name;
+        this.createdAt = createdAt;
+        this.categoryID = categoryID;
+        this.status = status;
     }
 
-    public Products(String Name, String Description, String Brand, Double Price, int Quantity, int WarrantyPeriod, Date CreatedAt, int CategoryID, int Status) {
-        this.Name = Name;
-        this.Description = Description;
-        this.Brand = Brand;
-        this.Price = Price;
-        this.Quantity = Quantity;
-        this.WarrantyPeriod = WarrantyPeriod;
-        this.CreatedAt = CreatedAt;
-        this.CategoryID = CategoryID;
-        this.Status = Status;
+    public Products(int productID, String name, Date createdAt, int categoryID, int status) {
+        this.productID = productID;
+        this.name = name;
+        this.createdAt = createdAt;
+        this.categoryID = categoryID;
+        this.status = status;
     }
 
     public int getProductID() {
-        return ProductID;
+        return productID;
     }
 
-    public void setProductID(int ProductID) {
-        this.ProductID = ProductID;
+    public void setProductID(int productID) {
+        this.productID = productID;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
-    public void setName(String Name) {
-        this.Name = Name;
-    }
-
-    public String getDescription() {
-        return Description;
-    }
-
-    public void setDescription(String Description) {
-        this.Description = Description;
-    }
-
-    public String getBrand() {
-        return Brand;
-    }
-
-    public void setBrand(String Brand) {
-        this.Brand = Brand;
-    }
-
-    public Double getPrice() {
-        return Price;
-    }
-
-    public void setPrice(Double Price) {
-        this.Price = Price;
-    }
-
-    public int getQuantity() {
-        return Quantity;
-    }
-
-    public void setQuantity(int Quantity) {
-        this.Quantity = Quantity;
-    }
-
-    public int getWarrantyPeriod() {
-        return WarrantyPeriod;
-    }
-
-    public void setWarrantyPeriod(int WarrantyPeriod) {
-        this.WarrantyPeriod = WarrantyPeriod;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Date getCreatedAt() {
-        return CreatedAt;
+        return createdAt;
     }
 
-    public void setCreatedAt(Date CreatedAt) {
-        this.CreatedAt = CreatedAt;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
     public int getCategoryID() {
-        return CategoryID;
+        return categoryID;
     }
 
-    public void setCategoryID(int CategoryID) {
-        this.CategoryID = CategoryID;
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
     }
 
     public int getStatus() {
-        return Status;
+        return status;
     }
 
-    public void setStatus(int Status) {
-        this.Status = Status;
+    public void setStatus(int status) {
+        this.status = status;
     }
-  
-
-   
-    
-    
 }
