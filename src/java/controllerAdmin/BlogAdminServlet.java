@@ -64,10 +64,10 @@ public class BlogAdminServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Blog_CateDAO dao = new Blog_CateDAO();
-//        List<Blog_Cate> categories = dao.getAllBlogCategory();
+        List<Blog_Cate> categories = dao.getAllBlogCategory();
         List<Post> post = dao.getAllPost();
 
-//        request.setAttribute("blog_categories", categories);
+        request.setAttribute("blog_categories", categories);
         request.setAttribute("postlist", post);
         request.getRequestDispatcher("AdminLTE/AdminPages/blogAdmin.jsp").forward(request, response);
     }

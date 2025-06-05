@@ -406,10 +406,12 @@
 
                                                 <td><fmt:formatDate value="${po.updated_date}" pattern="dd/MM/yyyy HH:mm:ss" /></td>
                                                 <td>${po.content}</td> 
-                                                <td>${po.bc_id}</td> 
-                                                <td>${po.thumbnail}</td> 
-                                                <td>${po.brief}</td> 
-                                                <td>${po.add_id}</td> 
+                                                <td>${po.bc_name}</td>
+                                            <a href="blogc?Bc_id=${po.bc_id}">${po.bc_name}</a>
+
+                                            <td>${po.thumbnail}</td> 
+                                            <td>${po.brief}</td> 
+                                            <td>${po.add_id}</td> 
                                             </tr>
                                         </c:forEach>
 
@@ -424,8 +426,8 @@
 
                 <!-- /.content-wrapper -->
                 <footer class="main-footer">
-                    
-                    
+
+
                 </footer>
 
                 <!-- Control Sidebar -->
