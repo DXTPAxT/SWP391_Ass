@@ -71,7 +71,7 @@
     <servlet>
         <servlet-name>BrandAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.BrandAdminServlet</servlet-class>
-            </servlet>
+    </servlet>
     <servlet>
         <servlet-name>BlogAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.BlogAdminServlet</servlet-class>
@@ -149,7 +149,6 @@
         <url-pattern>/AdminDashbordServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-<<<<<<< HEAD
         <servlet-name>UserViewServlet</servlet-name>
         <url-pattern>/Admin/user</url-pattern>
     </servlet-mapping>
@@ -164,14 +163,14 @@
     <servlet-mapping>
         <servlet-name>BrandAdminServlet</servlet-name>
         <url-pattern>/BrandAdmin</url-pattern>
-=======
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>BlogAdminServlet</servlet-name>
         <url-pattern>/bloga</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>BlogDetailServlet</servlet-name>
         <url-pattern>/blogdetail</url-pattern>
->>>>>>> c5a3f64f4bf7b399ddca93fd68a05fdd1d59b8e2
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AddUserServlet</servlet-name>
