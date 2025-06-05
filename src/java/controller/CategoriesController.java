@@ -39,7 +39,7 @@ public class CategoriesController extends HttpServlet {
         int page = parseIntegerOrDefault(request.getParameter("page"), 1);
         int start = (page - 1) * PAGE_SIZE;
 
-        // --- Data holders ---
+        
         List<Categories> categories;
         int totalItems;
         int totalPages;
