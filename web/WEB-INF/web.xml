@@ -81,12 +81,17 @@
         <servlet-class>controller.BlogDetailServlet</servlet-class>
     </servlet>
     <servlet>
+
+        <servlet-name>BlogAddServlet</servlet-name>
+        <servlet-class>controllerAdmin.BlogAddServlet</servlet-class>
+
         <servlet-name>AddUserServlet</servlet-name>
         <servlet-class>controllerAdmin.AddUserServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>FeedbackServlet</servlet-name>
         <servlet-class>controller.FeedbackServlet</servlet-class>
+
     </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
@@ -149,7 +154,7 @@
         <url-pattern>/AdminDashbordServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-<<<<<<< HEAD
+
         <servlet-name>UserViewServlet</servlet-name>
         <url-pattern>/Admin/user</url-pattern>
     </servlet-mapping>
@@ -164,14 +169,14 @@
     <servlet-mapping>
         <servlet-name>BrandAdminServlet</servlet-name>
         <url-pattern>/BrandAdmin</url-pattern>
-=======
+
         <servlet-name>BlogAdminServlet</servlet-name>
         <url-pattern>/bloga</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>BlogDetailServlet</servlet-name>
         <url-pattern>/blogdetail</url-pattern>
->>>>>>> c5a3f64f4bf7b399ddca93fd68a05fdd1d59b8e2
+
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AddUserServlet</servlet-name>
@@ -180,5 +185,9 @@
     <servlet-mapping>
         <servlet-name>FeedbackServlet</servlet-name>
         <url-pattern>/FeedbackServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BlogAddServlet</servlet-name>
+        <url-pattern>/blogadd</url-pattern>
     </servlet-mapping>
 </web-app>
