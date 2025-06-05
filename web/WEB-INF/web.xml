@@ -98,7 +98,6 @@
         <servlet-name>BrandAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.BrandAdminServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>BlogAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.BlogAdminServlet</servlet-class>
@@ -219,7 +218,6 @@
         <servlet-name>BrandAdminServlet</servlet-name>
         <url-pattern>/BrandAdmin</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>BlogAdminServlet</servlet-name>
         <url-pattern>/bloga</url-pattern>
