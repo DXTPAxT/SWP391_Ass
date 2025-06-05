@@ -368,11 +368,12 @@
                 <section class="content-header">
                     <h1>
                         Data Tables
+                        <small>advanced tables</small>
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Component</a></li>
-                        <li class="active">view Component</li>
+                        <li><a href="#">Product</a></li>
+                        <li class="active">view Product</li>
                     </ol>
                 </section>
 
@@ -384,10 +385,10 @@
                                 <div class="box-header with-border">
                                     <div class="row align-items-center">
                                         <div class="col-md-4">
-                                            <h3 class="box-title">Component</h3>
+                                            <h3 class="box-title">Product</h3>
                                         </div>
                                         <div class="col-md-5">
-                                            <form action="ComAdmin" method="get" class="input-group">
+                                            <form action="ProductAdmin" method="get" class="input-group">
                                                 <input type="hidden" name="service" value="list">
                                                 <input type="text" name="search" class="form-control" placeholder="Enter component name">
                                                 <span class="input-group-btn">
@@ -396,7 +397,7 @@
                                             </form>
                                         </div>
                                         <div class="col-md-3 text-right">
-                                            <a href="ComAdmin?service=insert" class="btn btn-warning btn-sm">ADD</a>
+                                            <a href="ProductAdmin?service=insert" class="btn btn-warning btn-sm">ADD</a>
                                         </div>
                                     </div>
                                 </div>
@@ -407,9 +408,10 @@
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Component ID</th>
+                                                <th>Product ID</th>
                                                 <th>Name</th>
-                                                <th>Quantity</th>                                               
+                                                <th>Created At</th>
+                                                <th>Category ID</th>
                                                 <th>Status</th>
                                                 <th>Toggle</th>
                                                 <th>Update</th>
@@ -418,14 +420,15 @@
                                         </thead>
                                         <tbody>
                                             <c:if test="${not empty requestScope.data}">
-                                                <c:forEach var="com" items="${requestScope.data}">
+                                                <c:forEach var="product" items="${requestScope.product}">
                                                     <tr>
-                                                        <td>${com.componentID}</td>
-                                                        <td>${com.componentName}</td>
-                                                        <td>${com.quantity}</td>
+                                                        <td>${product.productID}</td>
+                                                        <td>${product.name}</td>
+                                                        <td>${product.createdAt}</td>
+                                                        <td>${product.categoryID}</td>
                                                         <td>
                                                             <c:choose>
-                                                                <c:when test="${com.status == 1}">
+                                                                <c:when test="${product.status == 1}">
                                                                     <span class="label label-success">Active</span>
                                                                 </c:when>
                                                                 <c:otherwise>
@@ -434,30 +437,29 @@
                                                             </c:choose>
                                                         </td>
                                                         <td>
-                                                            <a href="ComAdmin?service=changestatus&componentID=${com.componentID}" 
+                                                            <a href="ProductAdmin?service=changestatus&productID=${product.productID}" 
                                                                class="btn btn-info btn-sm"
                                                                onclick="return confirm('Are you sure you want to change the status?');">
                                                                 <c:choose>
-                                                                    <c:when test="${com.status == 1}">Disable</c:when>
+                                                                    <c:when test="${product.status == 1}">Disable</c:when>
                                                                     <c:otherwise>Activate</c:otherwise>
                                                                 </c:choose>
                                                             </a>
                                                         </td>
-
                                                         <td>
-                                                            <a href="ComAdmin?service=update&componentID=${com.componentID}" 
+                                                            <a href="ProductAdmin?service=update&productID=${product.productID}" 
                                                                class="btn btn-warning btn-sm">Update</a>
                                                         </td>
                                                         <td>
-                                                            <a href="CateAdmin?service=listbycom&componentID=${com.componentID}" 
+                                                            <a href="FeedbackAdmin?service=listbyproduct&productID=${product.productID}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
-
                                         </tbody>
                                     </table>
+
                                 </div>
                             </div>
                             <!-- /.box-body -->
@@ -690,17 +692,17 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- page script -->
         <script>
-                                                                   $(function () {
-                                                                       $("#example1").DataTable();
-                                                                       $('#example2').DataTable({
-                                                                           "paging": true,
-                                                                           "lengthChange": false,
-                                                                           "searching": false,
-                                                                           "ordering": true,
-                                                                           "info": true,
-                                                                           "autoWidth": false
-                                                                       });
-                                                                   });
+                               $(function () {
+                                   $("#example1").DataTable();
+                                   $('#example2').DataTable({
+                                       "paging": true,
+                                       "lengthChange": false,
+                                       "searching": false,
+                                       "ordering": true,
+                                       "info": true,
+                                       "autoWidth": false
+                                   });
+                               });
         </script>
         <script>
             $(function () {
