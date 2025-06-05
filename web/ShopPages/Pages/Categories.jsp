@@ -302,6 +302,28 @@
                                 </div>
                             </div><!-- /price-range -->
 
+                            <div class="brands_products"><!-- build pc -->
+                                <h2 style="color: green; font-weight: bold; text-align: center; position: relative;">
+                                    <span style="background: #fff; padding: 0 10px; z-index: 2; position: relative;">BUILD PC</span>
+                                </h2>
+                                <div class="brands-name" style="border: 1px solid #f0f0f0; padding: 20px;">
+                                    <ul class="nav nav-pills nav-stacked">
+                                        <li>
+                                            <a href="${ctx}/BuildPC?service=list">
+                                                <i class="fa fa-cogs"></i> Customize Your PC
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="${ctx}/ShopPages/Pages/HomePages">
+                                                <i class="fa fa-book"></i> Build Guide
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div><!-- /build pc -->
+
+
+
                         </div>
                     </div>
 
