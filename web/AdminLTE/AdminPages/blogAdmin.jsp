@@ -346,7 +346,7 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu">
-                             
+
                             </ul>
                         </li>
 
@@ -377,46 +377,42 @@
                             <div class="box">
                                 <div class="box-header">
                                     <h3 class="box-title">Manage Blogs</h3>
-                                    <a href="bloga?action=create" class="btn btn-primary pull-right" style="margin-top: -28px;">Add new blog</a>
+                                    <h4><a href="post-create.jsp" class="btn btn-primary pull-right" style="margin-top: -28px;">Add new blog</a><h4/>
                                 </div>
                                 <!-- /.box-header -->
                                 <div class="box-body">
                                     <table id="example2" class="table table-bordered table-hover">
-                                        <thead>
+
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Title</th>
+                                            <th>Author</th>
+                                            <th>Update</th>
+                                            <th>Content</th>
+                                            <th>Blog_Category</th>
+                                            <th>Thumbnail</th>
+                                            <th>Brief</th>
+                                            <th>Author_Id</th>
+
+
+                                        </tr>
+
+                                        <c:forEach var="po" items="${requestScope.postlist}">
+                                            <c:set var="id" value="${po.post_id}"/>
                                             <tr>
-                                                <th>ID</th>
-                                                <th>Title</th>
-                                                <th>Author</th>
-                                                <th>Blog_Category</th>
-                                                <th>Update</th>
-                                                <th>Operation</th>
+                                                <td>${id}</td>
+                                                <td>${po.title}</td>
+                                                <td>${po.author}</td>
+
+                                                <td><fmt:formatDate value="${po.updated_date}" pattern="dd/MM/yyyy HH:mm:ss" /></td>
+                                                <td>${po.content}</td> 
+                                                <td>${po.bc_id}</td> 
+                                                <td>${po.thumbnail}</td> 
+                                                <td>${po.brief}</td> 
+                                                <td>${po.add_id}</td> 
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            <c:forEach var="post" items="${postList}">
-                                                <tr>
-                                                    <td>${post.post_id}</td>
-                                                    <td>${post.title}</td>
-                                                    <td>${post.author}</td>
-                                                    <td>${post.bc_name}</td> 
-                                                    <td><fmt:formatDate value="${post.updated_date}" pattern="dd/MM/yyyy HH:mm:ss" /></td>
-                                                    <td>
-                                                        <a href="bloga?action=edit&id=${post.post_id}" class="btn btn-sm btn-warning">Edit</a>
-                                                        <a href="bloga?action=delete&id=${post.post_id}" onclick="return confirm('Are you sure you want to delete this post?');" class="btn btn-sm btn-danger">Delete</a>
-                                                    </td>
-                                                </tr>
-                                            </c:forEach>
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Title</th>
-                                                <th>Author</th>
-                                                <th>Blog_Category</th>
-                                                <th>Update</th>
-                                                <th>Operation</th>
-                                            </tr>
-                                        </tfoot>
+                                        </c:forEach>
+
                                     </table>
                                 </div>
                                 <!-- /.box-body -->
@@ -428,11 +424,8 @@
 
                 <!-- /.content-wrapper -->
                 <footer class="main-footer">
-                    <div class="pull-right hidden-xs">
-                        <b>Version</b> 2.3.12
-                    </div>
-                    <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights
-                    reserved.
+                    
+                    
                 </footer>
 
                 <!-- Control Sidebar -->
@@ -648,17 +641,17 @@
             <script src="../../dist/js/demo.js"></script>
             <!-- page script -->
             <script>
-                                    $(function () {
-                                        $("#example1").DataTable();
-                                        $('#example2').DataTable({
-                                            "paging": true,
-                                            "lengthChange": false,
-                                            "searching": false,
-                                            "ordering": true,
-                                            "info": true,
-                                            "autoWidth": false
-                                        });
-                                    });
+                $(function () {
+                    $("#example1").DataTable();
+                    $('#example2').DataTable({
+                        "paging": true,
+                        "lengthChange": false,
+                        "searching": false,
+                        "ordering": true,
+                        "info": true,
+                        "autoWidth": false
+                    });
+                });
             </script>
     </body>
 </html>

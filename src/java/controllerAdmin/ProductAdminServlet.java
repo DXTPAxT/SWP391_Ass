@@ -6,6 +6,7 @@ package controllerAdmin;
 
 import dal.CategoriesDAO;
 import dal.CategoryAdminDAO;
+import dal.ComponentDAO;
 import dal.ProductDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,6 +18,7 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Vector;
 import models.Categories;
+import models.Components;
 import models.Products;
 
 /**
@@ -40,22 +42,23 @@ public class ProductAdminServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             String service = request.getParameter("service");
 
-            ProductDAO dao = new ProductDAO();
-            List<Products> list;
+            ProductDAO pro = new ProductDAO();
+            ComponentDAO dao = new ComponentDAO();
+            List<Products> product;
             CategoryAdminDAO cate = new CategoryAdminDAO();
-            if ("list".equals(service)) {
-                
-                list = dao.getAllProduct("SELECT * FROM Products ");
-
+            List<Categories> list = cate.getAllCategories("SELECT * FROM Categories");
+            List<Components> components = dao.getAllComponent("SELECT * FROM Components");
+            if(service == null){
+                service = "list";
+            }
+            if ("list".equals(service)) {                
+                product = pro.getAllProduct("SELECT * FROM Products ");
                 List<Categories> Categories = cate.getAllCategories(service);
-                request.setAttribute("data", list);
-                request.setAttribute("list", Categories);
-                //request.getRequestDispatcher("/AdminLTE/AdminPages/test.jsp").forward(request, response);            
+                request.setAttribute("product", product);
+                request.setAttribute("data", components);
+                request.setAttribute("list", list);
+           
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewProduct.jsp").forward(request, response);
-
-                List<Categories> Category = cate.getAllCategories("SELECT * FROM Categories ");
-
-                request.setAttribute("list", Category);
             } /*else if (service.equals("update")) {
                 String submit = request.getParameter("submit");
                 if (submit == null) {

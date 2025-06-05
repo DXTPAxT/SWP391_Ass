@@ -10,73 +10,123 @@ import models.Components;
 
 public class CategoriesDAO extends DBContext {
 
-    public List<Categories> getAllCategories() {
-        List<Categories> list = new ArrayList<>();
-        String sql = """
-        SELECT 
-            c.CategoryID, c.CategoryName, c.ComponentID, c.BrandID,
-            c.Quantity, c.Price, c.Description, c.Status,
-            b.BrandName
-        FROM Categories c
-        JOIN Brands b ON c.BrandID = b.BrandID
-        """;
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Categories c = new Categories(
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"),
-                        rs.getInt("ComponentID"),
-                        rs.getInt("BrandID"),
-                        rs.getString("BrandName"),
-                        rs.getInt("Quantity"),
-                        rs.getInt("Price"),
-                        rs.getString("Description"),
-                        rs.getInt("Status")
-                );
-                list.add(c);
-            }
-        } catch (SQLException e) {
-            Logger.getLogger(CategoriesDAO.class.getName()).log(Level.SEVERE, null, e);
-        }
-        return list;
-    }
+    private static final Logger LOGGER = Logger.getLogger(CategoriesDAO.class.getName());
 
-    public List<Brands> getBrands() {
-        List<Brands> list = new ArrayList<>();
+    // BRANDS
+    public List<Brands> getAllBrands() {
         String sql = "SELECT * FROM Brands";
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        List<Brands> list = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                Brands b = new Brands(
-                        rs.getInt("brandID"),
-                        rs.getString("BrandName")
-                );
-                list.add(b);
+                list.add(new Brands(rs.getInt("BrandID"), rs.getString("BrandName")));
             }
         } catch (SQLException e) {
-            Logger.getLogger(CategoriesDAO.class.getName()).log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, null, e);
         }
         return list;
     }
 
-    public List<BrandByComponentName> getBrandInSiteComponents() {
-        List<BrandByComponentName> list = new ArrayList<>();
+    public List<BrandByComponentName> getBrandsGroupedByComponent() {
         String sql = """
-        SELECT DISTINCT co.ComponentID, co.ComponentName, b.BrandName
-        FROM Components co
-        JOIN Categories c ON co.ComponentID = c.ComponentID
-        JOIN Brands b ON c.BrandID = b.BrandID
+            SELECT DISTINCT co.ComponentID, co.ComponentName, b.BrandName
+            FROM Components co
+            JOIN Categories c ON co.ComponentID = c.ComponentID
+            JOIN Brands b ON c.BrandID = b.BrandID
         """;
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        List<BrandByComponentName> list = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                BrandByComponentName obj = new BrandByComponentName(
-                        rs.getInt("ComponentID"),
-                        rs.getString("ComponentName"),
-                        rs.getString("BrandName")
-                );
-                list.add(obj);
+                list.add(new BrandByComponentName(
+                    rs.getInt("ComponentID"),
+                    rs.getString("ComponentName"),
+                    rs.getString("BrandName")));
             }
         } catch (SQLException e) {
-            Logger.getLogger(CategoriesDAO.class.getName()).log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+        return list;
+    }
+
+    // componenets
+    public List<Components> getAllComponents() {
+        String sql = "SELECT * FROM Components";
+        List<Components> list = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(new Components(
+                    rs.getInt("ComponentID"),
+                    rs.getString("ComponentName"),
+                    rs.getInt("Quantity"),
+                    rs.getInt("Status")));
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+        return list;
+    }
+
+    // categories 
+    public List<Categories> getCategoryByID(int id) {
+        String sql = "SELECT * FROM Categories WHERE CategoryID = ?";
+         List<Categories> list= new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            ps.setInt(1, id);
+           while (rs.next()) {
+                    list.add(extractCategory(rs));
+                }            
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+        return null;
+    }
+
+    public List<Categories> getCategoriesByComponent(int componentId, int start, int size) {
+        String sql = """
+            SELECT c.*, b.BrandName
+            FROM Categories c
+            JOIN Brands b ON c.BrandID = b.BrandID
+            WHERE c.ComponentID = ? AND c.Status = 2
+            ORDER BY c.CategoryID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+        """;
+        List<Categories> list = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, componentId);
+            ps.setInt(2, start);
+            ps.setInt(3, size);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(extractCategory(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+        
+        return list;
+    }
+
+    public List<Categories> getAllCategoriesPaginated(int page, int size) {
+        String sql = """
+            SELECT c.*, b.BrandName
+            FROM Categories c
+            JOIN Brands b ON c.BrandID = b.BrandID
+            ORDER BY c.CategoryID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+        """;
+        List<Categories> list = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, (page - 1) * size);
+            ps.setInt(2, size);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(extractCategory(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, null, e);
         }
         return list;
     }
@@ -85,156 +135,121 @@ public class CategoriesDAO extends DBContext {
         String sql = "SELECT COUNT(*) FROM Categories WHERE ComponentID = ? AND Status = 2";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, componentId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
             }
         } catch (SQLException e) {
-            Logger.getLogger(CategoriesDAO.class.getName()).log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, null, e);
         }
         return 0;
     }
 
-    public List<Components> GetAllComponents() {
-        List<Components> list = new ArrayList<>();
-        String sql = "SELECT * FROM Components";
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Components c = new Components(
-                        rs.getInt("componentID"),
-                        rs.getString("componentName"),
-                        rs.getInt("quantity"),
-                        rs.getInt("status")
-                );
-                list.add(c);
-            }
+    public int countAllCategories() {
+        String sql = "SELECT COUNT(*) FROM Categories";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getInt(1);
         } catch (SQLException e) {
-            Logger.getLogger(CategoriesDAO.class.getName()).log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, null, e);
         }
-        return list;
+        return 0;
     }
 
-    public Categories getCategoryByID(int id) {
-        String sql = "SELECT * FROM Categories WHERE CategoryID = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return new Categories(
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"),
-                        rs.getInt("ComponentID"),
-                        rs.getInt("BrandID"),
-                        null,
-                        rs.getInt("Quantity"),
-                        rs.getInt("Price"),
-                        rs.getString("Description"),
-                        rs.getInt("Status")
-                );
-            }
-        } catch (SQLException e) {
-            Logger.getLogger(CategoriesDAO.class.getName()).log(Level.SEVERE, null, e);
-        }
-        return null;
-    }
-
-    public List<Categories> getCategoriesByComponentName(int componentId, int start, int size) {
+    //  filter   
+    public List<Categories> getCategoriesFiltered(String componentName, String brandName,
+                                                  Integer minPrice, Integer maxPrice,
+                                                  String keyword, int start, int size) {
         List<Categories> list = new ArrayList<>();
-        String sql = """
-        SELECT c.*, b.BrandName
-        FROM Categories c
-        JOIN Brands b ON c.BrandID = b.BrandID
-        JOIN Components comp ON c.ComponentID = comp.ComponentID
-        WHERE comp.ComponentID = ? AND c.Status = 2
-        ORDER BY c.CategoryID
-        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-        """;
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, componentId);
-            ps.setInt(2, start);
-            ps.setInt(3, size);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                list.add(new Categories(
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"),
-                        rs.getInt("ComponentID"),
-                        rs.getInt("BrandID"),
-                        rs.getString("BrandName"),
-                        rs.getInt("Quantity"),
-                        rs.getInt("Price"),
-                        rs.getString("Description"),
-                        rs.getInt("Status")
-                ));
-            }
-        } catch (SQLException e) {
-            Logger.getLogger(CategoriesDAO.class.getName()).log(Level.SEVERE, null, e);
-        }
-        return list;
-    }
-
-    public List<Categories> getCategoriesFiltered(String componentName, String brandName, Integer minPrice, Integer maxPrice, String keyword) {
-        List<Categories> list = new ArrayList<>();
-
         StringBuilder sql = new StringBuilder("""
-        SELECT c.*, b.BrandName, comp.ComponentName
-        FROM Categories c
-        JOIN Brands b ON c.BrandID = b.BrandID
-        JOIN Components comp ON c.ComponentID = comp.ComponentID
-        WHERE 1 = 1
-    """);
+            SELECT c.*, b.BrandName
+            FROM Categories c
+            JOIN Brands b ON c.BrandID = b.BrandID
+            JOIN Components comp ON c.ComponentID = comp.ComponentID
+          
+        """);
+        List<Object> params = buildFilter(sql, componentName, brandName, minPrice, maxPrice, keyword);
+        sql.append(" ORDER BY c.CategoryID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY ");
+        params.add(start);
+        params.add(size);
 
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            setParams(ps, params);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(extractCategory(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+        return list;
+    }   
+                            
+    public int countFiltered(String componentName, String brandName,
+                             Integer minPrice, Integer maxPrice, String keyword) {
+        StringBuilder sql = new StringBuilder("""
+            SELECT COUNT(*) 
+            FROM Categories c
+            JOIN Brands b ON c.BrandID = b.BrandID
+            JOIN Components comp ON c.ComponentID = comp.ComponentID
+          
+        """);
+        List<Object> params = buildFilter(sql, componentName, brandName, minPrice, maxPrice, keyword);
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            setParams(ps, params);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+        return 0;
+    }
+
+
+    private Categories extractCategory(ResultSet rs) throws SQLException {
+        return new Categories(
+            rs.getInt("CategoryID"),
+            rs.getString("CategoryName"),
+            rs.getInt("ComponentID"),
+            rs.getInt("BrandID"),
+            rs.getString("BrandName"),
+            rs.getInt("Quantity"),
+            rs.getInt("Price"),
+            rs.getString("Description"),
+            rs.getInt("Status")
+        );
+    }
+  
+    private List<Object> buildFilter(StringBuilder sql, String componentName, String brandName,
+                                     Integer minPrice, Integer maxPrice, String keyword) {
         List<Object> params = new ArrayList<>();
-
         if (componentName != null && !componentName.isEmpty()) {
             sql.append(" AND comp.ComponentName = ? ");
             params.add(componentName);
         }
-
         if (brandName != null && !brandName.isEmpty()) {
             sql.append(" AND b.BrandName = ? ");
             params.add(brandName);
         }
-
         if (minPrice != null) {
             sql.append(" AND c.Price >= ? ");
             params.add(minPrice);
         }
-
         if (maxPrice != null) {
             sql.append(" AND c.Price <= ? ");
             params.add(maxPrice);
         }
-
         if (keyword != null && !keyword.isEmpty()) {
             sql.append(" AND LOWER(c.CategoryName) LIKE ? ");
             params.add("%" + keyword.toLowerCase() + "%");
         }
-
-        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
-            for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
-            }
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                list.add(new Categories(
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"),
-                        rs.getInt("ComponentID"),
-                        rs.getInt("BrandID"),
-                        rs.getString("BrandName"),
-                        rs.getInt("Quantity"),
-                        rs.getInt("Price"),
-                        rs.getString("Description"),
-                        rs.getInt("Status")
-                ));
-            }
-        } catch (SQLException e) {
-            Logger.getLogger(CategoriesDAO.class.getName()).log(Level.SEVERE, null, e);
-        }
-
-        return list;
+        return params;
     }
 
+    private void setParams(PreparedStatement ps, List<Object> params) throws SQLException {
+        for (int i = 0; i < params.size(); i++) {
+            ps.setObject(i + 1, params.get(i));
+        }
+    }
 }
