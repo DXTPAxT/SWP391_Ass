@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
-
-    <!-- SERVLET DEFINITIONS -->
+<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+    <!-- Servlets -->
     <servlet>
         <servlet-name>Demo</servlet-name>
         <servlet-class>controller.Demo</servlet-class>
@@ -122,6 +119,11 @@
         <servlet-name>FeedbackServlet</servlet-name>
         <servlet-class>controller.FeedbackServlet</servlet-class>
     </servlet>
+    <!-- Mappings -->
+    <servlet>
+        <servlet-name>BuildPcController</servlet-name>
+        <servlet-class>controller.BuildPcController</servlet-class>
+    </servlet>
 
     <!-- SERVLET MAPPINGS -->
     <servlet-mapping>
@@ -198,7 +200,7 @@
         <servlet-name>AdminDashbordServlet</servlet-name>
         <url-pattern>/AdminDashbordServlet</url-pattern>
     </servlet-mapping>
-
+  
     <servlet-mapping>
         <servlet-name>UserViewServlet</servlet-name>
         <url-pattern>/Admin/user</url-pattern>
@@ -242,5 +244,12 @@
         <servlet-name>FeedbackServlet</servlet-name>
         <url-pattern>/FeedbackServlet</url-pattern>
     </servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>BlogAddServlet</servlet-name>
+        <url-pattern>/blogadd</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BuildPcController</servlet-name>
+        <url-pattern>/buildPc</url-pattern>
+    </servlet-mapping>
 </web-app>

@@ -43,8 +43,14 @@ public class CategoriesController extends HttpServlet {
         List<Categories> categories;
         int totalItems;
         int totalPages;
+        if ("list".equals(service)) {
+            
+            totalItems = dao.countAllCategories();
+            totalPages = (int) Math.ceil(totalItems * 1.0 / PAGE_SIZE);
 
-        if ("filter".equals(service)) {
+            categories = dao.getAllCategoriesPaginated(page, PAGE_SIZE);
+            request.setAttribute("currentService", "list");
+        }else if ("filter".equals(service)) {
             totalItems = dao.countFiltered(componentName, brandName, minPrice, maxPrice, keyword);
             totalPages = (int) Math.ceil(totalItems * 1.0 / PAGE_SIZE);
 
@@ -57,10 +63,10 @@ public class CategoriesController extends HttpServlet {
             request.setAttribute("currentKeyword", keyword);
             request.setAttribute("currentService", "filter");
         } else {
+            // fallback nếu service sai → trả danh sách đầy đủ
+            categories = dao.getAllCategoriesPaginated(page, PAGE_SIZE);
             totalItems = dao.countAllCategories();
             totalPages = (int) Math.ceil(totalItems * 1.0 / PAGE_SIZE);
-
-            categories = dao.getAllCategoriesPaginated(page, PAGE_SIZE);
             request.setAttribute("currentService", "list");
         }
 
