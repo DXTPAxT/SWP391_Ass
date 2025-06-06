@@ -1,37 +1,29 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package models;
 
-/**
- *
- * @author PC ASUS
- */
 public class CartItem {
-
-    private int userID;
     private int cartItemID;
-    private int quantity;
-
-    private Products product;
+    private int userID;
+    private int CategoryID;
+    private int WarrantyDetailID;
+    private int Status;
 
     public CartItem() {
     }
 
-    public CartItem(int userID, int cartItemID, int quantity, Products product) {
-        this.userID = userID;
+    public CartItem(int cartItemID, int userID, int CategoryID, int WarrantyDetailID, int Status) {
         this.cartItemID = cartItemID;
-        this.quantity = quantity;
-        this.product = product;
-    }
-
-    public int getUserID() {
-        return userID;
-    }
-
-    public void setUserID(int userID) {
         this.userID = userID;
+        this.CategoryID = CategoryID;
+        this.WarrantyDetailID = WarrantyDetailID;
+        this.Status = Status;
+    }
+
+    public CartItem(int userID, int CategoryID, int WarrantyDetailID, int Status) {
+        this.userID = userID;
+        this.CategoryID = CategoryID;
+        this.WarrantyDetailID = WarrantyDetailID;
+        this.Status = Status;
     }
 
     public int getCartItemID() {
@@ -42,20 +34,42 @@ public class CartItem {
         this.cartItemID = cartItemID;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getUserID() {
+        return userID;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setUserID(int userID) {
+        this.userID = userID;
     }
 
-    public Products getProduct() {
-        return product;
+    public int getCategoryID() {
+        return CategoryID;
     }
 
-    public void setProduct(Products product) {
-        this.product = product;
+    public void setCategoryID(int CategoryID) {
+        this.CategoryID = CategoryID;
     }
+
+    public int getWarrantyDetailID() {
+        return WarrantyDetailID;
+    }
+
+    public void setWarrantyDetailID(int WarrantyDetailID) {
+        this.WarrantyDetailID = WarrantyDetailID;
+    }
+
+    public int getStatus() {
+        return Status;
+    }
+
+    public void setStatus(int Status) {
+        this.Status = Status;
+    }
+    
+    
+    
+    
+
+   
 
 }

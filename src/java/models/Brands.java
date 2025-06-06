@@ -9,15 +9,42 @@ package models;
  * @author Admin
  */
 public class Brands {
+
     private int brandID;
     private String brandName;
-
-    public Brands(int brandID, String brandName) {
-        this.brandID = brandID;
-        this.brandName = brandName;
-    }
+    private int Quantity;
+    private int Status;
 
     public Brands() {
+    }
+
+    public Brands(int brandID, String brandName, int Quantity, int Status) {
+        this.brandID = brandID;
+        this.brandName = brandName;
+        this.Quantity = Quantity;
+        this.Status = Status;
+    }
+
+    public Brands(String brandName, int Quantity, int Status) {
+        this.brandName = brandName;
+        this.Quantity = Quantity;
+        this.Status = Status;
+    }
+
+    public int getQuantity() {
+        return Quantity;
+    }
+
+    public void setQuantity(int Quantity) {
+        this.Quantity = Quantity;
+    }
+
+    public int getStatus() {
+        return Status;
+    }
+
+    public void setStatus(int Status) {
+        this.Status = Status;
     }
 
     public Brands(String brandName) {
@@ -39,5 +66,5 @@ public class Brands {
     public void setBrandName(String brandName) {
         this.brandName = brandName;
     }
-    
+
 }
