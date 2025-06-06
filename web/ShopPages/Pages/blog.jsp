@@ -124,26 +124,7 @@
                                 </form>
                             </div>
                         </div>
-                        <h2>Blog Posts</h2>
 
-                        <form method="get" action="Blog_CateServlet">
-                            <input type="hidden" name="cateId" value="<%= cateId %>"/>
-                            <label>Sort by:</label>
-                            <select name="sort" onchange="this.form.submit()">
-                                <option value="" <%= (sort == null || sort.equals("")) ? "selected" : "" %>>Default</option>
-                                <option value="oldest" <%= "oldest".equals(sort) ? "selected" : "" %>>Oldest to Latest</option>
-                                <option value="latest" <%= "latest".equals(sort) ? "selected" : "" %>>Latest to Oldest</option>
-                            </select>
-                        </form>
-
-                        <c:forEach var="p" items="${posts}">
-                            <div style="border:1px solid #ccc; margin:10px; padding:10px;">
-                                <h3>${p.title}</h3>
-                                <img src="${p.thumbnail}" width="150" />
-                                <p>${p.brief}</p>
-                                <small>Updated: ${p.updated_date}</small>
-                            </div>
-                        </c:forEach>
                     </div>
                 </div>
             </div><!--/header-bottom-->
