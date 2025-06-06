@@ -91,7 +91,7 @@ public class BlogAddServlet extends HttpServlet {
                 response.sendRedirect("listpo");
             } else {
                 request.setAttribute("error", Post_id + "exitsed");
-                request.getRequestDispatcher("AdminLTE/AdminPages/post_create.jsp").forward(request, response);
+                request.getRequestDispatcher("AdminLTE/AdminPages/post-create.jsp").forward(request, response);
             }
         } catch (NumberFormatException e) {
             System.out.println(e);

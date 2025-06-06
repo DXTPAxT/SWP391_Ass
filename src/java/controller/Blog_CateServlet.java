@@ -62,23 +62,29 @@ public class Blog_CateServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         Blog_CateDAO dao = new Blog_CateDAO();
         List<Blog_Cate> categories = dao.getAllBlogCategory();
         String Bc_id_raw = request.getParameter("Bc_id");
+        String searchKeyword = request.getParameter("search");
+        String sort = request.getParameter("sort");
+        List<Post> postList = null;
+        int count = 0;
 
-        List<Post> postList;
-        int count;
-
-        if (Bc_id_raw != null) {
-            try {
-                int Bc_id = Integer.parseInt(Bc_id_raw);
-                postList = dao.getPostsByCategoryId(Bc_id);
-                count = postList.size(); // nếu muốn phân trang theo danh mục thì cần query lại
-            } catch (NumberFormatException e) {
-                postList = dao.getAllPost(); // nếu lỗi thì fallback
+        try {
+            if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
+                postList = dao.searchPostsByTitle(searchKeyword);
+                count = postList.size();
+            } else if (Bc_id_raw != null) {
+                int Bc_id = Integer.parseInt(Bc_id_raw );
+                postList = dao.getPostsByCategorySorted(Bc_id, sort);
+                count = postList.size();
+            } else {
+                postList = dao.getAllPost();
                 count = dao.countAllPosts();
             }
-        } else {
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
             postList = dao.getAllPost();
             count = dao.countAllPosts();
         }
@@ -91,6 +97,8 @@ public class Blog_CateServlet extends HttpServlet {
         request.setAttribute("blog_categories", categories);
         request.setAttribute("postList", postList);
         request.setAttribute("endP", endPage);
+        request.setAttribute("searchKeyword", searchKeyword);
+        request.setAttribute("selectedSort", sort);// Gửi lại keyword để hiển thị lại trên form
         request.getRequestDispatcher("ShopPages/Pages/blog.jsp").forward(request, response);
     }
 

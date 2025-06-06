@@ -6,35 +6,40 @@ public class Feedback {
 
     private int feedbackID;
     private int userID;
-    private String userName;
     private String content;
-    private int categoryID;
+    private int categoryID; // Thay productID thành categoryID
     private Date createdAt;
     private int rate;
-    private int status;
+    private int status; // 1: active, 0: inactive/deleted
 
+    // Constructor mặc định
     public Feedback() {
-        this.status = 1;
+        this.status = 1; // Mặc định status = 1 (active)
     }
 
-    public Feedback(int feedbackID, int userID, String content, int categoryID, Date createdAt, int rate, int status) {
+    // Constructor đầy đủ (bao gồm status)
+    public Feedback(int feedbackID, int userID, String content, int categoryID,
+            Date createdAt, int rate, int status) {
         this.feedbackID = feedbackID;
         this.userID = userID;
-        setContent(content);
+        setContent(content); // Sử dụng setter để validate
         this.categoryID = categoryID;
         this.createdAt = createdAt;
-        setRate(rate);
+        setRate(rate); // Sử dụng setter để validate
         this.status = status;
     }
 
+    // Constructor không có createdAt và status
     public Feedback(int feedbackID, int userID, String content, int categoryID, int rate) {
         this(feedbackID, userID, content, categoryID, null, rate, 1);
     }
 
+    // Constructor dùng cho insert (không cần ID, createdAt)
     public Feedback(int userID, String content, int categoryID, int rate) {
         this(0, userID, content, categoryID, null, rate, 1);
     }
 
+    // Getter và Setter
     public int getFeedbackID() {
         return feedbackID;
     }
@@ -54,14 +59,6 @@ public class Feedback {
         this.userID = userID;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     public String getContent() {
         return content;
     }
@@ -76,11 +73,11 @@ public class Feedback {
         this.content = content.trim();
     }
 
-    public int getCategoryID() {
+    public int getCategoryID() { // Thay getProductID thành getCategoryID
         return categoryID;
     }
 
-    public void setCategoryID(int categoryID) {
+    public void setCategoryID(int categoryID) { // Thay setProductID thành setCategoryID
         if (categoryID <= 0) {
             throw new IllegalArgumentException("CategoryID must be positive");
         }
@@ -112,14 +109,21 @@ public class Feedback {
 
     public void setStatus(int status) {
         if (status != 0 && status != 1) {
-            throw new IllegalArgumentException("Status must be 0 or 1");
+            throw new IllegalArgumentException("Status must be 0 (inactive) or 1 (active)");
         }
         this.status = status;
     }
 
     @Override
     public String toString() {
-        return "Feedback{feedbackID=" + feedbackID + ", userID=" + userName + ", content='" + content + "', categoryID="
-                + categoryID + ", createdAt=" + createdAt + ", rate=" + rate + ", status=" + status + '}';
+        return "Feedback{"
+                + "feedbackID=" + feedbackID
+                + ", userID=" + userID
+                + ", content='" + content + '\''
+                + ", categoryID=" + categoryID
+                + ", createdAt=" + createdAt
+                + ", rate=" + rate
+                + ", status=" + status
+                + '}';
     }
 }

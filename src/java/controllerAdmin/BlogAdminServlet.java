@@ -69,6 +69,8 @@ public class BlogAdminServlet extends HttpServlet {
 
 //        request.setAttribute("blog_categories", categories);
         request.setAttribute("postlist", post);
+//         PrintWriter out = response.getWriter();
+//    out.println("Blog servlet is working!");
         request.getRequestDispatcher("AdminLTE/AdminPages/blogAdmin.jsp").forward(request, response);
     }
 
