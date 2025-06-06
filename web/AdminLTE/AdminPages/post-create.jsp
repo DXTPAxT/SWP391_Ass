@@ -15,7 +15,8 @@
 </head>
 <body>
     <div class="container form-container">
-        <h3 class="mb-4">Add new a blog</h3>
+        <h1 class="mb-4">Add new a blog</h1>
+        <h3 style="color: red">${requestScope.error}</h3>
         <c:if test="${not empty error}">
             <div class="alert alert-danger" role="alert">
                 <c:out value="${error}" />

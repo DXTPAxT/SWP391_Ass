@@ -19,7 +19,7 @@ public class Blog_CateDAO extends DBContext {
         String sql = "SELECT Bc_id, Bc_name FROM Blogs_category";
 
         try {
-            Connection conn = connection; 
+            Connection conn = connection;
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
@@ -37,6 +37,32 @@ public class Blog_CateDAO extends DBContext {
 
         return list;
     }
+
+    public List<Post> getTop5NewestPosts() {
+    List<Post> list = new ArrayList<>();
+    String sql = "SELECT TOP 5 * FROM Post ORDER BY Updated_date DESC";
+
+    try (PreparedStatement ps = connection.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            Post post = new Post();
+            post.setPost_id(rs.getInt("Post_id"));
+            post.setTitle(rs.getString("Title"));
+            post.setAuthor(rs.getString("Author"));
+            post.setUpdated_date(rs.getTimestamp("Updated_date"));
+            post.setContent(rs.getString("Content"));
+            post.setBc_id(rs.getInt("Bc_id"));
+            post.setThumbnail(rs.getString("Thumbnail"));
+            post.setBrief(rs.getString("Brief"));
+            post.setAdd_id(rs.getInt("Add_id"));
+            list.add(post);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return list;
+}
 
     public List<Post> getPostsByCategoryId(int bc_id) {
         List<Post> list = new ArrayList<>();
@@ -67,8 +93,7 @@ public class Blog_CateDAO extends DBContext {
         List<Post> list = new ArrayList<>();
         String sql = "SELECT * FROM Post";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql); 
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Post post = new Post();
@@ -214,6 +239,70 @@ public class Blog_CateDAO extends DBContext {
         return list;
     }
 
+    public List<Post> searchPostsByTitle(String keyword) {
+    List<Post> result = new ArrayList<>();
+    String sql = "SELECT * FROM Post WHERE Title LIKE ?";
+    
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setString(1, "%" + keyword + "%");
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Post post = new Post();
+                post.setPost_id(rs.getInt("Post_id"));
+                post.setTitle(rs.getString("Title"));
+                post.setAuthor(rs.getString("Author"));
+                post.setUpdated_date(rs.getTimestamp("Updated_date"));
+                post.setContent(rs.getString("Content"));
+                post.setBc_id(rs.getInt("Bc_id"));
+                post.setThumbnail(rs.getString("Thumbnail"));
+                post.setBrief(rs.getString("Brief"));
+                post.setAdd_id(rs.getInt("Add_id"));
+                result.add(post);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    
+    return result;
+}
+
+public List<Post> getPostsByCategorySorted(int bc_id, String sortOrder) {
+    List<Post> list = new ArrayList<>();
+    String sql = "SELECT * FROM Post WHERE Bc_id = ?";
+
+    if ("latest".equalsIgnoreCase(sortOrder)) {
+        sql += " ORDER BY Updated_date DESC";
+    } else if ("oldest".equalsIgnoreCase(sortOrder)) {
+        sql += " ORDER BY Updated_date ASC";
+    } // nếu sortOrder là null hoặc "default" thì không thêm ORDER BY
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, bc_id);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Post post = new Post();
+            post.setPost_id(rs.getInt("Post_id"));
+            post.setTitle(rs.getString("Title"));
+            post.setAuthor(rs.getString("Author"));
+            post.setUpdated_date(rs.getTimestamp("Updated_date"));
+            post.setContent(rs.getString("Content"));
+            post.setBc_id(rs.getInt("Bc_id"));
+            post.setThumbnail(rs.getString("Thumbnail"));
+            post.setBrief(rs.getString("Brief"));
+            post.setAdd_id(rs.getInt("Add_id"));
+            list.add(post);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return list;
+}
+
+
+    
+
     public static void main(String[] args) {
         Blog_CateDAO dao = new Blog_CateDAO();
         //        List<Post> list = dao.getAllPost();
@@ -221,7 +310,8 @@ public class Blog_CateDAO extends DBContext {
         //            System.out.println(o);
         //        }
         //        System.out.println(dao.getAllBlogCategory());
-                System.out.println(dao.getAllPost());
+//                System.out.println(dao.getAllPost());
+
         //        System.out.println(dao.countAllPosts());
         //        Post p = new Post();
         //        p.setTitle("Giới thiệu Laptop mới");
@@ -254,7 +344,6 @@ public class Blog_CateDAO extends DBContext {
 //
 //        System.out.println("Đã xoá bài viết có ID = " + postIdToDelete);
 //                System.out.println(dao.getPostsByCategoryId(1));
-
     }
 
 }
