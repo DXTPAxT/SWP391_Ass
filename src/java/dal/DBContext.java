@@ -11,15 +11,11 @@ public class DBContext {
     protected Connection connection;
 
     public DBContext() {
-        try {
-          
-            String user = "sa";                       
-            String pass = "1234";                      
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=ComputerOnlineShop";
-
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-
-          
+        try {         
+            String user = "sa";
+            String pass = "123";
+            String url = "jdbc:sqlserver://Haist0321\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");      
             connection = DriverManager.getConnection(url, user, pass);
             System.out.println("✅ Kết nối DB thành công!");
         } catch (ClassNotFoundException | SQLException ex) {
