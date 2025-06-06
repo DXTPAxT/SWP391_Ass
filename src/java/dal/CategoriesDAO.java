@@ -16,8 +16,7 @@ public class CategoriesDAO extends DBContext {
     public List<Brands> getAllBrands() {
         String sql = "SELECT * FROM Brands";
         List<Brands> list = new ArrayList<>();
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(new Brands(rs.getInt("BrandID"), rs.getString("BrandName")));
             }
@@ -35,13 +34,12 @@ public class CategoriesDAO extends DBContext {
             JOIN Brands b ON c.BrandID = b.BrandID
         """;
         List<BrandByComponentName> list = new ArrayList<>();
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(new BrandByComponentName(
-                    rs.getInt("ComponentID"),
-                    rs.getString("ComponentName"),
-                    rs.getString("BrandName")));
+                        rs.getInt("ComponentID"),
+                        rs.getString("ComponentName"),
+                        rs.getString("BrandName")));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
@@ -53,14 +51,13 @@ public class CategoriesDAO extends DBContext {
     public List<Components> getAllComponents() {
         String sql = "SELECT * FROM Components";
         List<Components> list = new ArrayList<>();
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(new Components(
-                    rs.getInt("ComponentID"),
-                    rs.getString("ComponentName"),
-                    rs.getInt("Quantity"),
-                    rs.getInt("Status")));
+                        rs.getInt("ComponentID"),
+                        rs.getString("ComponentName"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("Status")));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
@@ -70,18 +67,19 @@ public class CategoriesDAO extends DBContext {
 
     // categories 
     public List<Categories> getCategoryByID(int id) {
-        String sql = "SELECT * FROM Categories WHERE CategoryID = ?";
-         List<Categories> list= new ArrayList<>();
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
+        String sql = "SELECT c.*, b.BrandName FROM Categories c JOIN Brands b ON c.BrandID = b.BrandID WHERE CategoryID = ?";
+        List<Categories> list = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
-           while (rs.next()) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
                     list.add(extractCategory(rs));
-                }            
+                }
+            }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, null, e);
+            e.printStackTrace();
         }
-        return null;
+        return list;
     }
 
     public List<Categories> getCategoriesByComponent(int componentId, int start, int size) {
@@ -105,7 +103,7 @@ public class CategoriesDAO extends DBContext {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
-        
+
         return list;
     }
 
@@ -136,7 +134,9 @@ public class CategoriesDAO extends DBContext {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, componentId);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getInt(1);
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
@@ -146,9 +146,10 @@ public class CategoriesDAO extends DBContext {
 
     public int countAllCategories() {
         String sql = "SELECT COUNT(*) FROM Categories";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) return rs.getInt(1);
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
@@ -157,8 +158,8 @@ public class CategoriesDAO extends DBContext {
 
     //  filter   
     public List<Categories> getCategoriesFiltered(String componentName, String brandName,
-                                                  Integer minPrice, Integer maxPrice,
-                                                  String keyword, int start, int size) {
+            Integer minPrice, Integer maxPrice,
+            String keyword, int start, int size) {
         List<Categories> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder("""
             SELECT c.*, b.BrandName
@@ -183,10 +184,10 @@ public class CategoriesDAO extends DBContext {
             LOGGER.log(Level.SEVERE, null, e);
         }
         return list;
-    }   
-                            
+    }
+
     public int countFiltered(String componentName, String brandName,
-                             Integer minPrice, Integer maxPrice, String keyword) {
+            Integer minPrice, Integer maxPrice, String keyword) {
         StringBuilder sql = new StringBuilder("""
             SELECT COUNT(*) 
             FROM Categories c
@@ -198,7 +199,9 @@ public class CategoriesDAO extends DBContext {
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             setParams(ps, params);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getInt(1);
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
@@ -206,23 +209,22 @@ public class CategoriesDAO extends DBContext {
         return 0;
     }
 
-
     private Categories extractCategory(ResultSet rs) throws SQLException {
         return new Categories(
-            rs.getInt("CategoryID"),
-            rs.getString("CategoryName"),
-            rs.getInt("ComponentID"),
-            rs.getInt("BrandID"),
-            rs.getString("BrandName"),
-            rs.getInt("Quantity"),
-            rs.getInt("Price"),
-            rs.getString("Description"),
-            rs.getInt("Status")
+                rs.getInt("CategoryID"),
+                rs.getString("CategoryName"),
+                rs.getInt("ComponentID"),
+                rs.getInt("BrandID"),
+                rs.getString("BrandName"),
+                rs.getInt("Quantity"),
+                rs.getInt("Price"),
+                rs.getString("Description"),
+                rs.getInt("Status")
         );
     }
-  
+
     private List<Object> buildFilter(StringBuilder sql, String componentName, String brandName,
-                                     Integer minPrice, Integer maxPrice, String keyword) {
+            Integer minPrice, Integer maxPrice, String keyword) {
         List<Object> params = new ArrayList<>();
         if (componentName != null && !componentName.isEmpty()) {
             sql.append(" AND comp.ComponentName = ? ");

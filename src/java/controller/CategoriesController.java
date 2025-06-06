@@ -27,7 +27,9 @@ public class CategoriesController extends HttpServlet {
 
         // --- Get service ---
         String service = request.getParameter("service");
-        if (service == null) service = "list";
+        if (service == null) {
+            service = "list";
+        }
 
         // --- Get filters from request ---
         String componentName = request.getParameter("component");
@@ -39,18 +41,17 @@ public class CategoriesController extends HttpServlet {
         int page = parseIntegerOrDefault(request.getParameter("page"), 1);
         int start = (page - 1) * PAGE_SIZE;
 
-        
         List<Categories> categories;
         int totalItems;
         int totalPages;
         if ("list".equals(service)) {
-            
+
             totalItems = dao.countAllCategories();
             totalPages = (int) Math.ceil(totalItems * 1.0 / PAGE_SIZE);
 
             categories = dao.getAllCategoriesPaginated(page, PAGE_SIZE);
             request.setAttribute("currentService", "list");
-        }else if ("filter".equals(service)) {
+        } else if ("filter".equals(service)) {
             totalItems = dao.countFiltered(componentName, brandName, minPrice, maxPrice, keyword);
             totalPages = (int) Math.ceil(totalItems * 1.0 / PAGE_SIZE);
 
@@ -62,6 +63,17 @@ public class CategoriesController extends HttpServlet {
             request.setAttribute("maxPrice", request.getParameter("maxPrice"));
             request.setAttribute("currentKeyword", keyword);
             request.setAttribute("currentService", "filter");
+        } else if ("detail".equals(service)) {
+            int categoryId = parseIntegerOrDefault(request.getParameter("categoryID"), -1);
+            List<Categories> detailList = dao.getCategoryByID(categoryId);
+            if (detailList != null && !detailList.isEmpty()) {
+                request.setAttribute("product", detailList.get(0));
+                request.getRequestDispatcher("ShopPages/Pages/CategoriesDetails.jsp").forward(request, response);
+                return;
+            } else {
+                response.sendRedirect("CategoriesController?service=list");
+                return;
+            }
         } else {
             // fallback nếu service sai → trả danh sách đầy đủ
             categories = dao.getAllCategoriesPaginated(page, PAGE_SIZE);
