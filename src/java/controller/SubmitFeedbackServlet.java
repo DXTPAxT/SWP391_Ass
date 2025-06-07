@@ -24,7 +24,7 @@ public class SubmitFeedbackServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(); // Khai báo một lần duy nhất
+        HttpSession session = request.getSession();
         try {
             // Kiểm tra người dùng đã đăng nhập
             User user = (User) session.getAttribute("user");
@@ -37,52 +37,52 @@ public class SubmitFeedbackServlet extends HttpServlet {
             LOGGER.info("UserID " + user.getUserID() + " is submitting feedback");
 
             // Lấy thông tin từ form
-            String categoryIdStr = request.getParameter("categoryId");
+            String orderItemIdStr = request.getParameter("orderItemId");
             String ratingStr = request.getParameter("rating");
-            String content = request.getParameter("content");
+            String content = request.getParameter("content"); // Sửa lỗi gõ phím
 
             // Kiểm tra dữ liệu đầu vào
-            if (categoryIdStr == null || ratingStr == null || content == null) {
+            if (orderItemIdStr == null || ratingStr == null || content == null) {
                 session.setAttribute("error", "Missing required fields");
-                LOGGER.warning("Missing required fields: categoryId=" + categoryIdStr + ", rating=" + ratingStr + ", content=" + content);
-                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + (categoryIdStr != null ? categoryIdStr : "1"));
+                LOGGER.warning("Missing required fields: orderItemId=" + orderItemIdStr + ", rating=" + ratingStr + ", content=" + content);
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=1");
                 return;
             }
 
-            int categoryId;
+            int orderItemId;
             int rate;
             try {
-                categoryId = Integer.parseInt(categoryIdStr);
+                orderItemId = Integer.parseInt(orderItemIdStr);
                 rate = Integer.parseInt(ratingStr);
             } catch (NumberFormatException e) {
-                session.setAttribute("error", "Invalid category ID or rating");
-                LOGGER.log(Level.WARNING, "Invalid categoryId or rating: " + e.getMessage(), e);
-                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryIdStr);
+                session.setAttribute("error", "Invalid order item ID or rating");
+                LOGGER.log(Level.WARNING, "Invalid orderItemId or rating: " + e.getMessage(), e);
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=1");
                 return;
             }
 
             // Validate dữ liệu
             if (content.trim().isEmpty()) {
                 session.setAttribute("error", "Content cannot be empty");
-                LOGGER.warning("Content is empty for categoryId: " + categoryId);
-                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
+                LOGGER.warning("Content is empty for orderItemId: " + orderItemId);
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=1");
                 return;
             }
             if (rate < 1 || rate > 5) {
                 session.setAttribute("error", "Rating must be between 1 and 5");
-                LOGGER.warning("Invalid rating: " + rate + " for categoryId: " + categoryId);
-                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
+                LOGGER.warning("Invalid rating: " + rate + " for orderItemId: " + orderItemId);
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=1");
                 return;
             }
             if (content.length() > 500) {
                 session.setAttribute("error", "Content cannot exceed 500 characters");
-                LOGGER.warning("Content exceeds 500 characters for categoryId: " + categoryId);
-                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
+                LOGGER.warning("Content exceeds 500 characters for orderItemId: " + orderItemId);
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=1");
                 return;
             }
 
             // Tạo đối tượng Feedback
-            Feedback feedback = new Feedback(user.getUserID(), content, categoryId, rate);
+            Feedback feedback = new Feedback(user.getUserID(), content, orderItemId, rate);
             feedback.setCreatedAt(new Date());
             LOGGER.info("Feedback object created: " + feedback.toString());
 
@@ -92,17 +92,17 @@ public class SubmitFeedbackServlet extends HttpServlet {
 
             if (success) {
                 session.setAttribute("message", "Feedback submitted successfully");
-                LOGGER.info("Feedback submitted successfully for categoryId: " + categoryId);
-                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
+                LOGGER.info("Feedback submitted successfully for orderItemId: " + orderItemId);
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=1");
             } else {
                 session.setAttribute("error", "Failed to save feedback");
-                LOGGER.warning("Failed to save feedback for categoryId: " + categoryId);
-                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
+                LOGGER.warning("Failed to save feedback for orderItemId: " + orderItemId);
+                response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=1");
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error in SubmitFeedbackServlet: " + e.getMessage(), e);
             session.setAttribute("error", "An error occurred while submitting feedback: " + e.getMessage());
-            response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=" + (request.getParameter("categoryId") != null ? request.getParameter("categoryId") : "1"));
+            response.sendRedirect(request.getContextPath() + "/feedback?action=category&categoryID=1");
         }
     }
 }

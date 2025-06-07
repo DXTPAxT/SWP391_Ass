@@ -69,7 +69,7 @@
                     <h3>Write Your Review</h3>
                     <c:if test="${sessionScope.user != null}">
                         <form id="submitFeedbackForm" action="${pageContext.request.contextPath}/submitFeedback" method="post" class="review-form">
-                            <input type="hidden" name="categoryId" value="${categoryID}">
+                            <input type="hidden" name="orderItemId" value="${categoryID}">
                             <div class="form-group">
                                 <label>Rating:</label>
                                 <select name="rating" required>
