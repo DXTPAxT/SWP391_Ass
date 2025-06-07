@@ -34,7 +34,7 @@
         <c:if test="${not empty feedback}">
             <form id="editFeedbackForm" action="${pageContext.request.contextPath}/feedback?action=update" method="post">
                 <input type="hidden" name="feedbackID" value="${feedback.feedbackID}">
-                <input type="hidden" name="categoryID" value="${feedback.categoryID}">
+                <input type="hidden" name="orderItemID" value="${feedback.orderItemID}">
                 <div class="form-group">
                     <label>Đánh giá:</label>
                     <select name="rate" required>
@@ -51,7 +51,7 @@
                     <textarea name="content" rows="5" required>${feedback.content}</textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Cập nhật</button>
-                <a href="${pageContext.request.contextPath}/feedback?action=category&categoryID=${feedback.categoryID}" class="btn btn-secondary">Hủy</a>
+                <a href="${pageContext.request.contextPath}/feedback?action=category&categoryID=1" class="btn btn-secondary">Hủy</a>
             </form>
         </c:if>
         <c:if test="${empty feedback}">

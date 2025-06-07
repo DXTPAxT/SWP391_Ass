@@ -21,7 +21,7 @@ public class FeedbackDAO extends DBContext {
                     rs.getInt("FeedbackID"),
                     rs.getInt("UserID"),
                     rs.getString("Content"),
-                    rs.getInt("CategoryID"),
+                    rs.getInt("OrderItemID"),
                     rs.getTimestamp("CreatedAt"),
                     rs.getInt("Rate"),
                     rs.getInt("Status")
@@ -30,23 +30,23 @@ public class FeedbackDAO extends DBContext {
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error in getAllFeedbacks: " + e.getMessage(), e);
-            return list; // Trả về danh sách rỗng thay vì ném ngoại lệ
+            return list;
         }
         return list;
     }
 
-    public List<Feedback> getFeedbackByCategoryId(int categoryId) {
+    public List<Feedback> getFeedbackByOrderItemId(int orderItemId) {
         List<Feedback> list = new ArrayList<>();
-        String sql = "SELECT * FROM Feedbacks WHERE CategoryID = ? ORDER BY CreatedAt DESC";
+        String sql = "SELECT * FROM Feedbacks WHERE OrderItemID = ? ORDER BY CreatedAt DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, categoryId);
+            ps.setInt(1, orderItemId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Feedback f = new Feedback(
                         rs.getInt("FeedbackID"),
                         rs.getInt("UserID"),
                         rs.getString("Content"),
-                        rs.getInt("CategoryID"),
+                        rs.getInt("OrderItemID"),
                         rs.getTimestamp("CreatedAt"),
                         rs.getInt("Rate"),
                         rs.getInt("Status")
@@ -55,8 +55,8 @@ public class FeedbackDAO extends DBContext {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error in getFeedbackByCategoryId for categoryId " + categoryId + ": " + e.getMessage(), e);
-            return list; // Trả về danh sách rỗng thay vì ném ngoại lệ
+            LOGGER.log(Level.SEVERE, "Error in getFeedbackByOrderItemId for orderItemId " + orderItemId + ": " + e.getMessage(), e);
+            return list;
         }
         return list;
     }
@@ -72,7 +72,7 @@ public class FeedbackDAO extends DBContext {
                         rs.getInt("FeedbackID"),
                         rs.getInt("UserID"),
                         rs.getString("Content"),
-                        rs.getInt("CategoryID"),
+                        rs.getInt("OrderItemID"),
                         rs.getTimestamp("CreatedAt"),
                         rs.getInt("Rate"),
                         rs.getInt("Status")
@@ -82,7 +82,7 @@ public class FeedbackDAO extends DBContext {
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error in getFeedbackByUserId for userId " + userId + ": " + e.getMessage(), e);
-            return list; // Trả về danh sách rỗng thay vì ném ngoại lệ
+            return list;
         }
         return list;
     }
@@ -97,7 +97,7 @@ public class FeedbackDAO extends DBContext {
                         rs.getInt("FeedbackID"),
                         rs.getInt("UserID"),
                         rs.getString("Content"),
-                        rs.getInt("CategoryID"),
+                        rs.getInt("OrderItemID"),
                         rs.getTimestamp("CreatedAt"),
                         rs.getInt("Rate"),
                         rs.getInt("Status")
@@ -115,15 +115,15 @@ public class FeedbackDAO extends DBContext {
             LOGGER.warning("Feedback object is null");
             return false;
         }
-        if (!isCategoryValid(f.getCategoryID())) {
-            LOGGER.warning("Invalid CategoryID: " + f.getCategoryID());
+        if (!isOrderItemValid(f.getOrderItemID())) {
+            LOGGER.warning("Invalid OrderItemID: " + f.getOrderItemID());
             return false;
         }
-        String sql = "INSERT INTO Feedbacks (UserID, Content, CategoryID, CreatedAt, Rate, Status) VALUES (?, ?, ?, ?, ?, 1)";
+        String sql = "INSERT INTO Feedbacks (UserID, Content, OrderItemID, CreatedAt, Rate, Status) VALUES (?, ?, ?, ?, ?, 1)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, f.getUserID());
             ps.setString(2, f.getContent());
-            ps.setInt(3, f.getCategoryID());
+            ps.setInt(3, f.getOrderItemID());
             ps.setTimestamp(4, new Timestamp(f.getCreatedAt() != null ? f.getCreatedAt().getTime() : System.currentTimeMillis()));
             ps.setInt(5, f.getRate());
             int rowsAffected = ps.executeUpdate();
@@ -136,7 +136,7 @@ public class FeedbackDAO extends DBContext {
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error in insertFeedback: " + e.getMessage(), e);
-            return false; // Trả về false thay vì ném ngoại lệ
+            return false;
         }
     }
 
@@ -165,17 +165,17 @@ public class FeedbackDAO extends DBContext {
         }
     }
 
-    public boolean isCategoryValid(int categoryId) {
-        String sql = "SELECT COUNT(*) FROM Categories WHERE CategoryID = ?";
+    public boolean isOrderItemValid(int orderItemId) {
+        String sql = "SELECT COUNT(*) FROM OrderItems WHERE OrderItemID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, categoryId);
+            ps.setInt(1, orderItemId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
                 }
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error in isCategoryValid for categoryId " + categoryId + ": " + e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, "Error in isOrderItemValid for orderItemId " + orderItemId + ": " + e.getMessage(), e);
             return false;
         }
         return false;

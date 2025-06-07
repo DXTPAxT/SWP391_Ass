@@ -7,7 +7,7 @@ public class Feedback {
     private int feedbackID;
     private int userID;
     private String content;
-    private int categoryID; // Thay productID thành categoryID
+    private int orderItemID; // Sửa từ categoryID thành orderItemID
     private Date createdAt;
     private int rate;
     private int status; // 1: active, 0: inactive/deleted
@@ -18,25 +18,25 @@ public class Feedback {
     }
 
     // Constructor đầy đủ (bao gồm status)
-    public Feedback(int feedbackID, int userID, String content, int categoryID,
+    public Feedback(int feedbackID, int userID, String content, int orderItemID,
             Date createdAt, int rate, int status) {
         this.feedbackID = feedbackID;
         this.userID = userID;
         setContent(content); // Sử dụng setter để validate
-        this.categoryID = categoryID;
+        this.orderItemID = orderItemID;
         this.createdAt = createdAt;
         setRate(rate); // Sử dụng setter để validate
         this.status = status;
     }
 
     // Constructor không có createdAt và status
-    public Feedback(int feedbackID, int userID, String content, int categoryID, int rate) {
-        this(feedbackID, userID, content, categoryID, null, rate, 1);
+    public Feedback(int feedbackID, int userID, String content, int orderItemID, int rate) {
+        this(feedbackID, userID, content, orderItemID, null, rate, 1);
     }
 
     // Constructor dùng cho insert (không cần ID, createdAt)
-    public Feedback(int userID, String content, int categoryID, int rate) {
-        this(0, userID, content, categoryID, null, rate, 1);
+    public Feedback(int userID, String content, int orderItemID, int rate) {
+        this(0, userID, content, orderItemID, null, rate, 1);
     }
 
     // Getter và Setter
@@ -73,15 +73,15 @@ public class Feedback {
         this.content = content.trim();
     }
 
-    public int getCategoryID() { // Thay getProductID thành getCategoryID
-        return categoryID;
+    public int getOrderItemID() { // Sửa từ getCategoryID thành getOrderItemID
+        return orderItemID;
     }
 
-    public void setCategoryID(int categoryID) { // Thay setProductID thành setCategoryID
-        if (categoryID <= 0) {
-            throw new IllegalArgumentException("CategoryID must be positive");
+    public void setOrderItemID(int orderItemID) { // Sửa từ setCategoryID thành setOrderItemID
+        if (orderItemID <= 0) {
+            throw new IllegalArgumentException("OrderItemID must be positive");
         }
-        this.categoryID = categoryID;
+        this.orderItemID = orderItemID;
     }
 
     public Date getCreatedAt() {
@@ -120,7 +120,7 @@ public class Feedback {
                 + "feedbackID=" + feedbackID
                 + ", userID=" + userID
                 + ", content='" + content + '\''
-                + ", categoryID=" + categoryID
+                + ", orderItemID=" + orderItemID
                 + ", createdAt=" + createdAt
                 + ", rate=" + rate
                 + ", status=" + status
