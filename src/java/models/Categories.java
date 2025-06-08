@@ -33,7 +33,7 @@ public class Categories {
         this.status = status;
         this.imgURL = imgURL;
     }
-
+    
     public int getCategoryID() {
         return categoryID;
     }

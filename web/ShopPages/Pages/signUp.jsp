@@ -65,140 +65,18 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
       rel="apple-touch-icon-precomposed"
       href="images/ico/apple-touch-icon-57-precomposed.png"
     />
-    <style>
-      /* Giao diện form đăng ký với đổ bóng */
-      .signup-form {
-        transform: translateY(-5%);
-        margin-bottom: 100px;
-        background: #ffffff;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* đổ bóng mềm và sâu */
-        transition: box-shadow 0.3s ease;
-      }
-
-      .signup-form h2 {
-        margin-bottom: 25px;
-        font-weight: bold;
-        color: #333;
-        text-align: center;
-      }
-
-      .signup-form input {
-        margin-bottom: 15px;
-      }
-
-      .error-message {
-        margin-top: -10px;
-        font-size: 1.3rem;
-        color: red;
-        margin-bottom: 10px;
-      }
-
-      .custom-between {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .custom-between a {
-        text-decoration: underline;
-        font-size: 14px;
-      }
-
-      .btn-default {
-        background-color: #fd7e14;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 6px;
-        transition: background-color 0.3s ease;
-      }
-
-      .btn-default:hover {
-        background-color: #e66a00;
-      }
-
-      /* Responsive Mobile (≤768px) */
-      @media (max-width: 768px) {
-        .signup-form {
-          padding: 20px 15px;
-        }
-
-        .custom-between {
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .btn-default {
-          width: 100%;
-        }
-
-        .custom-between a {
-          text-align: center;
-        }
-      }
-
-      /* Responsive iPad (769px–1024px) */
-      @media (min-width: 769px) and (max-width: 1024px) {
-        .signup-form {
-          padding: 25px;
-        }
-
-        .custom-between {
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .btn-default {
-          width: 100%;
-        }
-
-        .custom-between a {
-          text-align: center;
-        }
-      }
-
-      #btn-signup {
-        flex: 1;
-        background-color: #fd7e14;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-weight: 500;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-      }
-
-      #btn-signup:hover {
-        background-color: #e66a00;
-      }
-
-      @media (max-width: 768px) {
-        #btn-signup {
-          width: 100%;
-        }
-      }
-    </style></head
+    
+    </head
   ><!--/head-->
 
   <body>
+    <%@ include file="components/header.jsp" %>
+    <!--/header-->
     <section id="form" class="mt-0">
-      <!--form-->
-      <center>
-        <div class="logo">
-          <a href="${pageContext.request.contextPath}/HomePages"
-            ><img
-              src="${pageContext.request.contextPath}/ShopPages/Pages/images/home/CyberBeast2.png"
-              style="height: 210px; width: 280px"
-          /></a>
-        </div>
-      </center>
       <div class="container">
         <div class="row custom-center">
           <div class="col-sm-4">
-            <div class="signup-form">
+            <div class="signup-form form-modern">
               <!--sign up form-->
               <h2>New User Signup!</h2>
               <c:if test="${error == 'Sign up failed!'}">
@@ -214,7 +92,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
                 <input
                   type="email"
                   placeholder="Enter email address"
-                  class="form-control ${error == 'Email existed!' || error == 'Email is required!' ? 'is-invalid' : ''}"
+                  class="form-control ${error == 'Email existed!' || error == 'Email is required!' ? 'input-modern-invalid' : ''}"
                   name="email"
                   required
                   value="${not empty error ? email : ''}"
@@ -228,7 +106,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
                 <input
                   type="text"
                   placeholder="Enter full name"
-                  class="form-control ${error == 'Full name is required!' ? 'is-invalid' : ''}"
+                  class="form-control ${error == 'Full name is required!' ? 'input-modern-invalid' : ''}"
                   name="fullName"
                   required
                   value="${not empty error ? fullName : ''}"
@@ -240,7 +118,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
                 <input
                   type="text"
                   placeholder="Enter address"
-                  class="form-control ${error == 'Address is required!' ? 'is-invalid' : ''}"
+                  class="form-control ${error == 'Address is required!' ? 'input-modern-invalid' : ''}"
                   name="address"
                   required
                   value="${not empty error ? address : ''}"
@@ -252,7 +130,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
                 <input
                   type="text"
                   placeholder="Enter phone number "
-                  class="form-control ${(error == 'Phone number existed!' || error == 'Phone number is required!' || error == 'Invalid phone number') ? 'is-invalid' : ''}"
+                  class="form-control ${(error == 'Phone number existed!' || error == 'Phone number is required!' || error == 'Invalid phone number') ? 'input-modern-invalid' : ''}"
                   name="phoneNumber"
                   required
                   value="${not empty error ? phoneNumber : ''}"
@@ -266,7 +144,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
                 <input
                   type="password"
                   placeholder="Enter password"
-                  class="form-control ${error == 'Password is required!' ? 'is-invalid' : ''}"
+                  class="form-control ${error == 'Password is required!' ? 'input-modern-invalid' : ''}"
                   name="password"
                   required
                   value="${not empty error ? password : ''}"
@@ -278,7 +156,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
                 <input
                   type="password"
                   placeholder="Confirm your password"
-                  class="form-control ${(error == 'Confirm password not match!' || error == 'Confirm password is required!') ? 'is-invalid' : ''}"
+                  class="form-control ${(error == 'Confirm password not match!' || error == 'Confirm password is required!') ? 'input-modern-invalid' : ''}"
                   name="confirmPassword"
                   required
                   value="${not empty error ? confirmPassword : ''}"
@@ -289,7 +167,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
                   <p class="text-danger error-message">${error}</p>
                 </c:if>
                 <div class="custom-between mt-5">
-                  <button type="submit" id="btn-signup">SignUp</button>
+                  <button type="submit" id="btn-signup" class="btn-modern">SignUp</button>
                   <a href="Login">Login</a>
                 </div>
               </form>
@@ -327,5 +205,6 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.prettyPhoto.js"></script>
     <script src="js/main.js"></script>
+    <%@ include file="components/footer.jsp" %>
   </body>
 </html>
