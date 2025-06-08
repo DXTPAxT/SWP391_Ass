@@ -1,15 +1,33 @@
 package dalAdmin;
 
-import dal.DBContext;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.*;
+import models.BraComs;
 import models.Categories;
 
-public class CategoryAdminDAO extends DBContext {
+public class CategoryAdminDAO extends DBAdminContext {
 
-    public List<Categories> getAllCategories(String sql) {
+    public List<Categories> getAllCategories() {
         List<Categories> list = new ArrayList<>();
+
+        String sql = """
+        SELECT 
+            c.CategoryID,
+            c.CategoryName,
+            c.BrandComID,
+            c.Quantity,
+            c.Price,
+            c.Description,
+            c.Status,
+            c.ImageURL,
+            b.BrandName,
+            com.ComponentName
+        FROM Categories c
+        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        JOIN Components com ON bc.ComponentID = com.ComponentID
+    """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -17,12 +35,14 @@ public class CategoryAdminDAO extends DBContext {
                 Categories c = new Categories(
                         rs.getInt("CategoryID"),
                         rs.getString("CategoryName"),
-                        rs.getInt("BraComID"),
+                        rs.getInt("BrandComID"),
+                        rs.getString("BrandName"),
+                        rs.getString("ComponentName"),
                         rs.getInt("Quantity"),
                         rs.getInt("Price"),
                         rs.getString("Description"),
                         rs.getInt("Status"),
-                        rs.getString("ImgURL")
+                        rs.getString("ImageURL")
                 );
                 list.add(c);
             }
@@ -34,28 +54,47 @@ public class CategoryAdminDAO extends DBContext {
         return list;
     }
 
-    public List<Categories> getCategoriesByBraComID(int id) {
+    public List<Categories> getAllCategoriesByBrandComID(int brandComID) {
         List<Categories> list = new ArrayList<>();
-        String sql = "SELECT * FROM Categories WHERE BraComID = ?";
+
+        String sql = """
+        SELECT 
+            c.CategoryID,
+            c.CategoryName,
+            c.BrandComID,
+            c.Quantity,
+            c.Price,
+            c.Description,
+            c.Status,
+            c.ImageURL,
+            b.BrandName,
+            com.ComponentName
+        FROM Categories c
+        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        JOIN Components com ON bc.ComponentID = com.ComponentID
+        WHERE c.BrandComID = ?
+    """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Categories c = new Categories(
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"),
-                        rs.getInt("BraComID"),
-                        rs.getInt("Quantity"),
-                        rs.getInt("Price"),
-                        rs.getString("Description"),
-                        rs.getInt("Status"),
-                        rs.getString("ImgURL")
-                );
-                list.add(c);
+            ps.setInt(1, brandComID);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Categories c = new Categories(
+                            rs.getInt("CategoryID"),
+                            rs.getString("CategoryName"),
+                            rs.getInt("BrandComID"),
+                            rs.getString("BrandName"),
+                            rs.getString("ComponentName"),
+                            rs.getInt("Quantity"),
+                            rs.getInt("Price"),
+                            rs.getString("Description"),
+                            rs.getInt("Status"),
+                            rs.getString("ImageURL")
+                    );
+                    list.add(c);
+                }
             }
-
         } catch (SQLException e) {
             Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
         }
@@ -72,12 +111,12 @@ public class CategoryAdminDAO extends DBContext {
                 return new Categories(
                         rs.getInt("CategoryID"),
                         rs.getString("CategoryName"),
-                        rs.getInt("BraComID"),
+                        rs.getInt("BrandComID"),
                         rs.getInt("Quantity"),
                         rs.getInt("Price"),
                         rs.getString("Description"),
                         rs.getInt("Status"),
-                        rs.getString("ImgURL")
+                        rs.getString("ImageURL")
                 );
             }
         } catch (SQLException e) {
@@ -87,8 +126,8 @@ public class CategoryAdminDAO extends DBContext {
     }
 
     public void insertCategory(Categories c) {
-        String sql = "INSERT INTO Categories (CategoryName, BraComID, Quantity, Price, Description, Status, ImgURL) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Categories (CategoryName, BrandComID, Quantity, Price, Description, Status, ImageURL) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, c.getCategoryName());
             ps.setInt(2, c.getBraComID());
@@ -104,8 +143,8 @@ public class CategoryAdminDAO extends DBContext {
     }
 
     public void updateCategory(Categories c) {
-        String sql = "UPDATE Categories SET CategoryName = ?, BraComID = ?, Quantity = ?, Price = ?, Description = ?, Status = ?, ImgURL = ? "
-                   + "WHERE CategoryID = ?";
+        String sql = "UPDATE Categories SET CategoryName = ?, BrandComID = ?, Quantity = ?, Price = ?, Description = ?, Status = ?, ImageURL = ? "
+                + "WHERE CategoryID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, c.getCategoryName());
             ps.setInt(2, c.getBraComID());
@@ -139,6 +178,25 @@ public class CategoryAdminDAO extends DBContext {
             ps.executeUpdate();
         } catch (SQLException e) {
             Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    public static void main(String[] args) {
+        CategoryAdminDAO dao = new CategoryAdminDAO();
+        int id = 1;
+        List<Categories> all = dao.getAllCategoriesByBrandComID(id);
+
+        System.out.printf("%-5s %-20s %-20s %-20s %-10s%n",
+                "ID", "Brand Name", "Component Name", "Category Name", "BraComID");
+
+        for (Categories c : all) {
+            System.out.printf("%-5d %-20s %-20s %-20s %-10d%n",
+                    c.getCategoryID(),
+                    c.getBrandName(),
+                    c.getComponentName(),
+                    c.getCategoryName(),
+                    c.getBraComID()
+            );
         }
     }
 

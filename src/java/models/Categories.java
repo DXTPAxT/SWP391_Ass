@@ -3,16 +3,53 @@ package models;
 public class Categories {
     private int categoryID;
     private String categoryName;
+
+    private int BraComID;
+    private String BrandName;
+    private String ComponentName;
+
     private int brandComID;      // FK về BrandComs
     private int componentID;     // Lấy từ BrandComs
     private int brandID;         // Lấy từ BrandComs
     private String brandName;    // Lấy từ bảng Brands
+
     private int quantity;
     private int price;
     private String description;
     private int status;
     private String imgURL;
 
+    public Categories(int categoryID, String categoryName, int BraComID, String BrandName, String ComponentName, int quantity, int price, String description, int status, String imgURL) {
+        this.categoryID = categoryID;
+        this.categoryName = categoryName;
+        this.BraComID = BraComID;
+        this.BrandName = BrandName;
+        this.ComponentName = ComponentName;
+        this.quantity = quantity;
+        this.price = price;
+        this.description = description;
+        this.status = status;
+        this.imgURL = imgURL;
+    }
+
+    public String getBrandName() {
+        return BrandName;
+    }
+
+    public void setBrandName(String BrandName) {
+        this.BrandName = BrandName;
+    }
+
+    public String getComponentName() {
+        return ComponentName;
+    }
+
+    public void setComponentName(String ComponentName) {
+        this.ComponentName = ComponentName;
+    }
+
+    
+    
     public Categories() {
     }
 

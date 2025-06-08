@@ -16,16 +16,16 @@ import java.sql.Statement;
  *
  * @author FPT University - PRJ30X
  */
-public class DBContext {
+public class DBAdminContext {
 
     protected Connection connection;
 
-    public DBContext() {
+    public DBAdminContext() {
         //@Students: You are allowed to edit user, pass, url variables to fit 
         //your system configuration
         //You can also add more methods for Database Interaction tasks. 
         //But we recommend you to do it in another class
-        // For example : StudentDBContext extends DBContext , 
+        // For example : StudentDBContext extends DBAdminContext , 
         //where StudentDBContext is located in dal package, 
         try {
             String user = "sa";
@@ -34,7 +34,7 @@ public class DBContext {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DBAdminContext.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -55,14 +55,14 @@ public class DBContext {
         try {
             return connection != null && !connection.isClosed();
         } catch (SQLException ex) {
-            Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DBAdminContext.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }
 
     // Phương thức main để kiểm tra kết nối
     public static void main(String[] args) {
-        DBContext dbContext = new DBContext();
+        DBAdminContext dbContext = new DBAdminContext();
         if (dbContext.isConnected()) {
             System.out.println("Kết nối cơ sở dữ liệu thành công!");
         } else {

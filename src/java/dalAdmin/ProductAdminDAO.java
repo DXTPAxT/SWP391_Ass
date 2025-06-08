@@ -4,27 +4,113 @@ import java.sql.*;
 import java.util.*;
 import models.Products;
 
-public class ProductAdminDAO extends DBContext {
+public class ProductAdminDAO extends DBAdminContext {
 
     // Lấy danh sách tất cả sản phẩm
     public List<Products> getAllProducts() {
         List<Products> list = new ArrayList<>();
-        String sql = "SELECT * FROM Products";
+        String sql = "SELECT \n"
+                + "    p.ProductID,\n"
+                + "    p.ProductCode,\n"
+                + "    p.ImportID,\n"
+                + "    c.CategoryID,\n"
+                + "    c.CategoryName,\n"
+                + "    p.Status\n"
+                + "FROM \n"
+                + "    Products p\n"
+                + "JOIN \n"
+                + "    Categories c ON p.CategoryID = c.CategoryID;";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Products p = new Products(
-                    rs.getInt("ProductID"),
-                    rs.getInt("ImportID"),
-                    rs.getInt("CategoryID"),
-                    rs.getString("ProductCode"),
-                    rs.getInt("Status")
+                        rs.getInt("ProductID"),
+                        rs.getInt("ImportID"),
+                        rs.getInt("CategoryID"),
+                        rs.getString("CategoryName"),
+                        rs.getString("ProductCode"),
+                        rs.getInt("Status")
                 );
                 list.add(p);
             }
         } catch (SQLException e) {
             System.err.println("getAllProducts Error: " + e.getMessage());
+        }
+
+        return list;
+    }
+
+    public List<Products> getAllProductsByCategoryID(int categoryID) {
+        List<Products> list = new ArrayList<>();
+        String sql = "SELECT \n"
+                + "    p.ProductID,\n"
+                + "    p.ProductCode,\n"
+                + "    p.ImportID,\n"
+                + "    c.CategoryID,\n"
+                + "    c.CategoryName,\n"
+                + "    p.Status\n"
+                + "FROM \n"
+                + "    Products p\n"
+                + "JOIN \n"
+                + "    Categories c ON p.CategoryID = c.CategoryID\n"
+                + "WHERE \n"
+                + "    c.CategoryID = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, categoryID);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Products p = new Products(
+                            rs.getInt("ProductID"),
+                            rs.getInt("ImportID"),
+                            rs.getInt("CategoryID"),
+                            rs.getString("CategoryName"),
+                            rs.getString("ProductCode"),
+                            rs.getInt("Status")
+                    );
+                    list.add(p);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("getAllProductsByCategoryID Error: " + e.getMessage());
+        }
+
+        return list;
+    }
+
+    public List<Products> getAllProductsByImportID(int importID) {
+        List<Products> list = new ArrayList<>();
+        String sql = "SELECT \n"
+                + "    p.ProductID,\n"
+                + "    p.ProductCode,\n"
+                + "    p.ImportID,\n"
+                + "    c.CategoryID,\n"
+                + "    c.CategoryName,\n"
+                + "    p.Status\n"
+                + "FROM \n"
+                + "    Products p\n"
+                + "JOIN \n"
+                + "    Categories c ON p.CategoryID = c.CategoryID\n"
+                + "WHERE \n"
+                + "    p.ImportID = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, importID);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Products p = new Products(
+                            rs.getInt("ProductID"),
+                            rs.getInt("ImportID"),
+                            rs.getInt("CategoryID"),
+                            rs.getString("CategoryName"),
+                            rs.getString("ProductCode"),
+                            rs.getInt("Status")
+                    );
+                    list.add(p);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("getAllProductsByImportID Error: " + e.getMessage());
         }
 
         return list;
@@ -38,11 +124,11 @@ public class ProductAdminDAO extends DBContext {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new Products(
-                    rs.getInt("ProductID"),
-                    rs.getInt("ImportID"),
-                    rs.getInt("CategoryID"),
-                    rs.getString("ProductCode"),
-                    rs.getInt("Status")
+                        rs.getInt("ProductID"),
+                        rs.getInt("ImportID"),
+                        rs.getInt("CategoryID"),
+                        rs.getString("ProductCode"),
+                        rs.getInt("Status")
                 );
             }
         } catch (SQLException e) {
@@ -93,4 +179,27 @@ public class ProductAdminDAO extends DBContext {
         }
         return false;
     }
+
+    public static void main(String[] args) {
+        // Tạo kết nối database (giả sử bạn có một lớp DBContext để lấy connection)
+        try {
+            ProductAdminDAO dao = new ProductAdminDAO();
+            int id = 1;
+            List<Products> productList = dao.getAllProductsByImportID(id);
+
+            for (Products p : productList) {
+                System.out.println("ProductID: " + p.getProductID());
+                System.out.println("ImportID: " + p.getImportID());
+                System.out.println("CategoryID: " + p.getCategoryID());
+                System.out.println("CategoryName: " + p.getCategoryName());
+                System.out.println("ProductCode: " + p.getProductCode());
+                System.out.println("Status: " + p.getStatus());
+                System.out.println("------------------------------");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

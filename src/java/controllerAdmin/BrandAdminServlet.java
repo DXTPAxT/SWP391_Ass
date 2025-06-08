@@ -40,18 +40,14 @@ public class BrandAdminServlet extends HttpServlet {
             if(service == null){
                 service = "listall";
             }
-            CategoryAdminDAO cate = new CategoryAdminDAO();
-            ComponentDAO dao = new ComponentDAO();
             BrandAdminDAO ban = new BrandAdminDAO();
             
             if(service.equals("listall")){
-            List<Brands> Brand = ban.getAllBrands();
-            List<Categories> Category = cate.getAllCategories("SELECT * FROM Categories");
-            List<Components> Components = dao.getAllComponent("SELECT * FROM Components");
-            request.setAttribute("data", Components);
-            request.setAttribute("category", Category);
-            request.setAttribute("brand", Brand);
+                List<Brands> bra = ban.getAllBrands();
+                request.setAttribute("bra", bra);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewBrand.jsp").forward(request, response);
             }
+            
         }
     } 
 

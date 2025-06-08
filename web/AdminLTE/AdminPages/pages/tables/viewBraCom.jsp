@@ -340,7 +340,7 @@
                             </a>
                             <ul class="treeview-menu">                               
                                 <li><a href="${ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>   
-                                     
+
                             </ul>
                         </li>                                 
                         <li class="treeview">
@@ -365,12 +365,12 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Component Tables
+                        Bra-Com Tables
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Component</a></li>
-                        <li class="active">view Component</li>
+                        <li><a href="#">BraCom</a></li>
+                        <li class="active">view BraCom</li>
                     </ol>
                 </section>
 
@@ -379,56 +379,42 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="box">
-
-                                <!-- /.box-header -->
                                 <div class="box-body">
-                                    <table id="example2" class="table table-bordered table-hover">
+                                    <table class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Component ID</th>
-                                                <th>Name</th>
-                                                <th>Quantity</th>                                               
-                                                <th>Status</th>
-                                                <th>Update</th>
+                                                <th>BraCom ID</th>
+                                                <th>Brand Name</th>
+                                                <th>Component Name</th>
+                                                <th>Quantity</th>
                                                 <th>View</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:if test="${not empty requestScope.data}">
-                                                <c:forEach var="com" items="${requestScope.data}">
+                                            <c:if test="${not empty braCom}">
+                                                <c:forEach var="bc" items="${braCom}">
                                                     <tr>
-                                                        <td>${com.componentID}</td>
-                                                        <td>${com.componentName}</td>
-                                                        <td>${com.quantity}</td>
+                                                        <td>${bc.braComID}</td>
+                                                        <td>${bc.brandName}</td>
+                                                        <td>${bc.componentName}</td>
+                                                        <td>${bc.quantity}</td>
                                                         <td>
-                                                            <c:choose>
-                                                                <c:when test="${com.status == 1}">
-                                                                    <span class="label label-success">Active</span>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <span class="label label-danger">Disable</span>
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                        </td>                                                   
-                                                        <td>
-                                                            <a href="ComAdmin?service=update&componentID=${com.componentID}" 
-                                                               class="btn btn-warning btn-sm">Update</a>
-                                                        </td>
-                                                        <td>
-                                                            <a href="BraComAdmin?service=listbycom&componentID=${com.componentID}" 
+                                                            <a href="CateAdmin?service=listbybcid&braComID=${bc.braComID}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
-
+                                            <c:if test="${empty requestScope.data}">
+                                                <tr><td colspan="5" style="text-align:center;">No BraComs found.</td></tr>
+                                            </c:if>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-                            <!-- /.box-body -->
                         </div>
                     </div>
+
 
                     <!-- /.box-body -->
             </div>
@@ -656,17 +642,17 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- page script -->
         <script>
-                                                                   $(function () {
-                                                                       $("#example1").DataTable();
-                                                                       $('#example2').DataTable({
-                                                                           "paging": true,
-                                                                           "lengthChange": false,
-                                                                           "searching": true,
-                                                                           "ordering": true,
-                                                                           "info": true,
-                                                                           "autoWidth": false
-                                                                       });
-                                                                   });
+            $(function () {
+                $("#example1").DataTable();
+                $('#example2').DataTable({
+                    "paging": true,
+                    "lengthChange": false,
+                    "searching": true,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": false
+                });
+            });
         </script>
         <script>
             $(function () {

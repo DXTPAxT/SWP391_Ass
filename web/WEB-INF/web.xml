@@ -17,6 +17,12 @@
         <servlet-name>ProductServlet</servlet-name>
         <servlet-class>controller.ProductServlet</servlet-class>
     </servlet>
+
+    <servlet>
+        <servlet-name>HomeServlet</servlet-name>
+        <servlet-class>controller.HomeServlet</servlet-class>
+    </servlet>
+
     <servlet>
         <servlet-name>SignUpServlet</servlet-name>
         <servlet-class>controller.SignUpServlet</servlet-class>
@@ -99,6 +105,14 @@
         <servlet-class>controller.BuildPcController</servlet-class>
     </servlet>
     <!-- SERVLET MAPPINGS -->
+    <servlet>
+        <servlet-name>BraComAdminServlet</servlet-name>
+        <servlet-class>controllerAdmin.BraComAdminServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ImportServlet</servlet-name>
+        <servlet-class>controllerAdmin.ImportServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
         <url-pattern>/Demo</url-pattern>
@@ -115,6 +129,12 @@
         <servlet-name>ProductServlet</servlet-name>
         <url-pattern>/Product</url-pattern>
     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>HomeServlet</servlet-name>
+        <url-pattern>/Home</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>SignUpServlet</servlet-name>
         <url-pattern>/SignUp</url-pattern>
@@ -194,5 +214,13 @@
     <servlet-mapping>
         <servlet-name>BuildPcController</servlet-name>
         <url-pattern>/buildPc</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BraComAdminServlet</servlet-name>
+        <url-pattern>/BraComAdmin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ImportServlet</servlet-name>
+        <url-pattern>/Import</url-pattern>
     </servlet-mapping>
 </web-app>
