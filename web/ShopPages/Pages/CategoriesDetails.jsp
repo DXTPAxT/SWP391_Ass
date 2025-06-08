@@ -302,17 +302,8 @@
                                     </div>
                                     <div class="col-md-6">
                                         <h2>${product.categoryName}</h2>
-                                        <p><strong>Category ID:</strong> ${product.categoryID}</p>
-                                        <p><strong>Component ID:</strong> ${product.componentID}</p>
                                         <p><strong>Brand:</strong> ${product.brandName}</p>
                                         <p><strong>Price:</strong> ${product.price} VND</p>
-                                        <p><strong>Quantity:</strong> ${product.quantity}</p>
-                                        <p><strong>Status:</strong> 
-                                            <c:choose>
-                                                <c:when test="${product.status == 1}">Active - Sản phẩm đang được bán</c:when>
-                                                <c:otherwise>Inactive - Sản phẩm đã ngừng kinh doanh</c:otherwise>
-                                            </c:choose>
-                                        </p>
                                         <p><strong>Description:</strong></p>
                                         <p class="text-muted">${product.description}</p>
                                         <button class="btn btn-success mt-3">
