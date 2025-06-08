@@ -124,8 +124,8 @@ public class CategoriesController extends HttpServlet {
         request.setAttribute("data", data);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
-        request.setAttribute("components", dao.getAllComponents());
-        request.setAttribute("brandWithComponent", dao.getBrandsGroupedByComponent());
+        request.setAttribute("Components", dao.getAllComponents());
+        request.setAttribute("BrandWithComponent", dao.getBrandsGroupedByComponent());
         request.setAttribute("listBrand", dao.getAllBrands());
 
         boolean ajax = "true".equals(request.getParameter("ajax"));
