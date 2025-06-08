@@ -4,8 +4,8 @@
  */
 package controllerAdmin;
 
-import dal.BrandAdminDAO;
-import dal.CategoryAdminDAO;
+import dalAdmin.BrandAdminDAO;
+import dalAdmin.CategoryAdminDAO;
 import dal.ComponentDAO;
 import dal.ProductDAO;
 import java.io.IOException;

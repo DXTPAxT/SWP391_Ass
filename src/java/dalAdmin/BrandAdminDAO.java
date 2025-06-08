@@ -1,9 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package dal;
+package dalAdmin;
 
+import dal.DBContext;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +15,12 @@ public class BrandAdminDAO extends DBContext {
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                Brands b = new Brands(rs.getInt("BrandID"), rs.getString("BrandName"));
+                Brands b = new Brands(
+                    rs.getInt("BrandID"),
+                    rs.getString("BrandName"),
+                    rs.getInt("Quantity"),
+                    rs.getInt("Status")
+                );
                 list.add(b);
             }
         } catch (SQLException e) {
@@ -34,7 +36,12 @@ public class BrandAdminDAO extends DBContext {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new Brands(rs.getInt("BrandID"), rs.getString("BrandName"));
+                return new Brands(
+                    rs.getInt("BrandID"),
+                    rs.getString("BrandName"),
+                    rs.getInt("Quantity"),
+                    rs.getInt("Status")
+                );
             }
         } catch (SQLException e) {
             System.err.println("getBrandByID Error: " + e.getMessage());
@@ -44,9 +51,11 @@ public class BrandAdminDAO extends DBContext {
 
     // Thêm mới Brand
     public boolean insertBrand(Brands brand) {
-        String sql = "INSERT INTO Brands (BrandName) VALUES (?)";
+        String sql = "INSERT INTO Brands (BrandName, Quantity, Status) VALUES (?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, brand.getBrandName());
+            ps.setInt(2, brand.getQuantity());
+            ps.setInt(3, brand.getStatus());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("insertBrand Error: " + e.getMessage());
@@ -56,10 +65,12 @@ public class BrandAdminDAO extends DBContext {
 
     // Cập nhật Brand
     public boolean updateBrand(Brands brand) {
-        String sql = "UPDATE Brands SET BrandName = ? WHERE BrandID = ?";
+        String sql = "UPDATE Brands SET BrandName = ?, Quantity = ?, Status = ? WHERE BrandID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, brand.getBrandName());
-            ps.setInt(2, brand.getBrandID());
+            ps.setInt(2, brand.getQuantity());
+            ps.setInt(3, brand.getStatus());
+            ps.setInt(4, brand.getBrandID());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("updateBrand Error: " + e.getMessage());
