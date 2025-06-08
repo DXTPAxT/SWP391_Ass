@@ -102,6 +102,8 @@ public class LoginServlet extends HttpServlet {
             RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/login.jsp");
             rs.forward(request, response);
         } else {
+            // Always hash password before checking
+            // String hashedPassword = utils.PasswordUtils.hashPassword(password);
             User user = userDAO.getUserByEmailAndPassword(email, password);
             if (user != null) {
                 HttpSession session = request.getSession();
