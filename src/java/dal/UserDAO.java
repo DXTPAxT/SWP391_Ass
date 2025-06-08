@@ -118,6 +118,8 @@ public class UserDAO extends DBContext {
                          """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
+            // Tạm thời không hash password khi đăng nhập, dùng password thường
+            // ps.setString(2, utils.PasswordUtils.hashPassword(password));
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -142,7 +144,10 @@ public class UserDAO extends DBContext {
     }
 
     public boolean createNewUser(String email, String fullName, String address, String phoneNumber, String password, int roleID) {
-        User user = null;
+        // Check duplicate email or phone before insert (defensive, though servlet already checks)
+        if (isEmailExist(email) || isPhoneNumberExisted(phoneNumber)) {
+            return false;
+        }
         int n = 0;
         String sql = """
                         Insert into Users(Email, FullName, Address, PhoneNumber, PasswordHash, RoleID, Status) 
@@ -153,7 +158,7 @@ public class UserDAO extends DBContext {
             ps.setString(2, fullName);
             ps.setString(3, address);
             ps.setString(4, phoneNumber);
-            ps.setString(5, password);
+            ps.setString(5, password); // password đã hash ở servlet
             ps.setInt(6, roleID);
             n = ps.executeUpdate();
         } catch (SQLException e) {
