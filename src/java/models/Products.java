@@ -7,12 +7,22 @@ public class Products {
     private int productID;
     private int ImportID;
     private int categoryID;
+    private String categoryName;
     private String ProductCode;
     private int status;
 
     public Products() {
     }
 
+    public Products(int productID, int ImportID, int categoryID, String categoryName, String ProductCode, int status) {
+        this.productID = productID;
+        this.ImportID = ImportID;
+        this.categoryID = categoryID;
+        this.categoryName = categoryName;
+        this.ProductCode = ProductCode;
+        this.status = status;
+    }
+    
     public Products(int productID, int ImportID, int categoryID, String ProductCode, int status) {
         this.productID = productID;
         this.ImportID = ImportID;
@@ -28,6 +38,15 @@ public class Products {
         this.status = status;
     }
 
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+    
+    
     public int getProductID() {
         return productID;
     }

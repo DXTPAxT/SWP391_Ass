@@ -340,7 +340,7 @@
                             </a>
                             <ul class="treeview-menu">                               
                                 <li><a href="${ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>   
-                                     
+
                             </ul>
                         </li>                                 
                         <li class="treeview">
@@ -365,12 +365,12 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Component Tables
+                        Import Tables
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Component</a></li>
-                        <li class="active">view Component</li>
+                        <li><a href="#">Import</a></li>
+                        <li class="active">view Import</li>
                     </ol>
                 </section>
 
@@ -385,37 +385,25 @@
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Component ID</th>
-                                                <th>Name</th>
+                                                <th>Import ID</th>
+                                                <th>Category Name</th>
+                                                <th>Created At</th>
                                                 <th>Quantity</th>                                               
-                                                <th>Status</th>
-                                                <th>Update</th>
+                                                <th>Price</th>
                                                 <th>View</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:if test="${not empty requestScope.data}">
-                                                <c:forEach var="com" items="${requestScope.data}">
+                                            <c:if test="${not empty requestScope.list}">
+                                                <c:forEach var="im" items="${requestScope.list}">
                                                     <tr>
-                                                        <td>${com.componentID}</td>
-                                                        <td>${com.componentName}</td>
-                                                        <td>${com.quantity}</td>
+                                                        <td>${im.importID}</td>
+                                                        <td>${im.categoryName}</td>
+                                                        <td>${im.creatAt}</td>
+                                                        <td>${im.quantity}</td>
+                                                        <td>${im.price}</td>                                                 
                                                         <td>
-                                                            <c:choose>
-                                                                <c:when test="${com.status == 1}">
-                                                                    <span class="label label-success">Active</span>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <span class="label label-danger">Disable</span>
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                        </td>                                                   
-                                                        <td>
-                                                            <a href="ComAdmin?service=update&componentID=${com.componentID}" 
-                                                               class="btn btn-warning btn-sm">Update</a>
-                                                        </td>
-                                                        <td>
-                                                            <a href="BraComAdmin?service=listbycom&componentID=${com.componentID}" 
+                                                            <a href="ProductAdmin?service=listbyim&ImportID=${im.importID}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                     </tr>
@@ -656,17 +644,17 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- page script -->
         <script>
-                                                                   $(function () {
-                                                                       $("#example1").DataTable();
-                                                                       $('#example2').DataTable({
-                                                                           "paging": true,
-                                                                           "lengthChange": false,
-                                                                           "searching": true,
-                                                                           "ordering": true,
-                                                                           "info": true,
-                                                                           "autoWidth": false
-                                                                       });
-                                                                   });
+            $(function () {
+                $("#example1").DataTable();
+                $('#example2').DataTable({
+                    "paging": true,
+                    "lengthChange": false,
+                    "searching": true,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": false
+                });
+            });
         </script>
         <script>
             $(function () {

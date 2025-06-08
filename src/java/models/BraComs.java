@@ -5,7 +5,9 @@ package models;
 public class BraComs {
     private int BraComID;
     private int BrandID;
+    private String BrandName;
     private int ComponentID;
+    private String ComponentName;
     private int Quantity;
 
     public BraComs(int BraComID, int BrandID, int ComponentID, int Quantity) {
@@ -15,6 +17,16 @@ public class BraComs {
         this.Quantity = Quantity;
     }
 
+    public BraComs(int BraComID, int BrandID, String BrandName, int ComponentID, String ComponentName, int Quantity) {
+        this.BraComID = BraComID;
+        this.BrandID = BrandID;
+        this.BrandName = BrandName;
+        this.ComponentID = ComponentID;
+        this.ComponentName = ComponentName;
+        this.Quantity = Quantity;
+    }
+    
+    
     public BraComs(int BrandID, int ComponentID, int Quantity) {
         this.BrandID = BrandID;
         this.ComponentID = ComponentID;
@@ -24,6 +36,23 @@ public class BraComs {
     public BraComs() {
     }
 
+    public String getBrandName() {
+        return BrandName;
+    }
+
+    public void setBrandName(String BrandName) {
+        this.BrandName = BrandName;
+    }
+
+    public String getComponentName() {
+        return ComponentName;
+    }
+
+    public void setComponentName(String ComponentName) {
+        this.ComponentName = ComponentName;
+    }
+    
+    
     public int getBraComID() {
         return BraComID;
     }

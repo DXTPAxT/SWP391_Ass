@@ -340,9 +340,7 @@
                             </a>
                             <ul class="treeview-menu">                               
                                 <li><a href="${ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>   
-                                    <c:forEach var="com" items="${data}">
-                                    <li><a href="${ctx}/CateAdmin?service=listbycom&componentID=${com.componentID}"><i class="fa fa-circle-o"></i> ${com.componentName}</a></li>
-                                    </c:forEach>    
+                                   
                             </ul>
                         </li>                                 
                         <li class="treeview">
@@ -367,8 +365,7 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Data Tables
-                        <small>advanced tables</small>
+                        Product Tables
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -381,52 +378,25 @@
                 <section class="content">
                     <div class="row">
                         <div class="col-xs-12">
-                            <div class="box">
-                                <div class="box-header with-border">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-4">
-                                            <h3 class="box-title">Product</h3>
-                                        </div>
-                                        <div class="col-md-5">
-                                            <form action="ProductAdmin" method="get" class="input-group">
-                                                <input type="hidden" name="service" value="list">
-                                                <input type="text" name="search" class="form-control" placeholder="Enter Product Name">
-                                                <span class="input-group-btn">
-                                                    <button class="btn btn-primary" type="submit">Search</button>
-                                                </span>
-                                            </form>
-                                        </div>
-                                        <div class="col-md-3 text-right">
-                                            <a href="ProductAdmin?service=insert" class="btn btn-warning btn-sm">ADD</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-
+                            <div class="box">                               
                                 <!-- /.box-header -->
                                 <div class="box-body">
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
                                                 <th>Product ID</th>
-                                                <th>Name</th>
-                                                <th>Created At</th>
-                                                <th>Category ID</th>
-                                                <th>ProductCode</th>
+                                                <th>Category Name</th>
+                                                <th>Product Code</th>
                                                 <th>Status</th>
-                                                <th>Toggle</th>
-                                                <th>Update</th>
-                                                <th>View</th>
+                                                <th>Import</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:if test="${not empty requestScope.data}">
+                                            <c:if test="${not empty requestScope.product}">
                                                 <c:forEach var="product" items="${requestScope.product}">
                                                     <tr>
                                                         <td>${product.productID}</td>
-                                                        <td>${product.name}</td>
-                                                        <td>${product.createdAt}</td>
-                                                        <td>${product.categoryID}</td>
+                                                        <td>${product.categoryName}</td>
                                                         <td>${product.productCode}</td>
                                                         <td>
                                                             <c:choose>
@@ -437,24 +407,9 @@
                                                                     <span class="label label-danger">Disable</span>
                                                                 </c:otherwise>
                                                             </c:choose>
-                                                        </td>
-                                                        
+                                                        </td>                              
                                                         <td>
-                                                            <a href="ProductAdmin?service=changestatus&productID=${product.productID}" 
-                                                               class="btn btn-info btn-sm"
-                                                               onclick="return confirm('Are you sure you want to change the status?');">
-                                                                <c:choose>
-                                                                    <c:when test="${product.status == 1}">Disable</c:when>
-                                                                    <c:otherwise>Activate</c:otherwise>
-                                                                </c:choose>
-                                                            </a>
-                                                        </td>
-                                                        <td>
-                                                            <a href="ProductAdmin?service=update&productID=${product.productID}" 
-                                                               class="btn btn-warning btn-sm">Update</a>
-                                                        </td>
-                                                        <td>
-                                                            <a href="FeedbackAdmin?service=listbyproduct&productID=${product.productID}" 
+                                                            <a href="Import?service=listbypro&productCode=${product.productCode}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                     </tr>
@@ -700,7 +655,7 @@
                                    $('#example2').DataTable({
                                        "paging": true,
                                        "lengthChange": false,
-                                       "searching": false,
+                                       "searching": true,
                                        "ordering": true,
                                        "info": true,
                                        "autoWidth": false

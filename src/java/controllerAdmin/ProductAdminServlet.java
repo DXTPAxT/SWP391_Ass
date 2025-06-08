@@ -4,10 +4,7 @@
  */
 package controllerAdmin;
 
-import dal.CategoriesDAO;
-import dalAdmin.CategoryAdminDAO;
-import dal.ComponentDAO;
-import dal.ProductDAO;
+import dalAdmin.ProductAdminDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -17,8 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Date;
 import java.util.List;
 import java.util.Vector;
-import models.Categories;
-import models.Components;
 import models.Products;
 
 /**
@@ -41,30 +36,26 @@ public class ProductAdminServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             String service = request.getParameter("service");
-
-            CategoryAdminDAO cate = new CategoryAdminDAO();
-            ComponentDAO dao = new ComponentDAO();
-            ProductDAO pro = new ProductDAO();
-            pro.syncProductNameWithCategoryName();
-
+            ProductAdminDAO pro = new ProductAdminDAO();
             List<Products> product;
-            List<Categories> list = cate.getAllCategories("SELECT * FROM Categories");
-            List<Components> components = dao.getAllComponent("SELECT * FROM Components");
             if (service == null) {
                 service = "list";
             }
             if ("list".equals(service)) {
-                String keyword = request.getParameter("keyword");
-                if (keyword != null && !keyword.trim().isEmpty()) {
-                    product = pro.getAllProduct("SELECT * FROM Products WHERE ProductName LIKE '%" + keyword + "%'");
-                } else {
-                    product = pro.getAllProduct("SELECT * FROM Products ");
-                }
-
+                product = pro.getAllProducts();
                 request.setAttribute("product", product);
-                request.setAttribute("data", components);
-                request.setAttribute("list", list);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewProduct.jsp").forward(request, response);
+            } else if ("listbycate".equals(service)) {
+                int id = Integer.parseInt(request.getParameter("categoryID"));
 
+                product = pro.getAllProductsByCategoryID(id);
+                request.setAttribute("product", product);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewProduct.jsp").forward(request, response);
+            }else if ("listbyim".equals(service)) {
+                int id = Integer.parseInt(request.getParameter("ImportID"));
+
+                product = pro.getAllProductsByImportID(id);
+                request.setAttribute("product", product);
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewProduct.jsp").forward(request, response);
             } else if (service.equals("update")) {
                 String submit = request.getParameter("submit");
@@ -73,28 +64,19 @@ public class ProductAdminServlet extends HttpServlet {
                     Products products = pro.getProductByID(productID);
 
                     request.setAttribute("product", products);
-                    request.setAttribute("data", components);
-                    request.setAttribute("list", list);
-
                     request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateProduct.jsp").forward(request, response);
                 } else {
                     int productID = Integer.parseInt(request.getParameter("productID"));
                     String name = request.getParameter("name");
                     String productCode = request.getParameter("productCode");
-                    Date createdAt = Date.valueOf(request.getParameter("createdAt")); 
+                    Date createdAt = Date.valueOf(request.getParameter("createdAt"));
                     int categoryID = Integer.parseInt(request.getParameter("categoryID"));
                     int status = Integer.parseInt(request.getParameter("status"));
-
-                    Products updatedProduct = new Products(productID, name, createdAt, categoryID, productCode, status);
-                    pro.updateProduct(updatedProduct);
-
                     response.sendRedirect(request.getContextPath() + "/ProductAdmin?service=list");
                 }
             } else if (service.equals("insert")) {
                 String submit = request.getParameter("submit");
                 if (submit == null) {
-                    request.setAttribute("data", components);
-                    request.setAttribute("list", list);
                     request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertProduct.jsp").forward(request, response);
                 } else {
                     // Xử lý thêm sản phẩm mới
@@ -104,11 +86,6 @@ public class ProductAdminServlet extends HttpServlet {
                     int categoryID = Integer.parseInt(request.getParameter("categoryID"));
                     int status = Integer.parseInt(request.getParameter("status"));
 
-                    // Tạo đối tượng Products và insert
-                    Products p = new Products(name, createdAt, categoryID, productCode, status);
-                    pro.insertProduct(p);
-
-                    // Redirect sau khi thêm
                     response.sendRedirect(request.getContextPath() + "/ProductAdmin?service=list");
                 }
             }

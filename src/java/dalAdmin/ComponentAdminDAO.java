@@ -15,27 +15,25 @@ import java.util.logging.Logger;
  *
  * @author PC
  */
-public class ComponentAdminDAO extends DBContext {
+public class ComponentAdminDAO extends DBAdminContext {
 
-    public List<Components> getAllComponent(String sql) {
-        List<Components> componentList = new ArrayList<>();
-
+    public List<Components> getAllComponent() {
+        List<Components> list = new ArrayList<>();
+        String sql = "SELECT * FROM Components";
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-
             while (rs.next()) {
-                Components c = new Components();
-                c.setComponentID(rs.getInt("ComponentID"));
-                c.setComponentName(rs.getString("ComponentName"));
-                c.setQuantity(rs.getInt("Quantity"));
-                c.setStatus(rs.getInt("Status"));
-                componentList.add(c);
+                Components c = new Components(
+                        rs.getInt("ComponentID"),
+                        rs.getString("ComponentName"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("Status")
+                );
+                list.add(c);
             }
-
         } catch (SQLException e) {
-            Logger.getLogger(ComponentAdminDAO.class.getName()).log(Level.SEVERE, null, e);
+            System.err.println("getAllCompoents Error: " + e.getMessage());
         }
-
-        return componentList;
+        return list;
     }
 
     public Components searchComponentByID(int componentID) {
@@ -140,7 +138,7 @@ public class ComponentAdminDAO extends DBContext {
         ComponentAdminDAO dao = new ComponentAdminDAO();
         String keyword = "pC";
         // Truy vấn tất cả
-        List<Components> all = dao.getAllComponent("SELECT * FROM Components WHERE ComponentName LIKE '" + keyword + "'");
+        List<Components> all = dao.getAllComponent();
 
         for (Components c : all) {
             System.out.println(c.getComponentID() + " - " + c.getComponentName() + " - " + c.getStatus());

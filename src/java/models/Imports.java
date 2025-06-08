@@ -1,14 +1,24 @@
-
 package models;
 
 import java.util.Date;
 
 public class Imports {
+
     private int ImportID;
     private int CategoryID;
+    private String CategoryName;
     private Date CreatAt;
     private int Quantity;
     private int price;
+
+    public Imports(int ImportID, int CategoryID, String CategoryName, Date CreatAt, int Quantity, int price) {
+        this.ImportID = ImportID;
+        this.CategoryID = CategoryID;
+        this.CategoryName = CategoryName;
+        this.CreatAt = CreatAt;
+        this.Quantity = Quantity;
+        this.price = price;
+    }
 
     public Imports(int ImportID, int CategoryID, Date CreatAt, int Quantity, int price) {
         this.ImportID = ImportID;
@@ -26,6 +36,14 @@ public class Imports {
     }
 
     public Imports() {
+    }
+
+    public String getCategoryName() {
+        return CategoryName;
+    }
+
+    public void setCategoryName(String CategoryName) {
+        this.CategoryName = CategoryName;
     }
 
     public int getImportID() {
@@ -67,6 +85,5 @@ public class Imports {
     public void setPrice(int price) {
         this.price = price;
     }
-    
-    
+
 }

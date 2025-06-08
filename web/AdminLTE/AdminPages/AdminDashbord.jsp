@@ -339,16 +339,37 @@
                         <li class="header">MAIN NAVIGATION</li>
                         <li class="treeview">
                             <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Brand</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">                               
+                                    <li><a href="${ctx}/BrandAdmin"><i class="fa fa-circle-o"></i>View Brand</a></li>   
+                                    
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
                                 <i class="fa fa-laptop"></i> <span>Component</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
                             </a>
                             <ul class="treeview-menu">                               
-                                    <li><a href="${ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>   
-                                    <c:forEach var="com" items="${data}">
-                                    <li><a href="${ctx}/CateAdmin?service=listbycom&componentID=${com.componentID}"><i class="fa fa-circle-o"></i> ${com.componentName}</a></li>
-                                    </c:forEach>    
+                                    <li><a href="${ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>     
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>BraCom</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">                               
+                                    <li><a href="${ctx}/BraComAdmin"><i class="fa fa-circle-o"></i>View Bra-Com</a></li>   
+                                    
                             </ul>
                         </li>
                          <li class="treeview">
@@ -364,16 +385,14 @@
                         </li>
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-laptop"></i> <span>Brand</span>
+                                <i class="fa fa-laptop"></i> <span>Import</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
                             </a>
                             <ul class="treeview-menu">                               
-                                    <li><a href="${ctx}/BanAdmin&service=listall"><i class="fa fa-circle-o"></i>View Brand</a></li>   
-                                    <c:forEach var="ban" items="${brand}">
-                                    <li><a href="${ctx}/CateAdmin?service=listbybrand&brandID=${ban.brandID}"><i class="fa fa-circle-o"></i> ${ban.brandName}</a></li>
-                                    </c:forEach>    
+                                    <li><a href="${ctx}/Import"><i class="fa fa-circle-o"></i>View Import</a></li>   
+                                    
                             </ul>
                         </li>
                         <li class="treeview">
@@ -385,6 +404,39 @@
                             </a>
                             <ul class="treeview-menu">                               
                                     <li><a href="${ctx}/ProductAdmin"><i class="fa fa-circle-o"></i>View Product</a></li>                                         
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Order</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">                               
+                                    <li><a href="${ctx}/OrderAdmin"><i class="fa fa-circle-o"></i>View Order</a></li>                                         
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Feedback</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">                               
+                                    <li><a href="${ctx}/FeedBackAdmin"><i class="fa fa-circle-o"></i>View Feedback</a></li>                                         
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Blogs</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">                               
+                                    <li><a href="${ctx}/BlogAdmin"><i class="fa fa-circle-o"></i>View Blog</a></li>                                         
                             </ul>
                         </li>
                         <li class="treeview">

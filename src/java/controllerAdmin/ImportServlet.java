@@ -4,51 +4,67 @@
  */
 package controllerAdmin;
 
-import dalAdmin.BraComAdminDAO;
-import dalAdmin.BrandAdminDAO;
-import dalAdmin.CategoryAdminDAO;
-import dalAdmin.ComponentAdminDAO;
 import dalAdmin.ImportDAO;
-import dalAdmin.ProductAdminDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import models.BraComs;
-import models.Brands;
-import models.Categories;
-import models.Components;
 import models.Imports;
-import models.Products;
 
 /**
  *
  * @author Admin
  */
+public class ImportServlet extends HttpServlet {
 
-public class AdminDashbordServlet extends HttpServlet {
-
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-          
-            
-            
-            ComponentAdminDAO Com = new ComponentAdminDAO();
-            List<Components> com = Com.getAllComponent();
-            request.setAttribute("com", com);
-            
-           
-            
-            request.getRequestDispatcher("AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);
+            /* TODO output your page here. You may use following sample code. */
+            String service = request.getParameter("service");
+
+            ImportDAO im = new ImportDAO();
+            List<Imports> list;
+
+            if (service == null) {
+                service = "list";
+            }
+            if ("list".equals(service)) {
+
+                list = im.getAllImports();
+
+                request.setAttribute("list", list);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewImport.jsp").forward(request, response);
+            } else if ("listbycate".equals(service)) {
+                int id = Integer.parseInt(request.getParameter("categoryID"));
+
+                list = im.getImportsWithProductsByCategoryID(id);
+
+                request.setAttribute("list", list);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewImport.jsp").forward(request, response);
+            }else if ("listbypro".equals(service)) {
+                String id = request.getParameter("productCode");
+
+                Imports imp = im.getImportByProductCode(id);
+
+                request.setAttribute("imp", imp);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewImportProductCode.jsp").forward(request, response);
+            }
         }
     }
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

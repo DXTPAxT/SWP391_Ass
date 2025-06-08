@@ -6,12 +6,32 @@ import java.util.ArrayList;
 import java.util.List;
 import models.Brands;
 
-public class BrandAdminDAO extends DBContext {
+public class BrandAdminDAO extends DBAdminContext {
 
     // Lấy toàn bộ danh sách Brand
     public List<Brands> getAllBrands() {
         List<Brands> list = new ArrayList<>();
         String sql = "SELECT * FROM Brands";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Brands b = new Brands(
+                    rs.getInt("BrandID"),
+                    rs.getString("BrandName"),
+                    rs.getInt("Quantity"),
+                    rs.getInt("Status")
+                );
+                list.add(b);
+            }
+        } catch (SQLException e) {
+            System.err.println("getAllBrands Error: " + e.getMessage());
+        }
+        return list;
+    }
+    
+    public List<Brands> getAllBrandsByName(String name) {
+        List<Brands> list = new ArrayList<>();
+        String sql = "SELECT * FROM Brands where BrandName LIKE '%" + name + "%'";
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -88,5 +108,14 @@ public class BrandAdminDAO extends DBContext {
             System.err.println("deleteBrand Error: " + e.getMessage());
         }
         return false;
+    }
+    
+    public static void main(String[] args) {
+        BrandAdminDAO dao = new BrandAdminDAO();
+        // Truy vấn tất cả
+        List<Brands> all = dao.getAllBrands();
+        for (Brands c : all) {
+            System.out.println(c.getBrandID() + " - " + c.getBrandName() + " - " + c.getStatus());
+        }
     }
 }
