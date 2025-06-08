@@ -37,10 +37,10 @@
         <link rel="apple-touch-icon-precomposed" href="${ctx}/ShopPages/Pages/images/ico/apple-touch-icon-57-precomposed.png">
     </head><!--/head-->
 
-
-
     <body>
-        <%@ include file="components/header.jsp" %>
+        <jsp:include page="components/header.jsp">
+            <jsp:param name="activePage" value="home"/>
+        </jsp:include>
         <!--/header-->
 
         <section id="slider"><!--slider-->
