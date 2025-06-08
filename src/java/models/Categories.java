@@ -45,11 +45,16 @@ public class Categories {
         this.imgURL = imgURL;
     }
 
-  
-  
-
-    // === Getters & Setters ===
-
+    public Categories(String categoryName, int BraComID, int quantity, int price, String description, int status, String imgURL) {
+        this.categoryName = categoryName;
+        this.BraComID = BraComID;
+        this.quantity = quantity;
+        this.price = price;
+        this.description = description;
+        this.status = status;
+        this.imgURL = imgURL;
+    }
+    
     public int getCategoryID() {
         return categoryID;
     }

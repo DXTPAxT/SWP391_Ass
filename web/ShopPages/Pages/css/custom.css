@@ -7,25 +7,130 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     Author     : PC ASUS
 */
 
+/* =====================
+   LOGIN & SIGNUP FORM UI
+   ===================== */
+
 .custom-center {
     display: flex;
     justify-content: center;
-    align-content: center;
-}
-
-.custom-between {
-    display: flex;
-    justify-content:space-between;
     align-items: center;
+    min-height: 60vh;
 }
 
-#form {
-    margin-top: 40px;
-    margin-bottom: 80px;
+.signup-form, .login-form, .form-modern {
+    background: #fff;
+    padding: 36px 32px 32px 32px;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.10), 0 1.5px 6px rgba(0,0,0,0.04);
+    margin: 40px 0;
+    max-width: 420px;
+    width: 100%;
+    transition: box-shadow 0.3s;
+    animation: fadeInUp 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.signup-form:hover, .login-form:hover, .form-modern:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06);
 }
 
-#loginButton {
-    margin-top: 0;
+.signup-form h2, .login-form h2, .form-modern h2 {
+    margin-bottom: 28px;
+    font-weight: 700;
+    color: #fd7e14;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.signup-form input, .login-form input, .form-modern input {
+    margin-bottom: 18px;
+    border-radius: 7px;
+    border: 1.5px solid #e0e0e0;
+    padding: 12px 14px;
+    font-size: 1.08rem;
+    background: #f9f9f9;
+    transition: border-color 0.2s;
+}
+.signup-form input:focus, .login-form input:focus, .form-modern input:focus {
+    border-color: #fd7e14;
+    outline: none;
+    background: #fff;
+}
+
+label.form {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+    display: block;
+    font-size: 1.5rem;
+    letter-spacing: 0.5px;
+}
+
+/* Error message styling */
+.error-message, .error-messager {
+    color: #e74c3c;
+    font-size: 1.08rem;
+    margin-top: -8px;
+    margin-bottom: 10px;
+    text-align: left;
+    font-weight: 500;
+}
+
+/* Modern invalid input */
+.input-modern-invalid, .is-invalid {
+    border: 1.5px solid #e74c3c !important;
+    background: #fff0f0 !important;
+    color: #e74c3c !important;
+}
+
+/* Button styles */
+.btn-modern, #btn-signup, #loginButton {
+    width: 100%;
+    background: linear-gradient(90deg, #fd7e14 60%, #ffb347 100%);
+    color: #fff !important;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 0;
+    font-size: 1.12rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(253,126,20,0.08);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+    margin-bottom: 8px;
+}
+.btn-modern:hover, #btn-signup:hover, #loginButton:hover {
+    background: linear-gradient(90deg, #e66a00 60%, #ffb347 100%);
+    box-shadow: 0 4px 16px rgba(253,126,20,0.13);
+    transform: translateY(-2px) scale(1.01);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .signup-form, .login-form, .form-modern {
+        padding: 18px 8px 18px 8px;
+        max-width: 98vw;
+    }
+    .custom-center {
+        min-height: 60vh;
+        padding: 0 4px;
+    }
+    .custom-between {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    #btn-signup, #loginButton, .btn-modern {
+        width: 100%;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Margin Top */
@@ -132,31 +237,26 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     font-size: 1rem; /* khoảng 16px */
 }
 
-
-.is-invalid {
-    border: 1px solid  !important;
-    color: #ff0000 !important;
-}
-
-/* Chrome, Safari, Edge */
+/* Standardize number input appearance */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
-
-/* Firefox */
 input[type="number"] {
     -moz-appearance: textfield;
+    appearance: textfield;
+    border-radius: 7px;
+    border: 1.5px solid #e0e0e0;
+    padding: 12px 14px;
+    font-size: 1.08rem;
+    background: #f9f9f9;
+    transition: border-color 0.2s;
 }
-
-input[type="number"] {
-    width: 60px;
-    padding: 2px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    text-align: center;
-    font-size: 16px;
+input[type="number"]:focus {
+    border-color: #fd7e14;
+    outline: none;
+    background: #fff;
 }
 
 .cart_product {
@@ -354,30 +454,6 @@ input[type="number"] {
     padding-bottom: 0.5rem;
 }
 
-/* Canh giữa form */
-.custom-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 70vh;
-}
-
-/* Khung form */
-.login-form {
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-}
-
-/* Tiêu đề */
-.login-form h2 {
-    margin-bottom: 25px;
-    font-weight: bold;
-    color: #333;
-    text-align: center;
-}
-
 #loginButton {
     width: 100%;
     background-color: #fd7e14; /* Màu cam Bootstrap */
@@ -427,10 +503,6 @@ input[type="number"] {
 .logo img {
     max-width: 100%;
     height: auto;
-}
-
-.form-wrapper {
-    transform: translateY(-25%);
 }
 
 /* iPad (769px–1024px) */
