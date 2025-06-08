@@ -5,13 +5,12 @@ public class Categories {
     private String categoryName;
 
     private int BraComID;
-    private String BrandName;
+    private String brandName;
     private String ComponentName;
 
-    private int brandComID;      // FK về BrandComs
-    private int componentID;     // Lấy từ BrandComs
-    private int brandID;         // Lấy từ BrandComs
-    private String brandName;    // Lấy từ bảng Brands
+    private int brandComID;      
+    private int componentID;     
+    private int brandID;  
 
     private int quantity;
     private int price;
@@ -19,11 +18,24 @@ public class Categories {
     private int status;
     private String imgURL;
 
-    public Categories(int categoryID, String categoryName, int BraComID, String BrandName, String ComponentName, int quantity, int price, String description, int status, String imgURL) {
+    public Categories(int categoryID, String categoryName, int BraComID, int quantity, int price, String description, int status, String imgURL) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
         this.BraComID = BraComID;
-        this.BrandName = BrandName;
+        this.quantity = quantity;
+        this.price = price;
+        this.description = description;
+        this.status = status;
+        this.imgURL = imgURL;
+    }
+
+   
+
+    public Categories(int categoryID, String categoryName, int BraComID, String brandName, String ComponentName, int quantity, int price, String description, int status, String imgURL) {
+        this.categoryID = categoryID;
+        this.categoryName = categoryName;
+        this.BraComID = BraComID;
+        this.brandName = brandName;
         this.ComponentName = ComponentName;
         this.quantity = quantity;
         this.price = price;
@@ -32,12 +44,28 @@ public class Categories {
         this.imgURL = imgURL;
     }
 
-    public String getBrandName() {
-        return BrandName;
+    public int getBraComID() {
+        return BraComID;
     }
 
-    public void setBrandName(String BrandName) {
-        this.BrandName = BrandName;
+    public void setBraComID(int BraComID) {
+        this.BraComID = BraComID;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
+    
+    public String getbrandName() {
+        return brandName;
+    }
+
+    public void setbrandName(String brandName) {
+        this.brandName = brandName;
     }
 
     public String getComponentName() {
@@ -130,14 +158,6 @@ public class Categories {
 
     public void setBrandID(int brandID) {
         this.brandID = brandID;
-    }
-
-    public String getBrandName() {
-        return brandName;
-    }
-
-    public void setBrandName(String brandName) {
-        this.brandName = brandName;
     }
 
     public int getQuantity() {
