@@ -1,5 +1,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<c:set var="activePage" value="${param.activePage}" />
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!-- Header Section Extracted from homepages.jsp -->
 <header id="header"><!--header-->
@@ -75,12 +76,13 @@
                     </div>
                     <div class="mainmenu pull-left">
                         <ul class="nav navbar-nav collapse navbar-collapse">
-                            <li><a href="${pageContext.request.contextPath}/HomePages" class="active">Home</a></li>
-                            <li><a href="${pageContext.request.contextPath}/CategoriesController?service=list" class="active">Products</a></li>
-                            <li class="dropdown"><a href="#">Blog<i class=""></i></a></li>
-                            <li><a href="404.html">404</a></li>
-                            <li><a href="contact-us.html">Contact</a></li>
+                            <li><a href="${pageContext.request.contextPath}/HomePages" class="${activePage == 'home' ? 'active' : ''}">Home</a></li>
+                            <li><a href="${pageContext.request.contextPath}/CategoriesController?service=list" class="${activePage == 'products' ? 'active' : ''}">Products</a></li>
+                            <li><a href="#" class="${activePage == 'blog' ? 'active' : ''}">Blog<i class=""></i></a></li>
+                            <li><a href="404.html" class="${activePage == '404' ? 'active' : ''}">404</a></li>
+                            <li><a href="contact-us.html" class="${activePage == 'contact' ? 'active' : ''}">Contact</a></li>
                         </ul>
+                        ${activePage == null}
                     </div>
                 </div>
                 <div class="search_box pull-right">
