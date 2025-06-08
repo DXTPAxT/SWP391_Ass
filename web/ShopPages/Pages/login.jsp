@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!--/header-->
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -35,34 +36,31 @@
     </head><!--/head-->
 
     <body>
+        <%@ include file="components/header.jsp" %>
+        
         <section id="login-section" class="position-container"><!--form-->
-            <center>
-                <div class="logo">
-                    <a href="${pageContext.request.contextPath}/HomePages"><img src="${pageContext.request.contextPath}/ShopPages/Pages/images/home/CyberBeast2.png" style="height: 210px; width: 280px;  "/></a>
-                </div>
-            </center>
             <div class="container form-wrapper">
                 <div class="row custom-center">
                     <div class="col-sm-4 col-sm-offset-1 ml-0">
-                        <div class="login-form"><!--login form-->
+                        <div class="login-form form-modern"><!--login form-->
                             <h2>Login to your account</h2>
                             <form action="Login" method="POST">
                                 <label class="form">Email</label>
-                                <input type="text" placeholder="Enter email address" class="form-control ${error == "Email is not exitsted" ? "is-invalid" : ''}" name="email" placeholder="Enter email" required="" value="${not empty error ? email : ''}"/>
-                                <c:if test="${error == 'Email is not exitsted'}">
-                                    <p class="error-messager">${error}</p>
+                                <input type="text" placeholder="Enter email address" class="form-control ${error == 'Email is required!' || error == 'Email does not exist!' ? 'input-modern-invalid' : ''}" name="email" required value="${not empty error ? email : ''}"/>
+                                <c:if test="${error == 'Email is required!' || error == 'Email does not exist!'}">
+                                    <p class="text-danger error-message">${error}</p>
                                 </c:if>
-                                <label>Password</label>
-                                <input type="password" placeholder="Enter password" class="form-control ${error == "Incorrect password!" ? "is-invalid" : ''}" name="password" placeholder="Enter password" required="" value="${not empty error ? password : ''}"/>
-                                <c:if test="${error == 'Incorrect password!'}">
-                                    <p class="error-messager">${error}</p>
+                                <label class="form">Password</label>
+                                <input type="password" placeholder="Password" class="form-control ${error == 'Password is required!' || error == 'Incorrect password!' ? 'input-modern-invalid' : ''}" name="password" required value="${not empty error ? password : ''}"/>
+                                <c:if test="${error == 'Password is required!' || error == 'Incorrect password!'}">
+                                    <p class="text-danger error-message">${error}</p>
                                 </c:if>
                                 <span>
                                     <input type="checkbox" class="checkbox"> 
                                     Keep me signed in
                                 </span>
                                 <div class="custom-between mt-3">
-                                    <button type="submit" class="btn btn-default " id="loginButton">Login</button>
+                                    <button type="submit" id="loginButton" class="btn-modern">Login</button>
                                     <a href="SignUp">SignUp</a>
                                 </div>
                             </form>
@@ -89,6 +87,20 @@
                         });
                     });
                 });
+
+                // Chọn tất cả input có class input-modern-invalid
+                const modernInvalidInputs = document.querySelectorAll("input.input-modern-invalid");
+                modernInvalidInputs.forEach(function (input) {
+                    input.addEventListener("input", function () {
+                        // Xóa class input-modern-invalid khỏi input
+                        input.classList.remove("input-modern-invalid");
+                        // Ẩn tất cả phần tử có class .error-message
+                        const errorMessages = input.parentElement.querySelectorAll(".error-message");
+                        errorMessages.forEach(function (el) {
+                            el.style.display = "none";
+                        });
+                    });
+                });
             });
         </script>
 
@@ -98,5 +110,6 @@
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+        <%@ include file="components/footer.jsp" %>
     </body>
 </html>

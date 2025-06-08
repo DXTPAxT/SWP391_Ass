@@ -18,6 +18,11 @@ public class Brands {
     public Brands() {
     }
 
+    public Brands(int brandID, String brandName) {
+        this.brandID = brandID;
+        this.brandName = brandName;
+    }
+
     public Brands(int brandID, String brandName, int Quantity, int Status) {
         this.brandID = brandID;
         this.brandName = brandName;
