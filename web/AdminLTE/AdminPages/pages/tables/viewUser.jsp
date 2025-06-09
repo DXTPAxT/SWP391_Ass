@@ -65,8 +65,6 @@
                             <div class="box">
                                 <!-- /.box-header -->
                                 <div class="box-body">
-                                    <a href="${ctx}/Admin/user/add"
-                                       class="btn btn-success btn">Add new user</a>
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
@@ -311,11 +309,11 @@
                 $("#example1").DataTable();
                 $('#example2').DataTable({
                     "paging": true,
-                    "lengthChange": false,
-                    "searching": false,
+                    "lengthChange": true,
+                    "searching": true,
                     "ordering": true,
                     "info": true,
-                    "autoWidth": false
+                    "autoWidth": true
                 });
             });
         </script>
