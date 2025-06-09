@@ -142,11 +142,11 @@
                                    $("#example1").DataTable();
                                    $('#example2').DataTable({
                                        "paging": true,
-                                       "lengthChange": false,
+                                       "lengthChange": true,
                                        "searching": true,
                                        "ordering": true,
                                        "info": true,
-                                       "autoWidth": false
+                                       "autoWidth": true
                                    });
                                });
         </script>

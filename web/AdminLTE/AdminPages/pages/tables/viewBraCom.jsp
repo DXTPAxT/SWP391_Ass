@@ -64,7 +64,7 @@
                         <div class="col-xs-12">
                             <div class="box">
                                 <div class="box-body">
-                                    <table class="table table-bordered table-hover">
+                                    <table  id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
                                                 <th>BraCom ID</th>
@@ -88,9 +88,6 @@
                                                         </td>
                                                     </tr>
                                                 </c:forEach>
-                                            </c:if>
-                                            <c:if test="${empty requestScope.data}">
-                                                <tr><td colspan="5" style="text-align:center;">No BraComs found.</td></tr>
                                             </c:if>
                                         </tbody>
                                     </table>
@@ -138,11 +135,11 @@
                 $("#example1").DataTable();
                 $('#example2').DataTable({
                     "paging": true,
-                    "lengthChange": false,
+                    "lengthChange": true,
                     "searching": true,
                     "ordering": true,
                     "info": true,
-                    "autoWidth": false
+                    "autoWidth": true
                 });
             });
         </script>
