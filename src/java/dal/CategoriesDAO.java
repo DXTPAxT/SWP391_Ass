@@ -270,8 +270,10 @@ public class CategoriesDAO extends DBContext {
     }
 
     //  Lấy danh sách sản phẩm theo tên component
-    public List<Categories> getCategoriesByComponentName(String componentName) {
-        String sql = """
+   public List<Categories> getCategoriesByComponentID(int componentID) {
+    // Nếu componentID là 1 thì bỏ qua
+    if (componentID == 1) return new ArrayList<>();     
+    String sql = """
         SELECT
           c.*,
           bc.ComponentID,
@@ -282,23 +284,24 @@ public class CategoriesDAO extends DBContext {
         JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
         JOIN Brands b ON bc.BrandID = b.BrandID
         JOIN Components comp ON bc.ComponentID = comp.ComponentID
-        WHERE comp.ComponentName = ? AND c.Status = 2
+        WHERE bc.ComponentID = ? AND c.Status = 2
         ORDER BY c.CategoryID
     """;
 
-        List<Categories> list = new ArrayList<>();
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, componentName);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    list.add(extractCategory(rs));
-                }
+    List<Categories> list = new ArrayList<>();
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, componentID);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(extractCategory(rs));
             }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, null, e);
         }
-        return list;
+    } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, null, e);
     }
+    return list;
+}
+
 
     // Phương pháp tiện ích
     private Categories extractCategory(ResultSet rs) throws SQLException {

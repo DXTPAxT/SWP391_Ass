@@ -82,7 +82,7 @@
                             <li><a href="404.html" class="${activePage == '404' ? 'active' : ''}">404</a></li>
                             <li><a href="contact-us.html" class="${activePage == 'contact' ? 'active' : ''}">Contact</a></li>
                         </ul>
-                        ${activePage == null}
+                    
                     </div>
                 </div>
                 <div class="search_box pull-right">
