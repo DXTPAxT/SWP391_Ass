@@ -68,38 +68,49 @@
                 <!-- Main content -->
                 <div class="box box-success">
                     <div class="box-body">
+                        <c:if test="${not empty error}">
+                            <div class="alert alert-danger" style="font-weight:bold;">${error}</div>
+                        </c:if>
                         <form method="post" action="${ctx}/Admin/user/add">
                             <input type="hidden" name="service" value="insert">
                             <input type="hidden" name="submit" value="submit">
                             <!-- Full Name -->
                             <div class="form-group">
                                 <label for="fullName">Full Name</label>
-                                <input type="text" id="fullName" name="fullName" class="form-control" placeholder="Enter full name" required value="${fullName}">
+                                <input type="text" id="fullName" name="fullName" class="form-control${error eq 'Full name is required!' ? ' is-invalid' : ''}" placeholder="Enter full name" required value="${fullName}">
                             </div>
                             <!-- Email -->
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input type="email" id="email" name="email" class="form-control ${error == 'Email existed!' ? 'is-invalid' : ''}" placeholder="Enter email" required value="${email}">
-                                <c:if test="${error == 'Email existed!'}">
+                                <input type="email" id="email" name="email" class="form-control${error eq 'Email is required!' || error eq 'Email existed!' ? ' is-invalid' : ''}" placeholder="Enter email" required value="${email}">
+                                <c:if test="${error == 'Email existed!' || error == 'Email is required!'}">
                                     <p style="color: red;">${error}</p>
                                 </c:if>
                             </div>
                             <!-- Phone Number -->
                             <div class="form-group">
                                 <label for="phoneNumber">Phone Number</label>
-                                <input type="text" id="phoneNumber" name="phoneNumber" class="form-control" placeholder="Enter phone number" required value="${phoneNumber}">
+                                <input type="text" id="phoneNumber" name="phoneNumber" class="form-control${error eq 'Phone number is required!' || error eq 'Invalid phone number!' || error eq 'Phone number existed!' || error eq 'Phone number must be exactly 10 digits!' ? ' is-invalid' : ''}" placeholder="Enter phone number" required value="${phoneNumber}">
+                                <c:if test="${error == 'Phone number is required!' || error == 'Invalid phone number' || error == 'Phone number existed!' || error == 'Phone number must be exactly 10 digits!'}">
+                                    <p style="color: red;">${error}</p>
+                                </c:if>
                             </div>
                             <!-- Address -->
                             <div class="form-group">
                                 <label for="address">Address</label>
-                                <textarea id="address" name="address" class="form-control" placeholder="Enter address" required>${address}</textarea>
+                                <textarea id="address" name="address" class="form-control${error eq 'Address is required!' ? ' is-invalid' : ''}" placeholder="Enter address" required>${address}</textarea>
+                                <c:if test="${error == 'Address is required!'}">
+                                    <p style="color: red;">${error}</p>
+                                </c:if>
                             </div>
                             <!-- Role -->
                             <div class="form-group">
                                 <label for="roleID">Role</label>
                                 <select id="roleID" name="roleID" class="form-control">
                                     <c:forEach var="r" items="${roles}">
-                                        <option value="${r.roleID}" ${r.roleID == roleID ? 'selected' : ''}>${r.roleName}</option>
+                                        <c:if test="${r.roleID == 1 || r.roleID == 2}">
+                                            <option value="${r.roleID}" ${r.roleID == roleID ? 'selected' : ''}>${r.roleName}</option>
+                                        </c:if>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -162,7 +173,6 @@
                 });
             });
         </script>
-
     </body>
 </html>
 

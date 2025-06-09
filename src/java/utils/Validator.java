@@ -9,10 +9,10 @@ package utils;
  * @author PC ASUS
  */
 public class Validator {
-    // Validates a phone number (Vietnamese format: 10 or 11 digits, starts with 0)
+    // Validates a phone number (must be exactly 10 digits, starts with 0)
     public static boolean isValidPhoneNumber(String phoneNumber) {
         if (phoneNumber == null) return false;
-        return phoneNumber.matches("0\\d{9,10}");
+        return phoneNumber.matches("0\\d{9}");
     }
     
     // Helper method to check if a String is null or empty (now static for reuse)

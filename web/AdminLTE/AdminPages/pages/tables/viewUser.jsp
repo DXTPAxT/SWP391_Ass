@@ -5,6 +5,7 @@
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
@@ -69,11 +70,11 @@
                                         <thead>
                                             <tr>
                                                 <th>User ID</th>
-                                                <th>Role ID</th>
                                                 <th>Full Name</th>
                                                 <th>Email</th>
                                                 <th>Phone number</th>
                                                 <th>Address</th>
+                                                <th>Role</th>
                                                 <th>Created At</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
@@ -84,37 +85,27 @@
                                                 <c:forEach var="user" items="${users}">
                                                     <tr>
                                                         <td>${user.userID}</td>
-                                                        <td>${user.roleID}</td>
                                                         <td>${user.fullname}</td>
                                                         <td>${user.email}</td>
                                                         <td>${user.phoneNumber}</td>
                                                         <td>${user.address}</td>
-                                                        <td>${user.createdAt}</td>
+                                                        <td>${roleMap[user.roleID]}</td>
                                                         <td>
-                                                            <c:if test="${user.status == 1}">
-                                                                <a href="${ctx}/User?service=toggleStatus&userID=${user.userID}"
-                                                                   class="btn btn-success btn-sm">Active</a>
-                                                            </c:if>
-                                                            <c:if test="${user.status == 0}">
-                                                                <a href="${ctx}/User?service=toggleStatus&userID=${user.userID}"
-                                                                   class="btn btn-warning btn-sm">Disable</a>
-                                                            </c:if>
+                                                            <fmt:parseDate value="${user.createdAt}" pattern="yyyy-MM-dd HH:mm:ss" var="createdDate"/>
+                                                            <fmt:formatDate value="${createdDate}" pattern="yyyy-MM-dd"/>
                                                         </td>
                                                         <td>
-                                                            <button
-                                                                class="btn btn-primary btn-sm"
-                                                                data-toggle="modal"
-                                                                data-target="#updateUserModal"
-                                                                data-userid="${user.userID}"
-                                                                data-roleid="${user.roleID}"
-                                                                data-fullname="${user.fullname}"
-                                                                data-email="${user.email}"
-                                                                data-phone="${user.phoneNumber}"
-                                                                data-address="${user.address}"
-                                                                data-createdat="${user.createdAt}"
-                                                                data-status="${user.status}">
-                                                                Update
-                                                            </button>
+                                                            <c:choose>
+                                                                <c:when test="${user.status == 1}">
+                                                                    <span class="label label-success">Active</span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <span class="label label-warning">Inactive</span>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+                                                        <td>
+                                                            <a href="${ctx}/Admin/user/update?userID=${user.userID}" class="btn btn-primary btn-sm">Update</a>
                                                             <a href="${ctx}/User?service=resetPassword&userID=${user.userID}"
                                                                onclick="return confirm(`Reset user's password?`);"
                                                                class="btn btn-danger btn-sm">Reset Password</a>
@@ -124,7 +115,7 @@
                                             </c:if>
                                             <c:if test="${empty users}">
                                                 <tr>
-                                                    <td colspan="8" style="text-align:center;">No User.</td>
+                                                    <td colspan="9" style="text-align:center;">No User.</td>
                                                 </tr>
                                             </c:if>
                                         </tbody>
@@ -143,70 +134,6 @@
 
             <jsp:include page="../../components/control-sidebar.jsp" />
         </div>
-
-        <!-- Modal Form -->
-        <div class="modal fade" id="updateUserModal" tabindex="-1" aria-labelledby="updateUserModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <form action="${ctx}/User" method="post">
-                        <div class="modal-header">
-                            <h3 class="modal-title" id="updateUserModalLabel">Update User</h3>
-                        </div>
-
-                        <div class="modal-body row g-3">
-
-                            <!-- Hidden ID -->
-                            <input type="hidden" name="userID" id="modal-userID">
-
-                            <div class="col-md-6">
-                                <label for="modal-roleID" class="form-label">Role ID</label>
-                                <input type="text" class="form-control" id="modal-roleID" name="roleID" readonly>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="modal-createdAt" class="form-label">Created At</label>
-                                <input type="text" class="form-control" id="modal-createdAt" name="createdAt" readonly>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="modal-fullname" class="form-label">Full Name</label>
-                                <input type="text" class="form-control" id="modal-fullname" name="fullName" required>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="modal-email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="modal-email" name="email" required>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="modal-phone" class="form-label">Phone Number</label>
-                                <input type="text" class="form-control" id="modal-phone" name="phoneNumber" required>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="modal-address" class="form-label">Address</label>
-                                <input type="text" class="form-control" id="modal-address" name="address" required>
-                            </div>
-
-                            <div class="col-md-6 mt-4">
-                                <label for="modal-status" class="form-label">Status</label>
-                                <select class="form-select" id="modal-status" name="status">
-                                    <option value="1">Active (1)</option>
-                                    <option value="0">Inactive (0)</option>
-                                </select>
-                            </div>
-
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="submit" name="service" value="updateUser" class="btn btn-primary">Save Changes</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
 
         <!-- Toast Container -->
         <div id="toastContainer" style="
@@ -279,20 +206,6 @@
         </script>
 
 
-        <script>
-            $('#updateUserModal').on('show.bs.modal', function (event) {
-                const button = $(event.relatedTarget);
-
-                $('#modal-userID').val(button.data('userid'));
-                $('#modal-roleID').val(button.data('roleid'));
-                $('#modal-fullname').val(button.data('fullname'));
-                $('#modal-email').val(button.data('email'));
-                $('#modal-phone').val(button.data('phone'));
-                $('#modal-address').val(button.data('address'));
-                $('#modal-createdAt').val(button.data('createdat'));
-                $('#modal-status').val(button.data('status'));
-            });
-        </script>
         <script>
             window.addEventListener('DOMContentLoaded', function () {
                 const alertBox = document.getElementById("alertBox");
