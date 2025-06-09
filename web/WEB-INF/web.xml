@@ -97,6 +97,10 @@
         <servlet-name>FeedbackServlet</servlet-name>
         <servlet-class>controller.FeedbackServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdateUserServlet</servlet-name>
+        <servlet-class>controllerAdmin.UpdateUserServlet</servlet-class>
+    </servlet>
     <!-- Mappings -->
     <!-- SERVLET MAPPINGS -->
     <servlet>
@@ -210,5 +214,9 @@
     <servlet-mapping>
         <servlet-name>ImportServlet</servlet-name>
         <url-pattern>/Import</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateUserServlet</servlet-name>
+        <url-pattern>/Admin/user/update</url-pattern>
     </servlet-mapping>
 </web-app>

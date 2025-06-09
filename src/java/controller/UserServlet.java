@@ -5,6 +5,7 @@
 package controller;
 
 import dal.UserDAO;
+import dal.RoleDAO;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,7 +15,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import models.User;
+import models.Role;
 import utils.MailUtils;
 import utils.PasswordUtils;
 
@@ -70,20 +74,15 @@ public class UserServlet extends HttpServlet {
         if ("resetPassword".equals(request.getParameter("service"))) {
             int userID = Integer.parseInt(request.getParameter("userID"));
             UserDAO dao = new UserDAO();
-            User user = dao.getUserByID(userID); // cần hàm getUserByID()
-
+            User user = dao.getUserByID(userID);
             if (user != null) {
-                // 🔐 Tạo mật khẩu ngẫu nhiên
                 String newPassword = PasswordUtils.generateRandomPassword(10);
                 String hashedPassword = PasswordUtils.hashPassword(newPassword);
-
                 boolean ok = dao.resetPassword(userID, hashedPassword);
-
                 if (ok) {
                     boolean mailSent = MailUtils.send(user.getEmail(),
                             "Your password has been reset",
                             "Hello " + user.getFullname() + ",\n\nYour new password is: " + newPassword + "\n\nPlease log in and change it immediately.");
-
                     if (mailSent) {
                         request.setAttribute("toast", "Reset password successfully!");
                         request.setAttribute("toastType", "success");
@@ -95,24 +94,25 @@ public class UserServlet extends HttpServlet {
                 }
             } else {
                 request.setAttribute("toast", "User not found!");
-                request.setAttribute("toastType", "error"); // error | warning
+                request.setAttribute("toastType", "error");
                 request.getRequestDispatcher("/AdminLTE/AdminPages/pages/tables/viewUser.jsp").forward(request, response);
             }
         } else if ("toggleStatus".equals(service)) {
             int userID = Integer.parseInt(request.getParameter("userID"));
             UserDAO dao = new UserDAO();
             boolean toggle = dao.toggleStatus(userID);
+            HttpSession session = request.getSession();
             if (toggle) {
-                HttpSession session = request.getSession();
                 session.setAttribute("toast", "Update user succesfully!");
                 session.setAttribute("toastType", "success");
-                response.sendRedirect("Admin/user"); // redirect lại để load danh sách mới
             } else {
-                HttpSession session = request.getSession();
                 session.setAttribute("toast", "Update user failed!");
                 session.setAttribute("toastType", "error");
-                response.sendRedirect("Admin/user"); // redirect lại để load danh sách mới
             }
+            response.sendRedirect("Admin/user");
+        } else {
+            // Default: show user list
+            request.getRequestDispatcher("/AdminLTE/AdminPages/pages/tables/viewUser.jsp").forward(request, response);
         }
     }
 
@@ -128,34 +128,79 @@ public class UserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String service = request.getParameter("service");
-
         if ("updateUser".equals(service)) {
+            UserDAO dao = new UserDAO();
+            String email = request.getParameter("email");
+            String fullName = request.getParameter("fullName");
+            String address = request.getParameter("address");
+            String phoneNumber = request.getParameter("phoneNumber");
+            int userID = Integer.parseInt(request.getParameter("userID"));
+            int status = Integer.parseInt(request.getParameter("status"));
+            boolean isEmailExist = dao.isEmailExist(email);
+            boolean isPhoneNumberExisted = dao.isPhoneNumberExisted(phoneNumber);
+            String error = null;
+            if (utils.Validator.isNullOrEmpty(email)) {
+                error = "Email is required!";
+            } else if (isEmailExist && !email.equals(dao.getUserByID(userID).getEmail())) {
+                error = "Email existed!";
+            } else if (utils.Validator.isNullOrEmpty(fullName)) {
+                error = "Full name is required!";
+            } else if (utils.Validator.isNullOrEmpty(address)) {
+                error = "Address is required!";
+            } else if (utils.Validator.isNullOrEmpty(phoneNumber)) {
+                error = "Phone number is required!";
+            } else if (!utils.Validator.isValidPhoneNumber(phoneNumber)) {
+                error = "Invalid phone number";
+            } else if (isPhoneNumberExisted && !phoneNumber.equals(dao.getUserByID(userID).getPhoneNumber())) {
+                error = "Phone number existed!";
+            }
+            if (error != null) {
+                User user = dao.getUserByID(userID);
+                user.setFullname(fullName);
+                user.setEmail(email);
+                user.setAddress(address);
+                user.setPhoneNumber(phoneNumber);
+                user.setStatus(status);
+                // Lấy roleMap
+                RoleDAO roleDAO = new RoleDAO();
+                ArrayList<Role> roles = roleDAO.getRoles();
+                Map<Integer, String> roleMap = new HashMap<>();
+                for (Role r : roles) {
+                    roleMap.put(r.getRoleID(), r.getRoleName());
+                }
+                request.setAttribute("roleMap", roleMap);
+                request.setAttribute("error", error);
+                request.setAttribute("user", user);
+                request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/updateUser.jsp").forward(request, response);
+                return;
+            }
             try {
-                // Lấy dữ liệu từ form
-                int userID = Integer.parseInt(request.getParameter("userID"));
-                String fullName = request.getParameter("fullName");
-                String email = request.getParameter("email");
-                String phone = request.getParameter("phoneNumber");
-                String address = request.getParameter("address");
-                int status = Integer.parseInt(request.getParameter("status"));
-
-                // Gọi DAO để cập nhật
-                UserDAO dao = new UserDAO();
-                boolean updated = dao.updateUser(userID, fullName, email, phone, address, status);
-
+                boolean updated = dao.updateUser(userID, fullName, email, phoneNumber, address, status);
                 if (updated) {
                     HttpSession session = request.getSession();
                     session.setAttribute("toast", "Update user succesfully!");
                     session.setAttribute("toastType", "success");
-                    response.sendRedirect("Admin/user"); // redirect lại để load danh sách mới
+                    response.sendRedirect("Admin/user");
                 } else {
                     request.setAttribute("error", "Cập nhật thất bại!");
-                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewUser.jsp").forward(request, response);
+                    User user = dao.getUserByID(userID);
+                    request.setAttribute("user", user);
+                    // Lấy roleMap cho trường hợp cập nhật thất bại hoặc lỗi exception
+                    RoleDAO roleDAO = new RoleDAO();
+                    ArrayList<Role> roles = roleDAO.getRoles();
+                    Map<Integer, String> roleMap = new HashMap<>();
+                    for (Role r : roles) {
+                        roleMap.put(r.getRoleID(), r.getRoleName());
+                    }
+                    request.setAttribute("roleMap", roleMap);
+                    request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/updateUser.jsp").forward(request, response);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 request.setAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
-                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewUser.jsp").forward(request, response);
+                User user = dao.getUserByID(userID);
+                request.setAttribute("user", user);
+                request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/updateUser.jsp").forward(request, response);
             }
         }
     }

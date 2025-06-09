@@ -24,6 +24,7 @@ public class BraComAdminServlet extends HttpServlet {
                 service = "list";
             }
             BraComAdminDAO dao = new BraComAdminDAO();
+            dao.updateBrandComQuantitiesFromCategories();
             if(service.equals("list")) {
                 List<BraComs> braComList = dao.getAllBraComs();
                 request.setAttribute("braCom", braComList);
@@ -64,6 +65,7 @@ public class BraComAdminServlet extends HttpServlet {
             }
 
         }
+        
     }
 
     @Override

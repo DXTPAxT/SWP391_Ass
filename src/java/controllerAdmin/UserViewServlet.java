@@ -5,6 +5,7 @@
 package controllerAdmin;
 
 import dal.UserDAO;
+import dal.RoleDAO;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,7 +14,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import models.User;
+import models.Role;
 
 /**
  *
@@ -63,6 +67,14 @@ public class UserViewServlet extends HttpServlet {
             UserDAO dao = new UserDAO();
             ArrayList<User> users = dao.getUsers();
             request.setAttribute("users", users);
+            // Load all roles and map roleID to roleName
+            RoleDAO roleDAO = new RoleDAO();
+            ArrayList<Role> roles = roleDAO.getRoles();
+            Map<Integer, String> roleMap = new HashMap<>();
+            for (Role r : roles) {
+                roleMap.put(r.getRoleID(), r.getRoleName());
+            }
+            request.setAttribute("roleMap", roleMap);
         } catch (Exception e) {
             e.printStackTrace(); // Ghi log ra console
             request.setAttribute("error", "Lỗi khi truy xuất dữ liệu người dùng: " + e.getMessage());
