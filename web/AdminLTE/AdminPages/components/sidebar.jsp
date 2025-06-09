@@ -144,7 +144,7 @@
                 </a>
                 <ul class="treeview-menu">                               
                     <li><a href="${param.ctx}/Admin/user"><i class="fa fa-circle-o"></i>View Users</a></li>                                  
-                    <li><a href="${param.ctx}/Admin/user/add"><i class="fa fa-circle-o"></i>Add Users</a></li>                              
+                    <li><a href="${param.ctx}/Admin/user/add"><i class="fa fa-circle-o"></i>Create new user</a></li>                              
                 </ul>
             </li>      
         </ul>
