@@ -70,6 +70,7 @@
                                         <thead>
                                             <tr>
                                                 <th>Import ID</th>
+                                                <th>Import Code</th>
                                                 <th>Category Name</th>
                                                 <th>Created At</th>
                                                 <th>Quantity</th>                                               
@@ -80,6 +81,7 @@
                                         <tbody>
                                                     <tr>
                                                         <td>${imp.importID}</td>
+                                                        <td>${imp.importCode}</td>
                                                         <td>${imp.categoryName}</td>
                                                         <td>${imp.creatAt}</td>
                                                         <td>${imp.quantity}</td>

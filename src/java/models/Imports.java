@@ -5,6 +5,7 @@ import java.util.Date;
 public class Imports {
 
     private int ImportID;
+    private String ImportCode;
     private int CategoryID;
     private String CategoryName;
     private Date CreatAt;
@@ -35,7 +36,34 @@ public class Imports {
         this.price = price;
     }
 
+    public Imports(int ImportID, String ImportCode, int CategoryID, String CategoryName, Date CreatAt, int Quantity, int price) {
+        this.ImportID = ImportID;
+        this.ImportCode = ImportCode;
+        this.CategoryID = CategoryID;
+        this.CategoryName = CategoryName;
+        this.CreatAt = CreatAt;
+        this.Quantity = Quantity;
+        this.price = price;
+    }
+
+    public Imports(String ImportCode, int CategoryID, String CategoryName, Date CreatAt, int Quantity, int price) {
+        this.ImportCode = ImportCode;
+        this.CategoryID = CategoryID;
+        this.CategoryName = CategoryName;
+        this.CreatAt = CreatAt;
+        this.Quantity = Quantity;
+        this.price = price;
+    }
+
     public Imports() {
+    }
+
+    public String getImportCode() {
+        return ImportCode;
+    }
+
+    public void setImportCode(String ImportCode) {
+        this.ImportCode = ImportCode;
     }
 
     public String getCategoryName() {

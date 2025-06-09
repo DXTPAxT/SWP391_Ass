@@ -11,6 +11,7 @@ public class ImportDAO extends DBAdminContext {
         List<Imports> list = new ArrayList<>();
         String sql = "SELECT \n"
                 + "    i.ImportID,\n"
+                + "    i.ImportCode,\n"
                 + "    i.CategoryID,\n"
                 + "    c.CategoryName,\n"
                 + "    i.CreatedAt,\n"
@@ -25,6 +26,7 @@ public class ImportDAO extends DBAdminContext {
             while (rs.next()) {
                 Imports imp = new Imports(
                         rs.getInt("ImportID"),
+                        rs.getString("ImportCode"),
                         rs.getInt("CategoryID"),
                         rs.getString("CategoryName"),
                         rs.getDate("CreatedAt"),
@@ -44,6 +46,7 @@ public class ImportDAO extends DBAdminContext {
         List<Imports> list = new ArrayList<>();
         String sql = "SELECT DISTINCT \n"
                 + "    i.ImportID,\n"
+                + "    i.ImportCode,\n"
                 + "    i.CategoryID,\n"
                 + "    c.CategoryName,\n"
                 + "    i.CreatedAt,\n"
@@ -60,6 +63,7 @@ public class ImportDAO extends DBAdminContext {
                 while (rs.next()) {
                     Imports imp = new Imports(
                             rs.getInt("ImportID"),
+                            rs.getString("ImportCode"),
                             rs.getInt("CategoryID"),
                             rs.getString("CategoryName"),
                             rs.getDate("CreatedAt"),
@@ -99,7 +103,7 @@ public class ImportDAO extends DBAdminContext {
     }
 
     public Imports getImportByProductCode(String productCode) {
-        String sql = "SELECT i.ImportID, i.CategoryID, c.CategoryName, i.CreatedAt, i.Quantity, i.Price "
+        String sql = "SELECT i.ImportID, i.ImportCode, i.CategoryID, c.CategoryName, i.CreatedAt, i.Quantity, i.Price "
                 + "FROM Products p "
                 + "JOIN Imports i ON p.ImportID = i.ImportID "
                 + "JOIN Categories c ON i.CategoryID = c.CategoryID "
@@ -111,6 +115,7 @@ public class ImportDAO extends DBAdminContext {
                 if (rs.next()) {
                     return new Imports(
                             rs.getInt("ImportID"),
+                            rs.getString("ImportCode"),
                             rs.getInt("CategoryID"),
                             rs.getString("CategoryName"),
                             rs.getDate("CreatedAt"),
