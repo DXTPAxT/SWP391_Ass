@@ -47,6 +47,7 @@ public class CateAdminServlet extends HttpServlet {
             List<Categories> list;
             cate.updateCategoryQuantities();
             cate.updateCategoryInventory();
+            cate.updateCategoryStatusIfInventoryZero();
             if (service == null) {
                 service = "list";
             }

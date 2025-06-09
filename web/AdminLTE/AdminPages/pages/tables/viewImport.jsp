@@ -70,6 +70,7 @@
                                         <thead>
                                             <tr>
                                                 <th>Import ID</th>
+                                                <th>Import Code</th>
                                                 <th>Category Name</th>
                                                 <th>Created At</th>
                                                 <th>Quantity</th>                                               
@@ -82,6 +83,7 @@
                                                 <c:forEach var="im" items="${requestScope.list}">
                                                     <tr>
                                                         <td>${im.importID}</td>
+                                                        <td>${im.importCode}</td>
                                                         <td>${im.categoryName}</td>
                                                         <td>${im.creatAt}</td>
                                                         <td>${im.quantity}</td>

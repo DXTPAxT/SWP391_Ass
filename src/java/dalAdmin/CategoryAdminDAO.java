@@ -219,6 +219,16 @@ public class CategoryAdminDAO extends DBAdminContext {
         }
     }
 
+    public void updateCategoryStatusIfInventoryZero() {
+        String sql = "UPDATE Categories SET Status = 0 WHERE inventory = 0";
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         CategoryAdminDAO dao = new CategoryAdminDAO();
         int id = 1;
