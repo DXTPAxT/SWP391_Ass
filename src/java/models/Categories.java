@@ -1,6 +1,7 @@
 package models;
 
 public class Categories {
+
     private int categoryID;
     private String categoryName;
 
@@ -8,11 +9,12 @@ public class Categories {
     private String brandName;
     private String ComponentName;
 
-    private int brandComID;      
-    private int componentID;     
-    private int brandID;  
+    private int brandComID;
+    private int componentID;
+    private int brandID;
 
     private int quantity;
+    private int inventory;
     private int price;
     private String description;
     private int status;
@@ -29,7 +31,27 @@ public class Categories {
         this.imgURL = imgURL;
     }
 
-   
+    public Categories(int categoryID, String categoryName, int BraComID, String brandName, String ComponentName, int quantity, int inventory, int price, String description, int status, String imgURL) {
+        this.categoryID = categoryID;
+        this.categoryName = categoryName;
+        this.BraComID = BraComID;
+        this.brandName = brandName;
+        this.ComponentName = ComponentName;
+        this.quantity = quantity;
+        this.inventory = inventory;
+        this.price = price;
+        this.description = description;
+        this.status = status;
+        this.imgURL = imgURL;
+    }
+
+    public int getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(int inventory) {
+        this.inventory = inventory;
+    }
 
     public Categories(int categoryID, String categoryName, int BraComID, String brandName, String ComponentName, int quantity, int price, String description, int status, String imgURL) {
         this.categoryID = categoryID;
@@ -59,7 +81,7 @@ public class Categories {
     public void setBrandName(String brandName) {
         this.brandName = brandName;
     }
-    
+
     public String getbrandName() {
         return brandName;
     }
@@ -76,24 +98,21 @@ public class Categories {
         this.ComponentName = ComponentName;
     }
 
-    
-    
     public Categories() {
     }
 
-  
     public Categories(int categoryID, String categoryName,
-                      int componentID, int brandID, String brandName,
-                      int quantity, int price, String description, int status) {
-        this.categoryID   = categoryID;
+            int componentID, int brandID, String brandName,
+            int quantity, int price, String description, int status) {
+        this.categoryID = categoryID;
         this.categoryName = categoryName;
-        this.componentID  = componentID;
-        this.brandID      = brandID;
-        this.brandName    = brandName;
-        this.quantity     = quantity;
-        this.price        = price;
-        this.description  = description;
-        this.status       = status;
+        this.componentID = componentID;
+        this.brandID = brandID;
+        this.brandName = brandName;
+        this.quantity = quantity;
+        this.price = price;
+        this.description = description;
+        this.status = status;
     }
 
     public Categories(int categoryID, String categoryName, int brandComID, int componentID, int brandID, String brandName, int quantity, int price, String description, int status, String imgURL) {
@@ -119,7 +138,7 @@ public class Categories {
         this.status = status;
         this.imgURL = imgURL;
     }
-    
+
     public int getCategoryID() {
         return categoryID;
     }
@@ -200,4 +219,3 @@ public class Categories {
         this.imgURL = imgURL;
     }
 }
-                                                                                                       

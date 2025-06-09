@@ -17,6 +17,7 @@ public class CategoryAdminDAO extends DBAdminContext {
             c.CategoryName,
             c.BrandComID,
             c.Quantity,
+            c.inventory,
             c.Price,
             c.Description,
             c.Status,
@@ -39,6 +40,7 @@ public class CategoryAdminDAO extends DBAdminContext {
                         rs.getString("BrandName"),
                         rs.getString("ComponentName"),
                         rs.getInt("Quantity"),
+                        rs.getInt("inventory"),
                         rs.getInt("Price"),
                         rs.getString("Description"),
                         rs.getInt("Status"),
@@ -63,6 +65,7 @@ public class CategoryAdminDAO extends DBAdminContext {
             c.CategoryName,
             c.BrandComID,
             c.Quantity,
+            c.inventory,
             c.Price,
             c.Description,
             c.Status,
@@ -87,6 +90,7 @@ public class CategoryAdminDAO extends DBAdminContext {
                             rs.getString("BrandName"),
                             rs.getString("ComponentName"),
                             rs.getInt("Quantity"),
+                            rs.getInt("inventory"),
                             rs.getInt("Price"),
                             rs.getString("Description"),
                             rs.getInt("Status"),
@@ -181,21 +185,56 @@ public class CategoryAdminDAO extends DBAdminContext {
         }
     }
 
+    public void updateCategoryQuantities() {
+        String sql = """
+        UPDATE Categories
+        SET Quantity = (
+            SELECT COUNT(*)
+            FROM Products p
+            WHERE p.CategoryID = Categories.CategoryID
+        )
+    """;
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateCategoryInventory() {
+        String sql = """
+        UPDATE Categories
+        SET inventory = (
+            SELECT COUNT(*)
+            FROM Products p
+            WHERE p.CategoryID = Categories.CategoryID AND p.status = 1
+        )
+    """;
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         CategoryAdminDAO dao = new CategoryAdminDAO();
         int id = 1;
         List<Categories> all = dao.getAllCategoriesByBrandComID(id);
 
         System.out.printf("%-5s %-20s %-20s %-20s %-10s%n",
-                "ID", "Brand Name", "Component Name", "Category Name", "BraComID");
+                "ID", "Brand Name", "Component Name", "Category Name", "BraComID", "inventory");
 
         for (Categories c : all) {
-            System.out.printf("%-5d %-20s %-20s %-20s %-10d%n",
+            System.out.printf("%-5d %-20s %-20s %-20s %-20s %-10d%n",
                     c.getCategoryID(),
                     c.getBrandName(),
                     c.getComponentName(),
                     c.getCategoryName(),
-                    c.getBraComID()
+                    c.getBraComID(),
+                    c.getInventory()
             );
         }
     }

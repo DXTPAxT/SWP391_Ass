@@ -37,6 +37,7 @@ public class ImportServlet extends HttpServlet {
             String service = request.getParameter("service");
 
             ImportDAO im = new ImportDAO();
+            im.updateImportQuantitiesFromProducts();
             List<Imports> list;
 
             if (service == null) {

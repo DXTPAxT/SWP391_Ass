@@ -78,6 +78,7 @@
                                                 <th>Component Name</th>
                                                 <th>Brand Name</th>
                                                 <th>Quantity</th>
+                                                <th>Inventory</th>
                                                 <th>Price</th>
                                                 <th>Description</th>
                                                 <th>Status</th>
@@ -97,6 +98,7 @@
                                                             <td>${category.componentName}</td>
                                                             <td>${category.brandName}</td>
                                                             <td>${category.quantity}</td>
+                                                            <td>${category.inventory}</td>
                                                             <td>${category.price}</td>
                                                             <td>${category.description}</td>
                                                             <td>

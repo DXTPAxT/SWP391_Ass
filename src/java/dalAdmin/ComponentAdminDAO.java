@@ -134,6 +134,22 @@ public class ComponentAdminDAO extends DBAdminContext {
         }
     }
 
+    public void updateComponentQuantitiesFromBrandComs() {
+        String sql = """
+        UPDATE Components
+        SET Quantity = (
+            SELECT SUM(bc.Quantity)
+            FROM BrandComs bc
+            WHERE bc.ComponentID = Components.ComponentID
+        )
+    """;
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         ComponentAdminDAO dao = new ComponentAdminDAO();
         String keyword = "pC";
