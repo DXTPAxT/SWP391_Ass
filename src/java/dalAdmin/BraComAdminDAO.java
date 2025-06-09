@@ -161,6 +161,23 @@ public class BraComAdminDAO extends DBAdminContext {
         return false;
     }
 
+    public void updateBrandComQuantitiesFromCategories() {
+        String sql = """
+        UPDATE BrandComs
+        SET Quantity = (
+            SELECT SUM(c.inventory)
+            FROM Categories c
+            WHERE c.BrandComID = BrandComs.BrandComID
+        )
+    """;
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         BraComAdminDAO dao = new BraComAdminDAO();
         int id = 1;

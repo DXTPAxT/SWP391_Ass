@@ -98,34 +98,33 @@ public class ImportDAO extends DBAdminContext {
         return null;
     }
 
-   public Imports getImportByProductCode(String productCode) {
-    String sql = "SELECT i.ImportID, i.CategoryID, c.CategoryName, i.CreatedAt, i.Quantity, i.Price " +
-                 "FROM Products p " +
-                 "JOIN Imports i ON p.ImportID = i.ImportID " +
-                 "JOIN Categories c ON i.CategoryID = c.CategoryID " +
-                 "WHERE p.ProductCode = ?";
+    public Imports getImportByProductCode(String productCode) {
+        String sql = "SELECT i.ImportID, i.CategoryID, c.CategoryName, i.CreatedAt, i.Quantity, i.Price "
+                + "FROM Products p "
+                + "JOIN Imports i ON p.ImportID = i.ImportID "
+                + "JOIN Categories c ON i.CategoryID = c.CategoryID "
+                + "WHERE p.ProductCode = ?";
 
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setString(1, productCode);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return new Imports(
-                        rs.getInt("ImportID"),
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"),
-                        rs.getDate("CreatedAt"),
-                        rs.getInt("Quantity"),
-                        rs.getInt("Price")
-                );
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, productCode);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Imports(
+                            rs.getInt("ImportID"),
+                            rs.getInt("CategoryID"),
+                            rs.getString("CategoryName"),
+                            rs.getDate("CreatedAt"),
+                            rs.getInt("Quantity"),
+                            rs.getInt("Price")
+                    );
+                }
             }
+        } catch (SQLException e) {
+            System.err.println("getImportByProductCode Error: " + e.getMessage());
         }
-    } catch (SQLException e) {
-        System.err.println("getImportByProductCode Error: " + e.getMessage());
+
+        return null;
     }
-
-    return null;
-}
-
 
     // Thêm bản ghi nhập hàng mới
     public boolean insertImport(Imports imp) {
@@ -176,6 +175,23 @@ public class ImportDAO extends DBAdminContext {
         return false;
     }
 
+    public void updateImportQuantitiesFromProducts() {
+        String sql = """
+        UPDATE Imports
+        SET Quantity = (
+            SELECT COUNT(*)
+            FROM Products p
+            WHERE p.ImportID = Imports.ImportID
+        )
+    """;
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         try {
             // Tạo connection nếu bạn có lớp DBContext
@@ -183,7 +199,7 @@ public class ImportDAO extends DBAdminContext {
             ImportDAO dao = new ImportDAO();
             String id = "PRD0409";
             Imports im = dao.getImportByProductCode(id);
-            System.out.println(im.getImportID() +" " + im.getCategoryName());
+            System.out.println(im.getImportID() + " " + im.getCategoryName());
 
         } catch (Exception e) {
             e.printStackTrace();

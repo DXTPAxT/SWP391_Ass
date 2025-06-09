@@ -40,11 +40,13 @@ public class CateAdminServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+            
             String service = request.getParameter("service");
            
             CategoryAdminDAO cate = new CategoryAdminDAO();
             List<Categories> list;
-           
+            cate.updateCategoryQuantities();
+            cate.updateCategoryInventory();
             if (service == null) {
                 service = "list";
             }

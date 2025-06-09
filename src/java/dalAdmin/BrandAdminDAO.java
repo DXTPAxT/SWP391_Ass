@@ -12,14 +12,13 @@ public class BrandAdminDAO extends DBAdminContext {
     public List<Brands> getAllBrands() {
         List<Brands> list = new ArrayList<>();
         String sql = "SELECT * FROM Brands";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Brands b = new Brands(
-                    rs.getInt("BrandID"),
-                    rs.getString("BrandName"),
-                    rs.getInt("Quantity"),
-                    rs.getInt("Status")
+                        rs.getInt("BrandID"),
+                        rs.getString("BrandName"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("Status")
                 );
                 list.add(b);
             }
@@ -28,18 +27,17 @@ public class BrandAdminDAO extends DBAdminContext {
         }
         return list;
     }
-    
+
     public List<Brands> getAllBrandsByName(String name) {
         List<Brands> list = new ArrayList<>();
         String sql = "SELECT * FROM Brands where BrandName LIKE '%" + name + "%'";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Brands b = new Brands(
-                    rs.getInt("BrandID"),
-                    rs.getString("BrandName"),
-                    rs.getInt("Quantity"),
-                    rs.getInt("Status")
+                        rs.getInt("BrandID"),
+                        rs.getString("BrandName"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("Status")
                 );
                 list.add(b);
             }
@@ -57,10 +55,10 @@ public class BrandAdminDAO extends DBAdminContext {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new Brands(
-                    rs.getInt("BrandID"),
-                    rs.getString("BrandName"),
-                    rs.getInt("Quantity"),
-                    rs.getInt("Status")
+                        rs.getInt("BrandID"),
+                        rs.getString("BrandName"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("Status")
                 );
             }
         } catch (SQLException e) {
@@ -109,7 +107,24 @@ public class BrandAdminDAO extends DBAdminContext {
         }
         return false;
     }
-    
+
+    public void updateBrandQuantitiesFromBrandComs() {
+        String sql = """
+        UPDATE Brands
+        SET Quantity = ISNULL((
+            SELECT SUM(bc.Quantity)
+            FROM BrandComs bc
+            WHERE bc.BrandID = Brands.BrandID
+        ), 0);
+    """;
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         BrandAdminDAO dao = new BrandAdminDAO();
         // Truy vấn tất cả

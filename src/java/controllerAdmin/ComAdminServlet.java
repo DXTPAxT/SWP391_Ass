@@ -31,7 +31,7 @@ public class ComAdminServlet extends HttpServlet {
                 service = "list";
             }
             ComponentAdminDAO dao = new ComponentAdminDAO();
-            dao.updateAllComponentQuantities();
+            dao.updateComponentQuantitiesFromBrandComs();
 
             if (service.equals("list")) {
 
