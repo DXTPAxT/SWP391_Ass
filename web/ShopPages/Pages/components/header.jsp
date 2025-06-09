@@ -81,7 +81,9 @@
                             <li><a href="#" class="${activePage == 'blog' ? 'active' : ''}">Blog<i class=""></i></a></li>
                             <li><a href="404.html" class="${activePage == '404' ? 'active' : ''}">404</a></li>
                             <li><a href="contact-us.html" class="${activePage == 'contact' ? 'active' : ''}">Contact</a></li>
-                        </ul>   
+
+                        </ul>
+   
                     </div>
                 </div>
                 <div class="search_box pull-right">

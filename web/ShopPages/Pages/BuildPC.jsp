@@ -1,167 +1,146 @@
-<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
+<%@ page isErrorPage="true" %>
 
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Build PC | CyberBeast</title>
-        <style>
-            body {
-                background: #121212;
-                color: white;
-                font-family: sans-serif;
-                margin: 0;
-                padding: 20px;
-            }
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Build PC | CyberBeast</title>
+    
+    <link href="${ctx}/ShopPages/Pages/css/bootstrap.min.css" rel="stylesheet">
+    <link href="${ctx}/ShopPages/Pages/css/font-awesome.min.css" rel="stylesheet">
+    <link href="${ctx}/ShopPages/Pages/css/buildpc.css" rel="stylesheet">
+    <link href="${ctx}/ShopPages/Pages/css/main.css" rel="stylesheet">
+    <link href="${ctx}/ShopPages/Pages/css/responsive.css" rel="stylesheet">
 
-            .list-group {
-                margin-top: 30px;
-            }
+    <link rel="shortcut icon" href="${ctx}/ShopPages/Pages/images/ico/favicon.ico">
+</head>
+<body>
 
-            .list-group-item {
-                background: #1e1e1e;
-                padding: 15px;
-                margin-bottom: 10px;
-                border-radius: 8px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
+<jsp:include page="components/header.jsp">
+    <jsp:param name="activePage" value="buildpc"/>
+</jsp:include>
 
-            .btn {
-                padding: 8px 16px;
-                background: #3498db;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
+<div class="list-group col-sm-5">
+    <c:forEach var="comp" items="${components}">
+        <c:if test="${comp.componentID != 1}">
+            <div class="list-group-item">
 
-            .btn:hover {
-                background: #2980b9;
-            }
+                <!-- Bên trái: Ảnh + Tên + nút Xoá -->
+                <div class="d-flex align-items-center">
+                    <img src="${ctx}/images/products/${comp.componentID}.png"
+                         alt="${comp.componentName}"
+                         class="component-image" />
 
-            /* Modal */
-            .modal-overlay {
-                display: none;
-                position: fixed;
-                z-index: 9999;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.7);
-                justify-content: center;
-                align-items: center;
-            }
+                    <div>
+                        <div class="component-title">
+                            ${comp.componentName}
+                            <c:forEach var="sel" items="${selectedComponents}">
+                                <c:if test="${sel.componentID eq comp.componentID}">
+                                    <a href="${ctx}/BuildPC?service=remove&componentID=${comp.componentID}"
+                                       class="btn btn-sm btn-outline-danger btn-remove">
+                                        Xoá
+                                    </a>
+                                </c:if>
+                            </c:forEach>
+                        </div>
 
-            .modal-content {
-                background: #222;
-                color: #fff;
-                width: 80%;
-                max-height: 80%;
-                overflow-y: auto;
-                border-radius: 10px;
-                padding: 20px;
-                position: relative;
-            }
-
-            .close-btn {
-                position: absolute;
-                top: 10px;
-                right: 20px;
-                font-size: 24px;
-                cursor: pointer;
-                color: white;
-            }
-
-            .component-info {
-                display: flex;
-                align-items: center;
-            }
-
-            .component-info img {
-                width: 60px;
-                height: 60px;
-                object-fit: contain;
-                margin-right: 20px;
-            }
-        </style>
-    </head>
-    <body>
-
-        <h2>🛠 Build PC</h2>
-        <p>Chọn các linh kiện để xây dựng máy tính của bạn</p>
-
-        <!-- Component List -->
-        <div class="list-group">
-            <c:forEach var="comp" items="${components}" begin="1">
-                <div class="list-group-item">
-                    <div class="component-info">
-                        <img src="${ctx}/images/components/${comp.componentID}.png" alt="${comp.componentName}" />
-                        <span class="fs-5 fw-bold">${comp.componentName}</span>
+                        <c:forEach var="sel" items="${selectedComponents}">
+                            <c:if test="${sel.componentID eq comp.componentID}">
+                                <div class="component-meta">
+                                    ${sel.categoryName} - ${sel.brandName}
+                                </div>
+                            </c:if>
+                        </c:forEach>
                     </div>
+                </div>
+
+                <!-- Bên phải: Giá + Nút -->
+                <div class="text-end">
+                    <c:set var="found" value="false" />
+                    <c:forEach var="sel" items="${selectedComponents}">
+                        <c:if test="${sel.componentID eq comp.componentID}">
+                            <c:set var="found" value="true" />
+                            <div class="component-price">
+                                <fmt:formatNumber value="${sel.price}" type="number" groupingUsed="true"/>₫
+                            </div>
+                        </c:if>
+                    </c:forEach>
+
                     <button type="button"
-                            class="btn open-component-modal"
+                            class="btn btn-sm btn-primary mt-2 open-component-modal"
                             data-component-id="${comp.componentID}"
                             data-component-name="${comp.componentName}">
-                        Chọn
+                        <c:choose>
+                            <c:when test="${found}">Thay đổi</c:when>
+                            <c:otherwise>Chọn</c:otherwise>
+                        </c:choose>
                     </button>
                 </div>
-            </c:forEach>
-        </div>
 
-        <!-- Modal -->
-        <div id="customModal" class="modal-overlay">
-            <div class="modal-content">
-                <span class="close-btn" id="closeModal">&times;</span>
-                <h3 id="modalTitle">Loading...</h3>
-                <div id="modalBody">Đang tải...</div>
             </div>
-        </div>
+        </c:if>
+    </c:forEach>
+</div>
 
-        <!-- Script -->
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const modal = document.getElementById('customModal');
-                const modalTitle = document.getElementById('modalTitle');
-                const modalBody = document.getElementById('modalBody');
-                const closeModal = document.getElementById('closeModal');
+<!-- Modal -->
+<div id="customModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-btn" id="closeModal">&times;</span>
+        <h3 id="modalTitle">Loading...</h3>
+        <div id="modalBody">Đang tải...</div>
+    </div>
+</div>
 
-                closeModal.addEventListener('click', () => {
-                    modal.style.display = 'none';
-                });
+<script>
+    const ctx = '${ctx}';
+    const modal = document.getElementById('customModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
 
-                document.querySelectorAll('.open-component-modal').forEach(button => {
-                    button.addEventListener('click', () => {
-                        const componentName = button.dataset.componentName;
+    document.querySelectorAll('.open-component-modal').forEach(button => {
+        button.addEventListener('click', () => {
+            const componentId = button.dataset.componentId;
+            const componentName = button.dataset.componentName;
 
-                        modal.style.display = 'flex';
-                        modalTitle.textContent = componentName;
-                        modalBody.innerHTML = "<p>Đang tải...</p>";
+            modal.style.display = 'flex';
+            modalTitle.textContent = componentName;
+            modalBody.innerHTML = "<p>Đang tải...</p>";
 
-                        // ✅ gọi servlet với contextPath chính xác
-                        fetch('<c:out value="${pageContext.request.contextPath}" />/CategoriesController?service=filter&component='
-                                + encodeURIComponent(componentName) + '&ajax=true')
-                                .then(res => res.text())
-                                .then(html => {
-                                    modalBody.innerHTML = html;
+            fetch(ctx + "/BuildPC?service=filter&componentID=" + encodeURIComponent(componentId) + "&ajax=true")
+                .then(res => res.text())
+                .then(html => {
+                    modalBody.innerHTML = html;
+                    modalBody.querySelectorAll('.select-product-btn').forEach(btn => {
+                        btn.addEventListener('click', function () {
+                            const categoryId = btn.getAttribute('data-category-id');
+                            fetch(ctx + '/BuildPC?service=add&categoryID=' + categoryId)
+                                .then(() => {
+                                    modal.style.display = "none";
+                                    window.location.href = ctx + '/BuildPC';
                                 })
-                                .catch(err => {
-                                    modalBody.innerHTML = '<p style="color:red">Lỗi khi tải dữ liệu.</p>';
+                                .catch(() => {
+                                    alert('Lỗi khi thêm sản phẩm');
                                 });
+                        });
                     });
+                })
+                .catch(() => {
+                    modalBody.innerHTML = '<p style="color:red">Lỗi khi tải dữ liệu.</p>';
                 });
+        });
+    });
 
-                window.onclick = function (e) {
-                    if (e.target === modal) {
-                        modal.style.display = "none";
-                    }
-                };
-            });
-
-        </script>
-    </body>
+    window.onclick = function (e) {
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
+    };
+</script>
+</body>
 </html>

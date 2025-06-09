@@ -21,6 +21,7 @@
         <title>Shop | E-Shopper</title>
         <link href="${ctx}/ShopPages/Pages/css/bootstrap.min.css" rel="stylesheet">
         <link href="${ctx}/ShopPages/Pages/css/font-awesome.min.css" rel="stylesheet">
+        <link href="${ctx}/ShopPages/Pages/css/buildpc.css" rel="stylesheet">
         <link href="${ctx}/ShopPages/Pages/css/prettyPhoto.css" rel="stylesheet">
         <link href="${ctx}/ShopPages/Pages/css/price-range.css" rel="stylesheet">
         <link href="${ctx}/ShopPages/Pages/css/animate.css" rel="stylesheet">

@@ -17,12 +17,10 @@
         <servlet-name>ProductServlet</servlet-name>
         <servlet-class>controller.ProductServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>HomeServlet</servlet-name>
         <servlet-class>controller.HomeServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>SignUpServlet</servlet-name>
         <servlet-class>controller.SignUpServlet</servlet-class>
@@ -104,10 +102,6 @@
         <servlet-class>controllerAdmin.UpdateUserServlet</servlet-class>
     </servlet>
     <!-- Mappings -->
-    <servlet>
-        <servlet-name>BuildPcController</servlet-name>
-        <servlet-class>controller.BuildPcController</servlet-class>
-    </servlet>
     <!-- SERVLET MAPPINGS -->
     <servlet>
         <servlet-name>BraComAdminServlet</servlet-name>
@@ -133,12 +127,10 @@
         <servlet-name>ProductServlet</servlet-name>
         <url-pattern>/Product</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/Home</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>SignUpServlet</servlet-name>
         <url-pattern>/SignUp</url-pattern>
@@ -214,10 +206,6 @@
     <servlet-mapping>
         <servlet-name>BlogAddServlet</servlet-name>
         <url-pattern>/blogadd</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>BuildPcController</servlet-name>
-        <url-pattern>/buildPc</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>BraComAdminServlet</servlet-name>
