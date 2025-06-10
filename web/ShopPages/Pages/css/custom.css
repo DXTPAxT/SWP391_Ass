@@ -576,6 +576,111 @@ input[type="number"]:focus {
     }
 }
 
+/* Custom product details styles */
+.product-details .container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+    padding: 32px 24px 24px 24px;
+    margin-bottom: 32px;
+}
+.product-details .row {
+    align-items: center;
+}
+.product-details img.img-fluid {
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    max-width: 100%;
+    height: auto;
+    background: #f8f8f8;
+    padding: 12px;
+}
+.product-details h2 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+    color: #222;
+}
+.product-details p {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+}
+.product-details p strong {
+    color: #555;
+    min-width: 90px;
+    display: inline-block;
+}
+.product-details .btn-success {
+    display: block;
+    width: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 1.25rem;
+    padding: 10px 28px;
+    border-radius: 6px;
+    margin-top: 18px;
+    box-shadow: 0 2px 8px rgba(40,167,69,0.08);
+    transition: background 0.2s;
+}
+.product-details .btn-success:hover {
+    background: #218838;
+}
+.product-details .text-muted {
+    font-size: 1.35rem;
+    color: #6c757d !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 4.5em;
+    max-height: 7em;
+    line-height: 1.7;
+    margin-bottom: 10px;
+    transition: max-height 0.3s;
+}
+.product-details .text-muted.expanded {
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    max-height: 100vh;
+    overflow: visible;
+}
+.product-details .see-more-btn {
+    display: block;
+    width: fit-content;
+    margin-top: 0.5rem;
+    margin-bottom: 1.2rem;
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+}
+.product-details .see-more-btn:focus {
+    outline: none;
+    color: #0056b3;
+}
+@media (max-width: 767px) {
+    .product-details .container {
+        padding: 16px 6px 16px 6px;
+    }
+    .product-details h2 {
+        font-size: 1.8rem;
+    }
+    .product-details p {
+        font-size: 1.1rem;
+    }
+    .product-details .btn-success {
+        width: 100%;
+    }
+    .product-details .see-more-btn {
+        width: 100%;
+    }
+}
+
 
 
 

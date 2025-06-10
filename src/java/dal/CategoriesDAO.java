@@ -305,7 +305,7 @@ public class CategoriesDAO extends DBContext {
 
     // Phương pháp tiện ích
     private Categories extractCategory(ResultSet rs) throws SQLException {
-        return new Categories(
+        Categories category = new Categories(
                 rs.getInt("CategoryID"),
                 rs.getString("CategoryName"),
                 rs.getInt("ComponentID"),
@@ -316,6 +316,12 @@ public class CategoriesDAO extends DBContext {
                 rs.getString("Description"),
                 rs.getInt("Status")
         );
+        try {
+            category.setComponentName(rs.getString("ComponentName"));
+        } catch (SQLException e) {
+            // Optionally log or ignore if not present
+        }
+        return category;
     }
 
     private List<Object> buildFilter(

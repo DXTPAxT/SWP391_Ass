@@ -124,7 +124,8 @@ public class FeedbackDAO extends DBContext {
             ps.setInt(1, f.getUserID());
             ps.setString(2, f.getContent());
             ps.setInt(3, f.getOrderItemID());
-            ps.setTimestamp(4, new Timestamp(f.getCreatedAt() != null ? f.getCreatedAt().getTime() : System.currentTimeMillis()));
+            // Chuyển sang lưu String cho createdAt
+            ps.setString(4, f.getCreatedAt() != null ? f.getCreatedAt() : "2025-06-10 00:00:00");
             ps.setInt(5, f.getRate());
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected > 0) {
@@ -145,7 +146,7 @@ public class FeedbackDAO extends DBContext {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, f.getContent());
             ps.setInt(2, f.getRate());
-            ps.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+            ps.setString(3, f.getCreatedAt() != null ? f.getCreatedAt() : "2025-06-10 00:00:00");
             ps.setInt(4, f.getFeedbackID());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -179,5 +180,38 @@ public class FeedbackDAO extends DBContext {
             return false;
         }
         return false;
+    }
+
+    public List<Feedback> getFeedbackByCategoryId(int categoryId) {
+        List<Feedback> list = new ArrayList<>();
+        String sql = "SELECT f.*, u.Fullname FROM Feedbacks f " +
+                     "JOIN OrderItems oi ON f.OrderItemID = oi.OrderItemID " +
+                     "JOIN Users u ON f.UserID = u.UserID " +
+                     "WHERE oi.CategoryID = ? ORDER BY f.CreatedAt DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, categoryId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String createdAt = rs.getString("CreatedAt");
+                    Feedback f = new Feedback(
+                        rs.getInt("FeedbackID"),
+                        rs.getInt("UserID"),
+                        rs.getString("Content"),
+                        rs.getInt("OrderItemID"),
+                        createdAt,
+                        rs.getInt("Rate"),
+                        rs.getInt("Status")
+                    );
+                    // Set user full name
+                    models.User user = new models.User(rs.getString("Fullname"));
+                    f.setUser(user);
+                    list.add(f);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error in getFeedbackByCategoryId for categoryId " + categoryId + ": " + e.getMessage(), e);
+            return list;
+        }
+        return list;
     }
 }
