@@ -14,7 +14,7 @@
     </head>
     <body>
         <c:if test="${user.getUserRoleID() != 1}">
-            <% response.sendRedirect(request.getContextPath() + "/Home"); %>
+            <% response.sendRedirect(request.getContextPath() + "/HomePages"); %>
         </c:if>
         <c:if test="${user.getUserRoleID() == 1}">
             <% response.sendRedirect(request.getContextPath() + "/Admin"); %>

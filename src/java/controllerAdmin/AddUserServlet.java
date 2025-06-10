@@ -91,9 +91,26 @@ public class AddUserServlet extends HttpServlet {
         ArrayList<Role> roles = roleDao.getRoles();
         String error = "";
 
-        boolean isEmailExisted = userDao.isEmailExist(email);
-        if (isEmailExisted) {
+        // Validate theo đúng thứ tự các trường trong form (fullName, email, phoneNumber, address, roleID)
+        if (utils.Validator.isNullOrEmpty(fullName)) {
+            error = "Full name is required!";
+        } else if (utils.Validator.isNullOrEmpty(email)) {
+            error = "Email is required!";
+        } else if (userDao.isEmailExist(email)) {
             error = "Email existed!";
+        } else if (utils.Validator.isNullOrEmpty(phoneNumber)) {
+            error = "Phone number is required!";
+        } else if (!utils.Validator.isValidPhoneNumber(phoneNumber)) {
+            error = "Invalid phone number!";
+        } else if (userDao.isPhoneNumberExisted(phoneNumber)) {
+            error = "Phone number existed!";
+        } else if (utils.Validator.isNullOrEmpty(address)) {
+            error = "Address is required!";
+        } else if (!("admin".equalsIgnoreCase(roleID) || "staff".equalsIgnoreCase(roleID) || "1".equals(roleID) || "2".equals(roleID))) {
+            error = "Only Admin and Staff accounts can be added!";
+        }
+
+        if (!error.isEmpty()) {
             request.setAttribute("error", error);
             request.setAttribute("fullName", fullName);
             request.setAttribute("email", email);
@@ -101,18 +118,15 @@ public class AddUserServlet extends HttpServlet {
             request.setAttribute("address", address);
             request.setAttribute("roleID", roleID);
             request.setAttribute("roles", roles);
+            // Thêm nhận lỗi cho toast
+            request.setAttribute("toast", error);
+            request.setAttribute("toastType", "error");
             RequestDispatcher rs = request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/addNewUser.jsp");
             rs.forward(request, response);
+            return;
         } else {
             try {
-                // 🔐 Tạo mật khẩu ngẫu nhiên
-                String newPassword = PasswordUtils.generateRandomPassword(10);
-//            String hashedPassword = PasswordUtils.hashPassword(newPassword);
-//
-//                boolean mailSent = MailUtils.send(email,
-//                        "Your password has been reset",
-//                        "Hello " + fullName + ",\n\nYour new password is: " + newPassword + "\n\nPlease log in and change it immediately.");
-
+                String newPassword = "123456"; // Mật khẩu mặc định, có thể thay đổi sau
                 boolean addUser = userDao.createNewUser(email, fullName, address, phoneNumber, newPassword, Integer.parseInt(roleID));
                 if (addUser) {
                     HttpSession session = request.getSession();
@@ -121,10 +135,10 @@ public class AddUserServlet extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/Admin/user");
                 } else {
                     request.setAttribute("toast", "Add user failed!");
-                    request.setAttribute("toastType", "success");
+                    request.setAttribute("toastType", "error");
                 }
             } catch (Exception e) {
-
+                e.printStackTrace(); // Log lỗi để dễ debug
             }
         }
     }

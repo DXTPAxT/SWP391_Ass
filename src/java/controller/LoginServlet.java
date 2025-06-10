@@ -6,13 +6,12 @@ package controller;
 
 import dal.UserDAO;
 import jakarta.servlet.RequestDispatcher;
-import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
 import models.User;
 
 /**
@@ -20,34 +19,8 @@ import models.User;
  * @author PC ASUS
  */
 public class LoginServlet extends HttpServlet {
+    private static final String REDIRECT_AFTER_LOGIN = "redirectAfterLogin";
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet LoginServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -66,11 +39,11 @@ public class LoginServlet extends HttpServlet {
             rs.forward(request, response);
         } else {
             if (user.getRoleID() == 3) {
-                String redirectURL = (String) session.getAttribute("redirectAfterLogin");
+                String redirectURL = (String) session.getAttribute(REDIRECT_AFTER_LOGIN);
                 if (redirectURL == null) {
-                    redirectURL = "Home";
+                    redirectURL = "HomePages";
                 }
-                session.setAttribute("redirectAfterLogin", null);
+                session.setAttribute(REDIRECT_AFTER_LOGIN, null);
                 response.sendRedirect(redirectURL);
             } else {
                 response.sendRedirect("AdminDashbordServlet");
@@ -92,50 +65,59 @@ public class LoginServlet extends HttpServlet {
         UserDAO userDAO = new UserDAO();
         String email = request.getParameter("email");
         String password = request.getParameter("password");
+
+        if (utils.Validator.isNullOrEmpty(email)) {
+            setLoginAttributes(request, "Email is required!", email, password);
+            forwardToLogin(request, response);
+            return;
+        } else if (utils.Validator.isNullOrEmpty(password)) {
+            setLoginAttributes(request, "Password is required!", email, password);
+            forwardToLogin(request, response);
+            return;
+        }
+
         boolean isEmailExist = userDAO.isEmailExist(email);
-        String error = null;
         if (!isEmailExist) {
-            error = "Email is not exitsted";
-            request.setAttribute("error", error);
-            request.setAttribute("email", email);
-            request.setAttribute("password", password);
-            RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/login.jsp");
-            rs.forward(request, response);
-        } else {
-            User user = userDAO.getUserByEmailAndPassword(email, password);
-            if (user != null) {
-                HttpSession session = request.getSession();
-                session.setAttribute("user", user);
-                session.setAttribute("id", user.getUserID());
-                if (user.getUserID() != 1) {
-                    String redirectURL = (String) session.getAttribute("redirectAfterLogin");
-                    if (redirectURL == null) {
-                        redirectURL = "Home";
-                    }
-                    session.setAttribute("redirectAfterLogin", null);
-                    response.sendRedirect(redirectURL);
-                } else {
-                    response.sendRedirect("AdminDashbordServlet");
+            setLoginAttributes(request, "Email does not exist!", email, password);
+            forwardToLogin(request, response);
+            return;
+        }
+
+        User user = userDAO.getUserByEmailAndPassword(email, password);
+        if (user != null) {
+            HttpSession session = request.getSession();
+            session.setAttribute("user", user);
+            session.setAttribute("id", user.getUserID());
+            if (user.getUserID() != 1) {
+                String redirectURL = (String) session.getAttribute(REDIRECT_AFTER_LOGIN);
+                if (redirectURL == null) {
+                    redirectURL = "HomePages";
                 }
+                session.setAttribute(REDIRECT_AFTER_LOGIN, null);
+                response.sendRedirect(redirectURL);
             } else {
-                error = "Incorrect password!";
-                request.setAttribute("error", error);
-                request.setAttribute("email", email);
-                request.setAttribute("password", password);
-                RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/login.jsp");
-                rs.forward(request, response);
+                response.sendRedirect("AdminDashbordServlet");
             }
+        } else {
+            setLoginAttributes(request, "Incorrect password!", email, password);
+            forwardToLogin(request, response);
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+    private void setLoginAttributes(HttpServletRequest request, String error, String email, String password) {
+        request.setAttribute("error", error);
+        request.setAttribute("email", email);
+        request.setAttribute("password", password);
+    }
+
+    private void forwardToLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/login.jsp");
+        rs.forward(request, response);
+    }
+
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "Login servlet for user authentication.";
     }// </editor-fold>
 
 }

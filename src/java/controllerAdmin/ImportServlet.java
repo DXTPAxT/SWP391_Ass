@@ -2,21 +2,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controllerAdmin;
 
-import jakarta.servlet.RequestDispatcher;
+import dalAdmin.ImportDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import models.Imports;
 
 /**
  *
- * @author PC ASUS
+ * @author Admin
  */
-public class HomeServlet extends HttpServlet {
+public class ImportServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -32,18 +34,38 @@ public class HomeServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet HomeServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet HomeServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+            String service = request.getParameter("service");
+
+            ImportDAO im = new ImportDAO();
+            im.updateImportQuantitiesFromProducts();
+            List<Imports> list;
+
+            if (service == null) {
+                service = "list";
+            }
+            if ("list".equals(service)) {
+
+                list = im.getAllImports();
+
+                request.setAttribute("list", list);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewImport.jsp").forward(request, response);
+            } else if ("listbycate".equals(service)) {
+                int id = Integer.parseInt(request.getParameter("categoryID"));
+
+                list = im.getImportsWithProductsByCategoryID(id);
+
+                request.setAttribute("list", list);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewImport.jsp").forward(request, response);
+            }else if ("listbypro".equals(service)) {
+                String id = request.getParameter("productCode");
+
+                Imports imp = im.getImportByProductCode(id);
+
+                request.setAttribute("imp", imp);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewImportProductCode.jsp").forward(request, response);
+            }
         }
     }
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -56,8 +78,7 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/home.jsp");
-        rs.forward(request, response);
+        processRequest(request, response);
     }
 
     /**
@@ -83,4 +104,5 @@ public class HomeServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
 }

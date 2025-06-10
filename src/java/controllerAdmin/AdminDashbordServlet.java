@@ -4,9 +4,12 @@
  */
 package controllerAdmin;
 
-import dal.BrandAdminDAO;
-import dal.CategoryAdminDAO;
-import dal.ComponentDAO;
+import dalAdmin.BraComAdminDAO;
+import dalAdmin.BrandAdminDAO;
+import dalAdmin.CategoryAdminDAO;
+import dalAdmin.ComponentAdminDAO;
+import dalAdmin.ImportDAO;
+import dalAdmin.ProductAdminDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,9 +18,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import models.BraComs;
 import models.Brands;
 import models.Categories;
 import models.Components;
+import models.Imports;
+import models.Products;
 
 /**
  *
@@ -31,16 +37,14 @@ public class AdminDashbordServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
           
-            ComponentDAO dao = new ComponentDAO();
-            CategoryAdminDAO cate = new CategoryAdminDAO();
-            BrandAdminDAO ban = new BrandAdminDAO();
-            List<Brands> Brand = ban.getAllBrands();
-            List<Categories> Category = cate.getAllCategories("SELECT * FROM Categories");
-            List<Components> Components = dao.getAllComponent("SELECT * FROM Components");
-            request.setAttribute("data", Components);
-            request.setAttribute("category", Category);
-            request.setAttribute("brand", Brand);
-            //request.getRequestDispatcher("/AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);
+            
+            
+            ComponentAdminDAO Com = new ComponentAdminDAO();
+            List<Components> com = Com.getAllComponent();
+            request.setAttribute("com", com);
+            
+           
+            
             request.getRequestDispatcher("AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);
         }
     }

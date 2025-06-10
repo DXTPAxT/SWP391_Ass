@@ -12,13 +12,17 @@ public class CategoriesDAO extends DBContext {
 
     private static final Logger LOGGER = Logger.getLogger(CategoriesDAO.class.getName());
 
-    // BRANDS
     public List<Brands> getAllBrands() {
-        String sql = "SELECT * FROM Brands";
+        String sql = "SELECT BrandID, BrandName, Quantity, Status FROM Brands";
         List<Brands> list = new ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                list.add(new Brands(rs.getInt("BrandID"), rs.getString("BrandName")));
+                list.add(new Brands(
+                        rs.getInt("BrandID"),
+                        rs.getString("BrandName"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("Status")
+                ));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
@@ -26,20 +30,25 @@ public class CategoriesDAO extends DBContext {
         return list;
     }
 
+    // 2. Lấy danh sách brand theo component (dùng bảng BrandComs)
     public List<BrandByComponentName> getBrandsGroupedByComponent() {
         String sql = """
-            SELECT DISTINCT co.ComponentID, co.ComponentName, b.BrandName
-            FROM Components co
-            JOIN Categories c ON co.ComponentID = c.ComponentID
-            JOIN Brands b ON c.BrandID = b.BrandID
-        """;
+            SELECT DISTINCT
+              bc.ComponentID,
+              comp.ComponentName,
+              b.BrandName
+            FROM BrandComs bc
+            JOIN Components comp ON bc.ComponentID = comp.ComponentID
+            JOIN Brands b ON bc.BrandID = b.BrandID
+            """;
         List<BrandByComponentName> list = new ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(new BrandByComponentName(
                         rs.getInt("ComponentID"),
                         rs.getString("ComponentName"),
-                        rs.getString("BrandName")));
+                        rs.getString("BrandName")
+                ));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
@@ -47,7 +56,7 @@ public class CategoriesDAO extends DBContext {
         return list;
     }
 
-    // componenets
+    // 3. Lấy toàn bộ Components
     public List<Components> getAllComponents() {
         String sql = "SELECT * FROM Components";
         List<Components> list = new ArrayList<>();
@@ -57,7 +66,8 @@ public class CategoriesDAO extends DBContext {
                         rs.getInt("ComponentID"),
                         rs.getString("ComponentName"),
                         rs.getInt("Quantity"),
-                        rs.getInt("Status")));
+                        rs.getInt("Status")
+                ));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
@@ -65,9 +75,21 @@ public class CategoriesDAO extends DBContext {
         return list;
     }
 
-    // categories 
+    // 4. Lấy category theo ID (kèm thông tin brand & component)
     public List<Categories> getCategoryByID(int id) {
-        String sql = "SELECT c.*, b.BrandName FROM Categories c JOIN Brands b ON c.BrandID = b.BrandID WHERE CategoryID = ?";
+        String sql = """
+            SELECT
+              c.*,
+              bc.ComponentID,
+              bc.BrandID,
+              b.BrandName,
+              comp.ComponentName
+            FROM Categories c
+            JOIN BrandComs bc ON c.BrandComID   = bc.BrandComID
+            JOIN Brands b ON bc.BrandID = b.BrandID
+            JOIN Components comp ON bc.ComponentID = comp.ComponentID
+            WHERE c.CategoryID = ?
+            """;
         List<Categories> list = new ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -77,19 +99,28 @@ public class CategoriesDAO extends DBContext {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, null, e);
         }
         return list;
     }
 
+    // 5. Phân trang theo component
     public List<Categories> getCategoriesByComponent(int componentId, int start, int size) {
         String sql = """
-            SELECT c.*, b.BrandName
+            SELECT
+              c.*,
+              bc.ComponentID,
+              bc.BrandID,
+              b.BrandName,
+              comp.ComponentName
             FROM Categories c
-            JOIN Brands b ON c.BrandID = b.BrandID
-            WHERE c.ComponentID = ? AND c.Status = 2
-            ORDER BY c.CategoryID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-        """;
+            JOIN BrandComs bc ON c.BrandComID   = bc.BrandComID
+            JOIN Brands b ON bc.BrandID = b.BrandID
+            JOIN Components comp ON bc.ComponentID = comp.ComponentID
+            WHERE bc.ComponentID = ? AND c.Status = 2
+            ORDER BY c.CategoryID
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+            """;
         List<Categories> list = new ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, componentId);
@@ -103,17 +134,25 @@ public class CategoriesDAO extends DBContext {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
-
         return list;
     }
 
+    // 6. Phân trang tất cả categories
     public List<Categories> getAllCategoriesPaginated(int page, int size) {
         String sql = """
-            SELECT c.*, b.BrandName
+            SELECT
+              c.*,
+              bc.ComponentID,
+              bc.BrandID,
+              b.BrandName,
+              comp.ComponentName
             FROM Categories c
-            JOIN Brands b ON c.BrandID = b.BrandID
-            ORDER BY c.CategoryID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-        """;
+            JOIN BrandComs bc ON c.BrandComID   = bc.BrandComID
+            JOIN Brands b ON bc.BrandID  = b.BrandID
+            JOIN Components comp ON bc.ComponentID = comp.ComponentID
+            ORDER BY c.CategoryID
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+            """;
         List<Categories> list = new ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, (page - 1) * size);
@@ -129,8 +168,14 @@ public class CategoriesDAO extends DBContext {
         return list;
     }
 
+    // 7. Đếm tổng số products theo component
     public int countTotalProducts(int componentId) {
-        String sql = "SELECT COUNT(*) FROM Categories WHERE ComponentID = ? AND Status = 2";
+        String sql = """
+            SELECT COUNT(*)
+            FROM Categories c
+            JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+            WHERE bc.ComponentID = ? AND c.Status = 2
+            """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, componentId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -144,6 +189,7 @@ public class CategoriesDAO extends DBContext {
         return 0;
     }
 
+    // 8. Đếm tất cả categories
     public int countAllCategories() {
         String sql = "SELECT COUNT(*) FROM Categories";
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -156,23 +202,31 @@ public class CategoriesDAO extends DBContext {
         return 0;
     }
 
-    //  filter   
-    public List<Categories> getCategoriesFiltered(String componentName, String brandName,
+    // 9. Lọc nâng cao với phân trang
+    public List<Categories> getCategoriesFiltered(
+            String componentName, String brandName,
             Integer minPrice, Integer maxPrice,
             String keyword, int start, int size) {
-        List<Categories> list = new ArrayList<>();
+
         StringBuilder sql = new StringBuilder("""
-            SELECT c.*, b.BrandName
+            SELECT
+              c.*,
+              bc.ComponentID,
+              bc.BrandID,
+              b.BrandName,
+              comp.ComponentName
             FROM Categories c
-            JOIN Brands b ON c.BrandID = b.BrandID
-            JOIN Components comp ON c.ComponentID = comp.ComponentID
-          
-        """);
+            JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+            JOIN Brands b ON bc.BrandID= b.BrandID
+            JOIN Components comp  ON bc.ComponentID = comp.ComponentID
+            WHERE 1=1
+            """);
         List<Object> params = buildFilter(sql, componentName, brandName, minPrice, maxPrice, keyword);
-        sql.append(" ORDER BY c.CategoryID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY ");
+        sql.append(" ORDER BY c.CategoryID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
         params.add(start);
         params.add(size);
 
+        List<Categories> list = new ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             setParams(ps, params);
             try (ResultSet rs = ps.executeQuery()) {
@@ -186,16 +240,22 @@ public class CategoriesDAO extends DBContext {
         return list;
     }
 
-    public int countFiltered(String componentName, String brandName,
-            Integer minPrice, Integer maxPrice, String keyword) {
+    // 10. Đếm kết quả lọc
+    public int countFiltered(
+            String componentName, String brandName,
+            Integer minPrice, Integer maxPrice,
+            String keyword) {
+
         StringBuilder sql = new StringBuilder("""
-            SELECT COUNT(*) 
+            SELECT COUNT(*)
             FROM Categories c
-            JOIN Brands b ON c.BrandID = b.BrandID
-            JOIN Components comp ON c.ComponentID = comp.ComponentID
-          
-        """);
+            JOIN BrandComs bc ON c.BrandComID= bc.BrandComID
+            JOIN Brands b ON bc.BrandID = b.BrandID
+            JOIN Components comp ON bc.ComponentID = comp.ComponentID
+            WHERE 1=1
+            """);
         List<Object> params = buildFilter(sql, componentName, brandName, minPrice, maxPrice, keyword);
+
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             setParams(ps, params);
             try (ResultSet rs = ps.executeQuery()) {
@@ -209,8 +269,43 @@ public class CategoriesDAO extends DBContext {
         return 0;
     }
 
+    //  Lấy danh sách sản phẩm theo tên component
+   public List<Categories> getCategoriesByComponentID(int componentID) {
+    // Nếu componentID là 1 thì bỏ qua
+    if (componentID == 1) return new ArrayList<>();     
+    String sql = """
+        SELECT
+          c.*,
+          bc.ComponentID,
+          bc.BrandID,
+          b.BrandName,
+          comp.ComponentName
+        FROM Categories c
+        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        JOIN Components comp ON bc.ComponentID = comp.ComponentID
+        WHERE bc.ComponentID = ? AND c.Status = 2
+        ORDER BY c.CategoryID
+    """;
+
+    List<Categories> list = new ArrayList<>();
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, componentID);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(extractCategory(rs));
+            }
+        }
+    } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, null, e);
+    }
+    return list;
+}
+
+
+    // Phương pháp tiện ích
     private Categories extractCategory(ResultSet rs) throws SQLException {
-        return new Categories(
+        Categories category = new Categories(
                 rs.getInt("CategoryID"),
                 rs.getString("CategoryName"),
                 rs.getInt("ComponentID"),
@@ -221,10 +316,20 @@ public class CategoriesDAO extends DBContext {
                 rs.getString("Description"),
                 rs.getInt("Status")
         );
+        try {
+            category.setComponentName(rs.getString("ComponentName"));
+        } catch (SQLException e) {
+            // Optionally log or ignore if not present
+        }
+        return category;
     }
 
-    private List<Object> buildFilter(StringBuilder sql, String componentName, String brandName,
-            Integer minPrice, Integer maxPrice, String keyword) {
+    private List<Object> buildFilter(
+            StringBuilder sql,
+            String componentName, String brandName,
+            Integer minPrice, Integer maxPrice,
+            String keyword) {
+
         List<Object> params = new ArrayList<>();
         if (componentName != null && !componentName.isEmpty()) {
             sql.append(" AND comp.ComponentName = ? ");

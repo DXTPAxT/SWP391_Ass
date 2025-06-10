@@ -1,42 +1,48 @@
 package models;
 
-import java.util.Date;
-
 public class Feedback {
 
     private int feedbackID;
     private int userID;
     private String content;
-    private int categoryID; // Thay productID thành categoryID
-    private Date createdAt;
+    private int orderItemID; // Sửa từ categoryID thành orderItemID
+    private String createdAt;
     private int rate;
     private int status; // 1: active, 0: inactive/deleted
+    private User user; // Thêm thuộc tính user
 
     // Constructor mặc định
     public Feedback() {
         this.status = 1; // Mặc định status = 1 (active)
     }
 
-    // Constructor đầy đủ (bao gồm status)
-    public Feedback(int feedbackID, int userID, String content, int categoryID,
-            Date createdAt, int rate, int status) {
+    // Constructor đầy đủ (bao gồm status và user)
+    public Feedback(int feedbackID, int userID, String content, int orderItemID,
+            String createdAt, int rate, int status, User user) {
         this.feedbackID = feedbackID;
         this.userID = userID;
         setContent(content); // Sử dụng setter để validate
-        this.categoryID = categoryID;
+        this.orderItemID = orderItemID;
         this.createdAt = createdAt;
         setRate(rate); // Sử dụng setter để validate
         this.status = status;
+        this.user = user;
+    }
+
+    // Constructor đầy đủ không có user (giữ tương thích cũ)
+    public Feedback(int feedbackID, int userID, String content, int orderItemID,
+            String createdAt, int rate, int status) {
+        this(feedbackID, userID, content, orderItemID, createdAt, rate, status, null);
     }
 
     // Constructor không có createdAt và status
-    public Feedback(int feedbackID, int userID, String content, int categoryID, int rate) {
-        this(feedbackID, userID, content, categoryID, null, rate, 1);
+    public Feedback(int feedbackID, int userID, String content, int orderItemID, int rate) {
+        this(feedbackID, userID, content, orderItemID, null, rate, 1);
     }
 
     // Constructor dùng cho insert (không cần ID, createdAt)
-    public Feedback(int userID, String content, int categoryID, int rate) {
-        this(0, userID, content, categoryID, null, rate, 1);
+    public Feedback(int userID, String content, int orderItemID, int rate) {
+        this(0, userID, content, orderItemID, null, rate, 1);
     }
 
     // Getter và Setter
@@ -73,22 +79,22 @@ public class Feedback {
         this.content = content.trim();
     }
 
-    public int getCategoryID() { // Thay getProductID thành getCategoryID
-        return categoryID;
+    public int getOrderItemID() { // Sửa từ getCategoryID thành getOrderItemID
+        return orderItemID;
     }
 
-    public void setCategoryID(int categoryID) { // Thay setProductID thành setCategoryID
-        if (categoryID <= 0) {
-            throw new IllegalArgumentException("CategoryID must be positive");
+    public void setOrderItemID(int orderItemID) { // Sửa từ setCategoryID thành setOrderItemID
+        if (orderItemID <= 0) {
+            throw new IllegalArgumentException("OrderItemID must be positive");
         }
-        this.categoryID = categoryID;
+        this.orderItemID = orderItemID;
     }
 
-    public Date getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -114,13 +120,21 @@ public class Feedback {
         this.status = status;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
         return "Feedback{"
                 + "feedbackID=" + feedbackID
                 + ", userID=" + userID
                 + ", content='" + content + '\''
-                + ", categoryID=" + categoryID
+                + ", orderItemID=" + orderItemID
                 + ", createdAt=" + createdAt
                 + ", rate=" + rate
                 + ", status=" + status

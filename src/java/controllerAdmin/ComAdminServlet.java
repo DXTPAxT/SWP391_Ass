@@ -4,7 +4,7 @@
  */
 package controllerAdmin;
 
-import dal.ComponentDAO;
+import dalAdmin.ComponentAdminDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -30,28 +30,24 @@ public class ComAdminServlet extends HttpServlet {
             if (service == null) {
                 service = "list";
             }
-            ComponentDAO dao = new ComponentDAO();
-            dao.updateAllComponentQuantities();
+            ComponentAdminDAO dao = new ComponentAdminDAO();
+            dao.updateComponentQuantitiesFromBrandComs();
 
             if (service.equals("list")) {
-                String keyword = request.getParameter("search");                
+
                 List<Components> components;
-                if (keyword != null && !keyword.trim().isEmpty()) {
-                    // Giả sử bạn có hàm getComponentByName(String name) trong DAO
-                    components = dao.getAllComponent("SELECT * FROM Components WHERE ComponentName LIKE '" + keyword + "' ");
-                } else {
-                    components = dao.getAllComponent("SELECT * FROM Components");
-                }
+
+                components = dao.getAllComponent();
 
                 request.setAttribute("data", components);
-                request.setAttribute("search", keyword); // để hiển thị lại keyword trên input nếu cần
+
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewComponent.jsp").forward(request, response);
             } else if (service.equals("update")) {
                 String submit = request.getParameter("submit");
                 if (submit == null) {
                     int componentID = Integer.parseInt(request.getParameter("componentID"));
                     Components component = dao.searchComponentByID(componentID);
-                    List<Components> components = dao.getAllComponent("SELECT * FROM Components");
+                    List<Components> components = dao.getAllComponent();
                     request.setAttribute("data", components);
                     request.setAttribute("component", component);
                     request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateComponent.jsp").forward(request, response);
@@ -69,7 +65,7 @@ public class ComAdminServlet extends HttpServlet {
             } else if (service.equals("insert")) {
                 String submit = request.getParameter("submit");
                 if (submit == null) {
-                    List<Components> components = dao.getAllComponent("SELECT * FROM Components");
+                    List<Components> components = dao.getAllComponent();
                     request.setAttribute("data", components);
                     request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertComponent.jsp").forward(request, response);
                 } else {
@@ -78,7 +74,7 @@ public class ComAdminServlet extends HttpServlet {
                     int Quantity = 0;
                     int Status = Integer.parseInt(request.getParameter("status"));
 
-                    Components component = new Components(); // Giả sử có constructor rỗng
+                    Components component = new Components();
                     component.setComponentName(name);
                     component.setQuantity(Quantity);
                     component.setStatus(Status);
