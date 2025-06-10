@@ -84,3 +84,50 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     margin-top: 20px ;
    margin-left: 200px;
 }
+
+.summary-box {
+    background-color: #fff;
+    
+    border-radius: 12px;
+    max-width: 100%;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.summary-label {
+    font-size: 32px ;
+    color: #111;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.summary-price {
+    font-size: 28px;
+    font-weight: bold;
+    color: #e60023;
+}
+
+.btn-cart {
+    font-size: 18px;
+    font-weight: bold;
+    border: 2px solid #e60023;
+    color: #e60023;
+    padding: 12px 0;
+}
+
+.btn-cart:hover {
+    background-color: #e60023;
+    color: #fff;
+}
+
+.btn-buy {
+    font-size: 18px;
+    font-weight: bold;
+    background-color: #e60023;
+    color: #fff;
+    padding: 12px 0;
+    border: none;
+}
+
+.btn-buy:hover {
+    background-color: #c8001a;
+}
