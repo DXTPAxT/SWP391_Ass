@@ -1,25 +1,24 @@
 package models;
 
-import java.util.Date;
-
 public class Feedback {
 
     private int feedbackID;
     private int userID;
     private String content;
     private int orderItemID; // Sửa từ categoryID thành orderItemID
-    private Date createdAt;
+    private String createdAt;
     private int rate;
     private int status; // 1: active, 0: inactive/deleted
+    private User user; // Thêm thuộc tính user
 
     // Constructor mặc định
     public Feedback() {
         this.status = 1; // Mặc định status = 1 (active)
     }
 
-    // Constructor đầy đủ (bao gồm status)
+    // Constructor đầy đủ (bao gồm status và user)
     public Feedback(int feedbackID, int userID, String content, int orderItemID,
-            Date createdAt, int rate, int status) {
+            String createdAt, int rate, int status, User user) {
         this.feedbackID = feedbackID;
         this.userID = userID;
         setContent(content); // Sử dụng setter để validate
@@ -27,6 +26,13 @@ public class Feedback {
         this.createdAt = createdAt;
         setRate(rate); // Sử dụng setter để validate
         this.status = status;
+        this.user = user;
+    }
+
+    // Constructor đầy đủ không có user (giữ tương thích cũ)
+    public Feedback(int feedbackID, int userID, String content, int orderItemID,
+            String createdAt, int rate, int status) {
+        this(feedbackID, userID, content, orderItemID, createdAt, rate, status, null);
     }
 
     // Constructor không có createdAt và status
@@ -84,11 +90,11 @@ public class Feedback {
         this.orderItemID = orderItemID;
     }
 
-    public Date getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -112,6 +118,14 @@ public class Feedback {
             throw new IllegalArgumentException("Status must be 0 (inactive) or 1 (active)");
         }
         this.status = status;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
