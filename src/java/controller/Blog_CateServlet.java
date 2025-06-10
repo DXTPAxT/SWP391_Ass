@@ -94,11 +94,14 @@ public class Blog_CateServlet extends HttpServlet {
             endPage++;
         }
 
+        List<Post> top5Posts = dao.getTop5NewestPosts();
+
         request.setAttribute("blog_categories", categories);
         request.setAttribute("postList", postList);
         request.setAttribute("endP", endPage);
         request.setAttribute("searchKeyword", searchKeyword);
         request.setAttribute("selectedSort", sort);// Gửi lại keyword để hiển thị lại trên form
+        request.setAttribute("top5Posts", top5Posts);
         request.getRequestDispatcher("ShopPages/Pages/blog.jsp").forward(request, response);
     }
 
