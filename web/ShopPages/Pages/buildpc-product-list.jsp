@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
+
 <style>
 .modal-overlay {
     display: none;
@@ -114,10 +115,10 @@ h4 {
     document.querySelectorAll('.select-product-btn').forEach(button => {
         button.addEventListener('click', () => {
             const categoryId = button.dataset.categoryId;
-            fetch('${ctx}/BuildPC?service=add&categoryID=' + categoryId)
+            fetch(`${'${ctx}'}/BuildPC?service=add&categoryID=` + categoryId)
                 .then(() => {
-                    modal.style.display = "none";
-                    window.location.href = '${ctx}/BuildPC';
+                    if (modal) modal.style.display = "none";
+                    window.location.href = `${'${ctx}'}/BuildPC`;
                 })
                 .catch(() => {
                     alert("Lỗi khi thêm sản phẩm.");
