@@ -34,7 +34,6 @@ public class BuildPC extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
 
-        // Lấy danh sách đã chọn từ session (nếu có)
         @SuppressWarnings("unchecked")
         List<Categories> selectedList = (List<Categories>) session.getAttribute("selectedComponents");
         if (selectedList == null) {
@@ -44,74 +43,78 @@ public class BuildPC extends HttpServlet {
         String service = request.getParameter("service");
         if (service == null) service = "view";
 
-        switch (service) {
-            case "add": {
-                int categoryId = parseIntOrDefault(request.getParameter("categoryID"), -1);
-                Categories selected = dao.getCategoryByID(categoryId).stream().findFirst().orElse(null);
-                if (selected != null) {
-                    int compId = selected.getComponentID();
-                    selectedList.removeIf(c -> c.getComponentID() == compId);
-                    selectedList.add(selected);
-                    session.setAttribute("selectedComponents", selectedList);
-                }
-                response.sendRedirect(request.getContextPath() + "/BuildPC");
-                return;
-            }
-
-            case "remove": {
-                int compId = parseIntOrDefault(request.getParameter("componentID"), -1);
+        if (service.equals("add")) {
+            int categoryId = parseIntOrDefault(request.getParameter("categoryID"), -1);
+            Categories selected = dao.getCategoryByID(categoryId).stream().findFirst().orElse(null);
+            if (selected != null) {
+                int compId = selected.getComponentID();
                 selectedList.removeIf(c -> c.getComponentID() == compId);
+                selectedList.add(selected);
                 session.setAttribute("selectedComponents", selectedList);
-                response.sendRedirect(request.getContextPath() + "/BuildPC");
-                return;
             }
+            response.sendRedirect(request.getContextPath() + "/BuildPC");
+            return;
+        }
 
-            case "reset": {
-                session.removeAttribute("selectedComponents");
+        if (service.equals("remove")) {
+            int compId = parseIntOrDefault(request.getParameter("componentID"), -1);
+            selectedList.removeIf(c -> c.getComponentID() == compId);
+            session.setAttribute("selectedComponents", selectedList);
+
+            // Kiểm tra nếu là request fetch/ajax thì trả về 200 OK, không redirect
+            String xRequestedWith = request.getHeader("X-Requested-With");
+            if ("XMLHttpRequest".equals(xRequestedWith)) {
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/BuildPC");
+            }
+            return;
+        }
+
+        if (service.equals("reset")) {
+            session.removeAttribute("selectedComponents");
+            response.sendRedirect(request.getContextPath() + "/BuildPC.jsp");
+            return;
+        }
+
+        if (service.equals("download")) {
+            if (selectedList.isEmpty()) {
                 response.sendRedirect(request.getContextPath() + "/BuildPC.jsp");
                 return;
             }
 
-            case "download": {
-                if (selectedList.isEmpty()) {
-                    response.sendRedirect(request.getContextPath() + "/BuildPC.jsp");
-                    return;
-                }
-                response.setContentType("text/csv");
-                response.setHeader("Content-Disposition", "attachment;filename=buildpc.csv");
-                var out = response.getWriter();
-                out.println("CategoryID,Name,Price");
-                for (Categories c : selectedList) {
-                    out.printf("%d,%s,%d\n", c.getCategoryID(), c.getCategoryName(), c.getPrice());
-                }
-                return;
+            response.setContentType("text/csv");
+            response.setHeader("Content-Disposition", "attachment;filename=buildpc.csv");
+            var out = response.getWriter();
+            out.println("CategoryID,Name,Price");
+            for (Categories c : selectedList) {
+                out.printf("%d,%s,%d\n", c.getCategoryID(), c.getCategoryName(), c.getPrice());
             }
-
-            case "filter": {
-                boolean ajax = "true".equals(request.getParameter("ajax"));
-                int componentID = parseIntOrDefault(request.getParameter("componentID"), -1);
-                List<Categories> list = new ArrayList<>();
-                if (componentID != 1 && componentID != -1) {
-                    list = dao.getCategoriesByComponentID(componentID);
-                }
-                request.setAttribute("products", list);
-                if (ajax) {
-                    request.getRequestDispatcher("/ShopPages/Pages/buildpc-product-list.jsp").forward(request, response);
-                } else {
-                    request.setAttribute("data", list);
-                    request.getRequestDispatcher("/ShopPages/Pages/BuildPC.jsp").forward(request, response);
-                }
-                return;
-            }
-
-            default: {
-                // Hiển thị mặc định trang BuildPC
-                List<Components> components = dao.getAllComponents();
-                request.setAttribute("components", components);
-                request.setAttribute("selectedComponents", selectedList);
-                request.getRequestDispatcher("ShopPages/Pages/BuildPC.jsp").forward(request, response);
-            }
+            return;
         }
+
+        if (service.equals("filter")) {
+            boolean ajax = "true".equals(request.getParameter("ajax"));
+            int componentID = parseIntOrDefault(request.getParameter("componentID"), -1);
+            List<Categories> list = new ArrayList<>();
+            if (componentID != 1 && componentID != -1) {
+                list = dao.getCategoriesByComponentID(componentID);
+            }
+            request.setAttribute("products", list);
+            if (ajax) {
+                request.getRequestDispatcher("/ShopPages/Pages/buildpc-product-list.jsp").forward(request, response);
+            } else {
+                request.setAttribute("data", list);
+                request.getRequestDispatcher("/ShopPages/Pages/BuildPC.jsp").forward(request, response);
+            }
+            return;
+        }
+
+        // Default view
+        List<Components> components = dao.getAllComponents();
+        request.setAttribute("components", components);
+        request.setAttribute("selectedComponents", selectedList);
+        request.getRequestDispatcher("ShopPages/Pages/BuildPC.jsp").forward(request, response);
     }
 
     private int parseIntOrDefault(String value, int defaultValue) {
