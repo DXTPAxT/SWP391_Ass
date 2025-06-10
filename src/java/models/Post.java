@@ -11,17 +11,32 @@ import java.sql.Timestamp;
  * @author User
  */
 public class Post {
-     private int Post_id;
+
+    private int Post_id;
     private String Title;
     private String Author;
     private java.sql.Timestamp Updated_date;
     private String Content;
+    private String bc_name;
     private int Bc_id;
     private String Thumbnail;
     private String Brief;
     private int Add_id;
 
     public Post() {
+    }
+
+    public Post(int Post_id, String Title, String Author, Timestamp Updated_date, String Content, String bc_name, int Bc_id, String Thumbnail, String Brief, int Add_id) {
+        this.Post_id = Post_id;
+        this.Title = Title;
+        this.Author = Author;
+        this.Updated_date = Updated_date;
+        this.Content = Content;
+        this.bc_name = bc_name;
+        this.Bc_id = Bc_id;
+        this.Thumbnail = Thumbnail;
+        this.Brief = Brief;
+        this.Add_id = Add_id;
     }
 
     public Post(int Post_id, String Title, String Author, Timestamp Updated_date, String Content, int Bc_id, String Thumbnail, String Brief, int Add_id) {
@@ -34,6 +49,14 @@ public class Post {
         this.Thumbnail = Thumbnail;
         this.Brief = Brief;
         this.Add_id = Add_id;
+    }
+
+    public String getBc_name() {
+        return bc_name;
+    }
+
+    public void setBc_name(String bc_name) {
+        this.bc_name = bc_name;
     }
 
     public int getPost_id() {
@@ -110,7 +133,9 @@ public class Post {
 
     @Override
     public String toString() {
-        return "Post{" + "Post_id=" + Post_id + ", Title=" + Title + ", Author=" + Author + ", Updated_date=" + Updated_date + ", Content=" + Content + ", Bc_id=" + Bc_id + ", Thumbnail=" + Thumbnail + ", Brief=" + Brief + ", Add_id=" + Add_id + '}';
+        return "Post{" + "Post_id=" + Post_id + ", Title=" + Title + ", Author=" + Author + ", Updated_date=" + Updated_date + ", Content=" + Content + ", bc_name=" + bc_name + ", Bc_id=" + Bc_id + ", Thumbnail=" + Thumbnail + ", Brief=" + Brief + ", Add_id=" + Add_id + '}';
     }
+
     
+
 }

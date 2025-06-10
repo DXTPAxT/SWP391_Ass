@@ -390,7 +390,7 @@
                                         <div class="col-md-5">
                                             <form action="ProductAdmin" method="get" class="input-group">
                                                 <input type="hidden" name="service" value="list">
-                                                <input type="text" name="search" class="form-control" placeholder="Enter component name">
+                                                <input type="text" name="search" class="form-control" placeholder="Enter Product Name">
                                                 <span class="input-group-btn">
                                                     <button class="btn btn-primary" type="submit">Search</button>
                                                 </span>
@@ -412,6 +412,7 @@
                                                 <th>Name</th>
                                                 <th>Created At</th>
                                                 <th>Category ID</th>
+                                                <th>ProductCode</th>
                                                 <th>Status</th>
                                                 <th>Toggle</th>
                                                 <th>Update</th>
@@ -426,6 +427,7 @@
                                                         <td>${product.name}</td>
                                                         <td>${product.createdAt}</td>
                                                         <td>${product.categoryID}</td>
+                                                        <td>${product.productCode}</td>
                                                         <td>
                                                             <c:choose>
                                                                 <c:when test="${product.status == 1}">
@@ -436,6 +438,7 @@
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </td>
+                                                        
                                                         <td>
                                                             <a href="ProductAdmin?service=changestatus&productID=${product.productID}" 
                                                                class="btn btn-info btn-sm"
