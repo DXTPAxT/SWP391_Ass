@@ -4,7 +4,7 @@
 
 <html>
     <head>
-        <title>Add blogs</title>
+        <title>Update blogs</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -22,8 +22,8 @@
     </head>
     <body>
         <div class="container form-container">
-            <h1 class="mb-4">Add new a blog</h1>
-            <h3 style="color: red">${requestScope.error}</h3>
+            <h1 class="mb-4">Update a blog</h1>
+            
             <c:if test="${not empty error}">
                 <div class="alert alert-danger" role="alert">
                     <c:out value="${error}" />
