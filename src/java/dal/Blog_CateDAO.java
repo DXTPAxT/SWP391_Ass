@@ -91,7 +91,7 @@ public class Blog_CateDAO extends DBContext {
 
     public List<Post> getAllPost() {
         List<Post> list = new ArrayList<>();
-        String sql = "SELECT * FROM Post";
+        String sql = "SELECT p.*, c.Bc_name FROM Post p JOIN Blogs_category c ON p.Bc_id = c.Bc_id";
 
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -103,6 +103,7 @@ public class Blog_CateDAO extends DBContext {
                 post.setAuthor(rs.getString("Author"));
                 post.setUpdated_date(rs.getTimestamp("Updated_date"));
                 post.setContent(rs.getString("Content"));
+                post.setBc_name(rs.getString("Bc_name"));
                 post.setBc_id(rs.getInt("Bc_id"));
                 post.setThumbnail(rs.getString("Thumbnail"));
                 post.setBrief(rs.getString("Brief"));
@@ -310,7 +311,7 @@ public List<Post> getPostsByCategorySorted(int bc_id, String sortOrder) {
         //            System.out.println(o);
         //        }
         //        System.out.println(dao.getAllBlogCategory());
-//                System.out.println(dao.getAllPost());
+                System.out.println(dao.getAllPost());
 
         //        System.out.println(dao.countAllPosts());
         //        Post p = new Post();

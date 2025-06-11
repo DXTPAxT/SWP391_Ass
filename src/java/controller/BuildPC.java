@@ -16,36 +16,21 @@ public class BuildPC extends HttpServlet {
 
     private final CategoriesDAO dao = new CategoriesDAO();
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
+ 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
 
-        // Lấy danh sách đã chọn từ session (nếu có)
-        @SuppressWarnings("unchecked")
         List<Categories> selectedList = (List<Categories>) session.getAttribute("selectedComponents");
-        if (selectedList == null) {
-            selectedList = new ArrayList<>();
-        }
+        if (selectedList == null) selectedList = new ArrayList<>();
 
         String service = request.getParameter("service");
         if (service == null) service = "view";
 
         switch (service) {
-            case "add": {
+            case "add" -> {
                 int categoryId = parseIntOrDefault(request.getParameter("categoryID"), -1);
                 Categories selected = dao.getCategoryByID(categoryId).stream().findFirst().orElse(null);
                 if (selected != null) {
@@ -57,22 +42,24 @@ public class BuildPC extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/BuildPC");
                 return;
             }
-
-            case "remove": {
+            case "remove" -> {
                 int compId = parseIntOrDefault(request.getParameter("componentID"), -1);
                 selectedList.removeIf(c -> c.getComponentID() == compId);
                 session.setAttribute("selectedComponents", selectedList);
-                response.sendRedirect(request.getContextPath() + "/BuildPC");
+                String xRequestedWith = request.getHeader("X-Requested-With");
+                if ("XMLHttpRequest".equals(xRequestedWith)) {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/BuildPC");
+                }
                 return;
             }
-
-            case "reset": {
+            case "reset" -> {
                 session.removeAttribute("selectedComponents");
                 response.sendRedirect(request.getContextPath() + "/BuildPC.jsp");
                 return;
             }
-
-            case "download": {
+            case "download" -> {
                 if (selectedList.isEmpty()) {
                     response.sendRedirect(request.getContextPath() + "/BuildPC.jsp");
                     return;
@@ -86,32 +73,35 @@ public class BuildPC extends HttpServlet {
                 }
                 return;
             }
-
-            case "filter": {
-                boolean ajax = "true".equals(request.getParameter("ajax"));
+            case "filter" -> {
                 int componentID = parseIntOrDefault(request.getParameter("componentID"), -1);
-                List<Categories> list = new ArrayList<>();
-                if (componentID != 1 && componentID != -1) {
-                    list = dao.getCategoriesByComponentID(componentID);
-                }
-                request.setAttribute("products", list);
-                if (ajax) {
-                    request.getRequestDispatcher("/ShopPages/Pages/buildpc-product-list.jsp").forward(request, response);
-                } else {
-                    request.setAttribute("data", list);
-                    request.getRequestDispatcher("/ShopPages/Pages/BuildPC.jsp").forward(request, response);
-                }
+                String brand = request.getParameter("brand");
+                String keyword = request.getParameter("keyword");
+                Integer min = parseNullableInt(request.getParameter("min"));
+                Integer max = parseNullableInt(request.getParameter("max"));
+                int page = parseIntOrDefault(request.getParameter("page"), 1);
+                int size = 6;
+                int start = (page - 1) * size;
+
+                String componentName = getComponentNameByID(componentID);
+                List<Categories> products = dao.getCategoriesFiltered(componentName, brand, min, max, keyword, start, size);
+                int total = dao.countFiltered(componentName, brand, min, max, keyword);
+                int totalPages = (int) Math.ceil(total / (double) size);
+
+                request.setAttribute("products", products);
+                request.setAttribute("brands", dao.getAllBrands());
+                request.setAttribute("componentID", componentID);
+                request.setAttribute("currentPage", page);
+                request.setAttribute("totalPages", totalPages);
+                request.getRequestDispatcher("/ShopPages/Pages/buildpc-product-list.jsp").forward(request, response);
                 return;
             }
-
-            default: {
-                // Hiển thị mặc định trang BuildPC
-                List<Components> components = dao.getAllComponents();
-                request.setAttribute("components", components);
-                request.setAttribute("selectedComponents", selectedList);
-                request.getRequestDispatcher("ShopPages/Pages/BuildPC.jsp").forward(request, response);
-            }
         }
+
+        List<Components> components = dao.getAllComponents();
+        request.setAttribute("components", components);
+        request.setAttribute("selectedComponents", selectedList);
+        request.getRequestDispatcher("ShopPages/Pages/BuildPC.jsp").forward(request, response);
     }
 
     private int parseIntOrDefault(String value, int defaultValue) {
@@ -120,6 +110,32 @@ public class BuildPC extends HttpServlet {
         } catch (NumberFormatException e) {
             return defaultValue;
         }
+    }
+
+    private Integer parseNullableInt(String val) {
+        try {
+            return (val != null && !val.isEmpty()) ? Integer.parseInt(val) : null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private String getComponentNameByID(int componentID) {
+        return dao.getAllComponents().stream()
+            .filter(c -> c.getComponentID() == componentID)
+            .map(Components::getComponentName)
+            .findFirst().orElse(null);
+    }
+   @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     @Override
