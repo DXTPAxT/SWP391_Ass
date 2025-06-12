@@ -324,7 +324,7 @@ public class CategoriesDAO extends DBContext {
         }
         return 0;
     }
-
+// select in build pc
     public List<Categories> getCategoriesByComponentID(int componentID) {
         if (componentID == 1) {
             return new ArrayList<>();
