@@ -1,14 +1,34 @@
-package dal;
+package dalAdmin;
 
 import java.sql.*;
 import java.util.*;
 import java.util.logging.*;
+import models.BraComs;
 import models.Categories;
 
-public class CategoryAdminDAO extends DBContext {
+public class CategoryAdminDAO extends DBAdminContext {
 
-    public List<Categories> getAllCategories(String sql) {
+    public List<Categories> getAllCategories() {
         List<Categories> list = new ArrayList<>();
+
+        String sql = """
+        SELECT 
+            c.CategoryID,
+            c.CategoryName,
+            c.BrandComID,
+            c.Quantity,
+            c.inventory,
+            c.Price,
+            c.Description,
+            c.Status,
+            c.ImageURL,
+            b.BrandName,
+            com.ComponentName
+        FROM Categories c
+        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        JOIN Components com ON bc.ComponentID = com.ComponentID
+    """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -16,12 +36,15 @@ public class CategoryAdminDAO extends DBContext {
                 Categories c = new Categories(
                         rs.getInt("CategoryID"),
                         rs.getString("CategoryName"),
-                        rs.getInt("ComponentID"),
-                        rs.getInt("BrandID"),
+                        rs.getInt("BrandComID"),
+                        rs.getString("BrandName"),
+                        rs.getString("ComponentName"),
                         rs.getInt("Quantity"),
+                        rs.getInt("inventory"),
                         rs.getInt("Price"),
                         rs.getString("Description"),
-                        rs.getInt("Status")
+                        rs.getInt("Status"),
+                        rs.getString("ImageURL")
                 );
                 list.add(c);
             }
@@ -33,58 +56,49 @@ public class CategoryAdminDAO extends DBContext {
         return list;
     }
 
-    public List<Categories> getCategoriesByComponentID(int id) {
+    public List<Categories> getAllCategoriesByBrandComID(int brandComID) {
         List<Categories> list = new ArrayList<>();
-        String sql = "SELECT * FROM Categories WHERE ComponentID = ?";
+
+        String sql = """
+        SELECT 
+            c.CategoryID,
+            c.CategoryName,
+            c.BrandComID,
+            c.Quantity,
+            c.inventory,
+            c.Price,
+            c.Description,
+            c.Status,
+            c.ImageURL,
+            b.BrandName,
+            com.ComponentName
+        FROM Categories c
+        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        JOIN Components com ON bc.ComponentID = com.ComponentID
+        WHERE c.BrandComID = ?
+    """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Categories c = new Categories(
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"),
-                        rs.getInt("ComponentID"),
-                        rs.getInt("BrandID"),
-                        rs.getInt("Quantity"),
-                        rs.getInt("Price"),
-                        rs.getString("Description"),
-                        rs.getInt("Status")
-                );
-                list.add(c);
+            ps.setInt(1, brandComID);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Categories c = new Categories(
+                            rs.getInt("CategoryID"),
+                            rs.getString("CategoryName"),
+                            rs.getInt("BrandComID"),
+                            rs.getString("BrandName"),
+                            rs.getString("ComponentName"),
+                            rs.getInt("Quantity"),
+                            rs.getInt("inventory"),
+                            rs.getInt("Price"),
+                            rs.getString("Description"),
+                            rs.getInt("Status"),
+                            rs.getString("ImageURL")
+                    );
+                    list.add(c);
+                }
             }
-
-        } catch (SQLException e) {
-            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
-        }
-
-        return list;
-    }
-
-    public List<Categories> getCategoriesByComponentIDAndComponentName(int id, String name) {
-        List<Categories> list = new ArrayList<>();
-        String sql = "SELECT * FROM Categories WHERE ComponentID = ? and CategoryName = ' % ? % ' ";
-
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ps.setString(2, name);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Categories c = new Categories(
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"),
-                        rs.getInt("ComponentID"),
-                        rs.getInt("BrandID"),
-                        rs.getInt("Quantity"),
-                        rs.getInt("Price"),
-                        rs.getString("Description"),
-                        rs.getInt("Status")
-                );
-                list.add(c);
-            }
-
         } catch (SQLException e) {
             Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
         }
@@ -101,12 +115,12 @@ public class CategoryAdminDAO extends DBContext {
                 return new Categories(
                         rs.getInt("CategoryID"),
                         rs.getString("CategoryName"),
-                        rs.getInt("ComponentID"),
-                        rs.getInt("BrandID"),
+                        rs.getInt("BrandComID"),
                         rs.getInt("Quantity"),
                         rs.getInt("Price"),
                         rs.getString("Description"),
-                        rs.getInt("Status")
+                        rs.getInt("Status"),
+                        rs.getString("ImageURL")
                 );
             }
         } catch (SQLException e) {
@@ -114,18 +128,18 @@ public class CategoryAdminDAO extends DBContext {
         }
         return null;
     }
-    
+
     public void insertCategory(Categories c) {
-        String sql = "INSERT INTO Categories (CategoryName, ComponentID, BrandID, Quantity, Price, Description, Status) "
+        String sql = "INSERT INTO Categories (CategoryName, BrandComID, Quantity, Price, Description, Status, ImageURL) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, c.getCategoryName());
-            ps.setInt(2, c.getComponentID());
-            ps.setInt(3, c.getBrandID());
-            ps.setInt(4, c.getQuantity());
-            ps.setInt(5, c.getPrice());
-            ps.setString(6, c.getDescription());
-            ps.setInt(7, c.getStatus());
+            ps.setInt(2, c.getBraComID());
+            ps.setInt(3, c.getQuantity());
+            ps.setInt(4, c.getPrice());
+            ps.setString(5, c.getDescription());
+            ps.setInt(6, c.getStatus());
+            ps.setString(7, c.getImgURL());
             ps.executeUpdate();
         } catch (SQLException e) {
             Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
@@ -133,16 +147,16 @@ public class CategoryAdminDAO extends DBContext {
     }
 
     public void updateCategory(Categories c) {
-        String sql = "UPDATE Categories SET CategoryName = ?, ComponentID = ?, BrandID = ?, Quantity = ?, Price = ?, Description = ?, Status = ? "
+        String sql = "UPDATE Categories SET CategoryName = ?, BrandComID = ?, Quantity = ?, Price = ?, Description = ?, Status = ?, ImageURL = ? "
                 + "WHERE CategoryID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, c.getCategoryName());
-            ps.setInt(2, c.getComponentID());
-            ps.setInt(3, c.getBrandID());
-            ps.setInt(4, c.getQuantity());
-            ps.setInt(5, c.getPrice());
-            ps.setString(6, c.getDescription());
-            ps.setInt(7, c.getStatus());
+            ps.setInt(2, c.getBraComID());
+            ps.setInt(3, c.getQuantity());
+            ps.setInt(4, c.getPrice());
+            ps.setString(5, c.getDescription());
+            ps.setInt(6, c.getStatus());
+            ps.setString(7, c.getImgURL());
             ps.setInt(8, c.getCategoryID());
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -160,41 +174,93 @@ public class CategoryAdminDAO extends DBContext {
         }
     }
 
-    public void updateAllCategoryQuantities() {
-        String sql = """
-        UPDATE Categories
-        SET Quantity = (
-            SELECT COUNT(*) 
-            FROM Products 
-            WHERE Products.CategoryID = Categories.CategoryID
-        )
-    """;
-
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.executeUpdate();
-            System.out.println("Cập nhật số lượng sản phẩm cho các Category thành công.");
-        } catch (SQLException e) {
-            System.err.println("Lỗi khi cập nhật số lượng sản phẩm: " + e.getMessage());
-        }
-    }
-
     public void updateStatus(int categoryID, int newStatus) {
         String sql = "UPDATE Categories SET Status = ? WHERE CategoryID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, newStatus);
             ps.setInt(2, categoryID);
             ps.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    public void updateCategoryQuantities() {
+        String sql = """
+        UPDATE Categories
+        SET Quantity = (
+            SELECT COUNT(*)
+            FROM Products p
+            WHERE p.CategoryID = Categories.CategoryID
+        )
+    """;
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void main(String[] args) {
-        CategoryAdminDAO dao = new CategoryAdminDAO(); // hoặc BrandAdminDAO nếu tên vậy
+    public void updateCategoryInventory() {
+        String sql = """
+        UPDATE Categories
+        SET inventory = (
+            SELECT COUNT(*)
+            FROM Products p
+            WHERE p.CategoryID = Categories.CategoryID AND p.status = 1
+        )
+    """;
 
-        int testComponentID = 2; // thay đổi ID này tùy dữ liệu có trong DB
-        Categories categories = dao.getCategoryByID(testComponentID);
-
-        System.out.println(categories.getCategoryName());
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
+    public void updateCategoryStatusIfInventoryZero() {
+        String sql = "UPDATE Categories SET Status = 0 WHERE inventory = 0";
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isCategoryNameExists(String categoryName) {
+        String sql = "SELECT 1 FROM Categories WHERE CategoryName = ?";
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, categoryName);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            System.err.println("isCategoryNameExists Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        CategoryAdminDAO dao = new CategoryAdminDAO();
+        int id = 1;
+        List<Categories> all = dao.getAllCategoriesByBrandComID(id);
+
+        System.out.printf("%-5s %-20s %-20s %-20s %-10s%n",
+                "ID", "Brand Name", "Component Name", "Category Name", "BraComID", "inventory");
+
+        for (Categories c : all) {
+            System.out.printf("%-5d %-20s %-20s %-20s %-20s %-10d%n",
+                    c.getCategoryID(),
+                    c.getBrandName(),
+                    c.getComponentName(),
+                    c.getCategoryName(),
+                    c.getBraComID(),
+                    c.getInventory()
+            );
+        }
+    }
+
+    // Tùy chọn: bạn có thể thêm phương thức updateAllCategoryQuantities nếu bảng Products vẫn còn liên kết theo CategoryID
 }
