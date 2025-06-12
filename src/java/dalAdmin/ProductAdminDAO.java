@@ -168,14 +168,32 @@ public class ProductAdminDAO extends DBAdminContext {
         return false;
     }
 
-    // Xóa sản phẩm
-    public boolean deleteProduct(int id) {
-        String sql = "DELETE FROM Products WHERE ProductID = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
+    public void insertProductsFromExcel(List<String> productCodes, int categoryID, int importID) {
+        String sql = "INSERT INTO Products (ProductCode, CategoryID, ImportID, Status) VALUES (?, ?, ?, 1)";
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            for (String code : productCodes) {
+                ps.setString(1, code);
+                ps.setInt(2, categoryID);
+                ps.setInt(3, importID);
+                ps.addBatch();
+            }
+
+            ps.executeBatch();
         } catch (SQLException e) {
-            System.err.println("deleteProduct Error: " + e.getMessage());
+            System.err.println("insertProductsFromExcel Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isProductCodeExists(String code) {
+        String sql = "SELECT 1 FROM Products WHERE ProductCode = ?";
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, code);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return false;
     }

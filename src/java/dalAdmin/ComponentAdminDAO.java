@@ -60,20 +60,6 @@ public class ComponentAdminDAO extends DBAdminContext {
         return component;
     }
 
-    public void updateComponent(Components c) {
-        String sql = "UPDATE Components SET ComponentName = ?, Quantity = ?, Status = ? WHERE ComponentID = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, c.getComponentName());
-            ps.setInt(2, c.getQuantity());
-            ps.setInt(3, c.getStatus());
-            ps.setInt(4, c.getComponentID());
-
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            Logger.getLogger(ComponentAdminDAO.class.getName()).log(Level.SEVERE, null, e);
-        }
-    }
-
     public void insertComponent(Components c) {
         String sql = "INSERT INTO Components (ComponentName, Quantity, Status) VALUES (?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -148,6 +134,20 @@ public class ComponentAdminDAO extends DBAdminContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isComponentNameExist(String name) {
+        String sql = "SELECT COUNT(*) FROM Components WHERE LOWER(LTRIM(RTRIM(ComponentName))) = LOWER(LTRIM(RTRIM(?)))";
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public static void main(String[] args) {

@@ -229,6 +229,19 @@ public class CategoryAdminDAO extends DBAdminContext {
         }
     }
 
+    public boolean isCategoryNameExists(String categoryName) {
+        String sql = "SELECT 1 FROM Categories WHERE CategoryName = ?";
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, categoryName);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            System.err.println("isCategoryNameExists Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         CategoryAdminDAO dao = new CategoryAdminDAO();
         int id = 1;
