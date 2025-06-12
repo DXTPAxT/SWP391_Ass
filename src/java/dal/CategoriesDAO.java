@@ -194,6 +194,7 @@ public class CategoriesDAO extends DBContext {
         }
         return 0;
     }
+// filter categopies    
 
     public List<Categories> getCategoriesFiltered(String componentName, String brandName,
             Integer minPrice, Integer maxPrice,
@@ -231,6 +232,44 @@ public class CategoriesDAO extends DBContext {
         return list;
     }
 
+    // filter build pc
+    public List<Categories> getCategoriesFilteredNoComponent(String brandName,
+            Integer minPrice, Integer maxPrice,
+            String keyword, int start, int size) {
+
+        StringBuilder sql = new StringBuilder("""
+            SELECT
+              c.*,
+              bc.ComponentID,
+              bc.BrandID,
+              b.BrandName,
+              comp.ComponentName
+            FROM Categories c
+            JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+            JOIN Brands b ON bc.BrandID = b.BrandID
+            JOIN Components comp ON bc.ComponentID = comp.ComponentID
+            WHERE 1=1
+        """);
+        List<Object> params = buildFilter1(sql, brandName, minPrice, maxPrice, keyword);
+        sql.append(" ORDER BY c.CategoryID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        params.add(start);
+        params.add(size);
+
+        List<Categories> list = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            setParams(ps, params);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(extractCategory(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+        return list;
+    }
+//Count in Categories
+
     public int countFiltered(String componentName, String brandName,
             Integer minPrice, Integer maxPrice,
             String keyword) {
@@ -244,6 +283,34 @@ public class CategoriesDAO extends DBContext {
             WHERE 1=1
         """);
         List<Object> params = buildFilter(sql, componentName, brandName, minPrice, maxPrice, keyword);
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            setParams(ps, params);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+        return 0;
+    }
+
+    // count in BuildPC
+    public int countFilteredNoComponent(String brandName,
+            Integer minPrice, Integer maxPrice,
+            String keyword) {
+
+        StringBuilder sql = new StringBuilder("""
+            SELECT COUNT(*)
+            FROM Categories c
+            JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+            JOIN Brands b ON bc.BrandID = b.BrandID
+            JOIN Components comp ON bc.ComponentID = comp.ComponentID
+            WHERE 1=1
+        """);
+        List<Object> params = buildFilter1(sql, brandName, minPrice, maxPrice, keyword);
 
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             setParams(ps, params);
@@ -309,6 +376,7 @@ public class CategoriesDAO extends DBContext {
         category.setComponentName(rs.getString("ComponentName"));
         return category;
     }
+// objects categories
 
     private List<Object> buildFilter(StringBuilder sql, String componentName, String brandName,
             Integer minPrice, Integer maxPrice, String keyword) {
@@ -318,6 +386,31 @@ public class CategoriesDAO extends DBContext {
             sql.append(" AND comp.ComponentName = ? ");
             params.add(componentName);
         }
+        if (brandName != null && !brandName.isEmpty()) {
+            sql.append(" AND b.BrandName = ? ");
+            params.add(brandName);
+        }
+        if (minPrice != null) {
+            sql.append(" AND c.Price >= ? ");
+            params.add(minPrice);
+        }
+        if (maxPrice != null) {
+            sql.append(" AND c.Price <= ? ");
+            params.add(maxPrice);
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND LOWER(c.CategoryName) LIKE ? ");
+            params.add("%" + keyword.toLowerCase() + "%");
+        }
+        return params;
+    }
+
+    // object buildpc
+    private List<Object> buildFilter1(StringBuilder sql, String brandName,
+            Integer minPrice, Integer maxPrice, String keyword) {
+
+        List<Object> params = new ArrayList<>();
+
         if (brandName != null && !brandName.isEmpty()) {
             sql.append(" AND b.BrandName = ? ");
             params.add(brandName);
