@@ -62,7 +62,7 @@
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
                         <li><a href="#">User</a></li>
-                        <li class="active">Insert Component</li>
+                        <li class="active">Insert User</li>
                     </ol>
                 </section>
                 <!-- Main content -->
@@ -72,37 +72,35 @@
                             <div class="alert alert-danger" style="font-weight:bold;">${error}</div>
                         </c:if>
 
-                        <form method="post" action="${ctx}/ComAdmin">
+                        <form method="post" action="${ctx}/BrandAdmin">
                             <input type="hidden" name="service" value="insert">
                             <input type="hidden" name="submit" value="submit">
 
-                            <!-- Component Name -->
+                            <!-- Brand Name -->
                             <div class="form-group">
-                                <label for="component_name">Component Name</label>
-                                <input type="text" id="component_name" name="component_name"
-                                       class="form-control${error eq 'Component name cannot be empty or whitespace only.'
-                                                            || error eq 'Component name is too long (maximum 50 characters).'
-                                                            || error eq 'Component name must contain only letters, digits and spaces.'
-                                                            || error eq 'Component name already exists.' ? ' is-invalid' : ''}"
-                                       placeholder="Enter component name" required value="${component_name}">
-                               
+                                <label for="brandName">Brand Name</label>
+                                <input type="text" id="brandName" name="brandName"
+                                       class="form-control${error eq 'Brand name cannot be empty or whitespace only.' 
+                                                            || error eq 'Brand name must contain only letters and spaces.' 
+                                                            || error eq 'Brand name cannot be entirely uppercase.' 
+                                                            || error eq 'Brand name already exists.' ? ' is-invalid' : ''}"
+                                       placeholder="Enter brand name" required value="${brandName}">
+                                
                             </div>
-
                             <!-- Status -->
                             <div class="form-group">
                                 <label for="status">Status</label>
                                 <select id="status" name="status" class="form-control">
                                     <option value="1" ${status == '1' ? 'selected' : ''}>Active</option>
                                     <option value="0" ${status == '0' ? 'selected' : ''}>Inactive</option>
+
                                 </select>
                             </div>
 
                             <!-- Submit -->
-                            <button type="submit" class="btn btn-success">Add Component</button>
+                            <button type="submit" class="btn btn-success">Add Brand</button>
                         </form>
                     </div>
-
-
 
                 </div>
                 <!-- /.box -->

@@ -62,7 +62,7 @@
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
                         <li><a href="#">User</a></li>
-                        <li class="active">Insert Component</li>
+                        <li class="active">Insert User</li>
                     </ol>
                 </section>
                 <!-- Main content -->
@@ -72,36 +72,40 @@
                             <div class="alert alert-danger" style="font-weight:bold;">${error}</div>
                         </c:if>
 
-                        <form method="post" action="${ctx}/ComAdmin">
+                        <form method="post" action="${ctx}/BraComAdmin">
                             <input type="hidden" name="service" value="insert">
                             <input type="hidden" name="submit" value="submit">
 
-                            <!-- Component Name -->
+                            <!-- Brand Dropdown -->
                             <div class="form-group">
-                                <label for="component_name">Component Name</label>
-                                <input type="text" id="component_name" name="component_name"
-                                       class="form-control${error eq 'Component name cannot be empty or whitespace only.'
-                                                            || error eq 'Component name is too long (maximum 50 characters).'
-                                                            || error eq 'Component name must contain only letters, digits and spaces.'
-                                                            || error eq 'Component name already exists.' ? ' is-invalid' : ''}"
-                                       placeholder="Enter component name" required value="${component_name}">
-                               
-                            </div>
-
-                            <!-- Status -->
-                            <div class="form-group">
-                                <label for="status">Status</label>
-                                <select id="status" name="status" class="form-control">
-                                    <option value="1" ${status == '1' ? 'selected' : ''}>Active</option>
-                                    <option value="0" ${status == '0' ? 'selected' : ''}>Inactive</option>
+                                <label for="brandID">Brand</label>
+                                <select id="brandID" name="brandID" class="form-control" >
+                                    <option value="">-- Select Brand --</option>
+                                    <c:forEach var="b" items="${brands}">
+                                        <option value="${b.brandID}" ${b.brandID == brandID ? 'selected' : ''}>
+                                            ${b.brandName}
+                                        </option>
+                                    </c:forEach>
                                 </select>
                             </div>
 
+                            <!-- Component Dropdown -->
+                            <div class="form-group">
+                                <label for="componentID">Component</label>
+                                <select id="componentID" name="componentID" class="form-control" >
+                                    <option value="">-- Select Component --</option>
+                                    <c:forEach var="c" items="${components}">
+                                        <option value="${c.componentID}" ${c.componentID == componentID ? 'selected' : ''}>
+                                            ${c.componentName}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            
                             <!-- Submit -->
-                            <button type="submit" class="btn btn-success">Add Component</button>
+                            <button type="submit" class="btn btn-success">Add Brand-Component</button>
                         </form>
                     </div>
-
 
 
                 </div>

@@ -42,46 +42,54 @@ public class ComAdminServlet extends HttpServlet {
                 request.setAttribute("data", components);
 
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewComponent.jsp").forward(request, response);
-            } else if (service.equals("update")) {
-                String submit = request.getParameter("submit");
-                if (submit == null) {
-                    int componentID = Integer.parseInt(request.getParameter("componentID"));
-                    Components component = dao.searchComponentByID(componentID);
-                    List<Components> components = dao.getAllComponent();
-                    request.setAttribute("data", components);
-                    request.setAttribute("component", component);
-                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateComponent.jsp").forward(request, response);
-                } else {
-                    int componentID = Integer.parseInt(request.getParameter("component_id"));
-                    String componentName = request.getParameter("component_name");
-                    int quantity = 0;
-                    int status = Integer.parseInt(request.getParameter("status"));
-
-                    Components component = new Components(componentID, componentName, quantity, status);
-                    dao.updateComponent(component);
-
-                    response.sendRedirect(request.getContextPath() + "/ComAdmin?service=list");
-                }
             } else if (service.equals("insert")) {
                 String submit = request.getParameter("submit");
+
                 if (submit == null) {
                     List<Components> components = dao.getAllComponent();
                     request.setAttribute("data", components);
                     request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertComponent.jsp").forward(request, response);
                 } else {
-
                     String name = request.getParameter("component_name");
-                    int Quantity = 0;
-                    int Status = Integer.parseInt(request.getParameter("status"));
+                    String statusRaw = request.getParameter("status");
+                    int quantity = 0; // mặc định khi insert mới
 
-                    Components component = new Components();
-                    component.setComponentName(name);
-                    component.setQuantity(Quantity);
-                    component.setStatus(Status);
+                    String error = null;
 
-                    dao.insertComponent(component);
+                    // Validate name
+                    if (name == null || name.trim().isEmpty()) {
+                        error = "Component name cannot be empty or whitespace only.";
+                    } else if (name.length() > 50) {
+                        error = "Component name is too long (maximum 50 characters).";
+                    } else if (!name.matches("^[A-Za-z0-9 ]+$")) {
+                        error = "Component name must contain only letters, digits and spaces.";
+                    } else if (dao.isComponentNameExist(name.trim())) {
+                        error = "Component name already exists.";
+                    }
 
-                    response.sendRedirect(request.getContextPath() + "/ComAdmin?service=list");
+                    if (error != null) {
+                        request.setAttribute("error", error);
+                        request.setAttribute("component_name", name);
+                        request.setAttribute("status", statusRaw);
+                        request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertComponent.jsp").forward(request, response);
+                        return;
+                    }
+
+                    try {
+                        int status = Integer.parseInt(statusRaw);
+
+                        Components component = new Components();
+                        component.setComponentName(name.trim());
+                        component.setQuantity(quantity);
+                        component.setStatus(status);
+
+                        dao.insertComponent(component);
+                        response.sendRedirect(request.getContextPath() + "/ComAdmin?service=list");
+
+                    } catch (NumberFormatException e) {
+                        request.setAttribute("error", "Invalid status.");
+                        request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertComponent.jsp").forward(request, response);
+                    }
                 }
             } else if (service.equals("changestatus")) {
                 int componentID = Integer.parseInt(request.getParameter("componentID"));
