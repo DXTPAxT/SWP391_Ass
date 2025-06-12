@@ -74,7 +74,7 @@ public class BuildPC extends HttpServlet {
                 return;
             }
             case "filter" -> {
-                int componentID = parseIntOrDefault(request.getParameter("componentID"), -1);
+               
                 String brand = request.getParameter("brand");
                 String keyword = request.getParameter("keyword");
                 Integer min = parseNullableInt(request.getParameter("min"));
@@ -83,14 +83,14 @@ public class BuildPC extends HttpServlet {
                 int size = 6;
                 int start = (page - 1) * size;
 
-                String componentName = getComponentNameByID(componentID);
-                List<Categories> products = dao.getCategoriesFiltered(componentName, brand, min, max, keyword, start, size);
-                int total = dao.countFiltered(componentName, brand, min, max, keyword);
+                
+                List<Categories> products = dao. getCategoriesFilteredNoComponent( brand, min, max, keyword, start, size);
+                int total = dao.countFilteredNoComponent( brand, min, max, keyword);
                 int totalPages = (int) Math.ceil(total / (double) size);
 
                 request.setAttribute("products", products);
                 request.setAttribute("brands", dao.getAllBrands());
-                request.setAttribute("componentID", componentID);
+       
                 request.setAttribute("currentPage", page);
                 request.setAttribute("totalPages", totalPages);
                 request.getRequestDispatcher("/ShopPages/Pages/buildpc-product-list.jsp").forward(request, response);
