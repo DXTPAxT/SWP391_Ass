@@ -340,7 +340,7 @@ public class CategoriesDAO extends DBContext {
             JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
             JOIN Brands b ON bc.BrandID = b.BrandID
             JOIN Components comp ON bc.ComponentID = comp.ComponentID
-            WHERE bc.ComponentID = ? AND c.Status = 2
+            WHERE bc.ComponentID = ?
             ORDER BY c.CategoryID
         """;
 
