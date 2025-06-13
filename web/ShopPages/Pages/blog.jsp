@@ -97,7 +97,7 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="${pageContext.request.contextPath}/blog.jsp" class="active">Blog</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/HomePages" class="active">Home</a></li>
                                     <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="${pageContext.request.contextPath}/Product?service=listProduct" class="active">Products</a></li>                                            <li><a href="product-details.html">Product Details</a></li> 
@@ -106,12 +106,10 @@
                                             <li><a href="login.html">Login</a></li> 
                                         </ul>
                                     </li> 
-                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="blog.html">Blog List</a></li>
-                                            <li><a href="blog-single.html">Blog Single</a></li>
-                                        </ul>
-                                    </li> 
+                                   
+                                            <li><a href="${pageContext.request.contextPath}/blogc">Blog List</a></li>
+                                            
+                                   
                                     <li><a href="404.html">404</a></li>
                                     <li><a href="contact-us.html">Contact</a></li>
                                 </ul>
@@ -124,26 +122,7 @@
                                 </form>
                             </div>
                         </div>
-                        <h2>Blog Posts</h2>
 
-                        <form method="get" action="Blog_CateServlet">
-                            <input type="hidden" name="cateId" value="<%= cateId %>"/>
-                            <label>Sort by:</label>
-                            <select name="sort" onchange="this.form.submit()">
-                                <option value="" <%= (sort == null || sort.equals("")) ? "selected" : "" %>>Default</option>
-                                <option value="oldest" <%= "oldest".equals(sort) ? "selected" : "" %>>Oldest to Latest</option>
-                                <option value="latest" <%= "latest".equals(sort) ? "selected" : "" %>>Latest to Oldest</option>
-                            </select>
-                        </form>
-
-                        <c:forEach var="p" items="${posts}">
-                            <div style="border:1px solid #ccc; margin:10px; padding:10px;">
-                                <h3>${p.title}</h3>
-                                <img src="${p.thumbnail}" width="150" />
-                                <p>${p.brief}</p>
-                                <small>Updated: ${p.updated_date}</small>
-                            </div>
-                        </c:forEach>
                     </div>
                 </div>
             </div><!--/header-bottom-->
@@ -197,6 +176,7 @@
 
                                         <div class="col-sm-6 d-flex" style="padding-bottom: 20px">
                                             <div class="w-100 d-flex flex-column mb-4" style="border:1px solid #ccc; padding:15px; height:100%;">
+                                                <a href="${ctx}/blogdetail?Post_id=${post.post_id}" style="color: black;">
                                                 <h3>${post.title}</h3>
                                                 <p>${post.author}</p>
                                                 <p>${post.updated_date}</p>
@@ -208,6 +188,7 @@
                                                         alt="Thumbnail" 
                                                         style="width:100%; height:200px; object-fit:cover; margin-top:auto;" />
                                                 </c:if>
+                                                    </a>
 
                                             </div>
                                         </div>
@@ -215,7 +196,7 @@
                                         <c:if test="${status.index % 2 == 1 || status.last}">
                                         </div>
                                     </c:if>
-
+                               
 
                                 </c:forEach>
 

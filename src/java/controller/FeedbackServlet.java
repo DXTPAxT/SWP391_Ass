@@ -121,24 +121,28 @@ public class FeedbackServlet extends HttpServlet {
         HttpSession session = req.getSession();
         User currentUser = (User) session.getAttribute("user");
         int feedbackId;
+        int categoryId = 1; // default fallback
         try {
             feedbackId = Integer.parseInt(req.getParameter("id"));
+            if (req.getParameter("categoryID") != null) {
+                categoryId = Integer.parseInt(req.getParameter("categoryID"));
+            }
         } catch (NumberFormatException e) {
             session.setAttribute("error", "Invalid feedback ID");
-            res.sendRedirect(req.getContextPath() + "/ShopPages/Pages/feedback.jsp");
+            res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
             return;
         }
 
         Feedback feedback = dao.getFeedbackById(feedbackId);
         if (feedback == null) {
             session.setAttribute("error", "Feedback not found");
-            res.sendRedirect(req.getContextPath() + "/ShopPages/Pages/feedback.jsp");
+            res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
             return;
         }
 
         if (currentUser == null || (currentUser.getUserID() != feedback.getUserID() && currentUser.getRoleID() != 1)) {
             session.setAttribute("error", "You are not authorized to delete this feedback");
-            res.sendRedirect(req.getContextPath() + "/ShopPages/Pages/feedback.jsp");
+            res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
             return;
         }
 
@@ -148,7 +152,7 @@ public class FeedbackServlet extends HttpServlet {
         } else {
             session.setAttribute("error", "Failed to delete feedback");
         }
-        res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=1");
+        res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
     }
 
     private void handleEditFeedback(HttpServletRequest req, HttpServletResponse res)
@@ -193,24 +197,28 @@ public class FeedbackServlet extends HttpServlet {
         }
 
         int feedbackId;
+        int categoryId = 1; // default fallback
         try {
             feedbackId = Integer.parseInt(req.getParameter("feedbackID"));
+            if (req.getParameter("categoryID") != null) {
+                categoryId = Integer.parseInt(req.getParameter("categoryID"));
+            }
         } catch (NumberFormatException e) {
             session.setAttribute("error", "Invalid feedback ID");
-            res.sendRedirect(req.getContextPath() + "/ShopPages/Pages/feedback.jsp");
+            res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
             return;
         }
 
         Feedback feedback = dao.getFeedbackById(feedbackId);
         if (feedback == null) {
             session.setAttribute("error", "Feedback not found");
-            res.sendRedirect(req.getContextPath() + "/ShopPages/Pages/feedback.jsp");
+            res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
             return;
         }
 
         if (currentUser.getUserID() != feedback.getUserID() && currentUser.getRoleID() != 1) {
             session.setAttribute("error", "You are not authorized to edit this feedback");
-            res.sendRedirect(req.getContextPath() + "/ShopPages/Pages/feedback.jsp");
+            res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
             return;
         }
 
@@ -241,7 +249,7 @@ public class FeedbackServlet extends HttpServlet {
 
         if (success) {
             session.setAttribute("message", "Feedback updated successfully");
-            res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=1");
+            res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
         } else {
             session.setAttribute("error", "Failed to update feedback");
             req.setAttribute("feedback", feedback);
@@ -258,22 +266,22 @@ public class FeedbackServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             session.setAttribute("error", "Invalid category ID");
             req.setAttribute("feedbackList", new ArrayList<>());
-            req.getRequestDispatcher("/ShopPages/Pages/feedback.jsp").forward(req, res);
+            req.getRequestDispatcher("/ShopPages/Pages/CategoriesDetail.jsp").forward(req, res);
             return;
         }
 
         try {
             session.removeAttribute("error");
-            List<Feedback> categoryFeedback = dao.getFeedbackByOrderItemId(categoryId); // Note: This may need adjustment based on actual logic
+            List<Feedback> categoryFeedback = dao.getFeedbackByCategoryId(categoryId);
             req.setAttribute("feedbackList", categoryFeedback != null ? categoryFeedback : new ArrayList<>());
             req.setAttribute("categoryID", categoryId);
-            req.getRequestDispatcher("/ShopPages/Pages/feedback.jsp").forward(req, res);
+            req.getRequestDispatcher("/ShopPages/Pages/CategoriesDetail.jsp").forward(req, res);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error in handleCategoryFeedback: " + e.getMessage(), e);
             session.setAttribute("error", "Failed to retrieve feedbacks for category: " + e.getMessage());
             req.setAttribute("feedbackList", new ArrayList<>());
             req.setAttribute("categoryID", categoryId);
-            req.getRequestDispatcher("/ShopPages/Pages/feedback.jsp").forward(req, res);
+            req.getRequestDispatcher("/ShopPages/Pages/CategoriesDetail.jsp").forward(req, res);
         }
     }
 

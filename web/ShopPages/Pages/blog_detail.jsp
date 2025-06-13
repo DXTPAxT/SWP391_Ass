@@ -244,7 +244,8 @@
                                    
                                     <li>
                                         <div class="blog-card">
-                                        <a href="blogdetail?id=${p.post_id}" style="color: black">
+                                        <a <a href="blogdetail?Post_id=${p.post_id}" style="color: black">
+>
                                             ${p.title} - <fmt:formatDate value="${p.updated_date}" pattern="dd/MM/yyyy"/>
                                         </a>
                                         </div>

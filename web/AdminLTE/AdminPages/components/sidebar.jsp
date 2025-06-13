@@ -35,7 +35,7 @@
                 </a>
                 <ul class="treeview-menu">                               
                     <li><a href="${param.ctx}/BrandAdmin"><i class="fa fa-circle-o"></i>View Brand</a></li>
-                    <li><a href="${param.ctx}/BrandAdmin&service=insert"><i class="fa fa-circle-o"></i>Insert new Brand</a></li>  
+                    <li><a href="${param.ctx}/BrandAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Brand</a></li>  
                 </ul>
             </li>
             <li class="treeview">
@@ -47,7 +47,7 @@
                 </a>
                 <ul class="treeview-menu">                               
                     <li><a href="${param.ctx}/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>
-                    <li><a href="${param.ctx}/ComAdmin&service=insert"><i class="fa fa-circle-o"></i>Insert new Component</a></li>
+                    <li><a href="${param.ctx}/ComAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Component</a></li>
                 </ul>
             </li>
             <li class="treeview">
@@ -59,7 +59,7 @@
                 </a>
                 <ul class="treeview-menu">                               
                     <li><a href="${param.ctx}/BraComAdmin"><i class="fa fa-circle-o"></i>View Bra-Com</a></li>   
-                    <li><a href="${param.ctx}/BraComAdmin&service=insert"><i class="fa fa-circle-o"></i>Insert new Brand-Com</a></li>
+                    <li><a href="${param.ctx}/BraComAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Brand-Com</a></li>
                 </ul>
             </li>
             <li class="treeview">
@@ -71,7 +71,7 @@
                 </a>
                 <ul class="treeview-menu">                               
                     <li><a href="${param.ctx}/CateAdmin"><i class="fa fa-circle-o"></i>View Category</a></li>
-                    <li><a href="${param.ctx}/CateAdmin&service=insert"><i class="fa fa-circle-o"></i>Insert new Category</a></li>
+                    <li><a href="${param.ctx}/CateAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Category</a></li>
                 </ul>
             </li>
             <li class="treeview">
@@ -83,7 +83,7 @@
                 </a>
                 <ul class="treeview-menu">                               
                     <li><a href="${param.ctx}/Import"><i class="fa fa-circle-o"></i>View Import</a></li>   
-                    <li><a href="${param.ctx}/Import&service=insert"><i class="fa fa-circle-o"></i>Insert new Import</a></li>   
+                    <li><a href="${param.ctx}/Import?service=insert"><i class="fa fa-circle-o"></i>Insert new Import</a></li>   
                 </ul>
             </li>
             <li class="treeview">
@@ -95,7 +95,6 @@
                 </a>
                 <ul class="treeview-menu">                               
                     <li><a href="${param.ctx}/ProductAdmin"><i class="fa fa-circle-o"></i>View Product</a></li> 
-                    <li><a href="${param.ctx}/ProductAdmin&service=insert"><i class="fa fa-circle-o"></i>Insert new Product</a></li>   
                 </ul>
             </li>
             <li class="treeview">
@@ -107,7 +106,7 @@
                 </a>
                 <ul class="treeview-menu">                               
                     <li><a href="${param.ctx}/OrderAdmin"><i class="fa fa-circle-o"></i>View Order</a></li>
-                    <li><a href="${param.ctx}/OrderAdmin&service=insert"><i class="fa fa-circle-o"></i>Insert new Order</a></li> 
+                    <li><a href="${param.ctx}/OrderAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Order</a></li> 
                 </ul>
             </li>
             <li class="treeview">
@@ -119,7 +118,7 @@
                 </a>
                 <ul class="treeview-menu">                               
                     <li><a href="${param.ctx}/FeedBackAdmin"><i class="fa fa-circle-o"></i>View Feedback</a></li> 
-                    <li><a href="${param.ctx}/FeedBackAdmin&service=insert"><i class="fa fa-circle-o"></i>Insert new Feedback</a></li>                                         
+                    <li><a href="${param.ctx}/FeedBackAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Feedback</a></li>                                         
 
                 </ul>
             </li>
@@ -132,7 +131,7 @@
                 </a>
                 <ul class="treeview-menu">                               
                     <li><a href="${param.ctx}/BlogAdmin"><i class="fa fa-circle-o"></i>View Blog</a></li>
-                    <li><a href="${param.ctx}/BlogAdmin&service=insert"><i class="fa fa-circle-o"></i>Insert new Blog</a></li>
+                    <li><a href="${param.ctx}/BlogAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Blog</a></li>
                 </ul>
             </li>
             <li class="treeview">

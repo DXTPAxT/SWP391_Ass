@@ -122,7 +122,7 @@ public class BraComAdminDAO extends DBAdminContext {
 
     // Thêm mới
     public boolean insertBraCom(BraComs b) {
-        String sql = "INSERT INTO BraComs (BrandID, ComponentID, Quantity) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO BrandComs (BrandID, ComponentID, Quantity) VALUES (?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, b.getBrandID());
             ps.setInt(2, b.getComponentID());
@@ -130,33 +130,6 @@ public class BraComAdminDAO extends DBAdminContext {
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("insertBraCom Error: " + e.getMessage());
-        }
-        return false;
-    }
-
-    // Cập nhật
-    public boolean updateBraCom(BraComs b) {
-        String sql = "UPDATE BraComs SET BrandID = ?, ComponentID = ?, Quantity = ? WHERE BraComID = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, b.getBrandID());
-            ps.setInt(2, b.getComponentID());
-            ps.setInt(3, b.getQuantity());
-            ps.setInt(4, b.getBraComID());
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.println("updateBraCom Error: " + e.getMessage());
-        }
-        return false;
-    }
-
-    // Xoá
-    public boolean deleteBraCom(int id) {
-        String sql = "DELETE FROM BraComs WHERE BraComID = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.println("deleteBraCom Error: " + e.getMessage());
         }
         return false;
     }
@@ -176,6 +149,41 @@ public class BraComAdminDAO extends DBAdminContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean existsBrandComponentPair(int brandID, int componentID) {
+        String sql = "SELECT COUNT(*) FROM BrandComs WHERE BrandID = ? AND ComponentID = ?";
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, brandID);
+            ps.setInt(2, componentID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public int getBrandComID(int brandID, int componentID) {
+        int brandComID = -1;
+        String sql = "SELECT BrandComID FROM BrandComs WHERE BrandID = ? AND ComponentID = ?";
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, brandID);
+            ps.setInt(2, componentID);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                brandComID = rs.getInt("BrandComID");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return brandComID;
     }
 
     public static void main(String[] args) {

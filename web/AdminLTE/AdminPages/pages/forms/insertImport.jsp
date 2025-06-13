@@ -72,39 +72,25 @@
                             <div class="alert alert-danger" style="font-weight:bold;">${error}</div>
                         </c:if>
 
-                        <form method="post" action="${ctx}/CateAdmin">
+                        <!-- IMPORTANT: must use enctype for file upload -->
+                        <form method="post" action="${ctx}/Import" enctype="multipart/form-data">
                             <input type="hidden" name="service" value="insert">
                             <input type="hidden" name="submit" value="submit">
 
-                            <!-- Category Name -->
+                            <!-- Import Code -->
                             <div class="form-group">
-                                <label for="categoryName">Category Name</label>
-                                <input type="text" id="categoryName" name="categoryName"
-                                       class="form-control" placeholder="Enter category name"
-                                       value="${categoryName}">
+                                <label for="importCode">Import Code</label>
+                                <input type="text" id="importCode" name="importCode" class="form-control" placeholder="Enter import code" value="${importCode}">
                             </div>
 
-                            <!-- Brand -->
+                            <!-- Category Dropdown -->
                             <div class="form-group">
-                                <label for="brandID">Brand</label>
-                                <select id="brandID" name="brandID" class="form-control">
-                                    <option value="">-- Select Brand --</option>
-                                    <c:forEach var="b" items="${brands}">
-                                        <option value="${b.brandID}" ${b.brandID == brandID ? 'selected' : ''}>
-                                            ${b.brandName}
-                                        </option>
-                                    </c:forEach>
-                                </select>
-                            </div>
-
-                            <!-- Component -->
-                            <div class="form-group">
-                                <label for="componentID">Component</label>
-                                <select id="componentID" name="componentID" class="form-control">
-                                    <option value="">-- Select Component --</option>
-                                    <c:forEach var="c" items="${components}">
-                                        <option value="${c.componentID}" ${c.componentID == componentID ? 'selected' : ''}>
-                                            ${c.componentName}
+                                <label for="categoryID">Select Category</label>
+                                <select id="categoryID" name="categoryID" class="form-control">
+                                    <option value="">-- Select Category --</option>
+                                    <c:forEach var="cate" items="${categories}">
+                                        <option value="${cate.categoryID}" ${cate.categoryID == categoryID ? 'selected' : ''}>
+                                            ${cate.categoryName}
                                         </option>
                                     </c:forEach>
                                 </select>
@@ -113,36 +99,17 @@
                             <!-- Price -->
                             <div class="form-group">
                                 <label for="price">Price</label>
-                               <input type="text" id="price" name="price" class="form-control" value="${price}">
-
+                                <input type="number" id="price" name="price" class="form-control" placeholder="Enter price" value="${price}">
                             </div>
 
-                            <!-- Description -->
+                            <!-- Excel Upload -->
                             <div class="form-group">
-                                <label for="description">Description</label>
-                                <textarea id="description" name="description"
-                                          class="form-control" rows="3">${description}</textarea>
-                            </div>
-
-                            <!-- Status -->
-                            <div class="form-group">
-                                <label for="status">Status</label>
-                                <select id="status" name="status" class="form-control">
-                                    <option value="1" ${status == '1' ? 'selected' : ''}>Active</option>
-                                    <option value="0" ${status == '0' ? 'selected' : ''}>Inactive</option>
-                                </select>
-                            </div>
-
-                            <!-- Image URL -->
-                            <div class="form-group">
-                                <label for="imageURL">Image URL</label>
-                                <input type="text" id="imageURL" name="imageURL"
-                                       class="form-control" placeholder="Enter image URL"
-                                       value="${imageURL}">
+                                <label for="productExcel">Upload Excel File (Product Codes)</label>
+                                <input type="file" id="productExcel" name="productExcel" class="form-control" accept=".xlsx" required>
                             </div>
 
                             <!-- Submit -->
-                            <button type="submit" class="btn btn-success">Insert Category</button>
+                            <button type="submit" class="btn btn-success">Insert Import</button>
                         </form>
                     </div>
 
