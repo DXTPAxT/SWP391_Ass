@@ -73,15 +73,16 @@
                         </c:if>
 
                         <form method="post" action="${ctx}/CateAdmin">
-                            <input type="hidden" name="service" value="insert">
+                            <input type="hidden" name="service" value="update">
                             <input type="hidden" name="submit" value="submit">
+                            <input type="hidden" name="categoryID" value="${category.categoryID}">
 
                             <!-- Category Name -->
                             <div class="form-group">
                                 <label for="categoryName">Category Name</label>
                                 <input type="text" id="categoryName" name="categoryName"
                                        class="form-control" placeholder="Enter category name"
-                                       value="${categoryName}">
+                                       value="${category.categoryName}">
                             </div>
 
                             <!-- Brand -->
@@ -90,7 +91,7 @@
                                 <select id="brandID" name="brandID" class="form-control">
                                     <option value="">-- Select Brand --</option>
                                     <c:forEach var="b" items="${brands}">
-                                        <option value="${b.brandID}" ${b.brandID == brandID ? 'selected' : ''}>
+                                        <option value="${b.brandID}" ${b.brandID == selectedBrandID ? 'selected' : ''}>
                                             ${b.brandName}
                                         </option>
                                     </c:forEach>
@@ -103,7 +104,7 @@
                                 <select id="componentID" name="componentID" class="form-control">
                                     <option value="">-- Select Component --</option>
                                     <c:forEach var="c" items="${components}">
-                                        <option value="${c.componentID}" ${c.componentID == componentID ? 'selected' : ''}>
+                                        <option value="${c.componentID}" ${c.componentID == selectedComponentID ? 'selected' : ''}>
                                             ${c.componentName}
                                         </option>
                                     </c:forEach>
@@ -113,23 +114,22 @@
                             <!-- Price -->
                             <div class="form-group">
                                 <label for="price">Price</label>
-                               <input type="text" id="price" name="price" class="form-control" value="${price}">
-
+                                <input type="text" id="price" name="price" class="form-control" value="${category.price}">
                             </div>
 
                             <!-- Description -->
                             <div class="form-group">
                                 <label for="description">Description</label>
                                 <textarea id="description" name="description"
-                                          class="form-control" rows="3">${description}</textarea>
+                                          class="form-control" rows="3">${category.description}</textarea>
                             </div>
 
                             <!-- Status -->
                             <div class="form-group">
                                 <label for="status">Status</label>
                                 <select id="status" name="status" class="form-control">
-                                    <option value="1" ${status == '1' ? 'selected' : ''}>Active</option>
-                                    <option value="0" ${status == '0' ? 'selected' : ''}>Inactive</option>
+                                    <option value="1" ${category.status == 1 ? 'selected' : ''}>Active</option>
+                                    <option value="0" ${category.status == 0 ? 'selected' : ''}>Inactive</option>
                                 </select>
                             </div>
 
@@ -138,13 +138,15 @@
                                 <label for="imageURL">Image URL</label>
                                 <input type="text" id="imageURL" name="imageURL"
                                        class="form-control" placeholder="Enter image URL"
-                                       value="${imageURL}">
+                                       value="${category.imageURL}">
                             </div>
 
                             <!-- Submit -->
-                            <button type="submit" class="btn btn-success">Insert Category</button>
+                            <button type="submit" class="btn btn-primary">Update Category</button>
+                            <a href="${ctx}/CateAdmin?service=list" class="btn btn-default">Cancel</a>
                         </form>
                     </div>
+
 
                     <!-- /.box -->
                 </div>

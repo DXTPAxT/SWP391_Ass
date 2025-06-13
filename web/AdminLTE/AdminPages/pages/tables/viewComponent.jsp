@@ -73,7 +73,7 @@
                                                 <th>Name</th>
                                                 <th>Quantity</th>                                               
                                                 <th>Status</th>
-                                                <th>Update</th>
+                                               
                                                 <th>View</th>
                                             </tr>
                                         </thead>
@@ -93,11 +93,7 @@
                                                                     <span class="label label-danger">Disable</span>
                                                                 </c:otherwise>
                                                             </c:choose>
-                                                        </td>                                                   
-                                                        <td>
-                                                            <a href="ComAdmin?service=update&componentID=${com.componentID}" 
-                                                               class="btn btn-warning btn-sm">Update</a>
-                                                        </td>
+                                                        </td>                                                            
                                                         <td>
                                                             <a href="BraComAdmin?service=listbycom&componentID=${com.componentID}" 
                                                                class="btn btn-warning btn-sm">View</a>
