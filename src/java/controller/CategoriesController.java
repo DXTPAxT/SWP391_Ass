@@ -7,6 +7,7 @@ import jakarta.servlet.http.*;
 import models.Categories;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "CategoriesController", urlPatterns = {"/CategoriesController"})
@@ -20,14 +21,19 @@ public class CategoriesController extends HttpServlet {
 
         response.setContentType("text/html;charset=UTF-8");
         String service = request.getParameter("service");
-        if (service == null) service = "list";
+        if (service == null) {
+            service = "list";
+        }
 
         // --- Chi tiết sản phẩm ---
         if ("detail".equals(service)) {
             int categoryId = parseIntegerOrDefault(request.getParameter("categoryID"), -1);
             List<Categories> detailList = dao.getCategoryByID(categoryId);
+            dal.FeedbackDAO feedbackDAO = new dal.FeedbackDAO();
+            ArrayList<models.Feedback> feedbackList = new ArrayList<>(feedbackDAO.getFeedbackByCategoryId(categoryId));
             if (!detailList.isEmpty()) {
                 request.setAttribute("product", detailList.get(0));
+                request.setAttribute("feedbackList", feedbackList);
                 request.getRequestDispatcher("/ShopPages/Pages/CategoriesDetails.jsp").forward(request, response);
             }
             return;
@@ -71,7 +77,6 @@ public class CategoriesController extends HttpServlet {
         request.setAttribute("BrandWithComponent", dao.getBrandsGroupedByComponent());
         request.setAttribute("listBrand", dao.getAllBrands());
 
-      
         request.getRequestDispatcher("/ShopPages/Pages/Categories.jsp").forward(request, response);
     }
 
