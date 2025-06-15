@@ -1,6 +1,6 @@
 package controllerAdmin;
 
-import dalAdmin.BraComAdminDAO;
+import dalAdmin.BrandComAdminDAO;
 import dalAdmin.BrandAdminDAO;
 import dalAdmin.ComponentAdminDAO;
 import java.io.IOException;
@@ -10,9 +10,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import models.BraComs;
+import models.BrandComs;
 
-public class BraComAdminServlet extends HttpServlet {
+public class BrandComAdminServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -23,22 +23,22 @@ public class BraComAdminServlet extends HttpServlet {
             if (service == null) {
                 service = "list";
             }
-            BraComAdminDAO dao = new BraComAdminDAO();
+            BrandComAdminDAO dao = new BrandComAdminDAO();
             dao.updateBrandComQuantitiesFromCategories();
             if (service.equals("list")) {
-                List<BraComs> braComList = dao.getAllBraComs();
+                List<BrandComs> braComList = dao.getAllBrandComs();
                 request.setAttribute("braCom", braComList);
-                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewBraCom.jsp").forward(request, response);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewBrandCom.jsp").forward(request, response);
             } else if (service.equals("listbybrand")) {
                 int id = Integer.parseInt(request.getParameter("brandID"));
-                List<BraComs> braComList = dao.getBraComsByBrandID(id);
+                List<BrandComs> braComList = dao.getBrandComsByBrandID(id);
                 request.setAttribute("braCom", braComList);
-                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewBraCom.jsp").forward(request, response);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewBrandCom.jsp").forward(request, response);
             } else if (service.equals("listbycom")) {
                 int id = Integer.parseInt(request.getParameter("componentID"));
-                List<BraComs> braComList = dao.getBraComsByComponentID(id);
+                List<BrandComs> braComList = dao.getBrandComsByComponentID(id);
                 request.setAttribute("braCom", braComList);
-                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewBraCom.jsp").forward(request, response);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewBrandCom.jsp").forward(request, response);
             } else if (service.equals("insert")) {
                 String submit = request.getParameter("submit");
 
@@ -80,9 +80,9 @@ public class BraComAdminServlet extends HttpServlet {
                         }
 
                         // Nếu hợp lệ thì insert
-                        BraComs newBraCom = new BraComs(brandID, componentID, quantity);
-                        dao.insertBraCom(newBraCom);
-                        response.sendRedirect("BraComAdmin?service=list");
+                        BrandComs newBrandCom = new BrandComs(brandID, componentID, quantity);
+                        dao.insertBrandCom(newBrandCom);
+                        response.sendRedirect("BrandComAdmin?service=list");
 
                     } catch (NumberFormatException e) {
                         error = "Invalid selection.";
@@ -117,6 +117,6 @@ public class BraComAdminServlet extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "BraCom Management Servlet";
+        return "BrandCom Management Servlet";
     }
 }

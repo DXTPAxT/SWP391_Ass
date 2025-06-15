@@ -58,11 +58,11 @@
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
-                    <h1>INSERT USER</h1>
+                    <h1>INSERT IMPORT</h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">User</a></li>
-                        <li class="active">Insert User</li>
+                        <li><a href="#">Import</a></li>
+                        <li class="active">Insert Import</li>
                     </ol>
                 </section>
                 <!-- Main content -->

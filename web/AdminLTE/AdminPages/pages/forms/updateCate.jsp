@@ -24,21 +24,27 @@
             </jsp:include>
             <div class="content-wrapper">
                 <section class="content-header">
-                    <h1>UPDATE CATE</h1>
+                    <h1>UPDATE CATEGORY</h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">User</a></li>
+                        <li><a href="#">Category</a></li>
                         <li class="active">Update Category</li>
                     </ol>
                 </section>
                 <div class="box box-primary">
                     <div class="box-body">
-                        <c:if test="${not empty error}">
-                            <div class="alert alert-danger" style="font-weight:bold;">${error}</div>
+                        <!-- Hiển thị danh sách lỗi nếu có -->
+                        <c:if test="${not empty errors}">
+                            <div class="alert alert-danger" style="font-weight:bold;">
+                                <ul>
+                                    <c:forEach var="err" items="${errors}">
+                                        <li>${err}</li>
+                                        </c:forEach>
+                                </ul>
+                            </div>
                         </c:if>
 
                         <form method="post" action="${ctx}/CateAdmin">
-                            
                             <input type="hidden" name="service" value="update">
                             <input type="hidden" name="submit" value="submit">
                             <input type="hidden" name="categoryID" value="${category.categoryID}">
@@ -47,8 +53,9 @@
                             <div class="form-group">
                                 <label for="categoryName">Category Name</label>
                                 <input type="text" id="categoryName" name="categoryName"
-                                       class="form-control${error eq 'Category name cannot be empty.' || error eq 'Category name contains invalid characters or is too long.' ? ' is-invalid' : ''}"
-                                       required value="${category.categoryName}">
+                                       class="form-control"
+                                       required
+                                       value="${param.categoryName != null ? param.categoryName : category.categoryName}">
                             </div>
 
                             <!-- Component Name (readonly) -->
@@ -60,7 +67,7 @@
                             <!-- Brand Name (readonly) -->
                             <div class="form-group">
                                 <label for="brandName">Brand</label>
-                                <input type="text" id="brandName" class="form-control" readonly value="${category.brandName}">
+                                <input type="text" id="brandName" class="form-control" readonly value="${bn}">
                             </div>
 
                             <!-- Price (readonly) -->
@@ -72,23 +79,22 @@
                             <!-- Description -->
                             <div class="form-group">
                                 <label for="description">Description</label>
-                                <textarea id="description" name="description" class="form-control" rows="3">${category.description}</textarea>
+                                <textarea id="description" name="description" class="form-control" rows="3">${param.description != null ? param.description : category.description}</textarea>
                             </div>
 
                             <!-- Status -->
                             <div class="form-group">
                                 <label for="status">Status</label>
                                 <select id="status" name="status" class="form-control">
-                                    <option value="1" ${category.status == 1 ? 'selected' : ''}>Active</option>
-                                    <option value="0" ${category.status == 0 ? 'selected' : ''}>Inactive</option>
-                                </select>
-                            </div>
+                                    <option value="1" <c:if test="${param.status == '1' || (empty param.status and category.status == 1)}">selected</c:if>>Active</option>
+                                    <option value="0" <c:if test="${param.status == '0' || (empty param.status and category.status == 0)}">selected</c:if>>Inactive</option>
+                                    </select>
+                                </div>
 
-                            <!-- Image URL -->
-                            <div class="form-group">
-                                <label for="imageURL">Image URL</label>
-                                <input type="text" id="imageURL" name="imageURL" class="form-control"
-                                       >
+                                <!-- Image URL -->
+                                <div class="form-group">
+                                    <label for="imageURL">Image URL</label>
+                                    <input type="text" id="imageURL" name="imageURL" class="form-control" >
                             </div>
 
                             <!-- Submit -->
@@ -96,6 +102,7 @@
                             <a href="${ctx}/CateAdmin?service=list" class="btn btn-default">Cancel</a>
                         </form>
                     </div>
+
 
                 </div>
             </div>

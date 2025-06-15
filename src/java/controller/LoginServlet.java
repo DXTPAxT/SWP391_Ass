@@ -38,7 +38,7 @@ public class LoginServlet extends HttpServlet {
             RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/login.jsp");
             rs.forward(request, response);
         } else {
-            if (user.getRoleID() == 3) {
+            if (user.getRoleID() == 2) {
                 String redirectURL = (String) session.getAttribute(REDIRECT_AFTER_LOGIN);
                 if (redirectURL == null) {
                     redirectURL = "HomePages";
