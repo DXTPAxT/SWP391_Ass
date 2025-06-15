@@ -22,7 +22,7 @@ public class FeedbackDAO extends DBContext {
                     rs.getInt("UserID"),
                     rs.getString("Content"),
                     rs.getInt("OrderItemID"),
-                    rs.getTimestamp("CreatedAt"),
+                    rs.getString("CreatedAt"),
                     rs.getInt("Rate"),
                     rs.getInt("Status")
                 );
@@ -47,7 +47,7 @@ public class FeedbackDAO extends DBContext {
                         rs.getInt("UserID"),
                         rs.getString("Content"),
                         rs.getInt("OrderItemID"),
-                        rs.getTimestamp("CreatedAt"),
+                        rs.getString("CreatedAt"),
                         rs.getInt("Rate"),
                         rs.getInt("Status")
                     );
@@ -73,7 +73,7 @@ public class FeedbackDAO extends DBContext {
                         rs.getInt("UserID"),
                         rs.getString("Content"),
                         rs.getInt("OrderItemID"),
-                        rs.getTimestamp("CreatedAt"),
+                        rs.getString("CreatedAt"),
                         rs.getInt("Rate"),
                         rs.getInt("Status")
                     );
@@ -98,7 +98,7 @@ public class FeedbackDAO extends DBContext {
                         rs.getInt("UserID"),
                         rs.getString("Content"),
                         rs.getInt("OrderItemID"),
-                        rs.getTimestamp("CreatedAt"),
+                        rs.getString("CreatedAt"),
                         rs.getInt("Rate"),
                         rs.getInt("Status")
                     );
