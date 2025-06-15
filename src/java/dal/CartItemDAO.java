@@ -10,11 +10,25 @@ public class CartItemDAO extends DBContext {
     public ArrayList<CartItem> getCartItemsByUserId(int userId) {
         ArrayList<CartItem> itemList = new ArrayList<>();
 
-        String sql = "SELECT ci.CartItemID, ci.Quantity, "
-                + "p.ProductID, p.Name, p.Price "
-                + "FROM CartItems ci "
-                + "JOIN Products p ON ci.ProductID = p.ProductID "
-                + "WHERE ci.UserID = ?";
+        String sql = """
+                     SELECT ci.CartItemID,
+                       ci.UserID,
+                       ci.CategoryID,
+                       ci.WarrantyDetailID,
+                       ci.Quantity,
+                       c.CategoryName,
+                       c.BrandComID,
+                       c.Price,
+                       c.Description as CategoryDescription,
+                       w.Description as WarrantyDescription,
+                       wd.Price
+                       FROM CartItems ci 
+                       LEFT JOIN Categories c on ci.CategoryID = c.CategoryID
+                       LEFT JOIN Users u on u.UserID = ci.UserID
+                       LEFT JOIN WarrantyDetails wd on ci.WarrantyDetailID = wd.WarrantyDetailID
+                       LEFT JOIN Warranties w on w.WarrantyID = wd.WarrantyID
+                     """
+                ;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);

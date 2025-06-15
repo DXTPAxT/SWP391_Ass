@@ -15,8 +15,58 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class FeedbackDAO {
-
+  
     private DBContext dbContext;
+
+
+    public List<Feedback> getAllFeedbacks() {
+        List<Feedback> list = new ArrayList<>();
+        String sql = "SELECT * FROM Feedbacks ORDER BY CreatedAt DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Feedback f = new Feedback(
+                    rs.getInt("FeedbackID"),
+                    rs.getInt("UserID"),
+                    rs.getString("Content"),
+                    rs.getInt("OrderItemID"),
+                    rs.getString("CreatedAt"),
+                    rs.getInt("Rate"),
+                    rs.getInt("Status")
+                );
+                list.add(f);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error in getAllFeedbacks: " + e.getMessage(), e);
+            return list;
+        }
+        return list;
+    }
+
+    public List<Feedback> getFeedbackByOrderItemId(int orderItemId) {
+        List<Feedback> list = new ArrayList<>();
+        String sql = "SELECT * FROM Feedbacks WHERE OrderItemID = ? ORDER BY CreatedAt DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, orderItemId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Feedback f = new Feedback(
+                        rs.getInt("FeedbackID"),
+                        rs.getInt("UserID"),
+                        rs.getString("Content"),
+                        rs.getInt("OrderItemID"),
+                        rs.getString("CreatedAt"),
+                        rs.getInt("Rate"),
+                        rs.getInt("Status")
+                    );
+                    list.add(f);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error in getFeedbackByOrderItemId for orderItemId " + orderItemId + ": " + e.getMessage(), e);
+            return list;
+        }
+        return list;
 
     public FeedbackDAO() {
         dbContext = new DBContext();
@@ -47,6 +97,7 @@ public class FeedbackDAO {
         }
         return userFeedbacks;
     }
+
 
     public boolean insertFeedback(Feedback feedback) {
         String sql = "INSERT INTO Feedbacks (userID, content, orderItemID, createdAt, rate, status) VALUES (?, ?, ?, ?, ?, ?)";
