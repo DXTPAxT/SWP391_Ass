@@ -40,9 +40,9 @@
         <div class="wrapper">
 
             <jsp:include page="../../components/header.jsp" />
-<jsp:include page="../../components/sidebar.jsp">
-    <jsp:param name="ctx" value="${ctx}" />
-</jsp:include>
+            <jsp:include page="../../components/sidebar.jsp">
+                <jsp:param name="ctx" value="${ctx}" />
+            </jsp:include>
 
             <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
@@ -71,10 +71,10 @@
                                             <tr>
                                                 <th>Component ID</th>
                                                 <th>Name</th>
-                                                <th>Quantity</th>                                               
+                                                <th>Quantity</th>
                                                 <th>Status</th>
-                                               
                                                 <th>View</th>
+                                                <th>Action</th> 
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -93,18 +93,40 @@
                                                                     <span class="label label-danger">Disable</span>
                                                                 </c:otherwise>
                                                             </c:choose>
-                                                        </td>                                                            
+                                                        </td>
                                                         <td>
                                                             <a href="BraComAdmin?service=listbycom&componentID=${com.componentID}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${com.status == 1}">
+                                                                    <a href="ComAdmin?service=toggleStatus&componentID=${com.componentID}"
+                                                                       class="btn btn-danger btn-sm"
+                                                                       onclick="return confirm('Are you sure you want to disable this component?');">
+                                                                        Disable
+                                                                    </a>
+                                                                </c:when>
+                                                                <c:when test="${com.status == 0}">
+                                                                    <a href="ComAdmin?service=toggleStatus&componentID=${com.componentID}"
+                                                                       class="btn btn-success btn-sm"
+                                                                       onclick="return confirm('Are you sure you want to activate this component?');">
+                                                                        Activate
+                                                                    </a>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <span class="text-muted">Unknown status</span>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
-
                                         </tbody>
                                     </table>
                                 </div>
+
                             </div>
                             <!-- /.box-body -->
                         </div>
@@ -140,17 +162,17 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- page script -->
         <script>
-                                                                   $(function () {
-                                                                       $("#example1").DataTable();
-                                                                       $('#example2').DataTable({
-                                                                           "paging": true,
-                                                                           "lengthChange": true,
-                                                                           "searching": true,
-                                                                           "ordering": true,
-                                                                           "info": true,
-                                                                           "autoWidth": true
-                                                                       });
-                                                                   });
+                   $(function () {
+                       $("#example1").DataTable();
+                       $('#example2').DataTable({
+                           "paging": true,
+                           "lengthChange": true,
+                           "searching": true,
+                           "ordering": true,
+                           "info": true,
+                           "autoWidth": true
+                       });
+                   });
         </script>
         <script>
             $(function () {

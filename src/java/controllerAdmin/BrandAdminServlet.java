@@ -66,7 +66,7 @@ public class BrandAdminServlet extends HttpServlet {
                         error = "Brand name already exists.";
                     } else if (brandName.length() > 50) {
                         error = "Brand name is too long (maximum 50 characters).";
-                    }else if (!brandName.matches("^[A-Za-z0-9 ]+$")) {
+                    } else if (!brandName.matches("^[A-Za-z0-9 ]+$")) {
                         error = "Brand name must contain only letters, digits and spaces.";
                     }
 
@@ -89,6 +89,11 @@ public class BrandAdminServlet extends HttpServlet {
                         request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertBrand.jsp").forward(request, response);
                     }
                 }
+            } else if (service.equals("toggleStatus")) {
+                int brandID = Integer.parseInt(request.getParameter("brandID"));
+                BrandAdminDAO dao = new BrandAdminDAO();
+                dao.toggleStatus(brandID);
+                response.sendRedirect("BrandAdmin"); // quay lại danh sách sau khi cập nhật
             }
 
         }

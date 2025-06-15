@@ -92,6 +92,16 @@ public class BrandAdminDAO extends DBAdminContext {
         return false;
     }
 
+    public void toggleStatus(int brandID) {
+        String sql = "UPDATE Brands SET Status = CASE WHEN Status = 1 THEN 0 ELSE 1 END WHERE BrandID = ?";
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, brandID);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         BrandAdminDAO dao = new BrandAdminDAO();
         // Truy vấn tất cả
