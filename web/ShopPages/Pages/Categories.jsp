@@ -222,7 +222,7 @@
                                 <div class="brands-name" style="border: 1px solid #f0f0f0; padding: 20px;">
                                     <ul class="nav nav-pills nav-stacked">
                                         <li>
-                                            <a href="${ctx}/BuildPC?service=list">
+                                            <a href="${ctx}/CategoriesController?service=build">
                                                 <i class="fa fa-cogs"></i> Customize Your PC
                                             </a>
                                         </li>
@@ -234,6 +234,7 @@
                                     </ul>
                                 </div>
                             </div><!-- /build pc -->
+
 
 
 
@@ -316,12 +317,12 @@
         </section>
 
         <jsp:include page="components/footer.jsp"/>
-      <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/main.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
 
     </body>
 
