@@ -99,8 +99,11 @@
                             <!-- Price -->
                             <div class="form-group">
                                 <label for="price">Price</label>
-                                <input type="number" id="price" name="price" class="form-control" placeholder="Enter price" value="${price}">
+                                <input type="text" id="price" name="price"
+                                       class="form-control${error eq 'Price must be a valid positive number.' || error eq 'Price must be greater than 0.' ? ' is-invalid' : ''}"
+                                       placeholder="Enter price" value="${price}">
                             </div>
+
 
                             <!-- Excel Upload -->
                             <div class="form-group">

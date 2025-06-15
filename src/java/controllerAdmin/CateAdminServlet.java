@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Date;
 import java.util.List;
+import models.BraComs;
 import models.Brands;
 import models.Categories;
 import models.Components;
@@ -66,30 +67,6 @@ public class CateAdminServlet extends HttpServlet {
                 request.setAttribute("list", list);
                 //request.getRequestDispatcher("/AdminLTE/AdminPages/test.jsp").forward(request, response);            
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewCate.jsp").forward(request, response);
-            } else if (service.equals("update")) {
-
-                String submit = request.getParameter("submit");
-                if (submit == null) {
-
-                    int categoryID = Integer.parseInt(request.getParameter("categoryID"));
-                    Categories category = cate.getCategoryByID(categoryID);
-
-                    request.setAttribute("category", category);
-
-                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateCate.jsp").forward(request, response);
-                } else {
-                    int categoryID = Integer.parseInt(request.getParameter("categoryID"));
-                    String categoryName = request.getParameter("categoryName");
-                    int componentID = Integer.parseInt(request.getParameter("componentID"));
-                    int brandID = Integer.parseInt(request.getParameter("brandID"));
-                    int quantity = 0;
-                    int price = Integer.parseInt(request.getParameter("price"));
-                    String description = request.getParameter("description");
-                    int status = Integer.parseInt(request.getParameter("status"));
-
-                    response.sendRedirect(request.getContextPath() + "/CateAdmin?service=listbycom&componentID=" + componentID);
-                }
-
             } else if (service.equals("insert")) {
 
                 String submit = request.getParameter("submit");
@@ -118,10 +95,11 @@ public class CateAdminServlet extends HttpServlet {
                     // Validate Category Name
                     if (categoryName == null || categoryName.trim().isEmpty()) {
                         error = "Category name cannot be empty.";
-                    } else if (!categoryName.matches("^[\\p{L}0-9 ]{1,100}$")) {
-                        error = "Category name contains invalid characters or is too long.";
+                    } else if (categoryName.length() > 30) {
+                        error = "Category name must not exceed 30 characters.";
+                    } else if (!categoryName.matches("^[\\p{L}0-9 ]+$")) {
+                        error = "Category name contains invalid characters.";
                     }
-
                     // Validate dropdowns
                     if (componentRaw == null || componentRaw.trim().isEmpty()) {
                         error = "Component must be selected.";
@@ -133,6 +111,11 @@ public class CateAdminServlet extends HttpServlet {
                     // Validate price
                     if (priceRaw == null || !priceRaw.matches("^\\d+$")) {
                         error = "Price must be a positive number.";
+                    }
+                    if (description == null || description.trim().isEmpty()) {
+                        error = "Description name cannot be empty.";
+                    } else if (description.length() > 50) {
+                        error = "Description name must not exceed 30 characters.";
                     }
 
                     // Validate status
@@ -196,6 +179,85 @@ public class CateAdminServlet extends HttpServlet {
                     }
                 }
 
+            } else if (service.equals("update")) {
+                String submit = request.getParameter("submit");
+
+                if (submit == null) {
+                    try {
+                        int categoryID = Integer.parseInt(request.getParameter("categoryID"));
+
+                        // Lấy thông tin category đã join với ComponentName và BrandName
+                        Categories cateObj = cate.getCategoryByID(categoryID);
+
+                        // Gán thông tin để hiển thị readonly trong JSP
+                        request.setAttribute("category", cateObj);
+                        request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateCate.jsp").forward(request, response);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid CategoryID");
+                    }
+                } else {
+                    // Nhận dữ liệu cập nhật
+                    String categoryIDRaw = request.getParameter("categoryID");
+                    String categoryName = request.getParameter("categoryName");
+                    String description = request.getParameter("description");
+                    String statusRaw = request.getParameter("status");
+                    String imageURL = request.getParameter("imageURL");
+
+                    String error = null;
+
+                    // Validate
+                    if (categoryName == null || categoryName.trim().isEmpty()) {
+                        error = "Category name cannot be empty.";
+                    } else if (categoryName.length() > 30) {
+                        error = "Category name must not exceed 30 characters.";
+                    } else if (!categoryName.matches("^[\\p{L}0-9 ]+$")) {
+                        error = "Category name contains invalid characters.";
+                    } else if (statusRaw == null || !(statusRaw.equals("0") || statusRaw.equals("1"))) {
+                        error = "Invalid status.";
+                    }
+                    if (description == null || description.trim().isEmpty()) {
+                        error = "Description name cannot be empty.";
+                    } else if (description.length() > 150) {
+                        error = "Description name must not exceed 150 characters.";
+                    }
+
+
+                    try {
+                        int categoryID = Integer.parseInt(categoryIDRaw);
+                        Categories oldCate = cate.getCategoryByID(categoryID);
+
+                        if (error != null) {
+                            // Nếu có lỗi thì gửi lại form
+                            request.setAttribute("error", error);
+                            request.setAttribute("category", oldCate);
+                            request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateCate.jsp").forward(request, response);
+                            return;
+                        }
+
+                        // Tạo object mới với các trường được phép thay đổi
+                        Categories updatedCate = new Categories(
+                                categoryID,
+                                categoryName.trim(),
+                                oldCate.getBrandComID(), // giữ nguyên
+                                oldCate.getQuantity(), // giữ nguyên
+                                oldCate.getPrice(), // giữ nguyên
+                                description,
+                                Integer.parseInt(statusRaw),
+                                imageURL
+                        );
+
+                        cate.updateCategory(updatedCate);
+
+                        response.sendRedirect(request.getContextPath() + "/CateAdmin");
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        request.setAttribute("error", "Update failed due to invalid input.");
+                        request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateCate.jsp").forward(request, response);
+                    }
+                }
             }
 
         }

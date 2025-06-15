@@ -149,6 +149,17 @@ public class ComponentAdminDAO extends DBAdminContext {
         }
         return false;
     }
+    public void toggleStatus(int componentID) {
+    String sql = "UPDATE Components SET Status = CASE WHEN Status = 1 THEN 0 ELSE 1 END WHERE ComponentID = ?";
+    try (Connection conn = new DBAdminContext().connection;
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, componentID);
+        ps.executeUpdate();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
 
     public static void main(String[] args) {
         ComponentAdminDAO dao = new ComponentAdminDAO();

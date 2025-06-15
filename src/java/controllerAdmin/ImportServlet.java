@@ -102,6 +102,9 @@ public class ImportServlet extends HttpServlet {
                     } else if (imdao.isImportCodeExists(importCode)) {
                         error = "Import code already exists.";
                     }
+                    if (priceRaw == null || !priceRaw.matches("^\\d+$")) {
+                        error = "Price must be a positive number.";
+                    }
 
                     if (error != null) {
                         CategoryAdminDAO cateDAO = new CategoryAdminDAO();
@@ -136,7 +139,19 @@ public class ImportServlet extends HttpServlet {
                                     if (code.isEmpty()) {
                                         continue;
                                     }
-
+                                    if (code.length() > 30 || !code.matches("^[a-zA-Z0-9_-]+$")) {
+                                        imdao.deleteImportByID(importID); // rollback insert
+                                        error = "Invalid ProductCode '" + code + "' at row " + rowNum + ". Must be ≤ 30 characters, no special characters.";
+                                        CategoryAdminDAO cateDAO = new CategoryAdminDAO();
+                                        List<Categories> categories = cateDAO.getAllCategories();
+                                        request.setAttribute("categories", categories);
+                                        request.setAttribute("error", error);
+                                        request.setAttribute("importCode", importCode);
+                                        request.setAttribute("categoryID", categoryID);
+                                        request.setAttribute("price", price);
+                                        request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertImport.jsp").forward(request, response);
+                                        return;
+                                    }
                                     if (pdao.isProductCodeExists(code)) {
                                         imdao.deleteImportByID(importID); // rollback insert
                                         error = "Duplicate ProductCode '" + code + "' at row " + rowNum;
@@ -150,7 +165,6 @@ public class ImportServlet extends HttpServlet {
                                         request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertImport.jsp").forward(request, response);
                                         return;
                                     }
-
                                     productCodes.add(code);
                                 }
                             }
