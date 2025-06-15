@@ -3,46 +3,46 @@ package dalAdmin;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import models.BraComs;
+import models.BrandComs;
 import models.Brands;
 
-public class BraComAdminDAO extends DBAdminContext {
+public class BrandComAdminDAO extends DBAdminContext {
 
-    // Lấy tất cả BraCom
-    public List<BraComs> getAllBraComs() {
-        List<BraComs> list = new ArrayList<>();
+    // Lấy tất cả BrandCom
+    public List<BrandComs> getAllBrandComs() {
+        List<BrandComs> list = new ArrayList<>();
         String sql = "SELECT \n"
                 + "    bc.BrandComID,\n"
                 + "    b.BrandID,\n"
                 + "    b.BrandName,\n"
                 + "    c.ComponentID,\n"
                 + "    c.ComponentName,\n"
-                + "    bc.Quantity AS BraComQuantity\n"
+                + "    bc.Quantity AS BrandComQuantity\n"
                 + "FROM BrandComs bc\n"
                 + "JOIN Brands b ON bc.BrandID = b.BrandID\n"
                 + "JOIN Components c ON bc.ComponentID = c.ComponentID;";
 
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                BraComs b = new BraComs();
-                b.setBraComID(rs.getInt("BrandComID"));
+                BrandComs b = new BrandComs();
+                b.setBrandComID(rs.getInt("BrandComID"));
                 b.setBrandID(rs.getInt("BrandID"));
                 b.setBrandName(rs.getString("BrandName"));
                 b.setComponentID(rs.getInt("ComponentID"));
                 b.setComponentName(rs.getString("ComponentName"));
-                b.setQuantity(rs.getInt("BraComQuantity"));  // hoặc setBraComQuantity nếu bạn đặt tên khác
+                b.setQuantity(rs.getInt("BrandComQuantity"));  // hoặc setBrandComQuantity nếu bạn đặt tên khác
                 list.add(b);
             }
         } catch (SQLException e) {
-            System.err.println("getAllBraComs Error: " + e.getMessage());
+            System.err.println("getAllBrandComs Error: " + e.getMessage());
         }
 
         return list;
     }
 
-    public List<BraComs> getBraComsByBrandID(int brandID) {
-        List<BraComs> list = new ArrayList<>();
-        String sql = "SELECT bc.BrandComID, b.BrandID, b.BrandName, c.ComponentID, c.ComponentName, bc.Quantity AS BraComQuantity "
+    public List<BrandComs> getBrandComsByBrandID(int brandID) {
+        List<BrandComs> list = new ArrayList<>();
+        String sql = "SELECT bc.BrandComID, b.BrandID, b.BrandName, c.ComponentID, c.ComponentName, bc.Quantity AS BrandComQuantity "
                 + "FROM BrandComs bc "
                 + "JOIN Brands b ON bc.BrandID = b.BrandID "
                 + "JOIN Components c ON bc.ComponentID = c.ComponentID "
@@ -53,26 +53,26 @@ public class BraComAdminDAO extends DBAdminContext {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                BraComs b = new BraComs();
-                b.setBraComID(rs.getInt("BrandComID"));
+                BrandComs b = new BrandComs();
+                b.setBrandComID(rs.getInt("BrandComID"));
                 b.setBrandID(rs.getInt("BrandID"));
                 b.setBrandName(rs.getString("BrandName"));
                 b.setComponentID(rs.getInt("ComponentID"));
                 b.setComponentName(rs.getString("ComponentName"));
-                b.setQuantity(rs.getInt("BraComQuantity"));
+                b.setQuantity(rs.getInt("BrandComQuantity"));
                 list.add(b);
             }
 
         } catch (SQLException e) {
-            System.err.println("getBraComsByBrandID Error: " + e.getMessage());
+            System.err.println("getBrandComsByBrandID Error: " + e.getMessage());
         }
 
         return list;
     }
 
-    public List<BraComs> getBraComsByComponentID(int componentID) {
-        List<BraComs> list = new ArrayList<>();
-        String sql = "SELECT bc.BrandComID, b.BrandID, b.BrandName, c.ComponentID, c.ComponentName, bc.Quantity AS BraComQuantity "
+    public List<BrandComs> getBrandComsByComponentID(int componentID) {
+        List<BrandComs> list = new ArrayList<>();
+        String sql = "SELECT bc.BrandComID, b.BrandID, b.BrandName, c.ComponentID, c.ComponentName, bc.Quantity AS BrandComQuantity "
                 + "FROM BrandComs bc "
                 + "JOIN Brands b ON bc.BrandID = b.BrandID "
                 + "JOIN Components c ON bc.ComponentID = c.ComponentID "
@@ -83,45 +83,45 @@ public class BraComAdminDAO extends DBAdminContext {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                BraComs b = new BraComs();
-                b.setBraComID(rs.getInt("BrandComID"));
+                BrandComs b = new BrandComs();
+                b.setBrandComID(rs.getInt("BrandComID"));
                 b.setBrandID(rs.getInt("BrandID"));
                 b.setBrandName(rs.getString("BrandName"));
                 b.setComponentID(rs.getInt("ComponentID"));
                 b.setComponentName(rs.getString("ComponentName"));
-                b.setQuantity(rs.getInt("BraComQuantity"));
+                b.setQuantity(rs.getInt("BrandComQuantity"));
                 list.add(b);
             }
 
         } catch (SQLException e) {
-            System.err.println("getBraComsByComponentID Error: " + e.getMessage());
+            System.err.println("getBrandComsByComponentID Error: " + e.getMessage());
         }
 
         return list;
     }
 
-    // Lấy BraCom theo ID
-    public BraComs getBraComByID(int id) {
-        String sql = "SELECT * FROM BraComs WHERE BraComID = ?";
+    // Lấy BrandCom theo ID
+    public BrandComs getBrandComByID(int id) {
+        String sql = "SELECT * FROM BrandComs WHERE BrandComID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new BraComs(
-                        rs.getInt("BraComID"),
+                return new BrandComs(
+                        rs.getInt("BrandComID"),
                         rs.getInt("BrandID"),
                         rs.getInt("ComponentID"),
                         rs.getInt("Quantity")
                 );
             }
         } catch (SQLException e) {
-            System.err.println("getBraComByID Error: " + e.getMessage());
+            System.err.println("getBrandComByID Error: " + e.getMessage());
         }
         return null;
     }
 
     // Thêm mới
-    public boolean insertBraCom(BraComs b) {
+    public boolean insertBrandCom(BrandComs b) {
         String sql = "INSERT INTO BrandComs (BrandID, ComponentID, Quantity) VALUES (?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, b.getBrandID());
@@ -129,7 +129,7 @@ public class BraComAdminDAO extends DBAdminContext {
             ps.setInt(3, b.getQuantity());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("insertBraCom Error: " + e.getMessage());
+            System.err.println("insertBrandCom Error: " + e.getMessage());
         }
         return false;
     }
@@ -187,12 +187,12 @@ public class BraComAdminDAO extends DBAdminContext {
     }
 
     public static void main(String[] args) {
-        BraComAdminDAO dao = new BraComAdminDAO();
+        BrandComAdminDAO dao = new BrandComAdminDAO();
         int id = 1;
-        List<BraComs> all = dao.getBraComsByComponentID(id);
+        List<BrandComs> all = dao.getAllBrandComs();
 
-        for (BraComs c : all) {
-            System.out.println(c.getBrandName() + " - " + c.getBraComID() + " - " + c.getComponentName());
+        for (BrandComs c : all) {
+            System.out.println(c.getBrandName() + " - " + c.getBrandComID() + " - " + c.getComponentName());
         }
     }
 

@@ -4,26 +4,112 @@ public class WarrantyDetails {
 
     private int WarrantyDetailID;
     private int WarrantyID;
-    private int BraComID;
+    private int WarrantyPeriod;
+    private String Description;
+    private int BrandComID;
+    private String BrandName;
+    private String ComponentName;
     private int price;
     private int status;
 
     public WarrantyDetails() {
     }
 
-    public WarrantyDetails(int WarrantyDetailID, int WarrantyID, int BraComID, int price, int status) {
+    public WarrantyDetails(int WarrantyDetailID, int WarrantyID, int WarrantyPeriod, String Description, int BrandComID, String BrandName, String ComponentName, int price, int status) {
         this.WarrantyDetailID = WarrantyDetailID;
         this.WarrantyID = WarrantyID;
-        this.BraComID = BraComID;
+        this.WarrantyPeriod = WarrantyPeriod;
+        this.Description = Description;
+        this.BrandComID = BrandComID;
+        this.BrandName = BrandName;
+        this.ComponentName = ComponentName;
         this.price = price;
         this.status = status;
     }
 
-    public WarrantyDetails(int WarrantyID, int BraComID, int price, int status) {
+    public WarrantyDetails(int WarrantyID, int WarrantyPeriod, String Description, int BrandComID, String BrandName, String ComponentName, int price, int status) {
         this.WarrantyID = WarrantyID;
-        this.BraComID = BraComID;
+        this.WarrantyPeriod = WarrantyPeriod;
+        this.Description = Description;
+        this.BrandComID = BrandComID;
+        this.BrandName = BrandName;
+        this.ComponentName = ComponentName;
         this.price = price;
         this.status = status;
+    }
+
+    public WarrantyDetails(int WarrantyDetailID, int WarrantyID, int BrandComID, String BrandName, String ComponentName, int price, int status) {
+        this.WarrantyDetailID = WarrantyDetailID;
+        this.WarrantyID = WarrantyID;
+        this.BrandComID = BrandComID;
+        this.BrandName = BrandName;
+        this.ComponentName = ComponentName;
+        this.price = price;
+        this.status = status;
+    }
+
+    public WarrantyDetails(int WarrantyID, int BrandComID, String BrandName, String ComponentName, int price, int status) {
+        this.WarrantyID = WarrantyID;
+        this.BrandComID = BrandComID;
+        this.BrandName = BrandName;
+        this.ComponentName = ComponentName;
+        this.price = price;
+        this.status = status;
+    }
+
+    public WarrantyDetails(int WarrantyDetailID, int WarrantyID, int BrandComID, int price, int status) {
+        this.WarrantyDetailID = WarrantyDetailID;
+        this.WarrantyID = WarrantyID;
+        this.BrandComID = BrandComID;
+        this.price = price;
+        this.status = status;
+    }
+
+    public WarrantyDetails(int WarrantyID, int BrandComID, String BrandName, int price, int status) {
+        this.WarrantyID = WarrantyID;
+        this.BrandComID = BrandComID;
+        this.BrandName = BrandName;
+        this.price = price;
+        this.status = status;
+    }
+
+    public WarrantyDetails(int WarrantyID, int BrandComID, int price, int status) {
+        this.WarrantyID = WarrantyID;
+        this.BrandComID = BrandComID;
+        this.price = price;
+        this.status = status;
+    }
+
+    public String getBrandName() {
+        return BrandName;
+    }
+
+    public void setBrandName(String BrandName) {
+        this.BrandName = BrandName;
+    }
+
+    public String getComponentName() {
+        return ComponentName;
+    }
+
+    public void setComponentName(String ComponentName) {
+        this.ComponentName = ComponentName;
+    }
+
+    public int getWarrantyPeriod() {
+        return WarrantyPeriod;
+    }
+
+    public void setWarrantyPeriod(int WarrantyPeriod) {
+        this.WarrantyPeriod = WarrantyPeriod;
+    }
+
+    public String getDescription() {
+        return Description;
+    }
+
+    public void setDescription(String Description) {
+        this.Description = Description;
     }
 
     public int getWarrantyDetailID() {
@@ -42,12 +128,12 @@ public class WarrantyDetails {
         this.WarrantyID = WarrantyID;
     }
 
-    public int getBraComID() {
-        return BraComID;
+    public int getBrandComID() {
+        return BrandComID;
     }
 
-    public void setBraComID(int BraComID) {
-        this.BraComID = BraComID;
+    public void setBrandComID(int BrandComID) {
+        this.BrandComID = BrandComID;
     }
 
     public int getPrice() {

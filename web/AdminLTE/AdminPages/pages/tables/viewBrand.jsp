@@ -92,7 +92,7 @@
                                                             </c:choose>
                                                         </td>
                                                         <td>
-                                                            <a href="BraComAdmin?service=listbybrand&brandID=${brand.brandID}" 
+                                                            <a href="BrandComAdmin?service=listbybrand&brandID=${brand.brandID}" 
                                                                class="btn btn-info btn-sm">View</a>
                                                         </td>
                                                         <td>

@@ -40,21 +40,21 @@
         <div class="wrapper">
 
             <jsp:include page="../../components/header.jsp" />
-            <jsp:include page="../../components/sidebar.jsp">
-                <jsp:param name="ctx" value="${ctx}" />
-            </jsp:include>
+<jsp:include page="../../components/sidebar.jsp">
+    <jsp:param name="ctx" value="${ctx}" />
+</jsp:include>
 
             <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Component Tables
+                        Bra-Com Tables
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Component</a></li>
-                        <li class="active">view Component</li>
+                        <li><a href="#">Brand Com</a></li>
+                        <li class="active">view Brand Com</li>
                     </ol>
                 </section>
 
@@ -63,74 +63,39 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="box">
-
-                                <!-- /.box-header -->
                                 <div class="box-body">
-                                    <table id="example2" class="table table-bordered table-hover">
+                                    <table  id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Component ID</th>
-                                                <th>Name</th>
+                                                <th>Brand-Com ID</th>
+                                                <th>Brand Name</th>
+                                                <th>Component Name</th>
                                                 <th>Quantity</th>
-                                                <th>Status</th>
                                                 <th>View</th>
-                                                <th>Action</th> 
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:if test="${not empty requestScope.data}">
-                                                <c:forEach var="com" items="${requestScope.data}">
+                                            <c:if test="${not empty braCom}">
+                                                <c:forEach var="bc" items="${braCom}">
                                                     <tr>
-                                                        <td>${com.componentID}</td>
-                                                        <td>${com.componentName}</td>
-                                                        <td>${com.quantity}</td>
+                                                        <td>${bc.brandComID}</td>
+                                                        <td>${bc.brandName}</td>
+                                                        <td>${bc.componentName}</td>
+                                                        <td>${bc.quantity}</td>
                                                         <td>
-                                                            <c:choose>
-                                                                <c:when test="${com.status == 1}">
-                                                                    <span class="label label-success">Active</span>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <span class="label label-danger">Disable</span>
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                        </td>
-                                                        <td>
-                                                            <a href="BrandComAdmin?service=listbycom&componentID=${com.componentID}" 
+                                                            <a href="CateAdmin?service=listbybcid&brandComID=${bc.brandComID}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
-                                                        <td>
-                                                            <c:choose>
-                                                                <c:when test="${com.status == 1}">
-                                                                    <a href="ComAdmin?service=toggleStatus&componentID=${com.componentID}"
-                                                                       class="btn btn-danger btn-sm"
-                                                                       onclick="return confirm('Are you sure you want to disable this component?');">
-                                                                        Disable
-                                                                    </a>
-                                                                </c:when>
-                                                                <c:when test="${com.status == 0}">
-                                                                    <a href="ComAdmin?service=toggleStatus&componentID=${com.componentID}"
-                                                                       class="btn btn-success btn-sm"
-                                                                       onclick="return confirm('Are you sure you want to activate this component?');">
-                                                                        Activate
-                                                                    </a>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <span class="text-muted">Unknown status</span>
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                        </td>
-
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
                                         </tbody>
                                     </table>
                                 </div>
-
                             </div>
-                            <!-- /.box-body -->
                         </div>
                     </div>
+
 
                     <!-- /.box-body -->
             </div>
@@ -138,7 +103,11 @@
 
             <!-- /.content-wrapper -->
             <jsp:include page="../../components/footer.jsp" />
+
+
+            <!-- Control Sidebar -->
             <jsp:include page="../../components/control-sidebar.jsp" />
+
             <!-- Add the sidebar's background. This div must be placed
                  immediately after the control sidebar -->
             <div class="control-sidebar-bg"></div>
@@ -162,17 +131,17 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- page script -->
         <script>
-                   $(function () {
-                       $("#example1").DataTable();
-                       $('#example2').DataTable({
-                           "paging": true,
-                           "lengthChange": true,
-                           "searching": true,
-                           "ordering": true,
-                           "info": true,
-                           "autoWidth": true
-                       });
-                   });
+            $(function () {
+                $("#example1").DataTable();
+                $('#example2').DataTable({
+                    "paging": true,
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": true
+                });
+            });
         </script>
         <script>
             $(function () {

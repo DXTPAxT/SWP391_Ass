@@ -3,7 +3,7 @@ package dalAdmin;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.*;
-import models.BraComs;
+import models.BrandComs;
 import models.Categories;
 
 public class CategoryAdminDAO extends DBAdminContext {
@@ -146,7 +146,7 @@ public class CategoryAdminDAO extends DBAdminContext {
                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, c.getCategoryName());
-            ps.setInt(2, c.getBraComID());
+            ps.setInt(2, c.getBrandComID());
             ps.setInt(3, c.getQuantity());
             ps.setInt(4, c.getPrice());
             ps.setString(5, c.getDescription());
@@ -254,22 +254,22 @@ public class CategoryAdminDAO extends DBAdminContext {
     public static void main(String[] args) {
         CategoryAdminDAO dao = new CategoryAdminDAO();
         int id = 1;
-        List<Categories> all = dao.getAllCategoriesByBrandComID(id);
+        Categories c = dao.getCategoryByID(id);
 
         System.out.printf("%-5s %-20s %-20s %-20s %-10s%n",
-                "ID", "Brand Name", "Component Name", "Category Name", "BraComID", "inventory");
+                "ID", "Brand Name", "Component Name", "Category Name", "BrandComID", "inventory");
 
-        for (Categories c : all) {
+       
             System.out.printf("%-5d %-20s %-20s %-20s %-20s %-10d%n",
                     c.getCategoryID(),
                     c.getBrandName(),
                     c.getComponentName(),
                     c.getCategoryName(),
-                    c.getBraComID(),
-                    c.getInventory()
-            );
+                    c.getBrandComID(),
+                    c.getInventory());
+           
         }
     }
 
     // Tùy chọn: bạn có thể thêm phương thức updateAllCategoryQuantities nếu bảng Products vẫn còn liên kết theo CategoryID
-}
+

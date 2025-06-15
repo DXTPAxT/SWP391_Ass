@@ -58,11 +58,11 @@
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
-                    <h1>INSERT BRAND</h1>
+                    <h1>INSERT USER</h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Brand</a></li>
-                        <li class="active">Insert Brand</li>
+                        <li><a href="#">User</a></li>
+                        <li class="active">Insert Component</li>
                     </ol>
                 </section>
                 <!-- Main content -->
@@ -72,36 +72,40 @@
                             <div class="alert alert-danger" style="font-weight:bold;">${error}</div>
                         </c:if>
 
-                        <form method="post" action="${ctx}/BrandAdmin">
-                            <input type="hidden" name="service" value="insert">
-                            <input type="hidden" name="submit" value="submit">
+                        <form method="post" action="${pageContext.request.contextPath}/WarrantyAdmin">
+                            <input type="hidden" name="service" value="insert"/>
+                            <input type="hidden" name="submit" value="submit"/>
 
-                            <!-- Brand Name -->
+                            <!-- Warranty Period -->
                             <div class="form-group">
-                                <label for="brandName">Brand Name</label>
-                                <input type="text" id="brandName" name="brandName"
-                                       class="form-control${error eq 'Brand name cannot be empty or whitespace only.' 
-                                                            || error eq 'Brand name must contain only letters and spaces.' 
-                                                            || error eq 'Brand name cannot be entirely uppercase.' 
-                                                            || error eq 'Brand name already exists.' ? ' is-invalid' : ''}"
-                                       placeholder="Enter brand name" required value="${brandName}">
-                                
+                                <label for="warrantyPeriod">Warranty Period (months)</label>
+                                <input type="text" id="warrantyPeriod" name="warrantyPeriod"
+                                       class="form-control "
+                                       placeholder="Enter warranty period in months"
+                                       value="${warrantyPeriod}" />
                             </div>
+
+                            <!-- Description -->
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea id="description" name="description" rows="3"
+                                          class="form-control"
+                                          placeholder="Enter warranty description (max 100 characters)">${description}</textarea>
+                            </div>
+
                             <!-- Status -->
                             <div class="form-group">
                                 <label for="status">Status</label>
                                 <select id="status" name="status" class="form-control">
                                     <option value="1" ${status == '1' ? 'selected' : ''}>Active</option>
                                     <option value="0" ${status == '0' ? 'selected' : ''}>Inactive</option>
-
                                 </select>
                             </div>
 
                             <!-- Submit -->
-                            <button type="submit" class="btn btn-success">Add Brand</button>
+                            <button type="submit" class="btn btn-success">Add Warranty</button>
                         </form>
                     </div>
-
                 </div>
                 <!-- /.box -->
             </div>

@@ -4,7 +4,7 @@
  */
 package controllerAdmin;
 
-import dalAdmin.BraComAdminDAO;
+import dalAdmin.BrandComAdminDAO;
 import dalAdmin.BrandAdminDAO;
 import dalAdmin.CategoryAdminDAO;
 import dalAdmin.ComponentAdminDAO;
@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import models.BraComs;
+import models.BrandComs;
 import models.Brands;
 import models.Categories;
 import models.Components;
