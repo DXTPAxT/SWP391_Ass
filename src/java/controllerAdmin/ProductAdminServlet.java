@@ -51,43 +51,17 @@ public class ProductAdminServlet extends HttpServlet {
                 product = pro.getAllProductsByCategoryID(id);
                 request.setAttribute("product", product);
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewProduct.jsp").forward(request, response);
-            }else if ("listbyim".equals(service)) {
+            } else if ("listbyim".equals(service)) {
                 int id = Integer.parseInt(request.getParameter("ImportID"));
 
                 product = pro.getAllProductsByImportID(id);
                 request.setAttribute("product", product);
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewProduct.jsp").forward(request, response);
-            } else if (service.equals("update")) {
-                String submit = request.getParameter("submit");
-                if (submit == null) {
-                    int productID = Integer.parseInt(request.getParameter("productID"));
-                    Products products = pro.getProductByID(productID);
-
-                    request.setAttribute("product", products);
-                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateProduct.jsp").forward(request, response);
-                } else {
-                    int productID = Integer.parseInt(request.getParameter("productID"));
-                    String name = request.getParameter("name");
-                    String productCode = request.getParameter("productCode");
-                    Date createdAt = Date.valueOf(request.getParameter("createdAt"));
-                    int categoryID = Integer.parseInt(request.getParameter("categoryID"));
-                    int status = Integer.parseInt(request.getParameter("status"));
-                    response.sendRedirect(request.getContextPath() + "/ProductAdmin?service=list");
-                }
-            } else if (service.equals("insert")) {
-                String submit = request.getParameter("submit");
-                if (submit == null) {
-                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertProduct.jsp").forward(request, response);
-                } else {
-                    // Xử lý thêm sản phẩm mới
-                    String name = request.getParameter("name");
-                    String productCode = request.getParameter("productCode");
-                    Date createdAt = Date.valueOf(java.time.LocalDate.now());
-                    int categoryID = Integer.parseInt(request.getParameter("categoryID"));
-                    int status = Integer.parseInt(request.getParameter("status"));
-
-                    response.sendRedirect(request.getContextPath() + "/ProductAdmin?service=list");
-                }
+            } else if (service.equals("toggleStatus")) {
+                int productID = Integer.parseInt(request.getParameter("productID"));
+                ProductAdminDAO dao = new ProductAdminDAO();
+                dao.toggleStatus(productID);
+                response.sendRedirect("ProductAdmin");
             }
 
         }

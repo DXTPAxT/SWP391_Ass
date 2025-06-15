@@ -1,3 +1,7 @@
+/*
+ * Click nb://source://SystemFileSystemAdmin/Templates/Licenses/license-default.txt to change this license
+ * Click nb://source://SystemFileSystemAdmin/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
 package dalAdmin;
 
 import java.sql.Connection;
@@ -5,50 +9,23 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-/**
- *
- * @author FPT University - PRJ30X
- */
 public class DBAdminContext {
 
     protected Connection connection;
 
     public DBAdminContext() {
-        //@Students: You are allowed to edit user, pass, url variables to fit 
-        //your system configuration
-        //You can also add more methods for Database Interaction tasks. 
-        //But we recommend you to do it in another class
-        // For example : StudentDBContext extends DBAdminContext , 
-        //where StudentDBContext is located in dal package, 
         try {
             String user = "sa";
             String pass = "123";
+
             String url = "jdbc:sqlserver://LAPTOP-dxt\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
+
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(DBAdminContext.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-    }
-    public ResultSet getData(String sql){
-        ResultSet rs = null;
-        Statement state;
-        try {
-            state = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
-            rs = state.executeQuery(sql);
-            
-        } catch (SQLException ex) {
-            ex.getStackTrace();
-        }
-        return rs;
     }
 
     public boolean isConnected() {
@@ -58,16 +35,5 @@ public class DBAdminContext {
             Logger.getLogger(DBAdminContext.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
-    }
-
-    // Phương thức main để kiểm tra kết nối
-    public static void main(String[] args) {
-        DBAdminContext dbContext = new DBAdminContext();
-        if (dbContext.isConnected()) {
-            System.out.println("Kết nối cơ sở dữ liệu thành công!");
-        } else {
-            System.out.println("Kết nối cơ sở dữ liệu thất bại.");
-        }
-
     }
 }

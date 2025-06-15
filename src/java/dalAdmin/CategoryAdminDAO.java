@@ -107,12 +107,20 @@ public class CategoryAdminDAO extends DBAdminContext {
     }
 
     public Categories getCategoryByID(int id) {
-        String sql = "SELECT * FROM Categories WHERE CategoryID = ?";
+        String sql = """
+        SELECT c.*, comp.ComponentName, b.BrandName
+        FROM Categories c
+        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+        JOIN Components comp ON bc.ComponentID = comp.ComponentID
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        WHERE c.CategoryID = ?
+        """;
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new Categories(
+                Categories cat = new Categories(
                         rs.getInt("CategoryID"),
                         rs.getString("CategoryName"),
                         rs.getInt("BrandComID"),
@@ -122,6 +130,10 @@ public class CategoryAdminDAO extends DBAdminContext {
                         rs.getInt("Status"),
                         rs.getString("ImageURL")
                 );
+                // Gán thêm tên
+                cat.setComponentName(rs.getString("ComponentName"));
+                cat.setBrandName(rs.getString("BrandName"));
+                return cat;
             }
         } catch (SQLException e) {
             Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
@@ -147,17 +159,14 @@ public class CategoryAdminDAO extends DBAdminContext {
     }
 
     public void updateCategory(Categories c) {
-        String sql = "UPDATE Categories SET CategoryName = ?, BrandComID = ?, Quantity = ?, Price = ?, Description = ?, Status = ?, ImageURL = ? "
+        String sql = "UPDATE Categories SET CategoryName = ?, Description = ?, Status = ?, ImageURL = ? "
                 + "WHERE CategoryID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, c.getCategoryName());
-            ps.setInt(2, c.getBraComID());
-            ps.setInt(3, c.getQuantity());
-            ps.setInt(4, c.getPrice());
-            ps.setString(5, c.getDescription());
-            ps.setInt(6, c.getStatus());
-            ps.setString(7, c.getImgURL());
-            ps.setInt(8, c.getCategoryID());
+            ps.setString(2, c.getDescription());
+            ps.setInt(3, c.getStatus());
+            ps.setString(4, c.getImgURL());
+            ps.setInt(5, c.getCategoryID());
             ps.executeUpdate();
         } catch (SQLException e) {
             Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);

@@ -40,9 +40,9 @@
         <div class="wrapper">
 
             <jsp:include page="../../components/header.jsp" />
-<jsp:include page="../../components/sidebar.jsp">
-    <jsp:param name="ctx" value="${ctx}" />
-</jsp:include>
+            <jsp:include page="../../components/sidebar.jsp">
+                <jsp:param name="ctx" value="${ctx}" />
+            </jsp:include>
 
             <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
@@ -73,6 +73,7 @@
                                                 <th>Product Code</th>
                                                 <th>Status</th>
                                                 <th>Import</th>
+                                                <th>Action</th> 
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -87,22 +88,53 @@
                                                                 <c:when test="${product.status == 1}">
                                                                     <span class="label label-success">Active</span>
                                                                 </c:when>
+                                                                <c:when test="${product.status == 2}">
+                                                                    <span class="label label-warning">Under Repair</span>
+                                                                </c:when>
                                                                 <c:otherwise>
                                                                     <span class="label label-danger">Disable</span>
                                                                 </c:otherwise>
                                                             </c:choose>
-                                                        </td>                              
+                                                        </td>
                                                         <td>
                                                             <a href="Import?service=listbypro&productCode=${product.productCode}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
+                                                        <td>
+                                                            <form action="ProductAdmin" method="post" style="display:inline;">
+                                                                <input type="hidden" name="service" value="toggleStatus"/>
+                                                                <input type="hidden" name="productID" value="${product.productID}"/>
+
+                                                                <c:choose>
+                                                                    <c:when test="${product.status == 1 || product.status == 2}">
+                                                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                                                onclick="return confirm('This will disable the product. Continue?');">
+                                                                            Disable
+                                                                        </button>
+                                                                    </c:when>
+                                                                    <c:when test="${product.status == 0}">
+                                                                        <button type="submit" class="btn btn-warning btn-sm"
+                                                                                onclick="return confirm('This will mark the product as Under Repair. Continue?');">
+                                                                            Mark Under Repair
+                                                                        </button>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                                                            Unknown Status
+                                                                        </button>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </form>
+                                                        </td>
+
+
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
                                         </tbody>
                                     </table>
-
                                 </div>
+
                             </div>
                             <!-- /.box-body -->
                         </div>
@@ -138,17 +170,17 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- page script -->
         <script>
-                               $(function () {
-                                   $("#example1").DataTable();
-                                   $('#example2').DataTable({
-                                       "paging": true,
-                                       "lengthChange": true,
-                                       "searching": true,
-                                       "ordering": true,
-                                       "info": true,
-                                       "autoWidth": true
-                                   });
-                               });
+                            $(function () {
+                                $("#example1").DataTable();
+                                $('#example2').DataTable({
+                                    "paging": true,
+                                    "lengthChange": true,
+                                    "searching": true,
+                                    "ordering": true,
+                                    "info": true,
+                                    "autoWidth": true
+                                });
+                            });
         </script>
         <script>
             $(function () {
