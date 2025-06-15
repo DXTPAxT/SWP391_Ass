@@ -91,18 +91,11 @@ public class ComAdminServlet extends HttpServlet {
                         request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertComponent.jsp").forward(request, response);
                     }
                 }
-            } else if (service.equals("changestatus")) {
+            } else if (service.equals("toggleStatus")) {
                 int componentID = Integer.parseInt(request.getParameter("componentID"));
 
-                // Lấy component hiện tại
-                Components com = dao.searchComponentByID(componentID);
-                if (com != null) {
-                    // Đảo ngược trạng thái: nếu đang là 1 thì đổi thành 0, ngược lại
-                    int newStatus = (com.getStatus() == 1) ? 0 : 1;
-                    dao.updateStatus(componentID, newStatus);
-                }
-                // Quay lại trang danh sách
-                response.sendRedirect(request.getContextPath() + "/ComAdmin?service=list");
+                dao.toggleStatus(componentID);
+                response.sendRedirect("ComAdmin"); 
             }
 
         }
