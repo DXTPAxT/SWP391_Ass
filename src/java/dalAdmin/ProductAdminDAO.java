@@ -198,6 +198,38 @@ public class ProductAdminDAO extends DBAdminContext {
         return false;
     }
 
+    public void toggleStatus(int productID) {
+        String selectSQL = "SELECT Status FROM Products WHERE ProductID = ?";
+        String updateSQL = "UPDATE Products SET Status = ? WHERE ProductID = ?";
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement selectPS = conn.prepareStatement(selectSQL)) {
+
+            selectPS.setInt(1, productID);
+            ResultSet rs = selectPS.executeQuery();
+
+            if (rs.next()) {
+                int currentStatus = rs.getInt("Status");
+                int newStatus;
+
+                if (currentStatus == 1) {
+                    newStatus = 0; // 1 → 0
+                } else if (currentStatus == 0) {
+                    newStatus = 2; // 0 → 2
+                } else {
+                    newStatus = 0; // 2 → 0
+                }
+
+                try (PreparedStatement updatePS = conn.prepareStatement(updateSQL)) {
+                    updatePS.setInt(1, newStatus);
+                    updatePS.setInt(2, productID);
+                    updatePS.executeUpdate();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         // Tạo kết nối database (giả sử bạn có một lớp DBContext để lấy connection)
         try {
