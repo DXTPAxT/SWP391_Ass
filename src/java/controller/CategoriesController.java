@@ -22,9 +22,14 @@ public class CategoriesController extends HttpServlet {
             throws ServletException, IOException {
 
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession();
-        String service = Optional.ofNullable(request.getParameter("service")).orElse("list");
 
+        HttpSession session = request.getSession();
+        String service = request.getParameter("service");
+        if (service == null) {
+            service = "list";
+        }
+
+        // Lấy danh sách đã chọn từ session hoặc tạo mới
         List<Categories> selectedList = (List<Categories>) session.getAttribute("selectedComponents");
         if (selectedList == null) {
             selectedList = new ArrayList<>();
@@ -37,23 +42,21 @@ public class CategoriesController extends HttpServlet {
 
                 Categories selected = dao.getCategoryByID(categoryId).stream().findFirst().orElse(null);
                 if (selected != null && compName != null) {
-                    selected.setComponentName(compName); // cần gán vào để lưu vào session
+                    selected.setComponentName(compName);
 
+                    // Loại bỏ mục cũ theo componentName, thêm mục mới
                     selectedList.removeIf(c -> c.getComponentName().equalsIgnoreCase(compName));
                     selectedList.add(selected);
                     session.setAttribute("selectedComponents", selectedList);
                 }
 
-                // Nếu là AJAX thì chỉ trả status 200 để JS xử lý, không redirect
                 String requestedWith = request.getHeader("X-Requested-With");
                 if ("XMLHttpRequest".equals(requestedWith)) {
                     response.setStatus(HttpServletResponse.SC_OK);
                     return;
                 }
 
-                // Không phải AJAX thì quay lại BuildPC bình thường
-             response.sendRedirect(request.getContextPath() + "/BuildPC?componentName=" + URLEncoder.encode(compName, "UTF-8") + "&justAdded=true");
-
+                response.sendRedirect(request.getContextPath() + "/BuildPC?componentName=" + URLEncoder.encode(compName, "UTF-8") + "&justAdded=true");
                 return;
             }
             case "remove": {
@@ -146,7 +149,7 @@ public class CategoriesController extends HttpServlet {
                 request.getRequestDispatcher("/ShopPages/Pages/Categories.jsp").forward(request, response);
                 return;
             }
-            default:
+            default: {
                 int page = parseIntOrDefault(request.getParameter("page"), 1);
                 int start = (page - 1) * PAGE_SIZE;
                 int totalItems = dao.countAllCategories();
@@ -162,6 +165,8 @@ public class CategoriesController extends HttpServlet {
                 request.setAttribute("listBrand", dao.getAllBrands());
 
                 request.getRequestDispatcher("/ShopPages/Pages/Categories.jsp").forward(request, response);
+                return;
+            }
         }
     }
 
