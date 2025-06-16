@@ -40,21 +40,21 @@
         <div class="wrapper">
 
             <jsp:include page="../../components/header.jsp" />
-<jsp:include page="../../components/sidebar.jsp">
-    <jsp:param name="ctx" value="${ctx}" />
-</jsp:include>
+            <jsp:include page="../../components/sidebar.jsp">
+                <jsp:param name="ctx" value="${ctx}" />
+            </jsp:include>
 
             <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Bra-Com Tables
+                        Warranty Tables
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">BraCom</a></li>
-                        <li class="active">view BraCom</li>
+                        <li><a href="#">Warranty</a></li>
+                        <li class="active">view Warranty</li>
                     </ol>
                 </section>
 
@@ -63,28 +63,43 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="box">
+
+                                <!-- /.box-header -->
                                 <div class="box-body">
-                                    <table  id="example2" class="table table-bordered table-hover">
+                                    <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>BraCom ID</th>
-                                                <th>Brand Name</th>
-                                                <th>Component Name</th>
-                                                <th>Quantity</th>
-                                                <th>View</th>
+                                                <th>Warranty ID</th>
+                                                <th>Warranty Period (months)</th>
+                                                <th>Description</th>
+                                                <th>Status</th>
+                                                <th>Update</th> 
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:if test="${not empty braCom}">
-                                                <c:forEach var="bc" items="${braCom}">
+                                            <c:if test="${not empty requestScope.warranties}">
+                                                <c:forEach var="warranty" items="${requestScope.warranties}">
                                                     <tr>
-                                                        <td>${bc.braComID}</td>
-                                                        <td>${bc.brandName}</td>
-                                                        <td>${bc.componentName}</td>
-                                                        <td>${bc.quantity}</td>
+                                                        <td>${warranty.warrantyID}</td>
+                                                        <td>${warranty.warrantyPeriod}</td>
+                                                        <td class="text-wrap" style="word-break: break-word; max-width: 300px;">
+                                                            ${warranty.description}
+                                                        </td>
                                                         <td>
-                                                            <a href="CateAdmin?service=listbybcid&braComID=${bc.braComID}" 
-                                                               class="btn btn-warning btn-sm">View</a>
+                                                            <c:choose>
+                                                                <c:when test="${warranty.status == 1}">
+                                                                    <span class="label label-success">Active</span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <span class="label label-danger">Inactive</span>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+                                                        <td>
+                                                            <a href="WarrantyAdmin?service=update&warrantyID=${warranty.warrantyID}"
+                                                               class="btn btn-warning btn-sm">
+                                                                Update
+                                                            </a>
                                                         </td>
                                                     </tr>
                                                 </c:forEach>
@@ -92,10 +107,11 @@
                                         </tbody>
                                     </table>
                                 </div>
+
                             </div>
+                            <!-- /.box-body -->
                         </div>
                     </div>
-
 
                     <!-- /.box-body -->
             </div>
@@ -103,11 +119,7 @@
 
             <!-- /.content-wrapper -->
             <jsp:include page="../../components/footer.jsp" />
-
-
-            <!-- Control Sidebar -->
             <jsp:include page="../../components/control-sidebar.jsp" />
-
             <!-- Add the sidebar's background. This div must be placed
                  immediately after the control sidebar -->
             <div class="control-sidebar-bg"></div>

@@ -8,14 +8,13 @@ import models.Categories;
 import models.Components;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(name = "BuildPC", urlPatterns = {"/BuildPC"})
 public class BuildPC extends HttpServlet {
 
     private final CategoriesDAO dao = new CategoriesDAO();
-    private static final int PAGE_SIZE = 6;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -35,6 +34,7 @@ public class BuildPC extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
 
+        @SuppressWarnings("unchecked")
         List<Categories> selectedList = (List<Categories>) session.getAttribute("selectedComponents");
         if (selectedList == null) {
             selectedList = new ArrayList<>();
@@ -61,6 +61,7 @@ public class BuildPC extends HttpServlet {
             selectedList.removeIf(c -> c.getComponentID() == compId);
             session.setAttribute("selectedComponents", selectedList);
 
+            // Kiểm tra nếu là request fetch/ajax thì trả về 200 OK, không redirect
             String xRequestedWith = request.getHeader("X-Requested-With");
             if ("XMLHttpRequest".equals(xRequestedWith)) {
                 response.setStatus(HttpServletResponse.SC_OK);
@@ -95,44 +96,11 @@ public class BuildPC extends HttpServlet {
         if (service.equals("filter")) {
             boolean ajax = "true".equals(request.getParameter("ajax"));
             int componentID = parseIntOrDefault(request.getParameter("componentID"), -1);
-            String brand = request.getParameter("brand");
-            String keyword = request.getParameter("keyword");
-            String minPriceStr = request.getParameter("minPrice");
-            String maxPriceStr = request.getParameter("maxPrice");
-            String pageStr = request.getParameter("page");
-
-            int page = parseIntOrDefault(pageStr, 1);
-            int start = (page - 1) * PAGE_SIZE;
-
-            Integer minPrice = null, maxPrice = null;
-            try {
-                if (minPriceStr != null && !minPriceStr.isEmpty()) {
-                    minPrice = Integer.parseInt(minPriceStr);
-                }
-                if (maxPriceStr != null && !maxPriceStr.isEmpty()) {
-                    maxPrice = Integer.parseInt(maxPriceStr);
-                }
-            } catch (NumberFormatException ignored) {}
-
-            // Sử dụng filter không có component name (dành riêng cho BuildPC)
-            List<Categories> list = dao.getCategoriesFilteredNoComponent(
-                brand, minPrice, maxPrice, keyword, start, PAGE_SIZE);
-
-            int total = dao.countFilteredNoComponent(brand, minPrice, maxPrice, keyword);
-            int totalPages = (int) Math.ceil((double) total / PAGE_SIZE);
-
-            List<String> brandList = list.stream()
-                    .map(Categories::getBrandName)
-                    .filter(Objects::nonNull)
-                    .distinct()
-                    .collect(Collectors.toList());
-
+            List<Categories> list = new ArrayList<>();
+            if (componentID != 1 && componentID != -1) {
+                list = dao.getCategoriesByComponentID(componentID);
+            }
             request.setAttribute("products", list);
-            request.setAttribute("brandList", brandList);
-            request.setAttribute("currentPage", page);
-            request.setAttribute("totalPages", totalPages);
-            request.setAttribute("componentID", componentID);
-
             if (ajax) {
                 request.getRequestDispatcher("/ShopPages/Pages/buildpc-product-list.jsp").forward(request, response);
             } else {
@@ -142,6 +110,7 @@ public class BuildPC extends HttpServlet {
             return;
         }
 
+        // Default view
         List<Components> components = dao.getAllComponents();
         request.setAttribute("components", components);
         request.setAttribute("selectedComponents", selectedList);

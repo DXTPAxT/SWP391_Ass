@@ -49,12 +49,12 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Product Tables
+                        Warranty Detail Tables
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Product</a></li>
-                        <li class="active">view Product</li>
+                        <li><a href="#">Warranty Detail</a></li>
+                        <li class="active">view Warranty Detail</li>
                     </ol>
                 </section>
 
@@ -62,69 +62,50 @@
                 <section class="content">
                     <div class="row">
                         <div class="col-xs-12">
-                            <div class="box">                               
+                            <div class="box">
+
                                 <!-- /.box-header -->
                                 <div class="box-body">
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Product ID</th>
-                                                <th>Category Name</th>
-                                                <th>Product Code</th>
+                                                <th>Warranty Detail ID</th>
+                                                <th>Warranty Period (months)</th>
+                                                <th>Description</th>
+                                                <th>Component</th>
+                                                <th>Brand</th>
+                                                <th>Price</th>
                                                 <th>Status</th>
-                                                <th>Import</th>
-                                                <th>Action</th> 
+                                                <th>Update</th> 
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:if test="${not empty requestScope.product}">
-                                                <c:forEach var="product" items="${requestScope.product}">
+                                            <c:if test="${not empty requestScope.warrantyDetails}">
+                                                <c:forEach var="warranty" items="${requestScope.warrantyDetails}">
                                                     <tr>
-                                                        <td>${product.productID}</td>
-                                                        <td>${product.categoryName}</td>
-                                                        <td>${product.productCode}</td>
+                                                        <td>${warranty.warrantyDetailID}</td>                                                        
+                                                        <td>${warranty.warrantyPeriod}</td>
+                                                        <td class="text-wrap" style="word-break: break-word; max-width: 300px;">
+                                                            ${warranty.description}
+                                                        </td>
+                                                        <td>${warranty.componentName}</td>
+                                                        <td>${warranty.brandName}</td>
+                                                        <td>${warranty.price}</td>
                                                         <td>
                                                             <c:choose>
-                                                                <c:when test="${product.status == 1}">
+                                                                <c:when test="${warranty.status == 1}">
                                                                     <span class="label label-success">Active</span>
                                                                 </c:when>
-                                                                <c:when test="${product.status == 2}">
-                                                                    <span class="label label-warning">Under Repair</span>
-                                                                </c:when>
                                                                 <c:otherwise>
-                                                                    <span class="label label-danger">Disable</span>
+                                                                    <span class="label label-danger">Inactive</span>
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </td>
                                                         <td>
-                                                            <a href="Import?service=listbypro&productCode=${product.productCode}" 
-                                                               class="btn btn-warning btn-sm">View</a>
-                                                        </td>
-                                                        <td>
-                                                            <form action="ProductAdmin" method="post" style="display:inline;">
-                                                                <input type="hidden" name="service" value="toggleStatus"/>
-                                                                <input type="hidden" name="productID" value="${product.productID}"/>
-
-                                                                <c:choose>
-                                                                    <c:when test="${product.status == 1 || product.status == 2}">
-                                                                        <button type="submit" class="btn btn-danger btn-sm"
-                                                                                onclick="return confirm('This will disable the product. Continue?');">
-                                                                            Disable
-                                                                        </button>
-                                                                    </c:when>
-                                                                    <c:when test="${product.status == 0}">
-                                                                        <button type="submit" class="btn btn-warning btn-sm"
-                                                                                onclick="return confirm('This will mark the product as Under Repair. Continue?');">
-                                                                            Mark Under Repair
-                                                                        </button>
-                                                                    </c:when>
-                                                                    <c:otherwise>
-                                                                        <button type="button" class="btn btn-secondary btn-sm" disabled>
-                                                                            Unknown Status
-                                                                        </button>
-                                                                    </c:otherwise>
-                                                                </c:choose>
-                                                            </form>
+                                                            <a href="WDA?service=update&warrantyDetailID=${warranty.warrantyDetailID}" 
+                                                               class="btn btn-warning btn-sm">
+                                                                Update
+                                                            </a>
                                                         </td>
                                                     </tr>
                                                 </c:forEach>
@@ -168,17 +149,17 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- page script -->
         <script>
-                            $(function () {
-                                $("#example1").DataTable();
-                                $('#example2').DataTable({
-                                    "paging": true,
-                                    "lengthChange": true,
-                                    "searching": true,
-                                    "ordering": true,
-                                    "info": true,
-                                    "autoWidth": true
-                                });
-                            });
+            $(function () {
+                $("#example1").DataTable();
+                $('#example2').DataTable({
+                    "paging": true,
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": true
+                });
+            });
         </script>
         <script>
             $(function () {

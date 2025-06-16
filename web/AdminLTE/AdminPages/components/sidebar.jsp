@@ -58,8 +58,8 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">                               
-                    <li><a href="${param.ctx}/BraComAdmin"><i class="fa fa-circle-o"></i>View Bra-Com</a></li>   
-                    <li><a href="${param.ctx}/BraComAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Brand-Com</a></li>
+                    <li><a href="${param.ctx}/BrandComAdmin"><i class="fa fa-circle-o"></i>View Bra-Com</a></li>   
+                    <li><a href="${param.ctx}/BrandComAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Brand-Com</a></li>
                 </ul>
             </li>
             <li class="treeview">
@@ -95,6 +95,30 @@
                 </a>
                 <ul class="treeview-menu">                               
                     <li><a href="${param.ctx}/ProductAdmin"><i class="fa fa-circle-o"></i>View Product</a></li> 
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-laptop"></i> <span>Warranty</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">                               
+                    <li><a href="${param.ctx}/WarrantyAdmin"><i class="fa fa-circle-o"></i>View Warranty</a></li> 
+                    <li><a href="${param.ctx}/WarrantyAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert Warranty</a></li> 
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-laptop"></i> <span>Warranty Detail</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">                               
+                    <li><a href="${param.ctx}/WDA"><i class="fa fa-circle-o"></i>View Warranty Detail</a></li> 
+                    <li><a href="${param.ctx}/WDA?service=insert"><i class="fa fa-circle-o"></i>Insert Warranty Detail</a></li> 
                 </ul>
             </li>
             <li class="treeview">

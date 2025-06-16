@@ -24,82 +24,72 @@
             </jsp:include>
             <div class="content-wrapper">
                 <section class="content-header">
-                    <h1>UPDATE CATEGORY</h1>
+                    <h1>UPDATE WARRANTY DETAIL</h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Category</a></li>
-                        <li class="active">Update Category</li>
+                        <li><a href="#">Warranty Detail</a></li>
+                        <li class="active">Update Warranty Detail</li>
                     </ol>
                 </section>
                 <div class="box box-primary">
                     <div class="box-body">
-                        <!-- Hiển thị danh sách lỗi nếu có -->
                         <c:if test="${not empty errors}">
-                            <div class="alert alert-danger" style="font-weight:bold;">
-                                <ul>
-                                    <c:forEach var="err" items="${errors}">
-                                        <li>${err}</li>
-                                        </c:forEach>
-                                </ul>
+                            <div class="alert alert-danger font-weight-bold">
+                                <c:forEach var="error" items="${errors}">
+                                    <li>${error}</li>
+                                </c:forEach>
                             </div>
                         </c:if>
 
-                        <form method="post" action="${ctx}/CateAdmin">
-                            <input type="hidden" name="service" value="update">
-                            <input type="hidden" name="submit" value="submit">
-                            <input type="hidden" name="categoryID" value="${category.categoryID}">
+                        <form method="post" action="${pageContext.request.contextPath}/WDA">
+                            <input type="hidden" name="service" value="update"/>
+                            <input type="hidden" name="submit" value="submit"/>
+                            <input type="hidden" name="warrantyDetailID" value="${param.warrantyDetailID}"/>
 
-                            <!-- Category Name -->
+                            <!-- Warranty (readonly) -->
                             <div class="form-group">
-                                <label for="categoryName">Category Name</label>
-                                <input type="text" id="categoryName" name="categoryName"
-                                       class="form-control"
-                                       required
-                                       value="${param.categoryName != null ? param.categoryName : category.categoryName}">
+                                <label>Warranty</label>
+                                <input type="text" class="form-control" readonly value="${detail.warrantyPeriod} months"/>
+                                
                             </div>
 
-                            <!-- Component Name (readonly) -->
+                            <!-- Brand (readonly) -->
                             <div class="form-group">
-                                <label for="componentName">Component</label>
-                                <input type="text" id="componentName" class="form-control" readonly value="${category.componentName}">
+                                <label>Brand</label>
+                                <input type="text" class="form-control" readonly value="${detail.brandName}"/>
                             </div>
 
-                            <!-- Brand Name (readonly) -->
+                            <!-- Component (readonly) -->
                             <div class="form-group">
-                                <label for="brandName">Brand</label>
-                                <input type="text" id="brandName" class="form-control" readonly value="${bn}">
+                                <label>Component</label>
+                                <input type="text" class="form-control" readonly value="${detail.componentName}"/>
                             </div>
 
-                            <!-- Price (readonly) -->
+                            <!-- Price -->
                             <div class="form-group">
                                 <label for="price">Price</label>
-                                <input type="text" id="price" name="price" class="form-control" readonly value="${category.price}">
-                            </div>
-
-                            <!-- Description -->
-                            <div class="form-group">
-                                <label for="description">Description</label>
-                                <textarea id="description" name="description" class="form-control" rows="3">${param.description != null ? param.description : category.description}</textarea>
+                                <input type="text" id="price" name="price" class="form-control" placeholder="Enter price"
+                                       value="${param.price}"/>
                             </div>
 
                             <!-- Status -->
                             <div class="form-group">
                                 <label for="status">Status</label>
                                 <select id="status" name="status" class="form-control">
-                                    <option value="1" <c:if test="${param.status == '1' || (empty param.status and category.status == 1)}">selected</c:if>>Active</option>
-                                    <option value="0" <c:if test="${param.status == '0' || (empty param.status and category.status == 0)}">selected</c:if>>Inactive</option>
+                                    <option value="1"
+                                            <c:if test="${param.status == '1' || (empty param.status and detail.status == 1)}">selected</c:if>>
+                                                Active
+                                            </option>
+                                            <option value="0"
+                                            <c:if test="${param.status == '0' || (empty param.status and detail.status == 0)}">selected</c:if>>
+                                                Inactive
+                                            </option>
                                     </select>
                                 </div>
 
-                                <!-- Image URL -->
-                                <div class="form-group">
-                                    <label for="imageURL">Image URL</label>
-                                    <input type="text" id="imageURL" name="imageURL" class="form-control" >
-                            </div>
-
-                            <!-- Submit -->
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                            <a href="${ctx}/CateAdmin?service=list" class="btn btn-default">Cancel</a>
+                                <!-- Submit -->
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                <a href="${pageContext.request.contextPath}/WarrantyDetailAdmin" class="btn btn-default">Cancel</a>
                         </form>
                     </div>
 
