@@ -195,7 +195,6 @@ public class CategoriesDAO extends DBContext {
         return 0;
     }
 // filter categopies    
-
     public List<Categories> getCategoriesFiltered(String componentName, String brandName,
             Integer minPrice, Integer maxPrice,
             String keyword, int start, int size) {
@@ -269,7 +268,6 @@ public class CategoriesDAO extends DBContext {
         return list;
     }
 //Count in Categories
-
     public int countFiltered(String componentName, String brandName,
             Integer minPrice, Integer maxPrice,
             String keyword) {
@@ -325,38 +323,36 @@ public class CategoriesDAO extends DBContext {
         return 0;
     }
 // select in build pc
-    public List<Categories> getCategoriesByComponentID(int componentID) {
-        if (componentID == 1) {
-            return new ArrayList<>();
-        }
-        String sql = """
-            SELECT
-              c.*,
-              bc.ComponentID,
-              bc.BrandID,
-              b.BrandName,
-              comp.ComponentName
-            FROM Categories c
-            JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-            JOIN Brands b ON bc.BrandID = b.BrandID
-            JOIN Components comp ON bc.ComponentID = comp.ComponentID
-            WHERE bc.ComponentID = ?
-            ORDER BY c.CategoryID
-        """;
+   public List<Categories> getCategoriesByComponentName(String componentName) {
+    String sql = """
+        SELECT
+          c.*,
+          bc.ComponentID,
+          bc.BrandID,
+          b.BrandName,
+          comp.ComponentName
+        FROM Categories c
+        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        JOIN Components comp ON bc.ComponentID = comp.ComponentID
+        WHERE comp.ComponentName = ?
+          AND c.Status = 2
+        ORDER BY c.CategoryID
+    """;
 
-        List<Categories> list = new ArrayList<>();
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, componentID);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    list.add(extractCategory(rs));
-                }
+    List<Categories> list = new ArrayList<>();
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setString(1, componentName);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(extractCategory(rs));
             }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, null, e);
         }
-        return list;
+    } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, null, e);
     }
+    return list;
+}
 
     private Categories extractCategory(ResultSet rs) throws SQLException {
         Categories category = new Categories(

@@ -1,0 +1,263 @@
+﻿Use master;
+
+-- Xóa database nếu đã tồn tại
+IF EXISTS (SELECT name FROM sys.databases WHERE name = N'ComputerOnlineShop')
+BEGIN
+    ALTER DATABASE ComputerOnlineShop SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE ComputerOnlineShop;
+END;
+
+-- Tạo database mới
+CREATE DATABASE ComputerOnlineShop;
+GO
+
+-- Sử dụng database vừa tạo
+USE ComputerOnlineShop;
+GO
+
+-- 1. Roles
+CREATE TABLE Roles (
+    RoleID INT PRIMARY KEY IDENTITY(1,1),
+    RoleName VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- 2. Users
+CREATE TABLE Users (
+    UserID INT PRIMARY KEY IDENTITY(1,1),
+    RoleID INT NOT NULL,
+    FullName VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    PhoneNumber VARCHAR(15) NOT NULL,
+    Address TEXT NOT NULL,
+    PasswordHash VARCHAR(255) NOT NULL,
+    CreatedAt DATETIME DEFAULT GETDATE() NOT NULL,
+    Status int DEFAULT 1 NOT NULL,
+    FOREIGN KEY (RoleID) REFERENCES Roles(RoleID)
+);
+
+-- 3. Customer Info
+/*
+CREATE TABLE CustomerInfo (
+	CustomerInfoID INT PRIMARY KEY IDENTITY(1,1),
+	UserID INT NOT NULL,
+    Address TEXT NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+)
+*/
+
+-- 4. Staff Info 
+/*
+CREATE TABLE StaffInfo (
+	StaffInfoID INT PRIMARY KEY IDENTITY(1,1),
+	UserID INT NOT NULL,
+    StartedDate Date NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+)
+*/
+
+-- 3. Components luu san pham: PC, Laptop, Ban Phim
+CREATE TABLE Components (
+    ComponentID INT PRIMARY KEY IDENTITY(1,1),
+	ComponentName VARCHAR(100) UNIQUE NOT NULL,
+    Quantity INT NOT NULL,
+	Status INT
+);
+
+--4. Brands
+Create table Brands(
+	BrandID int primary key identity(1,1),
+	BrandName Varchar(100)  NOT NULL,
+	Quantity INT NOT NULL,
+	Status INT NOT NULL
+);
+
+-- 5. Brand components
+Create table BrandComs (
+	BrandComID INT PRIMARY KEY IDENTITY(1,1),
+	ComponentID INT NOT NULL,
+	BrandID INT NOT NULL,
+	Quantity INT NOT NULL,
+	FOREIGN KEY (ComponentID) REFERENCES Components(ComponentID),
+	FOREIGN KEY (BrandID) REFERENCES Brands(BrandID)
+);
+
+--6. Category luu san pham cu the: Acer Nitro 5/ Des: RTX...
+CREATE TABLE Categories (
+    CategoryID INT PRIMARY KEY IDENTITY(1,1),
+	CategoryName VARCHAR(100) UNIQUE NOT NULL,
+	BrandComID INT NOT NULL,
+    Quantity INT NOT NULL,
+	Price int not null,
+	inventory int default 0 not null,
+	Description TEXT NOT NULL,
+    Status int DEFAULT 1 NOT NULL,
+	ImageURL TEXT,
+	FOREIGN KEY (BrandComID) REFERENCES BrandComs(BrandComID)
+);
+
+-- 7 Imports
+Create TABLE Imports(
+	ImportID INT PRIMARY KEY IDENTITY(1,1),
+	ImportCode Varchar(100) not null,
+	CategoryID INT NOT NULL ,
+	CreatedAt DATETIME DEFAULT GETDATE() NOT NULL,
+	Quantity INT NOT NULL,
+	Price INT NOT NULL,
+	FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
+);
+
+-- 8. Products
+CREATE TABLE Products (
+    ProductID INT PRIMARY KEY IDENTITY(1,1),
+    CategoryID INT NOT NULL,
+	ProductCode Varchar(100) NOT null,
+    Status int DEFAULT 1 NOT NULL,
+	ImportID INT NOT NULL,
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
+    FOREIGN KEY (ImportID) REFERENCES Imports(ImportID)
+);
+
+--9. Bang nay luu thong tin cua bao hanh
+Create table Warranties(
+	WarrantyID INT PRIMARY KEY IDENTITY(1,1),
+	WarrantyPeriod INT NOT NULL,
+	Description TEXT NOT NULL
+);
+
+--10. WarrantyDeatails
+Create table WarrantyDetails(
+	WarrantyDetailID INT PRIMARY KEY IDENTITY(1,1),
+	WarrantyID INT NOT NULL,
+	BrandComID INT NOT NULL,
+	Price INT NOT NULL,
+	Status int DEFAULT 1 NOT NULL,
+    FOREIGN KEY (WarrantyID) REFERENCES Warranties(WarrantyID),
+    FOREIGN KEY (BrandComID) REFERENCES BrandComs(BrandComID)
+);
+
+-- 11. Orders
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY IDENTITY(1,1),
+    CustomerID INT NOT NULL,
+    OrderDate DATETIME DEFAULT GETDATE() NOT NULL,
+    Address TEXT NOT NULL,
+    TotalAmount INT NOT NULL,
+    Status int DEFAULT 1 NOT NULL,
+    FOREIGN KEY (CustomerID) REFERENCES Users(UserID)
+);
+
+-- 12. OrderItems
+CREATE TABLE OrderItems (
+	OrderItemID INT PRIMARY KEY IDENTITY(1,1),
+	OrderID INT NOT NULL,
+	CategoryID INT NOT NULL,
+	Quantity INT NOT NULL,
+	Price INT NOT NULL,
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
+)
+
+-- 13. OrderDetails
+CREATE TABLE OrderDetails (
+    OrderDetailID INT PRIMARY KEY IDENTITY(1,1),
+    OrderItemID INT NOT NULL,
+    ProductID INT NOT NULL,
+	WarrantyDetailID Int not null,
+    UnitPrice int NOT NULL,
+    WarrantyPrice int NOT NULL,
+	Status int DEFAULT 1 NOT NULL,
+    FOREIGN KEY (OrderItemID) REFERENCES OrderItems(OrderItemID),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
+	FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID),
+);
+
+-- 14.CartItems
+CREATE TABLE CartItems (
+	CartItemID INT PRIMARY KEY IDENTITY(1,1),
+	UserID INT NOT NULL,
+	CategoryID INT NOT NULL,
+	WarrantyDetailID INT NOT NULL,
+	Status INT NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
+    FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
+)
+
+-- 11. Shipping
+CREATE TABLE Shipping (
+    ShippingID INT PRIMARY KEY IDENTITY(1,1),
+    OrderID INT NOT NULL,
+    ShipperID INT NOT NULL,
+    ShippingStatus VARCHAR(50) NOT NULL,
+    Feedback TEXT NOT NULL,
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY (ShipperID) REFERENCES Users(UserID),
+);
+
+-- 12. Feedbacks
+CREATE TABLE Feedbacks (
+    FeedbackID INT PRIMARY KEY IDENTITY(1,1),
+    UserID INT NOT NULL,
+    Content TEXT NOT NULL,
+	OrderItemID int not null,
+    CreatedAt DATETIME DEFAULT GETDATE() NOT NULL,
+    Rate INT NOT NULL,
+	Status INT DEFAULT 1 NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+	FOREIGN KEY (OrderItemID) REFERENCES OrderItems(OrderItemID)
+);
+
+-- 14. Reports
+CREATE TABLE Reports (
+    ReportID INT PRIMARY KEY IDENTITY(1,1),
+    ManagerID INT NOT NULL,
+    Title VARCHAR(255) NOT NULL,
+    Content TEXT NOT NULL,
+    CreatedAt DATETIME DEFAULT GETDATE() NOT NULL,
+    FOREIGN KEY (ManagerID) REFERENCES Users(UserID)
+);
+
+-- 15. Payments
+CREATE TABLE Payments (
+    PaymentID INT PRIMARY KEY IDENTITY(1,1),
+    OrderID INT NOT NULL,
+    PaymentMethod VARCHAR(50) NOT NULL,
+    PaidAmount DECIMAL(10,2) NOT NULL,
+    PaymentDate DATETIME DEFAULT GETDATE() NOT NULL,
+    PaymentStatus VARCHAR(50) NOT NULL,
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
+);
+
+-- Table: Blogs_category
+CREATE TABLE Blogs_category (
+    Bc_id INT PRIMARY KEY,
+    Bc_name VARCHAR(255) NOT NULL
+);
+
+-- Table: Post
+CREATE TABLE Post (
+    Post_id INT PRIMARY KEY,
+    Title VARCHAR(255) NOT NULL,
+    Author VARCHAR(255),
+    Updated_date DATETIME,
+    Content TEXT,
+    Bc_id INT,
+    Thumbnail VARCHAR(255),
+    Brief TEXT,
+    Add_id INT NOT NULL,
+	Status INT NOT NULL DEFAULT 1,
+    FOREIGN KEY (Bc_id) REFERENCES Blogs_category(Bc_id),
+    FOREIGN KEY (Add_id) REFERENCES Users(UserID)
+);
+
+-- 16. Sale Events
+CREATE TABLE SaleEvents (
+    EventID INT PRIMARY KEY IDENTITY(1,1),
+	CategoryID INT NOT NULL,
+	Post_id INT NOT NULL,
+	StartDate Date NOT NULL,
+	EndDate Date NOT NULL,
+	DiscountPercent DECIMAL(5,2) NOT NULL, 
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
+    FOREIGN KEY (Post_id) REFERENCES Post(Post_id)
+);

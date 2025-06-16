@@ -4,25 +4,18 @@ package models;
 public class CartItem {
     private int cartItemID;
     private int userID;
-    private int CategoryID;
-    private int WarrantyDetailID;
+    private Categories Category ;
+    private WarrantyDetails warranty;
     private int Status;
 
     public CartItem() {
     }
 
-    public CartItem(int cartItemID, int userID, int CategoryID, int WarrantyDetailID, int Status) {
+    public CartItem(int cartItemID, int userID, Categories Category, WarrantyDetails warranty, int Status) {
         this.cartItemID = cartItemID;
         this.userID = userID;
-        this.CategoryID = CategoryID;
-        this.WarrantyDetailID = WarrantyDetailID;
-        this.Status = Status;
-    }
-
-    public CartItem(int userID, int CategoryID, int WarrantyDetailID, int Status) {
-        this.userID = userID;
-        this.CategoryID = CategoryID;
-        this.WarrantyDetailID = WarrantyDetailID;
+        this.Category = Category;
+        this.warranty = warranty;
         this.Status = Status;
     }
 
@@ -42,20 +35,20 @@ public class CartItem {
         this.userID = userID;
     }
 
-    public int getCategoryID() {
-        return CategoryID;
+    public Categories getCategory() {
+        return Category;
     }
 
-    public void setCategoryID(int CategoryID) {
-        this.CategoryID = CategoryID;
+    public void setCategory(Categories Category) {
+        this.Category = Category;
     }
 
-    public int getWarrantyDetailID() {
-        return WarrantyDetailID;
+    public WarrantyDetails getWarranty() {
+        return warranty;
     }
 
-    public void setWarrantyDetailID(int WarrantyDetailID) {
-        this.WarrantyDetailID = WarrantyDetailID;
+    public void setWarranty(WarrantyDetails warranty) {
+        this.warranty = warranty;
     }
 
     public int getStatus() {
@@ -65,11 +58,5 @@ public class CartItem {
     public void setStatus(int Status) {
         this.Status = Status;
     }
-    
-    
-    
-    
-
-   
 
 }
