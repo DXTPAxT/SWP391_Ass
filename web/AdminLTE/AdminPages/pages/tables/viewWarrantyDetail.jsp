@@ -74,6 +74,7 @@
                                                 <th>Description</th>
                                                 <th>Component</th>
                                                 <th>Brand</th>
+                                                <th>Price</th>
                                                 <th>Status</th>
                                                 <th>Update</th> 
                                             </tr>
@@ -89,6 +90,7 @@
                                                         </td>
                                                         <td>${warranty.componentName}</td>
                                                         <td>${warranty.brandName}</td>
+                                                        <td>${warranty.price}</td>
                                                         <td>
                                                             <c:choose>
                                                                 <c:when test="${warranty.status == 1}">
