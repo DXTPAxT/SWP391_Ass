@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
-    <!-- Servlets -->
+<web-app version="6.0"
+         xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+
+    <!-- ===== Servlets ===== -->
     <servlet>
         <servlet-name>Demo</servlet-name>
         <servlet-class>controller.Demo</servlet-class>
@@ -122,17 +127,16 @@
         <servlet-class>controller.ShippingController</servlet-class>
     </servlet>
     <servlet>
-<<<<<<< HEAD
+        <servlet-name>FeedbackAdminServlet</servlet-name>
+        <servlet-class>controllerAdmin.FeedbackAdminServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>WarrantyAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.WarrantyAdminServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>WarrantyDetailAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.WarrantyDetailAdminServlet</servlet-class>
-=======
-        <servlet-name>FeedbackAdminServlet</servlet-name>
-        <servlet-class>controllerAdmin.FeedbackAdminServlet</servlet-class>
->>>>>>> main
     </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
@@ -255,16 +259,15 @@
         <url-pattern>/ShippingController</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-<<<<<<< HEAD
+        <servlet-name>FeedbackAdminServlet</servlet-name>
+        <url-pattern>/FeedbackAdminServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>WarrantyAdminServlet</servlet-name>
         <url-pattern>/WarrantyAdmin</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>WarrantyDetailAdminServlet</servlet-name>
         <url-pattern>/WDA</url-pattern>
-=======
-        <servlet-name>FeedbackAdminServlet</servlet-name>
-        <url-pattern>/FeedbackAdminServlet</url-pattern>
->>>>>>> main
     </servlet-mapping>
 </web-app>
