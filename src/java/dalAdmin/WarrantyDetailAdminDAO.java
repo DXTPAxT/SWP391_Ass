@@ -141,6 +141,46 @@ public class WarrantyDetailAdminDAO extends DBAdminContext {
         }
     }
 
+    public List<WarrantyDetails> getAllWarrantyDetailsByBrandComID(int brandComID) {
+        List<WarrantyDetails> list = new ArrayList<>();
+        String sql = """
+        SELECT wd.WarrantyDetailID, wd.WarrantyID, w.WarrantyPeriod, w.Description,
+               wd.BrandComID, b.BrandName, c.ComponentName,
+               wd.Price, wd.Status
+        FROM WarrantyDetails wd
+        JOIN Warranties w ON wd.WarrantyID = w.WarrantyID
+        JOIN BrandComs bc ON wd.BrandComID = bc.BrandComID
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        JOIN Components c ON bc.ComponentID = c.ComponentID
+        WHERE wd.BrandComID = ?
+    """;
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, brandComID);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                WarrantyDetails wd = new WarrantyDetails();
+                wd.setWarrantyDetailID(rs.getInt("WarrantyDetailID"));
+                wd.setWarrantyID(rs.getInt("WarrantyID"));
+                wd.setWarrantyPeriod(rs.getInt("WarrantyPeriod"));
+                wd.setDescription(rs.getString("Description"));
+                wd.setBrandComID(rs.getInt("BrandComID"));
+                wd.setBrandName(rs.getString("BrandName"));
+                wd.setComponentName(rs.getString("ComponentName"));
+                wd.setPrice(rs.getInt("Price"));
+                wd.setStatus(rs.getInt("Status"));
+                list.add(wd);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
     public static void main(String[] args) {
         WarrantyDetailAdminDAO dao = new WarrantyDetailAdminDAO();
 
