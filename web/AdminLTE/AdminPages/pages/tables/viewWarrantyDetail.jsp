@@ -83,13 +83,13 @@
                                             <c:if test="${not empty requestScope.warrantyDetails}">
                                                 <c:forEach var="warranty" items="${requestScope.warrantyDetails}">
                                                     <tr>
-                                                        <td>${warranty.warrantyDetailID}</td>                                                        
+                                                        <td>${warranty.warrantyDetailID}</td>     
+                                                        <td>${warranty.componentName}</td>
+                                                        <td>${warranty.brandName}</td>
                                                         <td>${warranty.warrantyPeriod}</td>
                                                         <td class="text-wrap" style="word-break: break-word; max-width: 300px;">
                                                             ${warranty.description}
                                                         </td>
-                                                        <td>${warranty.componentName}</td>
-                                                        <td>${warranty.brandName}</td>
                                                         <td>${warranty.price}</td>
                                                         <td>
                                                             <c:choose>

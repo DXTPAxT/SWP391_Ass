@@ -71,7 +71,8 @@
                                                 <th>Brand Name</th>
                                                 <th>Component Name</th>
                                                 <th>Quantity</th>
-                                                <th>View</th>
+                                                <th>View Category</th>
+                                                <th>View Warranty</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -84,6 +85,10 @@
                                                         <td>${bc.quantity}</td>
                                                         <td>
                                                             <a href="CateAdmin?service=listbybcid&brandComID=${bc.brandComID}" 
+                                                               class="btn btn-warning btn-sm">View</a>
+                                                        </td>
+                                                        <td>
+                                                            <a href="WDA?service=listbybrandcomid&brandComID=${bc.brandComID}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                     </tr>
