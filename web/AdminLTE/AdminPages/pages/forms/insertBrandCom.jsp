@@ -58,11 +58,11 @@
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
-                    <h1>INSERT USER</h1>
+                    <h1>INSERT BRAND COM</h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">User</a></li>
-                        <li class="active">Insert User</li>
+                        <li><a href="#">Brand Com</a></li>
+                        <li class="active">Insert Brand Com</li>
                     </ol>
                 </section>
                 <!-- Main content -->
@@ -72,7 +72,7 @@
                             <div class="alert alert-danger" style="font-weight:bold;">${error}</div>
                         </c:if>
 
-                        <form method="post" action="${ctx}/BraComAdmin">
+                        <form method="post" action="${ctx}/BrandComAdmin">
                             <input type="hidden" name="service" value="insert">
                             <input type="hidden" name="submit" value="submit">
 

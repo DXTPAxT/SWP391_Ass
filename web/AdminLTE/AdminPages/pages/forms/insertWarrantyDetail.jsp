@@ -58,16 +58,17 @@
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
-                    <h1>INSERT CATEGORY </h1>
+                    <h1>INSERT Warranty Detail</h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Category</a></li>
-                        <li class="active">Insert Category</li>
+                        <li><a href="#">Warranty Detail</a></li>
+                        <li class="active">Insert Warranty Detail</li>
                     </ol>
                 </section>
                 <!-- Main content -->
                 <div class="box box-success">
                     <div class="box-body">
+                       
                         <c:if test="${not empty errors}">
                             <div class="alert alert-danger" style="font-weight:bold;">
                                 <ul>
@@ -78,41 +79,43 @@
                             </div>
                         </c:if>
 
-                        <form method="post" action="${ctx}/CateAdmin">
-                            <input type="hidden" name="service" value="insert">
-                            <input type="hidden" name="submit" value="submit">
+                        <form method="post" action="${pageContext.request.contextPath}/WDA">
+                            <input type="hidden" name="service" value="insert"/>
+                            <input type="hidden" name="submit" value="submit"/>
 
-                            <!-- Category Name -->
+                            <!-- Select Warranty -->
                             <div class="form-group">
-                                <label for="categoryName">Category Name</label>
-                                <input type="text" id="categoryName" name="categoryName"
-                                       class="form-control"
-                                       placeholder="Enter category name"
-                                       value="${param.categoryName}">
+                                <label for="warrantyID">Warranty</label>
+                                <select id="warrantyID" name="warrantyID" class="form-control" >
+                                    <option value="">-- Select Warranty --</option>
+                                    <c:forEach var="w" items="${warranties}">
+                                        <option value="${w.warrantyID}" <c:if test="${param.warrantyID == w.warrantyID}">selected</c:if>>
+                                            ${w.warrantyPeriod} months
+                                        </option>
+                                    </c:forEach>
+                                </select>
                             </div>
 
-                            <!-- Brand -->
+                            <!-- Select Brand -->
                             <div class="form-group">
                                 <label for="brandID">Brand</label>
-                                <select id="brandID" name="brandID" class="form-control">
+                                <select id="brandID" name="brandID" class="form-control" >
                                     <option value="">-- Select Brand --</option>
                                     <c:forEach var="b" items="${brands}">
-                                        <option value="${b.brandID}"
-                                                <c:if test="${param.brandID == b.brandID}">selected</c:if>>
+                                        <option value="${b.brandID}" <c:if test="${param.brandID == b.brandID}">selected</c:if>>
                                             ${b.brandName}
                                         </option>
                                     </c:forEach>
                                 </select>
                             </div>
 
-                            <!-- Component -->
+                            <!-- Select Component -->
                             <div class="form-group">
                                 <label for="componentID">Component</label>
-                                <select id="componentID" name="componentID" class="form-control">
+                                <select id="componentID" name="componentID" class="form-control" >
                                     <option value="">-- Select Component --</option>
                                     <c:forEach var="c" items="${components}">
-                                        <option value="${c.componentID}"
-                                                <c:if test="${param.componentID == c.componentID}">selected</c:if>>
+                                        <option value="${c.componentID}" <c:if test="${param.componentID == c.componentID}">selected</c:if>>
                                             ${c.componentName}
                                         </option>
                                     </c:forEach>
@@ -122,16 +125,8 @@
                             <!-- Price -->
                             <div class="form-group">
                                 <label for="price">Price</label>
-                                <input type="text" id="price" name="price"
-                                       class="form-control"
-                                       value="${param.price}">
-                            </div>
-
-                            <!-- Description -->
-                            <div class="form-group">
-                                <label for="description">Description</label>
-                                <textarea id="description" name="description"
-                                          class="form-control" rows="3">${param.description}</textarea>
+                                <input type="text" id="price" name="price" class="form-control"
+                                       value="${param.price}" placeholder="Enter price" />
                             </div>
 
                             <!-- Status -->
@@ -143,77 +138,67 @@
                                     </select>
                                 </div>
 
-                                <!-- Image URL -->
-                                <div class="form-group">
-                                    <label for="imageURL">Image URL</label>
-                                    <input type="text" id="imageURL" name="imageURL"
-                                           class="form-control"
-                                           placeholder="Enter image URL"
-                                           value="${param.imageURL}">
-                            </div>
+                                <!-- Submit -->
+                                <button type="submit" class="btn btn-success">Add Warranty Detail</button>
+                            </form>
+                        </div>
 
-                            <!-- Submit -->
-                            <button type="submit" class="btn btn-primary">Insert Category</button>
-                            <a href="${ctx}/CateAdmin?service=list" class="btn btn-default">Cancel</a>
-                        </form>
+
                     </div>
-
-
-
                     <!-- /.box -->
                 </div>
-                <jsp:include page="../../components/footer.jsp" />
-                <jsp:include page="../../components/control-sidebar.jsp" />
-            </div>
-            <!-- ./wrapper -->
-            <!-- jQuery 2.2.3 -->
-            <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
-            <!-- Bootstrap 3.3.6 -->
-            <script src="${ctx}/AdminLTE/AdminPages/bootstrap/js/bootstrap.min.js"></script>
-            <!-- Select2 -->
-            <script src="${ctx}/AdminLTE/AdminPages/plugins/select2/select2.full.min.js"></script>
-            <!-- InputMask -->
-            <script src="${ctx}/AdminLTE/AdminPages/plugins/input-mask/jquery.inputmask.js"></script>
-            <script src="${ctx}/AdminLTE/AdminPages/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
-            <script src="${ctx}/AdminLTE/AdminPages/plugins/input-mask/jquery.inputmask.extensions.js"></script>
-            <!-- date-range-picker -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
-            <script src="${ctx}/AdminLTE/AdminPages/plugins/daterangepicker/daterangepicker.js"></script>
-            <!-- bootstrap datepicker -->
-            <script src="${ctx}/AdminLTE/AdminPages/plugins/datepicker/bootstrap-datepicker.js"></script>
-            <!-- bootstrap color picker -->
-            <script src="${ctx}/AdminLTE/AdminPages/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
-            <!-- bootstrap time picker -->
-            <script src="${ctx}/AdminLTE/AdminPages/plugins/timepicker/bootstrap-timepicker.min.js"></script>
-            <!-- SlimScroll 1.3.0 -->
-            <script src="${ctx}/AdminLTE/AdminPages/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-            <!-- iCheck 1.0.1 -->
-            <script src="${ctx}/AdminLTE/AdminPages/plugins/iCheck/icheck.min.js"></script>
-            <!-- FastClick -->
-            <script src="${ctx}/AdminLTE/AdminPages/plugins/fastclick/fastclick.js"></script>
-            <!-- AdminLTE App -->
-            <script src="${ctx}/AdminLTE/AdminPages/dist/js/app.min.js"></script>
-            <!-- AdminLTE for demo purposes -->
-            <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
-            <!-- Page script -->
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    const inputs = document.querySelectorAll(".is-invalid");
+            <jsp:include page="../../components/footer.jsp" />
+            <jsp:include page="../../components/control-sidebar.jsp" />
+        </div>
+        <!-- ./wrapper -->
+        <!-- jQuery 2.2.3 -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
+        <!-- Bootstrap 3.3.6 -->
+        <script src="${ctx}/AdminLTE/AdminPages/bootstrap/js/bootstrap.min.js"></script>
+        <!-- Select2 -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/select2/select2.full.min.js"></script>
+        <!-- InputMask -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/input-mask/jquery.inputmask.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+        <!-- date-range-picker -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/daterangepicker/daterangepicker.js"></script>
+        <!-- bootstrap datepicker -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/datepicker/bootstrap-datepicker.js"></script>
+        <!-- bootstrap color picker -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
+        <!-- bootstrap time picker -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/timepicker/bootstrap-timepicker.min.js"></script>
+        <!-- SlimScroll 1.3.0 -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+        <!-- iCheck 1.0.1 -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/iCheck/icheck.min.js"></script>
+        <!-- FastClick -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/fastclick/fastclick.js"></script>
+        <!-- AdminLTE App -->
+        <script src="${ctx}/AdminLTE/AdminPages/dist/js/app.min.js"></script>
+        <!-- AdminLTE for demo purposes -->
+        <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
+        <!-- Page script -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const inputs = document.querySelectorAll(".is-invalid");
 
-                    inputs.forEach(input => {
-                        input.addEventListener("input", function () {
-                            // B? class 'is-invalid'
-                            input.classList.remove("is-invalid");
+                inputs.forEach(input => {
+                    input.addEventListener("input", function () {
+                        // B? class 'is-invalid'
+                        input.classList.remove("is-invalid");
 
-                            // T�m ph?n t? <p> b�o l?i g?n input nh?t v� x�a
-                            const errorMsg = input.parentElement.querySelector("p");
-                            if (errorMsg) {
-                                errorMsg.remove();
-                            }
-                        });
+                        // T�m ph?n t? <p> b�o l?i g?n input nh?t v� x�a
+                        const errorMsg = input.parentElement.querySelector("p");
+                        if (errorMsg) {
+                            errorMsg.remove();
+                        }
                     });
                 });
-            </script>
+            });
+        </script>
     </body>
 </html>
 
