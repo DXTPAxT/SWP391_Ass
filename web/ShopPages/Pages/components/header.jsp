@@ -78,7 +78,7 @@
                         <ul class="nav navbar-nav collapse navbar-collapse">
                             <li><a href="${pageContext.request.contextPath}/HomePages" class="${activePage == 'home' ? 'active' : ''}">Home</a></li>
                             <li><a href="${pageContext.request.contextPath}/CategoriesController?service=list" class="${activePage == 'products' ? 'active' : ''}">Products</a></li>
-                            <li><a href="#" class="${activePage == 'blog' ? 'active' : ''}">Blog<i class=""></i></a></li>
+                            <li><a href="${ctx}/blogc" class="${activePage == 'blog' ? 'active' : ''}">Blog</a></li>
                             <li><a href="404.html" class="${activePage == '404' ? 'active' : ''}">404</a></li>
                             <li><a href="contact-us.html" class="${activePage == 'contact' ? 'active' : ''}">Contact</a></li>
 
