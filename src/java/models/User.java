@@ -46,6 +46,23 @@ public class User {
         this.status = status;
         this.customerInfo = customerInfo;
         this.staffInfo = staffInfo;
+
+
+    public User(int UserID, int RoleID, String Fullname, String Email, String PhoneNumber, String Address, String Password, String CreatedAt, int Status) {
+        this.UserID = UserID;
+        this.RoleID = RoleID;
+        this.Fullname = Fullname;
+        this.Email = Email;
+        this.PhoneNumber = PhoneNumber;
+        this.Address = Address;
+        this.Password = Password;
+        this.CreatedAt = CreatedAt;
+        this.Status = Status;
+    }
+
+    // Constructor chỉ nhận Fullname
+    public User(String Fullname) {
+        this.Fullname = Fullname;
     }
 
     public User(String string) {
