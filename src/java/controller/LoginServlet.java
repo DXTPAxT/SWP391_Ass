@@ -38,7 +38,7 @@ public class LoginServlet extends HttpServlet {
             RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/login.jsp");
             rs.forward(request, response);
         } else {
-            if (user.getRoleID() == 2) {
+            if (user.getRole().getRoleID() == 2) {
                 String redirectURL = (String) session.getAttribute(REDIRECT_AFTER_LOGIN);
                 if (redirectURL == null) {
                     redirectURL = "HomePages";
@@ -81,22 +81,28 @@ public class LoginServlet extends HttpServlet {
             setLoginAttributes(request, "Email does not exist!", email, password);
             forwardToLogin(request, response);
             return;
-        }
-
-        User user = userDAO.getUserByEmailAndPassword(email, password);
+        }        User user = userDAO.getUserByEmailAndPassword(email, password);
         if (user != null) {
+            if (user.getStatus() != 1) {
+                setLoginAttributes(request, "Your account has been disabled!", email, password);
+                forwardToLogin(request, response);
+                return;
+            }
+            
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
-            session.setAttribute("id", user.getUserID());
-            if (user.getUserID() != 1) {
+            session.setAttribute("id", user.getUserId());
+            
+            // Redirect based on role
+            if (user.isAdmin()) {
+                response.sendRedirect("AdminDashbordServlet");
+            } else {
                 String redirectURL = (String) session.getAttribute(REDIRECT_AFTER_LOGIN);
                 if (redirectURL == null) {
                     redirectURL = "HomePages";
                 }
                 session.setAttribute(REDIRECT_AFTER_LOGIN, null);
                 response.sendRedirect(redirectURL);
-            } else {
-                response.sendRedirect("AdminDashbordServlet");
             }
         } else {
             setLoginAttributes(request, "Incorrect password!", email, password);

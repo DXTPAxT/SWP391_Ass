@@ -34,7 +34,7 @@ public class SubmitFeedbackServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/Login");
                 return;
             }
-            LOGGER.info("UserID " + user.getUserID() + " is submitting feedback");
+            LOGGER.info("UserID " + user.getRole().getRoleID()+ " is submitting feedback");
 
             // Lấy thông tin từ form
             String orderItemIdStr = request.getParameter("orderItemId");
@@ -82,8 +82,8 @@ public class SubmitFeedbackServlet extends HttpServlet {
             }
 
             // Tạo đối tượng Feedback
-            Feedback feedback = new Feedback(user.getUserID(), content, orderItemId, rate);
-            feedback.setCreatedAt(new Date());
+            Feedback feedback = new Feedback(user.getRole().getRoleID(), content, orderItemId, rate);
+            feedback.setCreatedAt(new Date().toString());
             LOGGER.info("Feedback object created: " + feedback.toString());
 
             // Thêm feedback vào DB

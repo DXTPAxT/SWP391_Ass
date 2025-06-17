@@ -30,8 +30,8 @@ public class ShippingController extends HttpServlet {
         }
 
         User user = (User) session.getAttribute("user");
-        int userID = user.getUserID();
-        int roleID = user.getRoleID();
+        int userID = user.getRole().getRoleID();
+        int roleID = user.getRole().getRoleID();
         String service = request.getParameter("service") != null ? request.getParameter("service") : "list";
 
         switch (service) {

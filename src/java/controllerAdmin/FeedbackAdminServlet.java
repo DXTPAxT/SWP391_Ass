@@ -30,7 +30,7 @@ public class FeedbackAdminServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             HttpSession session = request.getSession();
-            if (session.getAttribute("user") == null || ((User) session.getAttribute("user")).getRoleID() != 1) {
+            if (session.getAttribute("user") == null || ((User) session.getAttribute("user")).getRole().getRoleID()!= 1) {
                 session.setAttribute("toast", "Access denied. Admins only.");
                 session.setAttribute("toastType", "error");
                 response.sendRedirect(request.getContextPath() + "/login.jsp");

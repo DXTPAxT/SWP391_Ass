@@ -30,15 +30,7 @@ public class UpdateUserServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/Admin/user");
             return;
         }
-        // Load roles for display
-        RoleDAO roleDAO = new RoleDAO();
-        ArrayList<Role> roles = roleDAO.getRoles();
-        Map<Integer, String> roleMap = new HashMap<>();
-        for (Role r : roles) {
-            roleMap.put(r.getRoleID(), r.getRoleName());
-        }
         request.setAttribute("user", user);
-        request.setAttribute("roleMap", roleMap);
         RequestDispatcher rd = request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/updateUser.jsp");
         rd.forward(request, response);
     }

@@ -141,8 +141,6 @@ public class WarrantyDetailAdminDAO extends DBAdminContext {
         }
     }
 
-<<<<<<< HEAD
-=======
     public List<WarrantyDetails> getAllWarrantyDetailsByBrandComID(int brandComID) {
         List<WarrantyDetails> list = new ArrayList<>();
         String sql = """
@@ -183,7 +181,6 @@ public class WarrantyDetailAdminDAO extends DBAdminContext {
         return list;
     }
 
->>>>>>> main
     public static void main(String[] args) {
         WarrantyDetailAdminDAO dao = new WarrantyDetailAdminDAO();
 

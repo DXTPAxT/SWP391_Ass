@@ -191,7 +191,6 @@ public class WarrantyDetailAdminServlet extends HttpServlet {
 
             if (submit == null) {
                 // Load dữ liệu để hiển thị form update
-<<<<<<< HEAD
                 WarrantyAdminDAO warrantyDAO = new WarrantyAdminDAO();
                 BrandAdminDAO brandDAO = new BrandAdminDAO();
                 ComponentAdminDAO componentDAO = new ComponentAdminDAO();
@@ -202,13 +201,10 @@ public class WarrantyDetailAdminServlet extends HttpServlet {
                 request.setAttribute("brands", brandDAO.getAllBrands());
                 request.setAttribute("components", componentDAO.getAllComponent());
                 request.setAttribute("detail", wd);
-=======
 
-                WarrantyDetails wd = dao.getWarrantyDetailByID(id);
                 int price = wd.getPrice();
                 request.setAttribute("detail", wd);
                 request.setAttribute("price", price);
->>>>>>> main
 
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateWarrantyDetail.jsp").forward(request, response);
             } else {
@@ -259,8 +255,6 @@ public class WarrantyDetailAdminServlet extends HttpServlet {
 
                 response.sendRedirect("WDA");
             }
-<<<<<<< HEAD
-=======
         } else if (service.equals("listbybrandcomid")) {
             String brandComIDRaw = request.getParameter("brandComID");
             try {
@@ -274,7 +268,6 @@ public class WarrantyDetailAdminServlet extends HttpServlet {
                 request.setAttribute("error", "Invalid brandComID.");
             request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewWarrantyDetail.jsp")
                     .forward(request, response);            }
->>>>>>> main
         }
 
     }
