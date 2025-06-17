@@ -4,117 +4,100 @@
  */
 package dalAdmin;
 
+import java.sql.*;
+import java.util.*;
 import models.Feedback;
-import models.User;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class FeedbackAdminDAO {
-
-    private DBAdminContext dbContext;
-
-    public FeedbackAdminDAO() {
-        dbContext = new DBAdminContext();
-    }
+public class FeedbackAdminDAO extends DBAdminContext {
 
     public List<Feedback> getAllFeedbacks() {
-        List<Feedback> feedbacks = new ArrayList<>();
-        String sql = "SELECT f.feedbackID, f.userID, f.content, f.orderItemID, f.createdAt, f.rate, f.status, u.fullName "
-                + "FROM Feedbacks f LEFT JOIN Users u ON f.userID = u.userID WHERE f.status = 1";
-        try (Connection conn = dbContext.connection; PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+        List<Feedback> list = new ArrayList<>();
+        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName " +
+                     "FROM Feedbacks f JOIN Users u ON f.UserID = u.UserID ORDER BY f.CreatedAt DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                Feedback feedback = new Feedback(
-                        rs.getInt("feedbackID"),
-                        rs.getInt("userID"),
-                        rs.getString("content"),
-                        rs.getInt("orderItemID"),
-                        rs.getString("createdAt"), // Sử dụng String
-                        rs.getInt("rate"),
-                        rs.getInt("status")
+                Feedback f = new Feedback(
+                    rs.getInt("FeedbackID"),
+                    rs.getInt("UserID"),
+                    rs.getString("Content"),
+                    rs.getInt("OrderItemID"),
+                    rs.getString("CreatedAt"),
+                    rs.getInt("Rate"),
+                    rs.getInt("Status"),
+                    rs.getString("FullName")
                 );
-                feedback.setUser(new User(rs.getString("fullName")));
-                feedbacks.add(feedback);
+                list.add(f);
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(FeedbackAdminDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return feedbacks;
+        return list;
     }
 
     public Feedback getFeedbackById(int feedbackID) {
-        String sql = "SELECT f.feedbackID, f.userID, f.content, f.orderItemID, f.createdAt, f.rate, f.status, u.fullName "
-                + "FROM Feedbacks f LEFT JOIN Users u ON f.userID = u.userID WHERE f.feedbackID = ? AND f.status = 1";
-        try (Connection conn = dbContext.connection; PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, feedbackID);
-            try (ResultSet rs = stmt.executeQuery()) {
+        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName " +
+                     "FROM Feedbacks f JOIN Users u ON f.UserID = u.UserID WHERE f.FeedbackID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, feedbackID);
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    Feedback feedback = new Feedback(
-                            rs.getInt("feedbackID"),
-                            rs.getInt("userID"),
-                            rs.getString("content"),
-                            rs.getInt("orderItemID"),
-                            rs.getString("createdAt"), // Sử dụng String
-                            rs.getInt("rate"),
-                            rs.getInt("status")
+                    return new Feedback(
+                        rs.getInt("FeedbackID"),
+                        rs.getInt("UserID"),
+                        rs.getString("Content"),
+                        rs.getInt("OrderItemID"),
+                        rs.getString("CreatedAt"),
+                        rs.getInt("Rate"),
+                        rs.getInt("Status"),
+                        rs.getString("FullName")
                     );
-                    feedback.setUser(new User(rs.getString("fullName")));
-                    return feedback;
                 }
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(FeedbackAdminDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
     public boolean insertFeedback(Feedback feedback) {
-        String sql = "INSERT INTO Feedbacks (userID, content, orderItemID, createdAt, rate, status) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection conn = dbContext.connection; PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, feedback.getUserID());
-            stmt.setString(2, feedback.getContent());
-            stmt.setInt(3, feedback.getOrderItemID());
-            stmt.setString(4, feedback.getCreatedAt()); // Sử dụng String
-            stmt.setInt(5, feedback.getRate());
-            stmt.setInt(6, feedback.getStatus());
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException ex) {
-            Logger.getLogger(FeedbackAdminDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+        String sql = "INSERT INTO Feedbacks (UserID, Content, OrderItemID, Rate, Status) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, feedback.getUserID());
+            ps.setString(2, feedback.getContent());
+            ps.setInt(3, feedback.getOrderItemID());
+            ps.setInt(4, feedback.getRate());
+            ps.setInt(5, feedback.getStatus());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
     public boolean updateFeedback(int feedbackID, Feedback feedback) {
-        String sql = "UPDATE Feedbacks SET content = ?, rate = ?, status = ?, createdAt = ? WHERE feedbackID = ? AND status = 1";
-        try (Connection conn = dbContext.connection; PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, feedback.getContent());
-            stmt.setInt(2, feedback.getRate());
-            stmt.setInt(3, feedback.getStatus());
-            stmt.setString(4, feedback.getCreatedAt()); // Sử dụng String
-            stmt.setInt(5, feedbackID);
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException ex) {
-            Logger.getLogger(FeedbackAdminDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+        String sql = "UPDATE Feedbacks SET Content=?, OrderItemID=?, Rate=?, Status=? WHERE FeedbackID=?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, feedback.getContent());
+            ps.setInt(2, feedback.getOrderItemID());
+            ps.setInt(3, feedback.getRate());
+            ps.setInt(4, feedback.getStatus());
+            ps.setInt(5, feedbackID);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
     public boolean deleteFeedback(int feedbackID) {
-        String sql = "UPDATE Feedbacks SET status = 0 WHERE feedbackID = ? AND status = 1";
-        try (Connection conn = dbContext.connection; PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, feedbackID);
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException ex) {
-            Logger.getLogger(FeedbackAdminDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+        String sql = "DELETE FROM Feedbacks WHERE FeedbackID=?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, feedbackID);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return false;
     }
 }

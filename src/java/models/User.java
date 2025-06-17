@@ -19,6 +19,9 @@ public class User {
     private String CreatedAt;
     private int Status;
 
+    // Constructor rỗng
+    public User() {}
+
     public User(int UserID, int RoleID, String Fullname, String Email, String PhoneNumber, String Address, String Password, String CreatedAt, int Status) {
         this.UserID = UserID;
         this.RoleID = RoleID;
@@ -31,6 +34,7 @@ public class User {
         this.Status = Status;
     }
 
+    // Constructor chỉ nhận Fullname
     public User(String Fullname) {
         this.Fullname = Fullname;
     }

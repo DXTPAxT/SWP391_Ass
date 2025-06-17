@@ -92,7 +92,7 @@ public class FeedbackServlet extends HttpServlet {
                 String content = req.getParameter("content");
                 int rate = Integer.parseInt(req.getParameter("rate"));
 
-                if (content == null || content.trim().isEmpty() || rate < 1 || rate > 5) {
+                if (content == null || content.trim().isEmpty() || content.length() > 500 || rate < 1 || rate > 5) {
                     session.setAttribute("error", "Invalid content or rating");
                     res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=1");
                     return;
@@ -266,7 +266,7 @@ public class FeedbackServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             session.setAttribute("error", "Invalid category ID");
             req.setAttribute("feedbackList", new ArrayList<>());
-            req.getRequestDispatcher("/ShopPages/Pages/CategoriesDetail.jsp").forward(req, res);
+            req.getRequestDispatcher("/ShopPages/Pages/CategoriesDetails.jsp").forward(req, res);
             return;
         }
 
@@ -275,13 +275,13 @@ public class FeedbackServlet extends HttpServlet {
             List<Feedback> categoryFeedback = dao.getFeedbackByCategoryId(categoryId);
             req.setAttribute("feedbackList", categoryFeedback != null ? categoryFeedback : new ArrayList<>());
             req.setAttribute("categoryID", categoryId);
-            req.getRequestDispatcher("/ShopPages/Pages/CategoriesDetail.jsp").forward(req, res);
+            req.getRequestDispatcher("/ShopPages/Pages/CategoriesDetails.jsp").forward(req, res);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error in handleCategoryFeedback: " + e.getMessage(), e);
             session.setAttribute("error", "Failed to retrieve feedbacks for category: " + e.getMessage());
             req.setAttribute("feedbackList", new ArrayList<>());
             req.setAttribute("categoryID", categoryId);
-            req.getRequestDispatcher("/ShopPages/Pages/CategoriesDetail.jsp").forward(req, res);
+            req.getRequestDispatcher("/ShopPages/Pages/CategoriesDetails.jsp").forward(req, res);
         }
     }
 
