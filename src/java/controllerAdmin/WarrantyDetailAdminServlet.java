@@ -191,8 +191,17 @@ public class WarrantyDetailAdminServlet extends HttpServlet {
 
             if (submit == null) {
                 // Load dữ liệu để hiển thị form update
+                WarrantyAdminDAO warrantyDAO = new WarrantyAdminDAO();
+                BrandAdminDAO brandDAO = new BrandAdminDAO();
+                ComponentAdminDAO componentDAO = new ComponentAdminDAO();
 
                 WarrantyDetails wd = dao.getWarrantyDetailByID(id);
+
+                request.setAttribute("warranties", warrantyDAO.getAllWarranties());
+                request.setAttribute("brands", brandDAO.getAllBrands());
+                request.setAttribute("components", componentDAO.getAllComponent());
+                request.setAttribute("detail", wd);
+
                 int price = wd.getPrice();
                 request.setAttribute("detail", wd);
                 request.setAttribute("price", price);

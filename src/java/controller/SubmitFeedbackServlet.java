@@ -27,6 +27,7 @@ public class SubmitFeedbackServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/Login");
                 return;
             }
+          
 
             String orderItemIdStr = request.getParameter("orderItemID");
             String rateStr = request.getParameter("rate");
@@ -59,7 +60,9 @@ public class SubmitFeedbackServlet extends HttpServlet {
                 return;
             }
 
-            Feedback feedback = new Feedback(user.getUserID(), content, orderItemID, rate);
+
+            Feedback feedback = new Feedback(user.getRole().getRoleID(), content, orderItemID, rate);
+
             FeedbackDAO dao = new FeedbackDAO();
             boolean success = dao.insertFeedback(feedback);
 

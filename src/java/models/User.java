@@ -9,18 +9,44 @@ package models;
  * @author PC ASUS
  */
 public class User {
-    private int UserID;
-    private int RoleID;
-    private String Fullname;
-    private String Email;
-    private String PhoneNumber;
-    private String Address;
-    private String Password;
-    private String CreatedAt;
-    private int Status;
+    private int userId;
+    private Role role;
+    private String fullname;
+    private String email;
+    private String phoneNumber;
+    private String password;
+    private String createdAt;
+    private int status;
+    private CustomerInfo customerInfo;
+    private StaffInfo staffInfo;
 
-    // Constructor rỗng
-    public User() {}
+    public User() {
+    }
+    
+    // Constructor cơ bản với các thông tin chính
+    public User(String fullname, String email, String phoneNumber, String password, Role role) {
+        this.fullname = fullname;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+        this.role = role;
+        this.status = 1; // Mặc định status là active
+    }
+    
+    // Constructor đầy đủ cho việc load từ database
+    public User(int userId, Role role, String fullname, String email, String phoneNumber, 
+            String password, String createdAt, int status, CustomerInfo customerInfo, StaffInfo staffInfo) {
+        this.userId = userId;
+        this.role = role;
+        this.fullname = fullname;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+        this.createdAt = createdAt;
+        this.status = status;
+        this.customerInfo = customerInfo;
+        this.staffInfo = staffInfo;
+
 
     public User(int UserID, int RoleID, String Fullname, String Email, String PhoneNumber, String Address, String Password, String CreatedAt, int Status) {
         this.UserID = UserID;
@@ -39,81 +65,106 @@ public class User {
         this.Fullname = Fullname;
     }
 
-    public int getUserID() {
-        return UserID;
+    public User(String string) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    public void setUserID(int UserID) {
-        this.UserID = UserID;
+    public int getUserId() {
+        return userId;
     }
 
-    public int getRoleID() {
-        return RoleID;
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }    public Role getRole() {
+        return role;
     }
 
-    public void setRoleID(int RoleID) {
-        this.RoleID = RoleID;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getFullname() {
-        return Fullname;
+        return fullname;
     }
 
-    public void setFullname(String Fullname) {
-        this.Fullname = Fullname;
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
-    public void setEmail(String Email) {
-        this.Email = Email;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPhoneNumber() {
-        return PhoneNumber;
+        return phoneNumber;
     }
 
-    public void setPhoneNumber(String PhoneNumber) {
-        this.PhoneNumber = PhoneNumber;
-    }
-
-    public String getAddress() {
-        return Address;
-    }
-
-    public void setAddress(String Address) {
-        this.Address = Address;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
-    public void setPassword(String Password) {
-        this.Password = Password;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getCreatedAt() {
-        return CreatedAt;
+        return createdAt;
     }
 
-    public void setCreatedAt(String CreatedAt) {
-        this.CreatedAt = CreatedAt;
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 
     public int getStatus() {
-        return Status;
+        return status;
     }
 
-    public void setStatus(int Status) {
-        this.Status = Status;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
-    @Override
+    public CustomerInfo getCustomerInfo() {
+        return customerInfo;
+    }
+
+    public void setCustomerInfo(CustomerInfo customerInfo) {
+        this.customerInfo = customerInfo;
+    }
+
+    public StaffInfo getStaffInfo() {
+        return staffInfo;
+    }
+
+    public void setStaffInfo(StaffInfo staffInfo) {
+        this.staffInfo = staffInfo;
+    }    // Phương thức hỗ trợ kiểm tra vai trò
+    public boolean isCustomer() {
+        return role != null && role.getRoleID() == 3; // Customer role
+    }
+
+    public boolean isStaff() {
+        return role != null && role.getRoleID() == 2; // Staff role
+    }
+
+    public boolean isAdmin() {
+        return role != null && role.getRoleID() == 1; // Admin role
+    }
+
+    // Phương thức hỗ trợ kiểm tra trạng thái
+    public boolean isActive() {
+        return status == 1;
+    }    @Override
     public String toString() {
-        return "User{" + "UserID=" + UserID + ", RoleID=" + RoleID + ", Fullname=" + Fullname + ", Email=" + Email + ", PhoneNumber=" + PhoneNumber + ", Address=" + Address + ", Password=" + Password + ", CreatedAt=" + CreatedAt + ", Status=" + Status + '}';
+        return "User{" + "userId=" + userId + ", role=" + role + ", fullname=" + fullname + ", email=" + email + 
+               ", phoneNumber=" + phoneNumber + ", password=" + password + ", createdAt=" + createdAt + ", status=" + status +
+               ", customerInfo=" + customerInfo + ", staffInfo=" + staffInfo + '}';
     }
-    
 }

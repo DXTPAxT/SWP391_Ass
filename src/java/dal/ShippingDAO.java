@@ -58,7 +58,7 @@ public class ShippingDAO extends DBContext {
         List<Shipping> shipments = new ArrayList<>();
         // Kiểm tra shipperID có RoleID = 2
         User shipper = userDAO.getUserByID(shipperID); // Dòng 59 (theo lỗi)
-        if (shipper == null || shipper.getRoleID() != 2) {
+        if (shipper == null || shipper.getRole().getRoleID()!= 2) {
             return shipments; // Trả về danh sách rỗng nếu không phải shipper
         }
         String sql = """

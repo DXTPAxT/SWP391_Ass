@@ -127,7 +127,7 @@ public class AddUserServlet extends HttpServlet {
         } else {
             try {
                 String newPassword = "123456"; // Mật khẩu mặc định, có thể thay đổi sau
-                boolean addUser = userDao.createNewUser(email, fullName, address, phoneNumber, newPassword, Integer.parseInt(roleID));
+                boolean addUser = userDao.createNewUser(email, fullName, phoneNumber, newPassword, Integer.parseInt(roleID));
                 if (addUser) {
                     HttpSession session = request.getSession();
                     session.setAttribute("toast", "Add user succesfully!");
@@ -139,7 +139,7 @@ public class AddUserServlet extends HttpServlet {
                 }
             } catch (Exception e) {
                 e.printStackTrace(); // Log lỗi để dễ debug
-            }
+            }   
         }
     }
 

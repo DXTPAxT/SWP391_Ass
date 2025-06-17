@@ -7,53 +7,53 @@ import models.Products;
 
 public class CartItemDAO extends DBContext {
 
-    public ArrayList<CartItem> getCartItemsByUserId(int userId) {
-        ArrayList<CartItem> itemList = new ArrayList<>();
-
-        String sql = """
-                     SELECT ci.CartItemID,
-                       ci.UserID,
-                       ci.CategoryID,
-                       ci.WarrantyDetailID,
-                       ci.Quantity,
-                       c.CategoryName,
-                       c.BrandComID,
-                       c.Price,
-                       c.Description as CategoryDescription,
-                       w.Description as WarrantyDescription,
-                       wd.Price
-                       FROM CartItems ci 
-                       LEFT JOIN Categories c on ci.CategoryID = c.CategoryID
-                       LEFT JOIN Users u on u.UserID = ci.UserID
-                       LEFT JOIN WarrantyDetails wd on ci.WarrantyDetailID = wd.WarrantyDetailID
-                       LEFT JOIN Warranties w on w.WarrantyID = wd.WarrantyID
-                     """
-                ;
-
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Products p = new Products();
-                p.setProductID(rs.getInt("ProductID"));
-                p.setName(rs.getString("Name"));
-                p.setPrice(rs.getDouble("Price"));
-
-                CartItem item = new CartItem();
-                item.setCartItemID(rs.getInt("CartItemID"));
-                item.setQuantity(rs.getInt("Quantity"));
-                item.setProduct(p);
-
-                itemList.add(item);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return itemList;
-    }
+//    public ArrayList<CartItem> getCartItemsByUserId(int userId) {
+//        ArrayList<CartItem> itemList = new ArrayList<>();
+//
+//        String sql = """
+//                     SELECT ci.CartItemID,
+//                       ci.UserID,
+//                       ci.CategoryID,
+//                       ci.WarrantyDetailID,
+//                       ci.Quantity,
+//                       c.CategoryName,
+//                       c.BrandComID,
+//                       c.Price,
+//                       c.Description as CategoryDescription,
+//                       w.Description as WarrantyDescription,
+//                       wd.Price
+//                       FROM CartItems ci 
+//                       LEFT JOIN Categories c on ci.CategoryID = c.CategoryID
+//                       LEFT JOIN Users u on u.UserID = ci.UserID
+//                       LEFT JOIN WarrantyDetails wd on ci.WarrantyDetailID = wd.WarrantyDetailID
+//                       LEFT JOIN Warranties w on w.WarrantyID = wd.WarrantyID
+//                     """
+//                ;
+//
+//        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+//            ps.setInt(1, userId);
+//            ResultSet rs = ps.executeQuery();
+//
+//            while (rs.next()) {
+//                Products p = new Products();
+//                p.setProductID(rs.getInt("ProductID"));
+//                p.setName(rs.getString("Name"));
+//                p.setPrice(rs.getDouble("Price"));
+//
+//                CartItem item = new CartItem();
+//                item.setCartItemID(rs.getInt("CartItemID"));
+//                item.setQuantity(rs.getInt("Quantity"));
+//                item.setProduct(p);
+//
+//                itemList.add(item);
+//            }
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return itemList;
+//    }
 
     public boolean updateQuantity(int cartItemID, int quantity) {
         // Bước 1: Lấy cart của user
