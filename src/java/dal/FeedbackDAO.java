@@ -12,8 +12,13 @@ public class FeedbackDAO extends DBContext {
 
     public List<Feedback> getAllFeedbacks() {
         List<Feedback> list = new ArrayList<>();
-        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName, f.Reply " +
-                     "FROM Feedbacks f JOIN Users u ON f.UserID = u.UserID ORDER BY f.CreatedAt DESC";
+        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName, f.Reply, " +
+                     "c.CategoryID, c.CategoryName " +
+                     "FROM Feedbacks f " +
+                     "JOIN Users u ON f.UserID = u.UserID " +
+                     "JOIN OrderItems oi ON f.OrderItemID = oi.OrderItemID " +
+                     "JOIN Categories c ON oi.CategoryID = c.CategoryID " +
+                     "ORDER BY f.CreatedAt DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -26,7 +31,9 @@ public class FeedbackDAO extends DBContext {
                     rs.getInt("Rate"),
                     rs.getInt("Status"),
                     rs.getString("FullName"),
-                    rs.getString("Reply")
+                    rs.getString("Reply"),
+                    rs.getInt("CategoryID"),
+                    rs.getString("CategoryName")
                 );
                 list.add(f);
             }

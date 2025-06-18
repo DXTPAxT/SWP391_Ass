@@ -10,7 +10,25 @@ public class Feedback {
     private int status;
     private String fullname;
     private String reply;
+    private int categoryID;
+    private String categoryName;
 
+    // Constructor đầy đủ cho JOIN lấy category
+    public Feedback(int feedbackID, int userID, String content, int orderItemID, String createdAt, int rate, int status, String fullname, String reply, int categoryID, String categoryName) {
+        this.feedbackID = feedbackID;
+        this.userID = userID;
+        this.content = content;
+        this.orderItemID = orderItemID;
+        this.createdAt = createdAt;
+        this.rate = rate;
+        this.status = status;
+        this.fullname = fullname;
+        this.reply = reply;
+        this.categoryID = categoryID;
+        this.categoryName = categoryName;
+    }
+
+    // Giữ nguyên tất cả constructor cũ (ví dụ):
     public Feedback(int feedbackID, int userID, String content, int orderItemID, String createdAt, int rate, int status, String fullname, String reply) {
         this.feedbackID = feedbackID;
         this.userID = userID;
@@ -51,6 +69,10 @@ public class Feedback {
     public void setFullname(String fullname) { this.fullname = fullname; }
     public String getReply() { return reply; }
     public void setReply(String reply) { this.reply = reply; }
+    public int getCategoryID() { return categoryID; }
+    public void setCategoryID(int categoryID) { this.categoryID = categoryID; }
+    public String getCategoryName() { return categoryName; }
+    public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
 
     @Override
     public String toString() {
