@@ -160,14 +160,15 @@
             </li>
             <li class="treeview">
                 <a href="#">
-                    <i class="fa fa-laptop"></i> <span>User</span>
+                    <i class="fa fa-users"></i> <span>User Management</span>
                     <span class="pull-right-container">
                         <i class="fa fa-angle-left pull-right"></i>
                     </span>
                 </a>
                 <ul class="treeview-menu">                               
-                    <li><a href="${param.ctx}/Admin/user"><i class="fa fa-circle-o"></i>View Users</a></li>                                  
-                    <li><a href="${param.ctx}/Admin/user/add"><i class="fa fa-circle-o"></i>Create new user</a></li>                              
+                    <li><a href="${param.ctx}/Admin/user?type=customer"><i class="fa fa-circle-o"></i>View Customers</a></li>   
+                    <li><a href="${param.ctx}/Admin/user?type=staff"><i class="fa fa-circle-o"></i>View Staff</a></li>   
+                    <li><a href="${param.ctx}/Admin/user/add"><i class="fa fa-circle-o"></i>Create new user</a></li>
                 </ul>
             </li>      
         </ul>

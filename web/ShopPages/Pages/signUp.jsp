@@ -8,7 +8,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Login | E-Shopper</title>
+    <title>Sign Up | Computer Shop</title>
     <link
       href="${pageContext.request.contextPath}/ShopPages/Pages/css/bootstrap.min.css"
       rel="stylesheet"
@@ -41,170 +41,223 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
       href="${pageContext.request.contextPath}/ShopPages/Pages/css/custom.css?v=1.0.10"
       rel="stylesheet"
     />
-    <!--[if lt IE 9]>
-      <script src="js/html5shiv.js"></script>
-      <script src="js/respond.min.js"></script>
-    <![endif]-->
-    <link rel="shortcut icon" href="images/ico/favicon.ico" />
+    <!-- Toast CSS -->
     <link
-      rel="apple-touch-icon-precomposed"
-      sizes="144x144"
-      href="images/ico/apple-touch-icon-144-precomposed.png"
+      href="${pageContext.request.contextPath}/ShopPages/Pages/css/toastr.min.css"
+      rel="stylesheet"
     />
-    <link
-      rel="apple-touch-icon-precomposed"
-      sizes="114x114"
-      href="images/ico/apple-touch-icon-114-precomposed.png"
-    />
-    <link
-      rel="apple-touch-icon-precomposed"
-      sizes="72x72"
-      href="images/ico/apple-touch-icon-72-precomposed.png"
-    />
-    <link
-      rel="apple-touch-icon-precomposed"
-      href="images/ico/apple-touch-icon-57-precomposed.png"
-    />
-    
-    </head
-  ><!--/head-->
+    <style>
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        min-width: 200px;
+        padding: 15px;
+        border-radius: 4px;
+        color: white;
+        z-index: 1000;
+      }
+      .toast-success {
+        background-color: #28a745;
+      }
+      .toast-error {
+        background-color: #dc3545;
+      }
+      .form-hint {
+        font-size: 12px;
+        color: #666;
+        margin-top: 4px;
+      }
+    </style>
+  </head>
 
   <body>
     <%@ include file="components/header.jsp" %>
-    <!--/header-->
+
     <section id="form" class="mt-0">
       <div class="container">
         <div class="row custom-center">
           <div class="col-sm-4">
             <div class="signup-form form-modern">
-              <!--sign up form-->
               <h2>New User Signup!</h2>
-              <c:if test="${error == 'Sign up failed!'}">
-                <p
-                  class="text-danger error-message"
-                  style="text-align: center; margin-top: 18px"
-                >
-                  ${error}
-                </p>
-              </c:if>
-              <form action="SignUp" method="POST">
-                <label class="form">Email</label>
-                <input
-                  type="email"
-                  placeholder="Enter email address"
-                  class="form-control ${error == 'Email existed!' || error == 'Email is required!' ? 'input-modern-invalid' : ''}"
-                  name="email"
-                  required
-                  value="${not empty error ? email : ''}"
-                />
-                <c:if
-                  test="${error == 'Email existed!' || error == 'Email is required!'}"
-                >
-                  <p class="text-danger error-message">${error}</p>
-                </c:if>
-                <label class="form">Full name</label>
-                <input
-                  type="text"
-                  placeholder="Enter full name"
-                  class="form-control ${error == 'Full name is required!' ? 'input-modern-invalid' : ''}"
-                  name="fullName"
-                  required
-                  value="${not empty error ? fullName : ''}"
-                />
-                <c:if test="${error == 'Full name is required!'}">
-                  <p class="text-danger error-message">${error}</p>
-                </c:if>
-                <label class="form">Address</label>
-                <input
-                  type="text"
-                  placeholder="Enter address"
-                  class="form-control ${error == 'Address is required!' ? 'input-modern-invalid' : ''}"
-                  name="address"
-                  required
-                  value="${not empty error ? address : ''}"
-                />
-                <c:if test="${error == 'Address is required!'}">
-                  <p class="text-danger error-message">${error}</p>
-                </c:if>
-                <label class="form">Phone number</label>
-                <input
-                  type="text"
-                  placeholder="Enter phone number "
-                  class="form-control ${(error == 'Phone number existed!' || error == 'Phone number is required!' || error == 'Invalid phone number') ? 'input-modern-invalid' : ''}"
-                  name="phoneNumber"
-                  required
-                  value="${not empty error ? phoneNumber : ''}"
-                />
-                <c:if
-                  test="${error == 'Phone number existed!' || error == 'Phone number is required!' || error == 'Invalid phone number'}"
-                >
-                  <p class="text-danger error-message">${error}</p>
-                </c:if>
-                <label class="form">Password</label>
-                <input
-                  type="password"
-                  placeholder="Enter password"
-                  class="form-control ${error == 'Password is required!' ? 'input-modern-invalid' : ''}"
-                  name="password"
-                  required
-                  value="${not empty error ? password : ''}"
-                />
-                <c:if test="${error == 'Password is required!'}">
-                  <p class="text-danger error-message">${error}</p>
-                </c:if>
-                <label class="form">Confirm password</label>
-                <input
-                  type="password"
-                  placeholder="Confirm your password"
-                  class="form-control ${(error == 'Confirm password not match!' || error == 'Confirm password is required!') ? 'input-modern-invalid' : ''}"
-                  name="confirmPassword"
-                  required
-                  value="${not empty error ? confirmPassword : ''}"
-                />
-                <c:if
-                  test="${error == 'Confirm password not match!' || error == 'Confirm password is required!'}"
-                >
-                  <p class="text-danger error-message">${error}</p>
-                </c:if>
+              <form action="SignUp" method="POST" id="signupForm">
+                <div class="form-group">
+                  <label class="form" for="email">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter email address"
+                    class="form-control ${error == 'Email already exists!' || error == 'Email is required!' || error == 'Invalid email format!' ? 'input-modern-invalid' : ''}"
+                    name="email"
+                    required
+                    pattern="[a-zA-Z0-9+_.-]+@(.+)"
+                    value="${not empty error ? email : ''}"
+                  />
+                  <c:if
+                    test="${error == 'Email already exists!' || error == 'Email is required!' || error == 'Invalid email format!'}"
+                  >
+                    <p class="text-danger error-message">${error}</p>
+                  </c:if>
+                </div>
+
+                <div class="form-group">
+                  <label class="form" for="fullName">Full name</label>
+                  <input
+                    type="text"
+                    id="fullName"
+                    placeholder="Enter full name"
+                    class="form-control ${error == 'Full name is required!' ? 'input-modern-invalid' : ''}"
+                    name="fullName"
+                    required
+                    value="${not empty error ? fullName : ''}"
+                  />
+                  <c:if test="${error == 'Full name is required!'}">
+                    <p class="text-danger error-message">${error}</p>
+                  </c:if>
+                </div>
+
+                <div class="form-group">
+                  <label class="form" for="address">Address</label>
+                  <input
+                    type="text"
+                    id="address"
+                    placeholder="Enter address"
+                    class="form-control ${error == 'Address is required!' ? 'input-modern-invalid' : ''}"
+                    name="address"
+                    required
+                    value="${not empty error ? address : ''}"
+                  />
+                  <c:if test="${error == 'Address is required!'}">
+                    <p class="text-danger error-message">${error}</p>
+                  </c:if>
+                </div>
+
+                <div class="form-group">
+                  <label class="form" for="phoneNumber">Phone number</label>
+                  <input
+                    type="tel"
+                    id="phoneNumber"
+                    placeholder="Enter phone number (10 digits, starts with 0)"
+                    class="form-control ${(error == 'Phone number already exists!' || error == 'Phone number is required!' || error == 'Invalid phone number format!') ? 'input-modern-invalid' : ''}"
+                    name="phoneNumber"
+                    required
+                    pattern="0[0-9]{9}"
+                    value="${not empty error ? phoneNumber : ''}"
+                  />
+                  <span class="form-hint">Format: 0XXXXXXXXX (10 digits)</span>
+                  <c:if
+                    test="${error == 'Phone number already exists!' || error == 'Phone number is required!' || error == 'Invalid phone number format!'}"
+                  >
+                    <p class="text-danger error-message">${error}</p>
+                  </c:if>
+                </div>
+
+                <div class="form-group">
+                  <label class="form" for="password">Password</label>
+                  <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter password"
+                    class="form-control ${error == 'Password is required!' ? 'input-modern-invalid' : ''}"
+                    name="password"
+                    required
+                    minlength="6"
+                  />
+                  <span class="form-hint">Minimum 6 characters</span>
+                  <c:if test="${error == 'Password is required!'}">
+                    <p class="text-danger error-message">${error}</p>
+                  </c:if>
+                </div>
+
+                <div class="form-group">
+                  <label class="form" for="confirmPassword">Confirm password</label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    placeholder="Confirm your password"
+                    class="form-control ${(error == 'Passwords do not match!' || error == 'Confirm password is required!') ? 'input-modern-invalid' : ''}"
+                    name="confirmPassword"
+                    required
+                  />
+                  <c:if
+                    test="${error == 'Passwords do not match!' || error == 'Confirm password is required!'}"
+                  >
+                    <p class="text-danger error-message">${error}</p>
+                  </c:if>
+                </div>
+
                 <div class="custom-between mt-5">
-                  <button type="submit" id="btn-signup" class="btn-modern">SignUp</button>
-                  <a href="Login">Login</a>
+                  <button type="submit" id="btn-signup" class="btn-modern">Sign Up</button>
+                  <a href="Login">Already have an account? Login</a>
                 </div>
               </form>
             </div>
-            <!--/sign up form-->
           </div>
         </div>
       </div>
     </section>
-    <!--/form-->
+
+    <!-- Toast message -->
+    <c:if test="${not empty toast}">
+      <div class="toast ${toastType == 'success' ? 'toast-success' : 'toast-error'}" id="toast">
+        ${toast}
+      </div>
+    </c:if>
+
+    <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.js"></script>
+    <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
+    <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
+    <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/main.js"></script>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // Chọn tất cả input có class is-invalid
-        const invalidInputs = document.querySelectorAll("input.is-invalid");
+        // Handle form validation
+        const form = document.getElementById('signupForm');
+        const password = form.querySelector('input[name="password"]');
+        const confirmPassword = form.querySelector('input[name="confirmPassword"]');
 
-        invalidInputs.forEach(function (input) {
-          input.addEventListener("input", function () {
-            // Xóa class is-invalid khỏi input
-            input.classList.remove("is-invalid");
+        form.addEventListener('submit', function (event) {
+          if (password.value !== confirmPassword.value) {
+            event.preventDefault();
+            confirmPassword.classList.add('input-modern-invalid');
+            const errorMessage = document.createElement('p');
+            errorMessage.className = 'text-danger error-message';
+            errorMessage.textContent = 'Passwords do not match!';
+            confirmPassword.parentNode.appendChild(errorMessage);
+          }
+        });
 
-            // Ẩn tất cả phần tử có class .error-message (nếu có)
-            const errorMessages = document.querySelectorAll(".error-message");
-            errorMessages.forEach(function (el) {
-              el.style.display = "none";
-            });
+        // Remove error messages on input
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach((input) => {
+          input.addEventListener('input', function () {
+            this.classList.remove('input-modern-invalid');
+            const errorMessage = this.parentNode.querySelector('.error-message');
+            if (errorMessage) {
+              errorMessage.remove();
+            }
           });
         });
+
+        // Handle toast message
+        const toast = document.getElementById('toast');
+        if (toast) {
+          // Show toast
+          toast.style.display = 'block';
+
+          // Hide toast after 3 seconds
+          setTimeout(function () {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.5s ease-out';
+
+            // Remove from DOM after fade out
+            setTimeout(function () {
+              toast.remove();
+            }, 500);
+          }, 3000);
+        }
       });
     </script>
-
-    <script src="js/jquery.js"></script>
-    <script src="js/price-range.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
-    <%@ include file="components/footer.jsp" %>
   </body>
 </html>

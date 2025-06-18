@@ -125,16 +125,16 @@
         <servlet-class>controller.ShippingController</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>FeedbackAdminServlet</servlet-name>
+        <servlet-class>controllerAdmin.FeedbackAdminServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>WarrantyAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.WarrantyAdminServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>WarrantyDetailAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.WarrantyDetailAdminServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>FeedbackAdminServlet</servlet-name>
-        <servlet-class>controllerAdmin.FeedbackAdminServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>BuildPC</servlet-name>
@@ -263,16 +263,16 @@
         <url-pattern>/ShippingController</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>FeedbackAdminServlet</servlet-name>
+        <url-pattern>/FeedBackAdmin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>WarrantyAdminServlet</servlet-name>
         <url-pattern>/WarrantyAdmin</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>WarrantyDetailAdminServlet</servlet-name>
         <url-pattern>/WDA</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>FeedbackAdminServlet</servlet-name>
-        <url-pattern>/FeedbackAdminServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>BuildPC</servlet-name>

@@ -28,7 +28,6 @@ CREATE TABLE Users (
     FullName VARCHAR(100) NOT NULL,
     Email VARCHAR(100) UNIQUE NOT NULL,
     PhoneNumber VARCHAR(15) NOT NULL,
-    Address TEXT NOT NULL,
     PasswordHash VARCHAR(255) NOT NULL,
     CreatedAt DATETIME DEFAULT GETDATE() NOT NULL,
     Status int DEFAULT 1 NOT NULL,
@@ -36,24 +35,21 @@ CREATE TABLE Users (
 );
 
 -- 3. Customer Info
-/*
 CREATE TABLE CustomerInfo (
 	CustomerInfoID INT PRIMARY KEY IDENTITY(1,1),
 	UserID INT NOT NULL,
     Address TEXT NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 )
-*/
 
 -- 4. Staff Info 
-/*
 CREATE TABLE StaffInfo (
 	StaffInfoID INT PRIMARY KEY IDENTITY(1,1),
 	UserID INT NOT NULL,
     StartedDate Date NOT NULL,
+    EndDate Date NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 )
-*/
 
 -- 3. Components luu san pham: PC, Laptop, Ban Phim
 CREATE TABLE Components (
@@ -121,6 +117,7 @@ CREATE TABLE Products (
 Create table Warranties(
 	WarrantyID INT PRIMARY KEY IDENTITY(1,1),
 	WarrantyPeriod INT NOT NULL,
+	Status int DEFAULT 1 NOT NULL,
 	Description TEXT NOT NULL
 );
 

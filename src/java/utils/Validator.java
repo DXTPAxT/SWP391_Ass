@@ -20,6 +20,17 @@ public class Validator {
         return str == null || str.trim().isEmpty();
     }
 
+    // Validates an email address using regex pattern
+    public static boolean isValidEmail(String email) {
+        if (email == null) return false;
+        // Basic email pattern:
+        // - At least one character before @
+        // - At least one character between @ and .
+        // - At least two characters after last .
+        // - Can contain letters, digits, dots, underscores, and hyphens
+        return email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
+    }
+
     private Validator() {
         // Prevent instantiation
     }

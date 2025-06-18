@@ -6,10 +6,16 @@ INSERT INTO Roles (RoleName) VALUES
 ('Customer');
 
 -- Insert data into Users
-INSERT INTO Users (RoleID, FullName, Email, PhoneNumber, Address, PasswordHash, CreatedAt, Status) VALUES
-(1, 'Alice Nguyen', 'alice@domain.com', '0912345678', '123 Le Loi, HCM', 'hashedpassword123', GETDATE(), 1),
-(2, 'Bob Tran', 'bob@domain.com', '0987654321', '456 Tran Hung Dao, HN', 'securepass456', GETDATE(), 1),
-(3, 'Charlie Pham', 'charlie@domain.com', '0909090909', '789 Nguyen Trai, DN', 'pass789secure', GETDATE(), 1);
+INSERT INTO Users (RoleID, FullName, Email, PhoneNumber, PasswordHash, CreatedAt, Status) VALUES
+(1, 'Alice Nguyen', 'alice@domain.com', '0912345678', 'hashedpassword123', GETDATE(), 1),
+(2, 'Bob Tran', 'bob@domain.com', '0987654321', 'securepass456', GETDATE(), 1),
+(3, 'Charlie Pham', 'charlie@domain.com', '0909090909', 'pass789secure', GETDATE(), 1);
+
+INSERT INTO CustomerInfo (UserID, Address) VALUES
+(3, '789 Nguyen Trai, DN');
+
+INSERT INTO StaffInfo (UserID, StartedDate, EndDate) VALUES
+(2, '2023-01-01', '2025-12-31');
 
 INSERT INTO Components (ComponentName, Quantity, Status) VALUES
 ('PC', 50, 1),
