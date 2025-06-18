@@ -18,7 +18,6 @@ public class StaffInfoDAO extends DBContext {
         String sql = "SELECT * FROM StaffInfo WHERE UserID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
-            LOGGER.info("Executing query: " + sql + " with UserID = " + userId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 StaffInfo info = new StaffInfo(
@@ -27,9 +26,6 @@ public class StaffInfoDAO extends DBContext {
                     rs.getString("StartedDate"),
                     rs.getString("EndDate")
                 );
-                LOGGER.info("Found StaffInfo - ID: " + info.getStaffInfoID() + 
-                          ", StartedDate: " + info.getStartedDate() +
-                          ", EndDate: " + info.getEndDate());
                 return info;
             } else {
                 LOGGER.info("No StaffInfo found for UserID: " + userId);

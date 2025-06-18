@@ -138,3 +138,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     border: 1px solid  !important;
     color: #ff0000 !important;
 }
+
+td, th {
+    word-break: break-word;
+    white-space: normal;
+}

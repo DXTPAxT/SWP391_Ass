@@ -25,7 +25,7 @@
         <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages//plugins/datatables/dataTables.bootstrap.css">
         <!-- Theme style -->
         <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages//dist/css/AdminLTE.min.css">
-        <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages//dist/css/custom.css">
+        <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages//dist/css/custom.css?v=1.0.12">
         <!-- AdminLTE Skins. Choose a skin from the css/skins
              folder instead of downloading all of them to reduce the load. -->
         <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages//dist/css/skins/_all-skins.min.css">
@@ -50,22 +50,20 @@
                 <!-- Content Header -->
                 <section class="content-header">
                     <h1>
-                        Customer Management
-                        <small>view and manage customers</small>
+                        ${users.get(0).role.roleName} Management
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Users</a></li>
-                        <li class="active">Customers</li>
+                        <li>Users</a</li>
                     </ol>
                 </section>
 
                 <!-- Main content -->
                 <section class="content">
-                    <div class="box">
-                        <div class="box-body">
-                            <div class="row">
-                                <div class="col-xs-12">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box">
+                                <div class="box-body">
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
@@ -73,8 +71,16 @@
                                                 <th>Full Name</th>
                                                 <th>Email</th>
                                                 <th>Phone</th>
-                                                <th>Address</th>
-                                                <th>Joined Date</th>
+                                                    <c:if test="${role == 'sale' || role == 'shipper'}"> 
+                                                    <th>Started Date</th>
+                                                    <th>End Date</th>
+                                                    </c:if>
+                                                    <c:if test="${role == 'sale'}"> 
+                                                    <th>Orders this month</th>
+                                                    </c:if>
+                                                    <c:if test="${role == 'customer'}"> 
+                                                    <th>Address</th>
+                                                    </c:if>
                                                 <th>Status</th>
                                                 <th>Actions</th>
                                             </tr>
@@ -87,11 +93,16 @@
                                                         <td>${user.fullname}</td>
                                                         <td>${user.email}</td>
                                                         <td>${user.phoneNumber}</td>
-                                                        <td>${user.customerInfo != null ? user.customerInfo.address : ''}</td>
-                                                        <td>
-                                                            <fmt:parseDate value="${user.createdAt}" pattern="yyyy-MM-dd HH:mm:ss" var="createdDate"/>
-                                                            <fmt:formatDate value="${createdDate}" pattern="yyyy-MM-dd"/>
-                                                        </td>
+                                                        <c:if test="${role == 'sale' || role == 'shipper'}"> 
+                                                            <td>${user.staffInfo.startedDate}</td>
+                                                            <td>${user.staffInfo.endDate}</td>
+                                                        </c:if>
+                                                        <c:if test="${role == 'sale'}"> 
+                                                            <td>${user.countNumberOfOrders1Month()}</td>
+                                                        </c:if>
+                                                        <c:if test="${role == 'customer'}">
+                                                            <td>${user.customerInfo != null ? user.customerInfo.address : ''}</td>
+                                                        </c:if>
                                                         <td>
                                                             <c:choose>
                                                                 <c:when test="${user.status == 1}">
@@ -104,7 +115,10 @@
                                                         </td>
                                                         <td>
                                                             <a href="${ctx}/Admin/user/update?userID=${user.userId}" class="btn btn-primary btn-sm">Update</a>
-                                                            <a href="${ctx}/User?service=resetPassword&userID=${user.userId}&roleID=${user.role.roleID}"
+                                                            <c:if test="${role == 'sale' || role == 'shipper'}"> 
+                                                                <a href="${ctx}/Admin/user/update?userID=${user.userId}" class="btn btn-primary btn-sm">History</a>
+                                                            </c:if>
+                                                            <a href="${ctx}/User?service=resetPassword&userID=${user.userId}"
                                                                onclick="return confirm(`Reset user's password?`);"
                                                                class="btn btn-danger btn-sm">Reset Password</a>
                                                         </td>

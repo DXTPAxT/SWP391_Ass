@@ -4,6 +4,8 @@
  */
 package models;
 
+import dalAdmin.OrderPreparementDAO;
+
 /**
  *
  * @author PC ASUS
@@ -134,16 +136,23 @@ public class User {
     }
 
     public boolean isStaff() {
-        return role != null && role.getRoleID() == 2; // Staff role
+        return role != null && (role.getRoleID() == 2 || role.getRoleID() == 4); // Staff role
     }
 
     public boolean isAdmin() {
         return role != null && role.getRoleID() == 1; // Admin role
     }
 
-    // Phương thức hỗ trợ kiểm tra trạng thái
     public boolean isActive() {
         return status == 1;
+    }
+    
+    public int countNumberOfOrders() {
+        return (new OrderPreparementDAO()).countOrderPreparementByID(userId);
+    }
+    
+    public int countNumberOfOrders1Month() {
+        return (new OrderPreparementDAO()).countOrder1MonthByID(userId);
     }
 
     @Override

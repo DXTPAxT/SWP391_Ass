@@ -46,8 +46,8 @@ CREATE TABLE CustomerInfo (
 CREATE TABLE StaffInfo (
 	StaffInfoID INT PRIMARY KEY IDENTITY(1,1),
 	UserID INT NOT NULL,
-    StartedDate Date NOT NULL,
-    EndDate Date NOT NULL,
+    StartedDate Date,
+    EndDate Date,
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 )
 
@@ -180,7 +180,7 @@ CREATE TABLE CartItems (
     FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
 )
 
--- 11. Shipping
+-- 15. Shipping
 CREATE TABLE Shipping (
     ShippingID INT PRIMARY KEY IDENTITY(1,1),
     OrderID INT NOT NULL,
@@ -191,7 +191,7 @@ CREATE TABLE Shipping (
     FOREIGN KEY (ShipperID) REFERENCES Users(UserID),
 );
 
--- 12. Feedbacks
+-- 16. Feedbacks
 CREATE TABLE Feedbacks (
     FeedbackID INT PRIMARY KEY IDENTITY(1,1),
     UserID INT NOT NULL,
@@ -204,7 +204,7 @@ CREATE TABLE Feedbacks (
 	FOREIGN KEY (OrderItemID) REFERENCES OrderItems(OrderItemID)
 );
 
--- 14. Reports
+-- 17. Reports
 CREATE TABLE Reports (
     ReportID INT PRIMARY KEY IDENTITY(1,1),
     ManagerID INT NOT NULL,
@@ -214,7 +214,7 @@ CREATE TABLE Reports (
     FOREIGN KEY (ManagerID) REFERENCES Users(UserID)
 );
 
--- 15. Payments
+-- 18. Payments
 CREATE TABLE Payments (
     PaymentID INT PRIMARY KEY IDENTITY(1,1),
     OrderID INT NOT NULL,
@@ -225,13 +225,13 @@ CREATE TABLE Payments (
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
 );
 
--- Table: Blogs_category
+-- 19: Blogs_category
 CREATE TABLE Blogs_category (
     Bc_id INT PRIMARY KEY,
     Bc_name VARCHAR(255) NOT NULL
 );
 
--- Table: Post
+-- 20: Post
 CREATE TABLE Post (
     Post_id INT PRIMARY KEY,
     Title VARCHAR(255) NOT NULL,
@@ -247,7 +247,7 @@ CREATE TABLE Post (
     FOREIGN KEY (Add_id) REFERENCES Users(UserID)
 );
 
--- 16. Sale Events
+-- 21. Sale Events
 CREATE TABLE SaleEvents (
     EventID INT PRIMARY KEY IDENTITY(1,1),
 	CategoryID INT NOT NULL,
@@ -258,3 +258,13 @@ CREATE TABLE SaleEvents (
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
     FOREIGN KEY (Post_id) REFERENCES Post(Post_id)
 );
+
+-- 22 Order Preparements
+CREATE TABLE OrderPreparements (
+	UserID INT NOT NULL,
+	OrderID INT NOT NULL,
+	PrepareTime Date NOT NULL,
+	Primary key(UserID, OrderID),
+	Foreign key(UserID) references Users(UserID),
+	Foreign key(OrderID) references Orders(OrderID),
+)
