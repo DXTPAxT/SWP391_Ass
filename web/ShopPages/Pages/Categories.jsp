@@ -222,7 +222,7 @@
                                 <div class="brands-name" style="border: 1px solid #f0f0f0; padding: 20px;">
                                     <ul class="nav nav-pills nav-stacked">
                                         <li>
-                                            <a href="${ctx}/BuildPC?service=list">
+                                            <a href="${ctx}/ShopPages/Pages/BuildPC.jsp">
                                                 <i class="fa fa-cogs"></i> Customize Your PC
                                             </a>
                                         </li>
