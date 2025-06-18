@@ -98,7 +98,7 @@
                             <c:if test="${user.role.roleID == 3}">
                                 <a href="${ctx}/Admin/user?type=customer" class="btn btn-default">Cancel</a>
                             </c:if>
-                            <c:if test="${user.role.roleID == 2}">
+                            <c:if test="${user.role.roleID != 3}">
                                 <a href="${ctx}/Admin/user?type=staff" class="btn btn-default">Cancel</a>
                             </c:if>
                         </form>

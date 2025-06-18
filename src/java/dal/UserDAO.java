@@ -34,35 +34,36 @@ public class UserDAO extends DBContext {
         roleDAO = new RoleDAO();
     }
 
-    // Get all users
-    public ArrayList<User> getUsers() {
-        ArrayList<User> list = new ArrayList<>();
-        String sql = "SELECT UserID, RoleID, FullName, Email, PhoneNumber, PasswordHash, CreatedAt, Status FROM Users";
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                list.add(mapUser(rs));
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error getting users list", e);
-        }
-        return list;
-    }
-
     // Get all staff members
-    public List<User> getAllStaff() {
+    public List<User> getAllAdmins() {
         ArrayList<User> staffList = new ArrayList<>();
         String sql = "SELECT UserID, RoleID, FullName, Email, PhoneNumber, PasswordHash, CreatedAt, Status "
-                + "FROM Users WHERE RoleID = 2"; // RoleID 2 for staff
+                + "FROM Users WHERE RoleID = 1"; // RoleID 1 for Admin
 
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             LOGGER.info("Executing query for getAllStaff()");
             while (rs.next()) {
                 User user = mapUser(rs);
-                LOGGER.info("Mapped staff - UserID: " + user.getUserId()
-                        + ", StaffInfo: " + (user.getStaffInfo() != null ? "present" : "null"));
                 staffList.add(user);
             }
-            LOGGER.info("Total staff found: " + staffList.size());
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error getting staff list", e);
+        }
+        return staffList;
+    }
+
+    // Get all staff members
+    public List<User> getAllSales() {
+        ArrayList<User> staffList = new ArrayList<>();
+        String sql = "SELECT UserID, RoleID, FullName, Email, PhoneNumber, PasswordHash, CreatedAt, Status "
+                + "FROM Users WHERE RoleID = 2"; // RoleID 2 for sale
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            LOGGER.info("Executing query for getAllStaff()");
+            while (rs.next()) {
+                User user = mapUser(rs);
+                staffList.add(user);
+            }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error getting staff list", e);
         }
@@ -79,15 +80,30 @@ public class UserDAO extends DBContext {
             LOGGER.info("Executing query for getAllCustomers()");
             while (rs.next()) {
                 User user = mapUser(rs);
-                LOGGER.info("Mapped customer - UserID: " + user.getUserId()
-                        + ", CustomerInfo: " + (user.getCustomerInfo() != null ? "present" : "null"));
                 customerList.add(user);
             }
-            LOGGER.info("Total customers found: " + customerList.size());
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error getting customer list", e);
         }
         return customerList;
+    }
+
+    // Get all staff members
+    public List<User> getAllShippers() {
+        ArrayList<User> staffList = new ArrayList<>();
+        String sql = "SELECT UserID, RoleID, FullName, Email, PhoneNumber, PasswordHash, CreatedAt, Status "
+                + "FROM Users WHERE RoleID = 4"; // RoleID 4 for shipper
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            LOGGER.info("Executing query for getAllStaff()");
+            while (rs.next()) {
+                User user = mapUser(rs);
+                staffList.add(user);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error getting staff list", e);
+        }
+        return staffList;
     }
 
     // Get user by ID
@@ -169,14 +185,14 @@ public class UserDAO extends DBContext {
                 boolean infoUpdated = true;
 
                 // Update role-specific information
-                if (user.isCustomer() && address != null) {
+                if (user.isCustomer()) {
                     if (user.getCustomerInfo() == null) {
                         infoUpdated = customerInfoDAO.createCustomerInfo(userId, address);
                     } else {
                         infoUpdated = customerInfoDAO.updateCustomerInfo(userId, address);
                     }
-                } else {
-                    if (user.getStaffInfo()== null) {
+                } else if (user.isStaff()) {
+                    if (user.getStaffInfo() == null) {
                         infoUpdated = staffInfoDAO.createStaffInfo(userId, StartedDate, EndDate);
                     } else {
                         infoUpdated = staffInfoDAO.updateStaffInfo(userId, StartedDate, EndDate);
@@ -303,24 +319,6 @@ public class UserDAO extends DBContext {
         return null;
     }
 
-    public List<User> getUsersByRole(int roleId) throws Exception {
-        List<User> userList = new ArrayList<>();
-        String sql = "SELECT UserID, RoleID, FullName, Email, PhoneNumber, PasswordHash, CreatedAt, Status "
-                + "FROM Users WHERE RoleID = ?";
-        try (PreparedStatement st = connection.prepareStatement(sql)) {
-            st.setInt(1, roleId);
-            try (ResultSet rs = st.executeQuery()) {
-                while (rs.next()) {
-                    userList.add(mapUser(rs));
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error getting users by role: {0}", roleId);
-            throw new Exception("Failed to get users by role", e);
-        }
-        return userList;
-    }    // Helper method to create User object from ResultSet
-
     private User mapUser(ResultSet rs) throws SQLException {
         User user = new User();
         user.setUserId(rs.getInt("UserID"));
@@ -337,17 +335,13 @@ public class UserDAO extends DBContext {
         user.setCreatedAt(rs.getString("CreatedAt"));
         user.setStatus(rs.getInt("Status"));
 
-        LOGGER.info("Mapping user - UserID: " + user.getUserId() + ", Role: " + role.getRoleName());
-
         // Load additional info based on role
         if (role.getRoleID() == 3) { // Customer
             CustomerInfo customerInfo = customerInfoDAO.getCustomerInfoByUserId(user.getUserId());
             user.setCustomerInfo(customerInfo);
-            LOGGER.info("CustomerInfo loaded for customer");
-        } else if (role.getRoleID() == 2) { // Staff
+        } else if (role.getRoleID() == 2 || role.getRoleID() == 4) { // Staff
             StaffInfo staffInfo = staffInfoDAO.getStaffInfoByUserId(user.getUserId());
             user.setStaffInfo(staffInfo);
-            LOGGER.info("StaffInfo loaded for staff");
         }
 
         return user;

@@ -2,20 +2,23 @@
 -- Insert data into Roles
 INSERT INTO Roles (RoleName) VALUES 
 ('Admin'),
-('Staff'),
-('Customer');
+('Sale'),
+('Customer'),
+('Shipper');
 
 -- Insert data into Users
 INSERT INTO Users (RoleID, FullName, Email, PhoneNumber, PasswordHash, CreatedAt, Status) VALUES
 (1, 'Alice Nguyen', 'alice@domain.com', '0912345678', 'hashedpassword123', GETDATE(), 1),
 (2, 'Bob Tran', 'bob@domain.com', '0987654321', 'securepass456', GETDATE(), 1),
-(3, 'Charlie Pham', 'charlie@domain.com', '0909090909', 'pass789secure', GETDATE(), 1);
+(3, 'Charlie Pham', 'charlie@domain.com', '0909090909', 'pass789secure', GETDATE(), 1),
+(4, 'Charlie Pham2', 'charlie@doma.com', '0909090908', 'pass789secure', GETDATE(), 1);
 
 INSERT INTO CustomerInfo (UserID, Address) VALUES
 (3, '789 Nguyen Trai, DN');
 
 INSERT INTO StaffInfo (UserID, StartedDate, EndDate) VALUES
-(2, '2023-01-01', '2025-12-31');
+(2, '2023-01-01', '2025-12-31'),
+(4, '2023-01-01', '2025-12-31');
 
 INSERT INTO Components (ComponentName, Quantity, Status) VALUES
 ('PC', 50, 1),
@@ -1462,5 +1465,10 @@ Ideal temps: CPU < 85°C, GPU < 80°C.',
 4, 'https://www.nvidia.com/content/dam/en-zz/Solutions/geforce/news/rtx-50-series-graphics-cards-gpu-laptop-announcements/geforce-rtx-5090-key-visual.jpg', 
 'Highlights from the NVIDIA RTX 50 series graphics card launch event.', 1);
 
-
-
+INSERT INTO OrderPreparements(UserID, OrderID, PrepareTime) values 
+(2,1,GETDATE()), 
+(2,2,GETDATE()), 
+(2,3,GETDATE()), 
+(2,4,GETDATE()), 
+(2,5,GETDATE()), 
+(2,6,GETDATE());
