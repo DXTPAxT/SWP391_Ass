@@ -50,6 +50,7 @@
                                         <th>Rate</th>
                                         <th>Created At</th>
                                         <th>Status</th>
+                                        <th>Trả lời Feedback</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -63,14 +64,24 @@
                                             <td>${feedback.rate}</td>
                                             <td>${feedback.createdAt}</td>
                                             <td>
-                                                <c:choose>
-                                                    <c:when test="${feedback.status == 1}">
-                                                        <span class="label label-success">Active</span>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <span class="label label-warning">Inactive</span>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                                <span class="label ${feedback.status == 1 ? 'label-success' : 'label-warning'}">
+                                                    ${feedback.status == 1 ? 'Active' : 'Inactive'}
+                                                </span>
+                                                <form action="${pageContext.request.contextPath}/admin/updateFeedbackStatus" method="post" style="display:inline;">
+                                                    <input type="hidden" name="feedbackID" value="${feedback.feedbackID}" />
+                                                    <button type="submit" name="status" value="${feedback.status == 1 ? 0 : 1}"
+                                                        class="btn btn-xs ${feedback.status == 1 ? 'btn-warning' : 'btn-success'}" style="margin-left:5px;">
+                                                        Đổi
+                                                    </button>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <form action="${pageContext.request.contextPath}/admin/replyFeedback" method="post">
+                                                    <input type="hidden" name="feedbackID" value="${feedback.feedbackID}" />
+                                                    <input type="text" name="reply" value="${feedback.reply}" placeholder="Nhập trả lời..." style="width:120px;" />
+                                                    <button type="submit" class="btn btn-xs btn-primary" style="margin-left:5px;">Trả lời</button>
+                                                </form>
+                                                <div style="font-size:12px;color:green;">${feedback.reply}</div>
                                             </td>
                                         </tr>
                                     </c:forEach>

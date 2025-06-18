@@ -9,8 +9,9 @@ public class Feedback {
     private int rate;
     private int status;
     private String fullname;
+    private String reply;
 
-    public Feedback(int feedbackID, int userID, String content, int orderItemID, String createdAt, int rate, int status, String fullname) {
+    public Feedback(int feedbackID, int userID, String content, int orderItemID, String createdAt, int rate, int status, String fullname, String reply) {
         this.feedbackID = feedbackID;
         this.userID = userID;
         this.content = content;
@@ -19,9 +20,10 @@ public class Feedback {
         this.rate = rate;
         this.status = status;
         this.fullname = fullname;
+        this.reply = reply;
     }
 
-    // Constructor cho insert nhanh
+    // Constructor cũ để không lỗi code cũ
     public Feedback(int userID, String content, int orderItemID, int rate) {
         this.userID = userID;
         this.content = content;
@@ -47,6 +49,8 @@ public class Feedback {
     public void setStatus(int status) { this.status = status; }
     public String getFullname() { return fullname; }
     public void setFullname(String fullname) { this.fullname = fullname; }
+    public String getReply() { return reply; }
+    public void setReply(String reply) { this.reply = reply; }
 
     @Override
     public String toString() {

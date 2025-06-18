@@ -12,7 +12,7 @@ public class FeedbackDAO extends DBContext {
 
     public List<Feedback> getAllFeedbacks() {
         List<Feedback> list = new ArrayList<>();
-        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName " +
+        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName, f.Reply " +
                      "FROM Feedbacks f JOIN Users u ON f.UserID = u.UserID ORDER BY f.CreatedAt DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -25,7 +25,8 @@ public class FeedbackDAO extends DBContext {
                     rs.getString("CreatedAt"),
                     rs.getInt("Rate"),
                     rs.getInt("Status"),
-                    rs.getString("FullName")
+                    rs.getString("FullName"),
+                    rs.getString("Reply")
                 );
                 list.add(f);
             }
@@ -52,7 +53,7 @@ public class FeedbackDAO extends DBContext {
 
     public List<Feedback> getFeedbackByCategoryId(int categoryId) {
         List<Feedback> list = new ArrayList<>();
-        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName " +
+        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName, f.Reply " +
                      "FROM Feedbacks f " +
                      "JOIN OrderItems oi ON f.OrderItemID = oi.OrderItemID " +
                      "JOIN Users u ON f.UserID = u.UserID " +
@@ -69,7 +70,8 @@ public class FeedbackDAO extends DBContext {
                         rs.getString("CreatedAt"),
                         rs.getInt("Rate"),
                         rs.getInt("Status"),
-                        rs.getString("FullName")
+                        rs.getString("FullName"),
+                        rs.getString("Reply")
                     );
                     list.add(f);
                 }
@@ -81,7 +83,7 @@ public class FeedbackDAO extends DBContext {
     }
 
     public Feedback getFeedbackById(int feedbackID) {
-        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName " +
+        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName, f.Reply " +
                      "FROM Feedbacks f JOIN Users u ON f.UserID = u.UserID WHERE f.FeedbackID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, feedbackID);
@@ -95,7 +97,8 @@ public class FeedbackDAO extends DBContext {
                         rs.getString("CreatedAt"),
                         rs.getInt("Rate"),
                         rs.getInt("Status"),
-                        rs.getString("FullName")
+                        rs.getString("FullName"),
+                        rs.getString("Reply")
                     );
                 }
             }
@@ -133,7 +136,7 @@ public class FeedbackDAO extends DBContext {
 
     public List<Feedback> getFeedbackByUserId(int userID) {
         List<Feedback> list = new ArrayList<>();
-        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName " +
+        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName, f.Reply " +
                      "FROM Feedbacks f JOIN Users u ON f.UserID = u.UserID WHERE f.UserID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userID);
@@ -147,7 +150,8 @@ public class FeedbackDAO extends DBContext {
                         rs.getString("CreatedAt"),
                         rs.getInt("Rate"),
                         rs.getInt("Status"),
-                        rs.getString("FullName")
+                        rs.getString("FullName"),
+                        rs.getString("Reply")
                     );
                     list.add(f);
                 }
