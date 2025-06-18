@@ -139,7 +139,7 @@ public class FeedbackServlet extends HttpServlet {
             return;
         }
 
-        if (currentUser == null || (currentUser.getUserID() != feedback.getUserID() && currentUser.getRoleID() != 1)) {
+        if (currentUser == null || (currentUser.getUserId() != feedback.getUserID() && currentUser.getRole().getRoleID() != 1)) {
             session.setAttribute("error", "You are not authorized to delete this feedback");
             res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
             return;
@@ -174,7 +174,7 @@ public class FeedbackServlet extends HttpServlet {
             return;
         }
 
-        if (currentUser == null || (currentUser.getUserID() != feedback.getUserID() && currentUser.getRoleID() != 1)) {
+        if (currentUser == null || (currentUser.getUserId() != feedback.getUserID() && currentUser.getRole().getRoleID() != 1)) {
             session.setAttribute("error", "You are not authorized to edit this feedback");
             res.sendRedirect(req.getContextPath() + "/ShopPages/Pages/feedback.jsp");
             return;
@@ -215,7 +215,7 @@ public class FeedbackServlet extends HttpServlet {
             return;
         }
 
-        if (currentUser.getUserID() != feedback.getUserID() && currentUser.getRoleID() != 1) {
+        if (currentUser.getUserId() != feedback.getUserID() && currentUser.getRole().getRoleID() != 1) {
             session.setAttribute("error", "You are not authorized to edit this feedback");
             res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
             return;
@@ -297,7 +297,7 @@ public class FeedbackServlet extends HttpServlet {
 
         try {
             session.removeAttribute("error");
-            List<Feedback> userFeedback = dao.getFeedbackByUserId(currentUser.getUserID());
+            List<Feedback> userFeedback = dao.getFeedbackByUserId(currentUser.getUserId());
             req.setAttribute("feedbackList", userFeedback != null ? userFeedback : new ArrayList<>());
             req.getRequestDispatcher("/ShopPages/Pages/my-feedback.jsp").forward(req, res);
         } catch (Exception e) {
