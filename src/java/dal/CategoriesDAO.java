@@ -359,4 +359,82 @@ public class CategoriesDAO extends DBContext {
             ps.setObject(i + 1, params.get(i));
         }
     }
+    public List<Categories> getCategoriesFiltered(int componentID, String brand, String keyword, int minPrice, int maxPrice) {
+    List<Categories> list = new ArrayList<>();
+    StringBuilder sql = new StringBuilder("""
+        SELECT 
+          c.*, 
+          bc.ComponentID, 
+          bc.BrandID, 
+          b.BrandName, 
+          comp.ComponentName
+        FROM Categories c
+        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        JOIN Components comp ON bc.ComponentID = comp.ComponentID
+        WHERE c.Status = 2 AND bc.ComponentID = ?
+    """);
+
+    List<Object> params = new ArrayList<>();
+    params.add(componentID);
+
+    if (brand != null && !brand.isEmpty()) {
+        sql.append(" AND b.BrandName = ? ");
+        params.add(brand);
+    }
+    if (keyword != null && !keyword.isEmpty()) {
+        sql.append(" AND LOWER(c.CategoryName) LIKE ? ");
+        params.add("%" + keyword.toLowerCase() + "%");
+    }
+    if (minPrice >= 0) {
+        sql.append(" AND c.Price >= ? ");
+        params.add(minPrice);
+    }
+    if (maxPrice < Integer.MAX_VALUE) {
+        sql.append(" AND c.Price <= ? ");
+        params.add(maxPrice);
+    }
+
+    sql.append(" ORDER BY c.CategoryID");
+
+    try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+        for (int i = 0; i < params.size(); i++) {
+            ps.setObject(i + 1, params.get(i));
+        }
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(extractCategory(rs));
+            }
+        }
+    } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, null, e);
+    }
+    return list;
+}
+public List<Brands> getBrandsByComponent(int componentID) {
+    List<Brands> list = new ArrayList<>();
+    String sql = """
+        SELECT DISTINCT b.BrandID, b.BrandName, b.Quantity, b.Status
+        FROM BrandComs bc
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        WHERE bc.ComponentID = ?
+    """;
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, componentID);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(new Brands(
+                        rs.getInt("BrandID"),
+                        rs.getString("BrandName"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("Status")
+                ));
+            }
+        }
+    } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, null, e);
+    }
+    return list;
+}
 }

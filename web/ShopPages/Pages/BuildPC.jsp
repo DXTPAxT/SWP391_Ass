@@ -1,3 +1,4 @@
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -22,49 +23,234 @@
         <jsp:include page="components/header.jsp">
             <jsp:param name="activePage" value="buildpc"/>
         </jsp:include>
+        <div class="choseCate">
+            <!-- Repeatable Component Blocks -->
 
-        <div class="list-group col-sm-5">
-            <c:forEach var="comp" items="${components}">
-                <c:if test="${comp.componentID != 1}">
-                    <div class="list-group-item">
-                        <div class="d-flex align-items-center">
-                            <img src="${ctx}/images/products/${comp.componentID}.png" alt="${comp.componentName}" class="component-image" />
-                            <div>
-                                <div class="component-title">${comp.componentName}
-                                    <c:forEach var="sel" items="${selectedComponents}">
-                                        <c:if test="${sel.componentID eq comp.componentID}">
-                                            <div class="selected-item">
-                                                <div class="component-meta">${sel.categoryName} - ${sel.brandName}</div>
-                                                <a href="#" class="btn btn-sm btn-outline-danger btn-remove mt-2" data-delete-url="${ctx}/BuildPC?service=remove&componentID=${comp.componentID}">Delete</a>
-                                            </div>
-                                        </c:if>
-                                    </c:forEach>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="text-end">
-                            <c:set var="found" value="false" />
+            <div class="list-group-item" id="component-wrapper-2">
+                <div class="d-flex align-items-center">
+                    <img src="${ctx}/ShopPages/Pages/images/anhproduct/2.jpg" alt="MainBoard" class="component-image" />
+                    <div>
+                        <div class="component-title">MainBoard
                             <c:forEach var="sel" items="${selectedComponents}">
-                                <c:if test="${sel.componentID eq comp.componentID}">
-                                    <c:set var="found" value="true" />
-                                    <div class="component-price">
-                                        <fmt:formatNumber value="${sel.price}" type="number" groupingUsed="true"/>₫
+                                <c:if test="${sel.componentID == 2}">
+                                    <div class="selected-item">
+                                        <div class="component-meta">${sel.categoryName} - ${sel.brandName}</div>
+                                        <a href="#" class="btn btn-sm btn-outline-danger btn-remove mt-2" 
+                                           data-delete-url="${ctx}/BuildPC?service=remove&componentID=2">Delete</a>
                                     </div>
                                 </c:if>
                             </c:forEach>
-                            <button type="button" class="btn btn-sm btn-primary mt-2 open-component-modal" data-component-id="${comp.componentID}" data-component-name="${comp.componentName}">
-                                <c:choose>
-                                    <c:when test="${found}">Changes</c:when>
-                                    <c:otherwise>Choose</c:otherwise>
-                                </c:choose>
-                            </button>
                         </div>
                     </div>
-                </c:if>
-            </c:forEach>
+                </div>
+                <div class="text-end">
+                    <c:set var="found" value="false" />
+                    <c:forEach var="sel" items="${selectedComponents}">
+                        <c:if test="${sel.componentID == 2}">
+                            <c:set var="found" value="true" />
+                            <div class="component-price">
+                                <fmt:formatNumber value="${sel.price}" type="number" groupingUsed="true"/>₫
+                            </div>
+                        </c:if>
+                    </c:forEach>
+                    <button type="button" class="btn btn-sm btn-primary mt-2 open-component-modal" 
+                            data-component-id="2" data-component-name="MainBoard">
+                        <c:choose>
+                            <c:when test="${found}">Changes</c:when>
+                            <c:otherwise>Choose</c:otherwise>
+                        </c:choose>
+                    </button>
+                </div>
+            </div>
+
+            <div class="list-group-item" id="component-wrapper-3">
+                <div class="d-flex align-items-center">
+                    <img src="${ctx}/ShopPages/Pages/images/anhproduct/3.jpg" alt="CPU" class="component-image" />
+                    <div>
+                        <div class="component-title">CPU
+                            <c:forEach var="sel" items="${selectedComponents}">
+                                <c:if test="${sel.componentID == 3}">
+                                    <div class="selected-item">
+                                        <div class="component-meta">${sel.categoryName} - ${sel.brandName}</div>
+                                        <a href="#" class="btn btn-sm btn-outline-danger btn-remove mt-2" 
+                                           data-delete-url="${ctx}/BuildPC?service=remove&componentID=3">Delete</a>
+                                    </div>
+                                </c:if>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <c:set var="found" value="false" />
+                    <c:forEach var="sel" items="${selectedComponents}">
+                        <c:if test="${sel.componentID == 3}">
+                            <c:set var="found" value="true" />
+                            <div class="component-price">
+                                <fmt:formatNumber value="${sel.price}" type="number" groupingUsed="true"/>₫
+                            </div>
+                        </c:if>
+                    </c:forEach>
+                    <button type="button" class="btn btn-sm btn-primary mt-2 open-component-modal" 
+                            data-component-id="3" data-component-name="CPU">
+                        <c:choose>
+                            <c:when test="${found}">Changes</c:when>
+                            <c:otherwise>Choose</c:otherwise>
+                        </c:choose>
+                    </button>
+                </div>
+            </div>
+
+            <div class="list-group-item" id="component-wrapper-4">
+                <div class="d-flex align-items-center">
+                    <img src="${ctx}/ShopPages/Pages/images/anhproduct/4.jpg" alt="GPU" class="component-image" />
+                    <div>
+                        <div class="component-title">GPU
+                            <c:forEach var="sel" items="${selectedComponents}">
+                                <c:if test="${sel.componentID == 4}">
+                                    <div class="selected-item">
+                                        <div class="component-meta">${sel.categoryName} - ${sel.brandName}</div>
+                                        <a href="#" class="btn btn-sm btn-outline-danger btn-remove mt-2" 
+                                           data-delete-url="${ctx}/BuildPC?service=remove&componentID=4">Delete</a>
+                                    </div>
+                                </c:if>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <c:set var="found" value="false" />
+                    <c:forEach var="sel" items="${selectedComponents}">
+                        <c:if test="${sel.componentID == 4}">
+                            <c:set var="found" value="true" />
+                            <div class="component-price">
+                                <fmt:formatNumber value="${sel.price}" type="number" groupingUsed="true"/>₫
+                            </div>
+                        </c:if>
+                    </c:forEach>
+                    <button type="button" class="btn btn-sm btn-primary mt-2 open-component-modal" 
+                            data-component-id="4" data-component-name="GPU">
+                        <c:choose>
+                            <c:when test="${found}">Changes</c:when>
+                            <c:otherwise>Choose</c:otherwise>
+                        </c:choose>
+                    </button>
+                </div>
+            </div>
+
+            <div class="list-group-item" id="component-wrapper-5">
+                <div class="d-flex align-items-center">
+                    <img src="${ctx}/ShopPages/Pages/images/anhproduct/5.jpg" alt="RAM" class="component-image" />
+                    <div>
+                        <div class="component-title">RAM
+                            <c:forEach var="sel" items="${selectedComponents}">
+                                <c:if test="${sel.componentID == 5}">
+                                    <div class="selected-item">
+                                        <div class="component-meta">${sel.categoryName} - ${sel.brandName}</div>
+                                        <a href="#" class="btn btn-sm btn-outline-danger btn-remove mt-2" 
+                                           data-delete-url="${ctx}/BuildPC?service=remove&componentID=5">Delete</a>
+                                    </div>
+                                </c:if>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <c:set var="found" value="false" />
+                    <c:forEach var="sel" items="${selectedComponents}">
+                        <c:if test="${sel.componentID == 5}">
+                            <c:set var="found" value="true" />
+                            <div class="component-price">
+                                <fmt:formatNumber value="${sel.price}" type="number" groupingUsed="true"/>₫
+                            </div>
+                        </c:if>
+                    </c:forEach>
+                    <button type="button" class="btn btn-sm btn-primary mt-2 open-component-modal" 
+                            data-component-id="5" data-component-name="RAM">
+                        <c:choose>
+                            <c:when test="${found}">Changes</c:when>
+                            <c:otherwise>Choose</c:otherwise>
+                        </c:choose>
+                    </button>
+                </div>
+            </div>
+
+            <div class="list-group-item" id="component-wrapper-6">
+                <div class="d-flex align-items-center">
+                    <img src="${ctx}/ShopPages/Pages/images/anhproduct/6.jpg" alt="SSD" class="component-image" />
+                    <div>
+                        <div class="component-title">SSD
+                            <c:forEach var="sel" items="${selectedComponents}">
+                                <c:if test="${sel.componentID == 6}">
+                                    <div class="selected-item">
+                                        <div class="component-meta">${sel.categoryName} - ${sel.brandName}</div>
+                                        <a href="#" class="btn btn-sm btn-outline-danger btn-remove mt-2" 
+                                           data-delete-url="${ctx}/BuildPC?service=remove&componentID=6">Delete</a>
+                                    </div>
+                                </c:if>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <c:set var="found" value="false" />
+                    <c:forEach var="sel" items="${selectedComponents}">
+                        <c:if test="${sel.componentID == 6}">
+                            <c:set var="found" value="true" />
+                            <div class="component-price">
+                                <fmt:formatNumber value="${sel.price}" type="number" groupingUsed="true"/>₫
+                            </div>
+                        </c:if>
+                    </c:forEach>
+                    <button type="button" class="btn btn-sm btn-primary mt-2 open-component-modal" 
+                            data-component-id="6" data-component-name="SSD">
+                        <c:choose>
+                            <c:when test="${found}">Changes</c:when>
+                            <c:otherwise>Choose</c:otherwise>
+                        </c:choose>
+                    </button>
+                </div>
+            </div>
+
+            <div class="list-group-item" id="component-wrapper-7">
+                <div class="d-flex align-items-center">
+                    <img src="${ctx}/ShopPages/Pages/images/anhproduct/7.jpg" alt="Case" class="component-image" />
+                    <div>
+                        <div class="component-title">Case
+                            <c:forEach var="sel" items="${selectedComponents}">
+                                <c:if test="${sel.componentID == 7}">
+                                    <div class="selected-item">
+                                        <div class="component-meta">${sel.categoryName} - ${sel.brandName}</div>
+                                        <a href="#" class="btn btn-sm btn-outline-danger btn-remove mt-2" 
+                                           data-delete-url="${ctx}/BuildPC?service=remove&componentID=7">Delete</a>
+                                    </div>
+                                </c:if>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <c:set var="found" value="false" />
+                    <c:forEach var="sel" items="${selectedComponents}">
+                        <c:if test="${sel.componentID == 7}">
+                            <c:set var="found" value="true" />
+                            <div class="component-price">
+                                <fmt:formatNumber value="${sel.price}" type="number" groupingUsed="true"/>₫
+                            </div>
+                        </c:if>
+                    </c:forEach>
+                    <button type="button" class="btn btn-sm btn-primary mt-2 open-component-modal" 
+                            data-component-id="7" data-component-name="Case">
+                        <c:choose>
+                            <c:when test="${found}">Changes</c:when>
+                            <c:otherwise>Choose</c:otherwise>
+                        </c:choose>
+                    </button>
+                </div>
+            </div>
+
         </div>
 
+        <!-- Modals -->
         <div id="customModal" class="modal-overlay">
             <div class="modal-content">
                 <span class="close-btn" id="closeModal">&times;</span>
@@ -84,11 +270,11 @@
             </div>
         </div>
 
-        <!-- Toast thông báo -->
         <div id="toast" style="position: fixed; bottom: 20px; right: 20px; background: #28a745; color: white; padding: 14px 20px; border-radius: 8px; display: none; font-weight: bold; z-index: 99999;">
             Delete successful
         </div>
 
+        <!-- Tổng tiền -->
         <c:set var="totalPrice" value="0" />
         <c:forEach var="sel" items="${selectedComponents}">
             <c:if test="${not empty sel.price}">
@@ -111,89 +297,6 @@
             </div>
         </div>
 
-        <script>
-            const ctx = '${ctx}';
-            const modal = document.getElementById('customModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalBody = document.getElementById('modalBody');
-            const deleteModal = document.getElementById('deleteModal');
-            const cancelDelete = document.getElementById('cancelDelete');
-            const confirmDelete = document.getElementById('confirmDelete');
-            const toast = document.getElementById('toast');
-
-            let deleteUrl = null;
-
-            document.querySelectorAll('.open-component-modal').forEach(button => {
-                button.addEventListener('click', () => {
-                    const componentId = button.dataset.componentId;
-                    const componentName = button.dataset.componentName;
-                    modal.style.display = 'flex';
-                    modalTitle.textContent = componentName;
-                    modalBody.innerHTML = "<p>Loading...</p>";
-                    fetch(ctx + "/BuildPC?service=filter&componentID=" + encodeURIComponent(componentId) + "&ajax=true")
-                            .then(res => res.text())
-                            .then(html => {
-                                modalBody.innerHTML = html;
-                                modalBody.querySelectorAll('.select-product-btn').forEach(btn => {
-                                    btn.addEventListener('click', function () {
-                                        const categoryId = btn.getAttribute('data-category-id');
-                                        fetch(ctx + '/BuildPC?service=add&categoryID=' + categoryId)
-                                                .then(() => {
-                                                    modal.style.display = "none";
-                                                    window.location.href = ctx + '/BuildPC';
-                                                })
-                                                .catch(() => {
-                                                    alert('Lỗi khi thêm sản phẩm');
-                                                });
-                                    });
-                                });
-                            })
-                            .catch(() => {
-                                modalBody.innerHTML = '<p style="color:red">Lỗi khi tải dữ liệu.</p>';
-                            });
-                });
-            });
-
-            document.querySelectorAll('.btn-remove').forEach(btn => {
-                btn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    deleteUrl = this.getAttribute('data-delete-url');
-                    deleteModal.style.display = 'flex';
-                });
-            });
-
-            cancelDelete.onclick = () => {
-                deleteModal.style.display = 'none';
-                deleteUrl = null;
-            };
-
-            confirmDelete.onclick = () => {
-                if (deleteUrl) {
-                    fetch(deleteUrl, {
-                        headers: {'X-Requested-With': 'XMLHttpRequest'}
-                    }).then(response => {
-                        if (response.ok) {
-                            deleteModal.style.display = 'none';
-                            toast.style.display = 'block';
-                            setTimeout(() => {
-                                toast.style.display = 'none';
-                                window.location.reload();
-                            });
-                        } else {
-                            alert('Không thể xoá. Đã có lỗi xảy ra.');
-                        }
-                    }).catch(() => {
-                        alert('Không thể xoá. Lỗi mạng.');
-                    });
-                }
-            };
-
-            window.onclick = function (e) {
-                if (e.target === modal || e.target === deleteModal) {
-                    modal.style.display = "none";
-                    deleteModal.style.display = "none";
-                }
-            };
-        </script>
+        <script src="${ctx}/ShopPages/Pages/js/buildpc-ajax.js"></script>
     </body>
 </html>
