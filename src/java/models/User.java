@@ -9,6 +9,7 @@ package models;
  * @author PC ASUS
  */
 public class User {
+
     private int userId;
     private Role role;
     private String fullname;
@@ -22,7 +23,7 @@ public class User {
 
     public User() {
     }
-    
+
     // Constructor cơ bản với các thông tin chính
     public User(String fullname, String email, String phoneNumber, String password, Role role) {
         this.fullname = fullname;
@@ -32,9 +33,9 @@ public class User {
         this.role = role;
         this.status = 1; // Mặc định status là active
     }
-    
+
     // Constructor đầy đủ cho việc load từ database
-    public User(int userId, Role role, String fullname, String email, String phoneNumber, 
+    public User(int userId, Role role, String fullname, String email, String phoneNumber,
             String password, String createdAt, int status, CustomerInfo customerInfo, StaffInfo staffInfo) {
         this.userId = userId;
         this.role = role;
@@ -46,27 +47,6 @@ public class User {
         this.status = status;
         this.customerInfo = customerInfo;
         this.staffInfo = staffInfo;
-
-
-    public User(int UserID, int RoleID, String Fullname, String Email, String PhoneNumber, String Address, String Password, String CreatedAt, int Status) {
-        this.UserID = UserID;
-        this.RoleID = RoleID;
-        this.Fullname = Fullname;
-        this.Email = Email;
-        this.PhoneNumber = PhoneNumber;
-        this.Address = Address;
-        this.Password = Password;
-        this.CreatedAt = CreatedAt;
-        this.Status = Status;
-    }
-
-    // Constructor chỉ nhận Fullname
-    public User(String Fullname) {
-        this.Fullname = Fullname;
-    }
-
-    public User(String string) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     public int getUserId() {
@@ -75,7 +55,9 @@ public class User {
 
     public void setUserId(int userId) {
         this.userId = userId;
-    }    public Role getRole() {
+    }
+
+    public Role getRole() {
         return role;
     }
 
@@ -146,6 +128,7 @@ public class User {
     public void setStaffInfo(StaffInfo staffInfo) {
         this.staffInfo = staffInfo;
     }    // Phương thức hỗ trợ kiểm tra vai trò
+
     public boolean isCustomer() {
         return role != null && role.getRoleID() == 3; // Customer role
     }
@@ -161,10 +144,12 @@ public class User {
     // Phương thức hỗ trợ kiểm tra trạng thái
     public boolean isActive() {
         return status == 1;
-    }    @Override
+    }
+
+    @Override
     public String toString() {
-        return "User{" + "userId=" + userId + ", role=" + role + ", fullname=" + fullname + ", email=" + email + 
-               ", phoneNumber=" + phoneNumber + ", password=" + password + ", createdAt=" + createdAt + ", status=" + status +
-               ", customerInfo=" + customerInfo + ", staffInfo=" + staffInfo + '}';
+        return "User{" + "userId=" + userId + ", role=" + role + ", fullname=" + fullname + ", email=" + email
+                + ", phoneNumber=" + phoneNumber + ", password=" + password + ", createdAt=" + createdAt + ", status=" + status
+                + ", customerInfo=" + customerInfo + ", staffInfo=" + staffInfo + '}';
     }
 }
