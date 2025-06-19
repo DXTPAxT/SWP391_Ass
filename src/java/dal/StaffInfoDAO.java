@@ -1,5 +1,6 @@
 package dal;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +14,10 @@ import java.util.logging.Logger;
 public class StaffInfoDAO extends DBContext {
 
     private static final Logger LOGGER = Logger.getLogger(StaffInfoDAO.class.getName());
+
+    public void setConnection(Connection conn) {
+        this.connection = conn;
+    }
 
     public StaffInfo getStaffInfoByUserId(int userId) {
         LOGGER.info("Getting staff info for UserID: " + userId);
@@ -40,12 +45,25 @@ public class StaffInfoDAO extends DBContext {
     public boolean createStaffInfo(int userId, String startedDate, String endDate) {
         String sql = "INSERT INTO StaffInfo (UserID, StartedDate, EndDate) VALUES (?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            System.out.println("→ staffInfoDAO: Preparing insert for UserID = " + userId);
+
             ps.setInt(1, userId);
             ps.setString(2, startedDate);
-            ps.setString(3, endDate);
-            return ps.executeUpdate() > 0;
+
+            if (endDate == null || endDate.trim().isEmpty()) {
+                ps.setNull(3, java.sql.Types.DATE);
+                System.out.println("→ EndDate set to NULL");
+            } else {
+                ps.setDate(3, java.sql.Date.valueOf(endDate));
+            }
+
+            int rows = ps.executeUpdate();
+            System.out.println("→ Inserted staff info rows: " + rows);
+            return rows > 0;
+
         } catch (SQLException e) {
-            System.out.println("Error creating staff info: " + e.getMessage());
+            System.out.println("❗ Error creating staff info: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -55,7 +73,7 @@ public class StaffInfoDAO extends DBContext {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, startedDate);
             if (endDate == null || endDate.trim().isEmpty()) {
-                ps.setNull(2, java.sql.Types.DATE); 
+                ps.setNull(2, java.sql.Types.DATE);
             } else {
                 ps.setDate(2, java.sql.Date.valueOf(endDate));
             }

@@ -133,7 +133,11 @@ public class UserDAO extends DBContext {
         }
     }
 
-    public boolean createNewUser(String email, String fullName, String phoneNumber, String hashedPassword, int roleId) {
+    public boolean createNewUser(String email, String fullName, String phoneNumber, String hashedPassword, int roleId, String startDate) throws SQLException {
+        connection.setAutoCommit(false);
+        int n = 0;
+        staffInfoDAO.setConnection(this.connection);
+        
         String sql = "INSERT INTO Users (Email, FullName, PhoneNumber, PasswordHash, RoleID, Status) VALUES (?, ?, ?, ?, ?, 1)";
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, email);
@@ -142,14 +146,23 @@ public class UserDAO extends DBContext {
             ps.setString(4, hashedPassword);
             ps.setInt(5, roleId);
 
-            return ps.executeUpdate() > 0;
+            n = ps.executeUpdate();
+            boolean infoUpdated = true;
+            if (n > 0) {
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    if (roleId == 2 || roleId == 4) {
+                        infoUpdated = staffInfoDAO.createStaffInfo(rs.getInt(1), startDate, null);
+                    }
+                }
+            }
+            return n > 0 && infoUpdated;
         } catch (SQLException e) {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
                 LOGGER.log(Level.SEVERE, "Error rolling back transaction", ex);
             }
-            LOGGER.log(Level.SEVERE, "Error creating new user", e);
             return false;
         } finally {
             try {
@@ -159,6 +172,7 @@ public class UserDAO extends DBContext {
             }
         }
     }
+    // Update user with role-specific information
 
     // Update user with role-specific information
     public boolean updateUser(int userId, String fullName, String email, String phoneNumber, int status, String address, String StartedDate, String EndDate) throws SQLException {
@@ -183,7 +197,6 @@ public class UserDAO extends DBContext {
             User user = getUserByID(userId);
             if (user != null) {
                 boolean infoUpdated = true;
-
                 // Update role-specific information
                 if (user.isCustomer()) {
                     if (user.getCustomerInfo() == null) {
