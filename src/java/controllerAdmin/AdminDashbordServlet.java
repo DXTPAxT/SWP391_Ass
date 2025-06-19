@@ -29,22 +29,18 @@ import models.Products;
  *
  * @author Admin
  */
-
 public class AdminDashbordServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-          
-            
-            
+            CategoryAdminDAO dao = new CategoryAdminDAO();
             ComponentAdminDAO Com = new ComponentAdminDAO();
             List<Components> com = Com.getAllComponent();
             request.setAttribute("com", com);
-            
-           
-            
+            List<Categories> list = dao.getAllCategoriesByInvenory();
+            request.setAttribute("list", list);
             request.getRequestDispatcher("AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);
         }
     }

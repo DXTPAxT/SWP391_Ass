@@ -82,6 +82,18 @@ public class ImportServlet extends HttpServlet {
             String submit = request.getParameter("submit");
 
             if (submit == null) {
+                String cateID_raw = request.getParameter("categoryID");
+                if (cateID_raw != null) {
+                    try {
+                        int categoryID = Integer.parseInt(cateID_raw);
+                        CategoryAdminDAO cateDAO = new CategoryAdminDAO();
+                        Categories selectedCategory = cateDAO.getCategoryByID(categoryID);
+
+                        request.setAttribute("selectedCategory", selectedCategory); // Gửi sang JSP
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 CategoryAdminDAO cateDAO = new CategoryAdminDAO();
                 List<Categories> categories = cateDAO.getAllCategories();
                 request.setAttribute("categories", categories);
