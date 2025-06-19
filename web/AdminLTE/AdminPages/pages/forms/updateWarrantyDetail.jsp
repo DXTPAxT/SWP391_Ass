@@ -37,11 +37,9 @@
                             <div class="alert alert-danger font-weight-bold">
                                 <c:forEach var="error" items="${errors}">
                                     <li>${error}</li>
-<<<<<<< HEAD
+
                                 </c:forEach>
-=======
-                                    </c:forEach>
->>>>>>> main
+
                             </div>
                         </c:if>
 
@@ -49,30 +47,24 @@
                             <input type="hidden" name="service" value="update"/>
                             <input type="hidden" name="submit" value="submit"/>
                             <input type="hidden" name="warrantyDetailID" value="${param.warrantyDetailID}"/>
-<<<<<<< HEAD
-=======
+
                             <div class="form-group">
                                 <label>Warranty Detail ID</label>
                                 <input type="text" class="form-control" readonly value="${detail.warrantyDetailID}"/>
 
                             </div>
 
->>>>>>> main
 
                             <!-- Warranty (readonly) -->
                             <div class="form-group">
                                 <label>Warranty</label>
                                 <input type="text" class="form-control" readonly value="${detail.warrantyPeriod} months"/>
-<<<<<<< HEAD
-                                
-=======
 
                             </div>
                             <div class="form-group">
                                 <label>Description</label>
                                 <input type="text" class="form-control" readonly value="${detail.description}"/>
 
->>>>>>> main
                             </div>
 
                             <!-- Brand (readonly) -->
@@ -91,11 +83,9 @@
                             <div class="form-group">
                                 <label for="price">Price</label>
                                 <input type="text" id="price" name="price" class="form-control" placeholder="Enter price"
-<<<<<<< HEAD
-                                       value="${param.price}"/>
-=======
+
                                        value="${price}"/>
->>>>>>> main
+
                             </div>
 
                             <!-- Status -->

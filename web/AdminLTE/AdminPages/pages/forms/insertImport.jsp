@@ -84,17 +84,30 @@
                             </div>
 
                             <!-- Category Dropdown -->
-                            <div class="form-group">
-                                <label for="categoryID">Select Category</label>
-                                <select id="categoryID" name="categoryID" class="form-control">
-                                    <option value="">-- Select Category --</option>
-                                    <c:forEach var="cate" items="${categories}">
-                                        <option value="${cate.categoryID}" ${cate.categoryID == categoryID ? 'selected' : ''}>
-                                            ${cate.categoryName}
-                                        </option>
-                                    </c:forEach>
-                                </select>
-                            </div>
+                            <c:choose>
+                                <c:when test="${not empty selectedCategory}">
+                                    <div class="form-group">
+                                        <label>Category Name</label>
+                                        <input type="text" class="form-control" value="${selectedCategory.categoryName}" readonly />
+                                        <input type="hidden" name="categoryID" value="${selectedCategory.categoryID}" />
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="form-group">
+                                        <label>Choose Category</label>
+                                        <select name="categoryID" class="form-control">
+                                            <option>Choose an Category</option>
+                                            <c:forEach var="cate" items="${categories}">
+                                                <option value="${cate.categoryID}"
+                                                        <c:if test="${cate.categoryID == param.categoryID}">selected</c:if>>
+                                                    ${cate.categoryName}
+                                                </option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
+
 
                             <!-- Price -->
                             <div class="form-group">
