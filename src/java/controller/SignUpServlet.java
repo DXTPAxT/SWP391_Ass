@@ -93,7 +93,7 @@ public class SignUpServlet extends HttpServlet {
 //            String hashedPassword = PasswordUtils.hashPassword(password);
             
             // Create user with role 3 (customer)
-            boolean userCreated = userDAO.createNewUser(email, fullName, phoneNumber, password, 3);
+            boolean userCreated = userDAO.createNewUser(email, fullName, phoneNumber, password, 3, null);
             
             if (userCreated) {
                 // Get the newly created user's ID and create customer info

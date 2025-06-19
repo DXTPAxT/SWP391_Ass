@@ -108,11 +108,15 @@
                                 <label for="roleID">Role</label>
                                 <select id="roleID" name="roleID" class="form-control">
                                     <c:forEach var="r" items="${roles}">
-                                        <c:if test="${r.roleID == 1 || r.roleID == 2}">
+                                        <c:if test="${r.roleID != 3}">
                                             <option value="${r.roleID}" ${r.roleID == roleID ? 'selected' : ''}>${r.roleName}</option>
                                         </c:if>
                                     </c:forEach>
                                 </select>
+                            </div>
+                            <div class="form-group" id="startDateContainer" style="display: none;">
+                                <label for="startDate">Start Date</label>
+                                <input type="date" id="startDate" name="startDate" class="form-control" value="${startDate}">
                             </div>
                             <!-- Submit -->
                             <button type="submit" class="btn btn-success">Add User</button>
@@ -154,17 +158,37 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/app.min.js"></script>
         <!-- AdminLTE for demo purposes -->
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
-        <!-- Page script -->
-        <script>
+        <!-- Page script -->        <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const inputs = document.querySelectorAll(".is-invalid");
+                const roleSelect = document.getElementById("roleID");
+                const startDateContainer = document.getElementById("startDateContainer");
+                const startDateInput = document.getElementById("startDate");
+
+                // Function to toggle start date visibility
+                function toggleStartDate() {
+                    const roleID = parseInt(roleSelect.value);
+                    if (roleID === 2 || roleID === 4) {
+                        startDateContainer.style.display = "block";
+                        startDateInput.required = true;
+                    } else {
+                        startDateContainer.style.display = "none";
+                        startDateInput.required = false;
+                    }
+                }
+
+                // Add event listener for role select
+                roleSelect.addEventListener("change", toggleStartDate);
+
+                // Check initial state
+                toggleStartDate();
 
                 inputs.forEach(input => {
                     input.addEventListener("input", function () {
-                        // B? class 'is-invalid'
+                        // Remove 'is-invalid' class
                         input.classList.remove("is-invalid");
 
-                        // T�m ph?n t? <p> b�o l?i g?n input nh?t v� x�a
+                        // Find and remove error message
                         const errorMsg = input.parentElement.querySelector("p");
                         if (errorMsg) {
                             errorMsg.remove();
