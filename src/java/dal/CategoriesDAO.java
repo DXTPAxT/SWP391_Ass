@@ -117,7 +117,7 @@ public class CategoriesDAO extends DBContext {
             JOIN BrandComs bc ON c.BrandComID   = bc.BrandComID
             JOIN Brands b ON bc.BrandID = b.BrandID
             JOIN Components comp ON bc.ComponentID = comp.ComponentID
-            WHERE bc.ComponentID = ? AND c.Status = 2
+            WHERE bc.ComponentID = ? 
             ORDER BY c.CategoryID
             OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
             """;
@@ -174,7 +174,7 @@ public class CategoriesDAO extends DBContext {
             SELECT COUNT(*)
             FROM Categories c
             JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-            WHERE bc.ComponentID = ? AND c.Status = 2
+            WHERE bc.ComponentID = ?
             """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, componentId);
@@ -284,7 +284,7 @@ public class CategoriesDAO extends DBContext {
         JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
         JOIN Brands b ON bc.BrandID = b.BrandID
         JOIN Components comp ON bc.ComponentID = comp.ComponentID
-        WHERE bc.ComponentID = ? AND c.Status = 2
+        WHERE bc.ComponentID = ? 
         ORDER BY c.CategoryID
     """;
 
@@ -359,7 +359,10 @@ public class CategoriesDAO extends DBContext {
             ps.setObject(i + 1, params.get(i));
         }
     }
-    public List<Categories> getCategoriesFiltered(int componentID, String brand, String keyword, int minPrice, int maxPrice) {
+ public List<Categories> getCategoriesFiltered2(
+    int componentID, String brand, String keyword,
+    int minPrice, int maxPrice, int start, int size) {
+
     List<Categories> list = new ArrayList<>();
     StringBuilder sql = new StringBuilder("""
         SELECT 
@@ -372,19 +375,19 @@ public class CategoriesDAO extends DBContext {
         JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
         JOIN Brands b ON bc.BrandID = b.BrandID
         JOIN Components comp ON bc.ComponentID = comp.ComponentID
-        WHERE c.Status = 2 AND bc.ComponentID = ?
+        WHERE  bc.ComponentID = ?
     """);
 
     List<Object> params = new ArrayList<>();
     params.add(componentID);
 
-    if (brand != null && !brand.isEmpty()) {
+    if (brand != null && !brand.trim().isEmpty()) {
         sql.append(" AND b.BrandName = ? ");
-        params.add(brand);
+        params.add(brand.trim());
     }
-    if (keyword != null && !keyword.isEmpty()) {
+    if (keyword != null && !keyword.trim().isEmpty()) {
         sql.append(" AND LOWER(c.CategoryName) LIKE ? ");
-        params.add("%" + keyword.toLowerCase() + "%");
+        params.add("%" + keyword.trim().toLowerCase() + "%");
     }
     if (minPrice >= 0) {
         sql.append(" AND c.Price >= ? ");
@@ -395,7 +398,9 @@ public class CategoriesDAO extends DBContext {
         params.add(maxPrice);
     }
 
-    sql.append(" ORDER BY c.CategoryID");
+    sql.append(" ORDER BY c.CategoryID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+    params.add(start);
+    params.add(size);
 
     try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
         for (int i = 0; i < params.size(); i++) {
@@ -410,8 +415,50 @@ public class CategoriesDAO extends DBContext {
     } catch (SQLException e) {
         LOGGER.log(Level.SEVERE, null, e);
     }
+
     return list;
 }
+public int countFilteredByComponent(int componentID, String brand, int minPrice, int maxPrice, String keyword) {
+    StringBuilder sql = new StringBuilder("""
+        SELECT COUNT(*)
+        FROM Categories c
+        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        WHERE bc.ComponentID = ? AND c.Status = 2
+    """);
+    List<Object> params = new ArrayList<>();
+    params.add(componentID);
+
+    if (brand != null && !brand.isEmpty()) {
+        sql.append(" AND b.BrandName = ?");
+        params.add(brand);
+    }
+    if (minPrice >= 0) {
+        sql.append(" AND c.Price >= ?");
+        params.add(minPrice);
+    }
+    if (maxPrice < Integer.MAX_VALUE) {
+        sql.append(" AND c.Price <= ?");
+        params.add(maxPrice);
+    }
+    if (keyword != null && !keyword.isEmpty()) {
+        sql.append(" AND LOWER(c.CategoryName) LIKE ?");
+        params.add("%" + keyword.toLowerCase() + "%");
+    }
+
+    try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+        for (int i = 0; i < params.size(); i++) {
+            ps.setObject(i + 1, params.get(i));
+        }
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getInt(1);
+        }
+    } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, null, e);
+    }
+    return 0;
+}
+
 public List<Brands> getBrandsByComponent(int componentID) {
     List<Brands> list = new ArrayList<>();
     String sql = """
@@ -437,4 +484,5 @@ public List<Brands> getBrandsByComponent(int componentID) {
     }
     return list;
 }
+
 }
