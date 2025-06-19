@@ -215,6 +215,7 @@
                                 </div>
                             </div><!-- /price-range -->
 
+                            <!-- build pc -->
                             <div class="brands_products"><!-- build pc -->
                                 <h2 style="color: green; font-weight: bold; text-align: center; position: relative;">
                                     <span style="background: #fff; padding: 0 10px; z-index: 2; position: relative;">BUILD PC</span>
@@ -222,7 +223,7 @@
                                 <div class="brands-name" style="border: 1px solid #f0f0f0; padding: 20px;">
                                     <ul class="nav nav-pills nav-stacked">
                                         <li>
-                                            <a href="${ctx}/ShopPages/Pages/BuildPC.jsp">
+                                            <a href="${ctx}/ShopPages/Pages/BuildPC/BuildPC.html">
                                                 <i class="fa fa-cogs"></i> Customize Your PC
                                             </a>
                                         </li>
@@ -234,7 +235,6 @@
                                     </ul>
                                 </div>
                             </div><!-- /build pc -->
-
 
 
                         </div>
@@ -316,12 +316,12 @@
         </section>
 
         <jsp:include page="components/footer.jsp"/>
-      <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/main.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
 
     </body>
 
