@@ -46,12 +46,12 @@ CREATE TABLE CustomerInfo (
 CREATE TABLE StaffInfo (
 	StaffInfoID INT PRIMARY KEY IDENTITY(1,1),
 	UserID INT NOT NULL,
-    StartedDate Date,
+    StartedDate Date NOT NULL,
     EndDate Date,
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 )
 
--- 3. Components luu san pham: PC, Laptop, Ban Phim
+-- 5. Components luu san pham: PC, Laptop, Ban Phim
 CREATE TABLE Components (
     ComponentID INT PRIMARY KEY IDENTITY(1,1),
 	ComponentName VARCHAR(100) UNIQUE NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE Components (
 	Status INT
 );
 
---4. Brands
+--6. Brands
 Create table Brands(
 	BrandID int primary key identity(1,1),
 	BrandName Varchar(100)  NOT NULL,
@@ -67,7 +67,7 @@ Create table Brands(
 	Status INT NOT NULL
 );
 
--- 5. Brand components
+-- 7. Brand components
 Create table BrandComs (
 	BrandComID INT PRIMARY KEY IDENTITY(1,1),
 	ComponentID INT NOT NULL,
@@ -77,7 +77,7 @@ Create table BrandComs (
 	FOREIGN KEY (BrandID) REFERENCES Brands(BrandID)
 );
 
---6. Category luu san pham cu the: Acer Nitro 5/ Des: RTX...
+--8. Category luu san pham cu the: Acer Nitro 5/ Des: RTX...
 CREATE TABLE Categories (
     CategoryID INT PRIMARY KEY IDENTITY(1,1),
 	CategoryName VARCHAR(100) UNIQUE NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE Categories (
 	FOREIGN KEY (BrandComID) REFERENCES BrandComs(BrandComID)
 );
 
--- 7 Imports
+-- 9. Imports
 Create TABLE Imports(
 	ImportID INT PRIMARY KEY IDENTITY(1,1),
 	ImportCode Varchar(100) not null,
@@ -102,7 +102,7 @@ Create TABLE Imports(
 	FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
 );
 
--- 8. Products
+-- 10. Products
 CREATE TABLE Products (
     ProductID INT PRIMARY KEY IDENTITY(1,1),
     CategoryID INT NOT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE Products (
     FOREIGN KEY (ImportID) REFERENCES Imports(ImportID)
 );
 
---9. Bang nay luu thong tin cua bao hanh
+--11. Bang nay luu thong tin cua bao hanh
 Create table Warranties(
 	WarrantyID INT PRIMARY KEY IDENTITY(1,1),
 	WarrantyPeriod INT NOT NULL,
@@ -121,7 +121,7 @@ Create table Warranties(
 	Description TEXT NOT NULL
 );
 
---10. WarrantyDeatails
+--12. WarrantyDetails
 Create table WarrantyDetails(
 	WarrantyDetailID INT PRIMARY KEY IDENTITY(1,1),
 	WarrantyID INT NOT NULL,
@@ -132,7 +132,7 @@ Create table WarrantyDetails(
     FOREIGN KEY (BrandComID) REFERENCES BrandComs(BrandComID)
 );
 
--- 11. Orders
+-- 13. Orders
 CREATE TABLE Orders (
     OrderID INT PRIMARY KEY IDENTITY(1,1),
     CustomerID INT NOT NULL,
@@ -143,7 +143,7 @@ CREATE TABLE Orders (
     FOREIGN KEY (CustomerID) REFERENCES Users(UserID)
 );
 
--- 12. OrderItems
+-- 14. OrderItems
 CREATE TABLE OrderItems (
 	OrderItemID INT PRIMARY KEY IDENTITY(1,1),
 	OrderID INT NOT NULL,
@@ -154,7 +154,7 @@ CREATE TABLE OrderItems (
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
 )
 
--- 13. OrderDetails
+-- 15. OrderDetails
 CREATE TABLE OrderDetails (
     OrderDetailID INT PRIMARY KEY IDENTITY(1,1),
     OrderItemID INT NOT NULL,
@@ -168,7 +168,7 @@ CREATE TABLE OrderDetails (
 	FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID),
 );
 
--- 14.CartItems
+-- 16.CartItems
 CREATE TABLE CartItems (
 	CartItemID INT PRIMARY KEY IDENTITY(1,1),
 	UserID INT NOT NULL,
@@ -180,18 +180,18 @@ CREATE TABLE CartItems (
     FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
 )
 
--- 15. Shipping
+-- 17. Shipping
 CREATE TABLE Shipping (
     ShippingID INT PRIMARY KEY IDENTITY(1,1),
     OrderID INT NOT NULL,
     ShipperID INT NOT NULL,
     ShippingStatus VARCHAR(50) NOT NULL,
-    Feedback TEXT NOT NULL,
+    ShipTime DATE NOT NULL,
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
     FOREIGN KEY (ShipperID) REFERENCES Users(UserID),
 );
 
--- 16. Feedbacks
+-- 18. Feedbacks
 CREATE TABLE Feedbacks (
     FeedbackID INT PRIMARY KEY IDENTITY(1,1),
     UserID INT NOT NULL,
@@ -199,12 +199,13 @@ CREATE TABLE Feedbacks (
 	OrderItemID int not null,
     CreatedAt DATETIME DEFAULT GETDATE() NOT NULL,
     Rate INT NOT NULL,
+	Reply TEXT NULL,
 	Status INT DEFAULT 1 NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
 	FOREIGN KEY (OrderItemID) REFERENCES OrderItems(OrderItemID)
 );
 
--- 17. Reports
+-- 19. Reports
 CREATE TABLE Reports (
     ReportID INT PRIMARY KEY IDENTITY(1,1),
     ManagerID INT NOT NULL,
@@ -214,7 +215,7 @@ CREATE TABLE Reports (
     FOREIGN KEY (ManagerID) REFERENCES Users(UserID)
 );
 
--- 18. Payments
+-- 20. Payments
 CREATE TABLE Payments (
     PaymentID INT PRIMARY KEY IDENTITY(1,1),
     OrderID INT NOT NULL,
@@ -225,13 +226,13 @@ CREATE TABLE Payments (
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
 );
 
--- 19: Blogs_category
+-- 21: Blogs_category
 CREATE TABLE Blogs_category (
     Bc_id INT PRIMARY KEY,
     Bc_name VARCHAR(255) NOT NULL
 );
 
--- 20: Post
+-- 22: Post
 CREATE TABLE Post (
     Post_id INT PRIMARY KEY,
     Title VARCHAR(255) NOT NULL,
@@ -247,7 +248,7 @@ CREATE TABLE Post (
     FOREIGN KEY (Add_id) REFERENCES Users(UserID)
 );
 
--- 21. Sale Events
+-- 23. Sale Events
 CREATE TABLE SaleEvents (
     EventID INT PRIMARY KEY IDENTITY(1,1),
 	CategoryID INT NOT NULL,
@@ -259,7 +260,7 @@ CREATE TABLE SaleEvents (
     FOREIGN KEY (Post_id) REFERENCES Post(Post_id)
 );
 
--- 22 Order Preparements
+-- 24 Order Preparements
 CREATE TABLE OrderPreparements (
 	UserID INT NOT NULL,
 	OrderID INT NOT NULL,

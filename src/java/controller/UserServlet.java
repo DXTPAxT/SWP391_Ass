@@ -150,6 +150,9 @@ public class UserServlet extends HttpServlet {
                 user.setEmail(email);
                 user.setPhoneNumber(phoneNumber);
                 request.setAttribute("user", user);
+                if (address != null) {
+                    request.setAttribute("address", address);
+                }
                 request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/updateUser.jsp").forward(request, response);
             } else {
                 try {
@@ -164,10 +167,21 @@ public class UserServlet extends HttpServlet {
                 } catch (SQLException ex) {
                     Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                if ("3".equals(roleID)) {
+                switch (roleID) {
+                    case "1":
+                    response.sendRedirect("Admin/user?type=admin");
+                    break;
+                    case "2":
+                    response.sendRedirect("Admin/user?type=sale");
+                    break;
+                    case "3":
                     response.sendRedirect("Admin/user?type=customer");
-                } else {
-                    response.sendRedirect("Admin/user?type=staff");
+                    break;
+                    case "4":
+                    response.sendRedirect("Admin/user?type=shipper");
+                    break;
+                    default:
+                    response.sendRedirect("Admin/user?type=admin");
                 }
             }
         } else if ("updateProfile".equals(service)) {

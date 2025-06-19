@@ -1472,3 +1472,9 @@ INSERT INTO OrderPreparements(UserID, OrderID, PrepareTime) values
 (2,4,GETDATE()), 
 (2,5,GETDATE()), 
 (2,6,GETDATE());
+
+INSERT INTO Shipping(OrderID, ShipperID, ShippingStatus, ShipTime) values 
+(1, 4, 'On going', GETDATE()), 
+(2, 4, 'On going', GETDATE()), 
+(3, 4, 'On going', GETDATE()), 
+(4, 4, 'On going', GETDATE());

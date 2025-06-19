@@ -4,7 +4,8 @@
  */
 package models;
 
-import dalAdmin.OrderPreparementDAO;
+import dal.OrderPreparementDAO;
+import dal.ShippingDAO;
 
 /**
  *
@@ -153,6 +154,10 @@ public class User {
     
     public int countNumberOfOrders1Month() {
         return (new OrderPreparementDAO()).countOrder1MonthByID(userId);
+    }
+    
+    public int countNumberOfShips1Month() {
+        return (new ShippingDAO()).countShips1MonthByID(userId);
     }
 
     @Override

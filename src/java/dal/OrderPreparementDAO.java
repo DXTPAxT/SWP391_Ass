@@ -1,5 +1,6 @@
-package dalAdmin;
+package dal;
 
+import dalAdmin.DBAdminContext;
 import java.sql.*;
 
 public class OrderPreparementDAO extends DBAdminContext {
