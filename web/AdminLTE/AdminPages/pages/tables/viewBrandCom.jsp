@@ -85,13 +85,10 @@
                                                         <td>${bc.quantity}</td>
                                                         <td>
                                                             <a href="CateAdmin?service=listbybcid&brandComID=${bc.brandComID}" 
-<<<<<<< HEAD
-=======
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                         <td>
                                                             <a href="WDA?service=listbybrandcomid&brandComID=${bc.brandComID}" 
->>>>>>> main
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                     </tr>

@@ -130,7 +130,7 @@
                                                 </c:when>
                                                 <c:otherwise>
                                                     <tr>
-                                                        <td colspan="11" class="text-center text-muted">No categories found.</td>
+                                                        <td colspan="13" class="text-center text-muted">No categories found.</td>
                                                     </tr>
                                                 </c:otherwise>
                                             </c:choose>

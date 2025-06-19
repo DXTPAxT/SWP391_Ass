@@ -70,10 +70,10 @@
                                         <thead>
                                             <tr>
                                                 <th>Warranty Detail ID</th>
-                                                <th>Warranty Period (months)</th>
-                                                <th>Description</th>
                                                 <th>Component</th>
                                                 <th>Brand</th>
+                                                <th>Warranty Period (months)</th>
+                                                <th>Description</th>                                                
                                                 <th>Price</th>
                                                 <th>Status</th>
                                                 <th>Update</th> 
@@ -83,22 +83,14 @@
                                             <c:if test="${not empty requestScope.warrantyDetails}">
                                                 <c:forEach var="warranty" items="${requestScope.warrantyDetails}">
                                                     <tr>
-<<<<<<< HEAD
-                                                        <td>${warranty.warrantyDetailID}</td>                                                        
-=======
+
                                                         <td>${warranty.warrantyDetailID}</td>     
                                                         <td>${warranty.componentName}</td>
                                                         <td>${warranty.brandName}</td>
->>>>>>> main
                                                         <td>${warranty.warrantyPeriod}</td>
                                                         <td class="text-wrap" style="word-break: break-word; max-width: 300px;">
                                                             ${warranty.description}
                                                         </td>
-<<<<<<< HEAD
-                                                        <td>${warranty.componentName}</td>
-                                                        <td>${warranty.brandName}</td>
-=======
->>>>>>> main
                                                         <td>${warranty.price}</td>
                                                         <td>
                                                             <c:choose>

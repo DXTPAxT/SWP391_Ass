@@ -1,4 +1,5 @@
-<% String ctx = request.getContextPath(); %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
 <header class="main-header">
     <!-- Logo -->
     <a href="${ctx}/AdminDashbordServlet" class="logo">

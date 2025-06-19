@@ -56,6 +56,55 @@ public class CategoryAdminDAO extends DBAdminContext {
         return list;
     }
 
+    public List<Categories> getAllCategoriesByInvenory() {
+        List<Categories> list = new ArrayList<>();
+
+        String sql = """
+    SELECT 
+        c.CategoryID,
+        c.CategoryName,
+        c.BrandComID,
+        c.Quantity,
+        c.inventory,
+        c.Price,
+        c.Description,
+        c.Status,
+        c.ImageURL,
+        b.BrandName,
+        com.ComponentName
+    FROM Categories c
+    JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+    JOIN Brands b ON bc.BrandID = b.BrandID
+    JOIN Components com ON bc.ComponentID = com.ComponentID
+    WHERE c.inventory = 0 AND c.Status = 0
+""";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Categories c = new Categories(
+                        rs.getInt("CategoryID"),
+                        rs.getString("CategoryName"),
+                        rs.getInt("BrandComID"),
+                        rs.getString("BrandName"),
+                        rs.getString("ComponentName"),
+                        rs.getInt("Quantity"),
+                        rs.getInt("inventory"),
+                        rs.getInt("Price"),
+                        rs.getString("Description"),
+                        rs.getInt("Status"),
+                        rs.getString("ImageURL")
+                );
+                list.add(c);
+            }
+
+        } catch (SQLException e) {
+            Logger.getLogger(CategoryAdminDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        return list;
+    }
+
     public List<Categories> getAllCategoriesByBrandComID(int brandComID) {
         List<Categories> list = new ArrayList<>();
 
@@ -229,7 +278,7 @@ public class CategoryAdminDAO extends DBAdminContext {
     }
 
     public void updateCategoryStatusIfInventoryZero() {
-        String sql = "UPDATE Categories SET Status = 0 WHERE inventory = 0";
+        String sql = "UPDATE Categories SET Status = 0 WHERE inventory = 0 AND Status IN (1, 2)";
 
         try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.executeUpdate();
@@ -254,22 +303,17 @@ public class CategoryAdminDAO extends DBAdminContext {
     public static void main(String[] args) {
         CategoryAdminDAO dao = new CategoryAdminDAO();
         int id = 1;
-        Categories c = dao.getCategoryByID(id);
+        List<Categories> c = dao.getAllCategoriesByInvenory();
 
         System.out.printf("%-5s %-20s %-20s %-20s %-10s%n",
                 "ID", "Brand Name", "Component Name", "Category Name", "BrandComID", "inventory");
 
-       
-            System.out.printf("%-5d %-20s %-20s %-20s %-20s %-10d%n",
-                    c.getCategoryID(),
-                    c.getBrandName(),
-                    c.getComponentName(),
-                    c.getCategoryName(),
-                    c.getBrandComID(),
-                    c.getInventory());
-           
+        for (Categories a : c) {
+            System.out.println(a.getBrandName() + a.getInventory() + a.getCategoryName());
         }
-    }
 
-    // Tùy chọn: bạn có thể thêm phương thức updateAllCategoryQuantities nếu bảng Products vẫn còn liên kết theo CategoryID
+    }
+}
+
+// Tùy chọn: bạn có thể thêm phương thức updateAllCategoryQuantities nếu bảng Products vẫn còn liên kết theo CategoryID
 
