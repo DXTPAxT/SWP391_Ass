@@ -78,6 +78,9 @@
                                                     <c:if test="${role == 'sale'}"> 
                                                     <th>Orders this month</th>
                                                     </c:if>
+                                                    <c:if test="${role == 'shipper'}"> 
+                                                    <th>Ships this month</th>
+                                                    </c:if>
                                                     <c:if test="${role == 'customer'}"> 
                                                     <th>Address</th>
                                                     </c:if>
@@ -99,6 +102,9 @@
                                                         </c:if>
                                                         <c:if test="${role == 'sale'}"> 
                                                             <td>${user.countNumberOfOrders1Month()}</td>
+                                                        </c:if>
+                                                        <c:if test="${role == 'shipper'}"> 
+                                                            <td>${user.countNumberOfShips1Month()}</td>
                                                         </c:if>
                                                         <c:if test="${role == 'customer'}">
                                                             <td>${user.customerInfo != null ? user.customerInfo.address : ''}</td>

@@ -55,18 +55,18 @@
                             <c:if test="${user.role.roleID == 3}">
                                 <div class="form-group">
                                     <label for="address">Address</label>
-                                    <input type="text" id="address" name="address" class="form-control ${error eq 'Address is required!' ? ' is-invalid' : ''}" required value="${user.customerInfo.address}">
+                                    <input type="text" id="address" name="address" class="form-control ${error eq 'Address is required!' ? ' is-invalid' : ''}" required value="${address != null ? address : user.customerInfo.address}">
                                 </div>
                             </c:if>
 
-                            <c:if test="${user.role.roleID != 3}">
+                            <c:if test="${user.role.roleID == 2 || user.role.roleID == 4}">
                                 <div class="form-group">
                                     <label for="address">Start Date</label>
                                     <input type="date" id="StartedDate" name="StartedDate" class="form-control" required value="${user.staffInfo.startedDate}">
                                 </div>
                                 <div class="form-group">
                                     <label for="address">End Date</label>
-                                    <input type="date" id="EndDate" name="EndDate" class="form-control ${error eq 'Address is required!' ? ' is-invalid' : ''}" required value="${user.staffInfo.endDate}">
+                                    <input type="date" id="EndDate" name="EndDate" class="form-control" value="${user.staffInfo.endDate != null ? user.staffInfo.endDate : ''}">
                                 </div>
                             </c:if>
                             <div class="form-group">
@@ -95,11 +95,17 @@
                                 </c:choose>
                             </div>
                             <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <c:if test="${user.role.roleID == 1}">
+                                <a href="${ctx}/Admin/user?type=admin" class="btn btn-default">Cancel</a>
+                            </c:if>
+                            <c:if test="${user.role.roleID == 2}">
+                                <a href="${ctx}/Admin/user?type=sale" class="btn btn-default">Cancel</a>
+                            </c:if>
                             <c:if test="${user.role.roleID == 3}">
                                 <a href="${ctx}/Admin/user?type=customer" class="btn btn-default">Cancel</a>
                             </c:if>
-                            <c:if test="${user.role.roleID != 3}">
-                                <a href="${ctx}/Admin/user?type=staff" class="btn btn-default">Cancel</a>
+                            <c:if test="${user.role.roleID == 4}">
+                                <a href="${ctx}/Admin/user?type=shipper" class="btn btn-default">Cancel</a>
                             </c:if>
                         </form>
                     </div>

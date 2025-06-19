@@ -11,8 +11,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class StaffInfoDAO extends DBContext {
+
     private static final Logger LOGGER = Logger.getLogger(StaffInfoDAO.class.getName());
-    
+
     public StaffInfo getStaffInfoByUserId(int userId) {
         LOGGER.info("Getting staff info for UserID: " + userId);
         String sql = "SELECT * FROM StaffInfo WHERE UserID = ?";
@@ -21,10 +22,10 @@ public class StaffInfoDAO extends DBContext {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 StaffInfo info = new StaffInfo(
-                    rs.getInt("StaffInfoID"),
-                    rs.getInt("UserID"),
-                    rs.getString("StartedDate"),
-                    rs.getString("EndDate")
+                        rs.getInt("StaffInfoID"),
+                        rs.getInt("UserID"),
+                        rs.getString("StartedDate"),
+                        rs.getString("EndDate")
                 );
                 return info;
             } else {
@@ -35,7 +36,7 @@ public class StaffInfoDAO extends DBContext {
         }
         return null;
     }
-    
+
     public boolean createStaffInfo(int userId, String startedDate, String endDate) {
         String sql = "INSERT INTO StaffInfo (UserID, StartedDate, EndDate) VALUES (?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -48,12 +49,16 @@ public class StaffInfoDAO extends DBContext {
             return false;
         }
     }
-    
+
     public boolean updateStaffInfo(int userId, String startedDate, String endDate) {
         String sql = "UPDATE StaffInfo SET StartedDate = ?, EndDate = ? WHERE UserID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, startedDate);
-            ps.setString(2, endDate);
+            if (endDate == null || endDate.trim().isEmpty()) {
+                ps.setNull(2, java.sql.Types.DATE); 
+            } else {
+                ps.setDate(2, java.sql.Date.valueOf(endDate));
+            }
             ps.setInt(3, userId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -61,7 +66,7 @@ public class StaffInfoDAO extends DBContext {
             return false;
         }
     }
-    
+
     public boolean deleteStaffInfo(int userId) {
         String sql = "DELETE FROM StaffInfo WHERE UserID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -72,22 +77,22 @@ public class StaffInfoDAO extends DBContext {
             return false;
         }
     }
-    
+
     // Get all active staff with their basic info
     public List<StaffInfo> getAllActiveStaffInfos() {
         List<StaffInfo> staffInfos = new ArrayList<>();
-        String sql = "SELECT si.StaffInfoID, si.UserID, si.StartedDate, si.EndDate " +
-                    "FROM StaffInfo si " +
-                    "JOIN Users u ON si.UserID = u.UserID " +
-                    "WHERE u.Status = 1 AND u.RoleID = 2";
+        String sql = "SELECT si.StaffInfoID, si.UserID, si.StartedDate, si.EndDate "
+                + "FROM StaffInfo si "
+                + "JOIN Users u ON si.UserID = u.UserID "
+                + "WHERE u.Status = 1 AND u.RoleID = 2";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 StaffInfo info = new StaffInfo(
-                    rs.getInt("StaffInfoID"),
-                    rs.getInt("UserID"),
-                    rs.getString("StartedDate"),
-                    rs.getString("EndDate")
+                        rs.getInt("StaffInfoID"),
+                        rs.getInt("UserID"),
+                        rs.getString("StartedDate"),
+                        rs.getString("EndDate")
                 );
                 staffInfos.add(info);
             }
@@ -99,19 +104,19 @@ public class StaffInfoDAO extends DBContext {
 
     // Get staff info with user details
     public StaffInfo getStaffInfoWithUser(int staffInfoId) {
-        String sql = "SELECT si.*, u.FullName, u.Email, u.PhoneNumber, u.Status " +
-                    "FROM StaffInfo si " +
-                    "JOIN Users u ON si.UserID = u.UserID " +
-                    "WHERE si.StaffInfoID = ?";
+        String sql = "SELECT si.*, u.FullName, u.Email, u.PhoneNumber, u.Status "
+                + "FROM StaffInfo si "
+                + "JOIN Users u ON si.UserID = u.UserID "
+                + "WHERE si.StaffInfoID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, staffInfoId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 StaffInfo info = new StaffInfo(
-                    rs.getInt("StaffInfoID"),
-                    rs.getInt("UserID"),
-                    rs.getString("StartedDate"),
-                    rs.getString("EndDate")
+                        rs.getInt("StaffInfoID"),
+                        rs.getInt("UserID"),
+                        rs.getString("StartedDate"),
+                        rs.getString("EndDate")
                 );
                 // You might want to set additional user information here if needed
                 return info;
@@ -153,9 +158,9 @@ public class StaffInfoDAO extends DBContext {
 
     // Get current staff count
     public int getActiveStaffCount() {
-        String sql = "SELECT COUNT(*) FROM StaffInfo si " +
-                    "JOIN Users u ON si.UserID = u.UserID " +
-                    "WHERE u.Status = 1 AND u.RoleID = 2";
+        String sql = "SELECT COUNT(*) FROM StaffInfo si "
+                + "JOIN Users u ON si.UserID = u.UserID "
+                + "WHERE u.Status = 1 AND u.RoleID = 2";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
