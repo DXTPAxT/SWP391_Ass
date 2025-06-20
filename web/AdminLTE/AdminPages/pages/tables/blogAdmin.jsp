@@ -48,6 +48,7 @@
         </script>
     </head>
     <body class="hold-transition skin-blue sidebar-mini">
+
         <div class="wrapper">
 
             <header class="main-header">
@@ -192,7 +193,7 @@
             </aside>
             <div class="content-wrapper">
                 <section class="content-header">
-                    <h1>Data Tables <small>advanced tables</small></h1>
+                    <h1>Blog Table</h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
                         <li><a href="#">Blogs</a></li>
@@ -204,9 +205,44 @@
                         <div class="col-xs-12">
                             <div class="box">
                                 <div class="box-header">
-                                    <h3 class="box-title">Manage Blogs</h3>
-                                    <a href="${ctx}/AdminLTE/AdminPages/post-create.jsp" class="btn btn-primary pull-right" style="margin-top: -28px;">Add New Blog</a>
+                                    <h3 class="box-title">Manage Blogs | Total Blogs: <c:out value="${fn:length(requestScope.postlist)}" /></h3>
+
+                                    <a href="${pageContext.request.contextPath}/blogadd" class="btn btn-primary pull-right" style="margin-top: 10px;">
+                                        Add New Blog
+                                    </a>
+
+
                                 </div>
+                                <div style="margin-left: 50px;">
+                                    <form action="bloga" method="get" class="form-inline"
+                                          style="display: flex; gap: 20px; max-width: 900px; flex-wrap: wrap;">
+
+                                        <select name="sort" class="form-control" onchange="this.form.submit()">
+                                            <option value="default" ${selectedSort == 'default' ? 'selected' : ''}>Default</option>
+                                            <option value="A to Z" ${selectedSort == 'A to Z' ? 'selected' : ''}>A to Z</option>
+                                            <option value="Z to A" ${selectedSort == 'Z to A' ? 'selected' : ''}>Z to A</option>
+                                        </select>
+
+
+                                        <select name="role" class="form-control" style="min-width: 150px;">
+                                            <option value="all">All Roles</option>
+                                            <option value="admin">Admin</option>
+                                            <option value="staff">Staff</option>
+                                        </select>
+
+                                        <div style="display: flex; gap: 5px;">
+                                            <input type="text" name="q" class="form-control" 
+                                                   placeholder="Search by title, content, or category..." style="min-width: 250px;" />
+
+                                            <button type="submit" style="background-color: #367FA9; color: white; border: none; padding: 6px 12px;">
+                                                <i class="fa fa-search"></i> Search
+                                            </button>
+
+                                        </div>
+                                    </form>
+                                </div>
+
+
                                 <div class="box-body">
                                     <c:if test="${empty requestScope.postlist}">
                                         <p>No blog posts available.</p>
@@ -224,6 +260,8 @@
                                                     <th>Thumbnail</th>
                                                     <th>Brief</th>
                                                     <th>Author ID</th>
+                                                    <th>status</th>
+
 
                                                 </tr>
                                             </thead>
@@ -241,9 +279,21 @@
                                                         <td><c:out value="${fn:substring(po.brief, 0, 50)}..." /></td>
                                                         <td>${po.add_id}</td>
                                                         <td>
-                                                            <a href="${ctx}/update-post?post_id=${po.post_id}" class="btn btn-sm btn-primary">Update</a>
-                                                            <a href="javascript:void(0);" onclick="doDelete(${po.post_id})" class="btn btn-sm btn-danger">Delete</a>
+                                                            <c:choose>
+                                                                <c:when test="${po.status == 1}">
+                                                                    <span class="badge bg-success">Active</span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <span class="badge bg-danger">Disable</span>
+                                                                </c:otherwise>
+                                                            </c:choose>
                                                         </td>
+
+                                                        <td>
+                                                            <a href="${ctx}/update-post?post_id=${po.post_id}" class="btn btn-sm btn-primary">Update</a>
+
+                                                        </td>
+
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>
@@ -324,16 +374,16 @@
         <!-- AdminLTE for demo purposes -->
         <script src="${ctx}/AdminLTE/dist/js/demo.js"></script>
         <script>
-                                                                $(function () {
-                                                                    $('#example2').DataTable({
-                                                                        "paging": true,
-                                                                        "lengthChange": false,
-                                                                        "searching": true,
-                                                                        "ordering": true,
-                                                                        "info": true,
-                                                                        "autoWidth": false
-                                                                    });
-                                                                });
+                                            $(function () {
+                                                $('#example2').DataTable({
+                                                    "paging": true,
+                                                    "lengthChange": false,
+                                                    "searching": true,
+                                                    "ordering": true,
+                                                    "info": true,
+                                                    "autoWidth": false
+                                                });
+                                            });
         </script>
     </body>
 </html>

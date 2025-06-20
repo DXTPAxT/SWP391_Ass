@@ -154,8 +154,8 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">                               
-                    <li><a href="${param.ctx}/BlogAdmin"><i class="fa fa-circle-o"></i>View Blog</a></li>
-                    <li><a href="${param.ctx}/BlogAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Blog</a></li>
+                    <li><a href="${param.ctx}/bloga"><i class="fa fa-circle-o"></i>View Blog</a></li>
+                    <li><a href="${param.ctx}/BlogAdmin&service=insert"><i class="fa fa-circle-o"></i>Insert new Blog</a></li>
                 </ul>
             </li>
             <li class="treeview">

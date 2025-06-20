@@ -73,7 +73,7 @@ public class Blog_CateServlet extends HttpServlet {
 
         try {
             if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-                postList = dao.searchPostsByTitle(searchKeyword);
+                postList = dao.searchPosts(searchKeyword);
                 count = postList.size();
             } else if (Bc_id_raw != null) {
                 int Bc_id = Integer.parseInt(Bc_id_raw );
