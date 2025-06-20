@@ -277,6 +277,7 @@ CREATE TABLE OTP (
     OTP_Code VARCHAR(10) NOT NULL,                -- Mã OTP (thường 6 ký tự)
     ExpirationTime DATETIME NOT NULL,             -- Thời điểm mã hết hạn (ví dụ: tạo + 5 phút)
     CreatedAt DATETIME DEFAULT GETDATE(),         -- Thời điểm tạo
-    IsUsed BIT DEFAULT 0                          -- Đánh dấu mã đã sử dụng hay chưa (0 = chưa, 1 = đã dùng)
+    IsUsed BIT DEFAULT 0,                          -- Đánh dấu mã đã sử dụng hay chưa (0 = chưa, 1 = đã dùng)
+	Foreign key(Email) References Users(Email)
 );
 
