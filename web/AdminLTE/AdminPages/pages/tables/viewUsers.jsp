@@ -124,7 +124,7 @@
                                                             <c:if test="${role == 'sale' || role == 'shipper'}"> 
                                                                 <a href="${ctx}/Admin/user/update?userID=${user.userId}" class="btn btn-primary btn-sm">History</a>
                                                             </c:if>
-                                                            <a href="${ctx}/User?service=resetPassword&userID=${user.userId}"
+                                                            <a href="${ctx}/User?service=resetPassword&userID=${user.userId}&roleID=${user.role.roleID}"
                                                                onclick="return confirm(`Reset user's password?`);"
                                                                class="btn btn-danger btn-sm">Reset Password</a>
                                                         </td>

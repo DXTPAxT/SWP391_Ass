@@ -269,6 +269,17 @@ CREATE TABLE OrderPreparements (
 	Foreign key(UserID) references Users(UserID),
 	Foreign key(OrderID) references Orders(OrderID),
 )
+
+-- 25 OTP
+CREATE TABLE OTP (
+    OTP_ID INT PRIMARY KEY IDENTITY(1,1),         -- Mã định danh riêng cho mỗi OTP
+    Email VARCHAR(100) NOT NULL,                  -- Hoặc có thể dùng PhoneNumber nếu xác thực qua SMS
+    OTP_Code VARCHAR(10) NOT NULL,                -- Mã OTP (thường 6 ký tự)
+    ExpirationTime DATETIME NOT NULL,             -- Thời điểm mã hết hạn (ví dụ: tạo + 5 phút)
+    CreatedAt DATETIME DEFAULT GETDATE(),         -- Thời điểm tạo
+    IsUsed BIT DEFAULT 0                          -- Đánh dấu mã đã sử dụng hay chưa (0 = chưa, 1 = đã dùng)
+);
+
 -- 25. Build PC
 CREATE TABLE Build_PC (
     BuildPCID INT PRIMARY KEY IDENTITY(1,1),

@@ -123,7 +123,7 @@
                                                     <div class="feedback-item" style="border:1px solid #ccc; margin-bottom:10px; padding:10px; border-radius:8px; background:#fafbfc;">
                                                         <p><b>Name:</b> 
                                                             <c:choose>
-                                                                <c:when test="${not empty fb.user.fullname}">${fb.user.fullname}</c:when>
+                                                                <c:when test="${not empty fb.fullname}">${fb.fullname}</c:when>
                                                                 <c:otherwise>Unknown</c:otherwise>
                                                             </c:choose>
                                                         </p>
