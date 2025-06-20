@@ -24,9 +24,16 @@ public class ReplyFeedbackServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         int feedbackID = Integer.parseInt(req.getParameter("feedbackID"));
-        String reply = req.getParameter("reply");
         FeedbackAdminDAO dao = new FeedbackAdminDAO();
-        dao.replyFeedback(feedbackID, reply);
+        if (req.getParameter("deleteReply") != null) {
+            // Xóa reply: set reply = NULL, status = 1 (chưa trả lời)
+            dao.replyFeedback(feedbackID, null);
+            dao.updateFeedbackStatus(feedbackID, 1);
+        } else {
+            String reply = req.getParameter("reply");
+            dao.replyFeedback(feedbackID, reply);
+            dao.updateFeedbackStatus(feedbackID, 2); // Set status = 2 (đã trả lời)
+        }
         resp.sendRedirect(req.getContextPath() + "/FeedBackAdmin");
     }
 }
