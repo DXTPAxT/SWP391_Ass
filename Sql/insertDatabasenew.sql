@@ -1478,3 +1478,9 @@ INSERT INTO Shipping(OrderID, ShipperID, ShippingStatus, ShipTime) values
 (2, 4, 'On going', GETDATE()), 
 (3, 4, 'On going', GETDATE()), 
 (4, 4, 'On going', GETDATE());
+
+INSERT INTO Comments (Post_id, UserID, CommentText)
+VALUES (1, 3, 'Very informative post, thank you!');
+
+ INSERT INTO Users (RoleID, FullName, Email, PhoneNumber,  PasswordHash, CreatedAt, Status)
+VALUES (3, 'LinhNV', 'customer@example.com', '0912345678', 'hashedpassword3', GETDATE(), 1);
