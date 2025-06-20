@@ -63,17 +63,41 @@ public class BlogAdminServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        String selectedRole = request.getParameter("role");
         Blog_CateDAO dao = new Blog_CateDAO();
-        
         List<Blog_Cate> categories = dao.getAllBlogCategory();
-        List<Post> post = dao.getAllPost();
-        
+
+        String sort = request.getParameter("sort");
+        List<Post> post;
+        if (selectedRole == null || selectedRole.equals("all")) {
+            post = dao.getAllPost();
+        } else {
+            // Convert to proper RoleName in DB
+            String roleName = switch (selectedRole) {
+                case "admin" ->
+                    "Admin";
+                case "staff" ->
+                    "Staff";
+                case "customer" ->
+                    "Customer";
+                default ->
+                    "";
+            };
+            post = dao.getPostsByAuthorRole(roleName);
+        }
+        if ("A to Z".equalsIgnoreCase(sort)) {
+            post = dao.getPostsSortedByTitle(true);  // ASC
+        } else if ("Z to A".equalsIgnoreCase(sort)) {
+            post = dao.getPostsSortedByTitle(false); // DESC
+        } else {
+            post = dao.getAllPost(); // default
+        }
+
         request.setAttribute("blog_categories", categories);
         request.setAttribute("postlist", post);
-//         PrintWriter out = response.getWriter();
-//    out.println("Blog servlet is working!");
-        request.getRequestDispatcher("AdminLTE/AdminPages/blogAdmin.jsp").forward(request, response);
+        request.setAttribute("selectedSort", sort); // để giữ trạng thái dropdown 
+        request.setAttribute("selectedRole", selectedRole);
+        request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/blogAdmin.jsp").forward(request, response);
     }
 
     /**

@@ -281,3 +281,61 @@ CREATE TABLE OTP (
 	Foreign key(Email) References Users(Email)
 );
 
+-- 25. Build PC
+CREATE TABLE Build_PC (
+    BuildPCID INT PRIMARY KEY IDENTITY(1,1),
+	Price int not null,
+	Status INT NOT NULL DEFAULT 1,
+);
+
+-- 26. Build PC Item
+
+CREATE TABLE Build_PC_Items (
+    BuildPCItemID INT PRIMARY KEY IDENTITY(1,1),
+	BuildPCID INT not null,
+	CategoryID int not null, 
+	price int not null,
+	WarrantyDetailID INT NOT NULL,
+	Status INT NOT NULL DEFAULT 1,
+	FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
+	FOREIGN KEY (BuildPCID) REFERENCES Build_PC(BuildPCID),
+    FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
+);
+
+-- 27. Cart Build PC
+CREATE TABLE Cart_Build_PC (
+	CartBuildPCID INT PRIMARY KEY IDENTITY(1,1),
+	UserID INT NOT NULL,
+	-- giá bán cả case PC 
+	Price int not null, 
+	Status INT NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+);
+
+-- 28. Cart Build PC Item
+CREATE TABLE Cart_Build_PC_Items (
+	CartBuildPCItemID INT PRIMARY KEY IDENTITY(1,1),
+	CartBuildPCID INT not null,
+	CategoryID int not null,
+	WarrantyDetailID INT NOT NULL,
+	-- giá bán của item 
+	price int not null,
+	Status INT NOT NULL,
+	FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
+	FOREIGN KEY (CartBuildPCID) REFERENCES Cart_Build_PC(CartBuildPCID),
+    FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
+);
+
+-- 29. Comments
+CREATE TABLE Comments (
+    CommentID INT IDENTITY(1,1) PRIMARY KEY,
+    Post_id INT NOT NULL,            
+    UserID INT NOT NULL,              
+    CommentText TEXT NOT NULL,        
+    CreatedAt DATETIME DEFAULT GETDATE(),  
+    ParentCommentID INT NULL,         
+
+    FOREIGN KEY (Post_id) REFERENCES Post(Post_id),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (ParentCommentID) REFERENCES Comments(CommentID)
+);

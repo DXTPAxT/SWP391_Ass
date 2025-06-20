@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import static java.util.Collections.list;
 import java.util.Date;
 import java.util.List;
+import javax.lang.model.util.Types;
 import models.Blog_Cate;
+import models.Comment;
 import models.Post;
 
 public class Blog_CateDAO extends DBContext {
@@ -39,30 +41,30 @@ public class Blog_CateDAO extends DBContext {
     }
 
     public List<Post> getTop5NewestPosts() {
-    List<Post> list = new ArrayList<>();
-    String sql = "SELECT TOP 5 * FROM Post ORDER BY Updated_date DESC";
+        List<Post> list = new ArrayList<>();
+        String sql = "SELECT TOP 5 * FROM Post ORDER BY Updated_date DESC";
 
-    try (PreparedStatement ps = connection.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
-        while (rs.next()) {
-            Post post = new Post();
-            post.setPost_id(rs.getInt("Post_id"));
-            post.setTitle(rs.getString("Title"));
-            post.setAuthor(rs.getString("Author"));
-            post.setUpdated_date(rs.getTimestamp("Updated_date"));
-            post.setContent(rs.getString("Content"));
-            post.setBc_id(rs.getInt("Bc_id"));
-            post.setThumbnail(rs.getString("Thumbnail"));
-            post.setBrief(rs.getString("Brief"));
-            post.setAdd_id(rs.getInt("Add_id"));
-            list.add(post);
+            while (rs.next()) {
+                Post post = new Post();
+                post.setPost_id(rs.getInt("Post_id"));
+                post.setTitle(rs.getString("Title"));
+                post.setAuthor(rs.getString("Author"));
+                post.setUpdated_date(rs.getTimestamp("Updated_date"));
+                post.setContent(rs.getString("Content"));
+                post.setBc_id(rs.getInt("Bc_id"));
+                post.setThumbnail(rs.getString("Thumbnail"));
+                post.setBrief(rs.getString("Brief"));
+                post.setAdd_id(rs.getInt("Add_id"));
+                post.setStatus(rs.getInt("status"));
+                list.add(post);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return list;
     }
-    return list;
-}
 
     public List<Post> getPostsByCategoryId(int bc_id) {
         List<Post> list = new ArrayList<>();
@@ -81,6 +83,7 @@ public class Blog_CateDAO extends DBContext {
                 post.setThumbnail(rs.getString("Thumbnail"));
                 post.setBrief(rs.getString("Brief"));
                 post.setAdd_id(rs.getInt("Add_id"));
+                post.setStatus(rs.getInt("status"));
                 list.add(post);
             }
         } catch (SQLException e) {
@@ -108,6 +111,7 @@ public class Blog_CateDAO extends DBContext {
                 post.setThumbnail(rs.getString("Thumbnail"));
                 post.setBrief(rs.getString("Brief"));
                 post.setAdd_id(rs.getInt("Add_id"));
+                post.setStatus(rs.getInt("status"));
 
                 list.add(post);
 
@@ -118,6 +122,48 @@ public class Blog_CateDAO extends DBContext {
         }
 
         return list;
+    }
+
+    public List<Comment> getCommentsByPostId(int postId) {
+        List<Comment> list = new ArrayList<>();
+        String query = "SELECT * FROM Comments WHERE Post_id = ? ORDER BY CreatedAt ASC";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, postId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Comment comment = new Comment(
+                        rs.getInt("CommentID"),
+                        rs.getInt("Post_id"),
+                        rs.getInt("UserID"),
+                        rs.getString("CommentText"),
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getObject("ParentCommentID") != null ? rs.getInt("ParentCommentID") : null
+                );
+                list.add(comment);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public void addComment(Comment c) {
+        String query = "INSERT INTO Comments (Post_id, UserID, CommentText, ParentCommentID) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, c.getPost_id());
+            ps.setInt(2, c.getUserID());
+            ps.setString(3, c.getCommentText());
+            if (c.getParentCommentID() != null) {
+                ps.setInt(4, c.getParentCommentID());
+            } else {
+                ps.setNull(4, java.sql.Types.INTEGER);
+            }
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void insertPost(Post p) {
@@ -132,6 +178,8 @@ public class Blog_CateDAO extends DBContext {
             st.setString(6, p.getThumbnail());
             st.setString(7, p.getBrief());
             st.setInt(8, p.getAdd_id());
+            st.setInt(9, p.getStatus());
+
             st.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -154,6 +202,7 @@ public class Blog_CateDAO extends DBContext {
                 p.setThumbnail(rs.getString("Thumbnail"));
                 p.setBrief(rs.getString("Brief"));
                 p.setAdd_id(rs.getInt("Add_id"));
+                p.setStatus(rs.getInt("status"));
                 return p;
             }
         } catch (Exception e) {
@@ -163,7 +212,7 @@ public class Blog_CateDAO extends DBContext {
     }
 
     public void updatePost(Post p) {
-        String sql = "UPDATE Post SET Title=?, Author=?, Updated_date=?, Content=?, Bc_id=?, Thumbnail=?, Brief=?, Add_id=? "
+        String sql = "UPDATE Post SET Title=?, Author=?, Updated_date=?, Content=?, Bc_id=?, Thumbnail=?, Brief=?, Add_id=?, status=? "
                 + "WHERE Post_id=?";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setString(1, p.getTitle());
@@ -174,21 +223,101 @@ public class Blog_CateDAO extends DBContext {
             st.setString(6, p.getThumbnail());
             st.setString(7, p.getBrief());
             st.setInt(8, p.getAdd_id());
-            st.setInt(9, p.getPost_id());
+            st.setInt(9, p.getStatus());       // thêm dòng này
+            st.setInt(10, p.getPost_id());
             st.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void deletePost(int id) {
-        String sql = "DELETE FROM Post WHERE Post_id = ?";
-        try (PreparedStatement st = connection.prepareStatement(sql)) {
-            st.setInt(1, id);
-            st.executeUpdate();
+//   
+    public List<Post> getPostsByStatus(int status) {
+        List<Post> list = new ArrayList<>();
+        String sql = "SELECT * FROM Post WHERE status = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, status);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Post post = new Post();
+                post.setPost_id(rs.getInt("Post_id"));
+                post.setTitle(rs.getString("Title"));
+                post.setAuthor(rs.getString("Author"));
+                post.setUpdated_date(rs.getTimestamp("Updated_date"));
+                post.setContent(rs.getString("Content"));
+                post.setBc_id(rs.getInt("Bc_id"));
+                post.setThumbnail(rs.getString("Thumbnail"));
+                post.setBrief(rs.getString("Brief"));
+                post.setAdd_id(rs.getInt("Add_id"));
+                post.setStatus(rs.getInt("status"));
+                list.add(post);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public List<Post> getPostsSortedByTitle(boolean ascending) {
+        List<Post> list = new ArrayList<>();
+        String order = ascending ? "ASC" : "DESC";
+        String sql = "SELECT p.*, c.Bc_name FROM Post p JOIN Blogs_category c ON p.Bc_id = c.Bc_id ORDER BY p.Title " + order;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Post post = new Post();
+                post.setPost_id(rs.getInt("Post_id"));
+                post.setTitle(rs.getString("Title"));
+                post.setAuthor(rs.getString("Author"));
+                post.setUpdated_date(rs.getTimestamp("Updated_date"));
+                post.setContent(rs.getString("Content"));
+                post.setBc_name(rs.getString("Bc_name"));
+                post.setBc_id(rs.getInt("Bc_id"));
+                post.setThumbnail(rs.getString("Thumbnail"));
+                post.setBrief(rs.getString("Brief"));
+                post.setAdd_id(rs.getInt("Add_id"));
+                post.setStatus(rs.getInt("status"));
+                list.add(post);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public List<Post> getPostsByAuthorRole(String roleName) {
+        List<Post> list = new ArrayList<>();
+        String query = "SELECT p.* FRSOM Post p "
+                + "JOIN Users u ON p.Add_id = u.UserID "
+                + "JOIN Roles r ON u.RoleID = r.RoleID "
+                + "WHERE r.RoleName = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, roleName);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Post p = new Post(
+                        rs.getInt("Post_id"),
+                        rs.getString("Title"),
+                        rs.getString("Author"),
+                        rs.getTimestamp("Updated_date"),
+                        rs.getString("Content"),
+                        rs.getInt("Bc_id"),
+                        rs.getString("Thumbnail"),
+                        rs.getString("Brief"),
+                        rs.getInt("Add_id"),
+                        rs.getInt("status")
+                );
+                list.add(p);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return list;
     }
 
     public int countAllPosts() {
@@ -229,6 +358,7 @@ public class Blog_CateDAO extends DBContext {
                     post.setThumbnail(rs.getString("Thumbnail"));
                     post.setBrief(rs.getString("Brief"));
                     post.setAdd_id(rs.getInt("Add_id"));
+                    post.setStatus(rs.getInt("status"));
 
                     list.add(post);
                 }
@@ -240,13 +370,59 @@ public class Blog_CateDAO extends DBContext {
         return list;
     }
 
-    public List<Post> searchPostsByTitle(String keyword) {
-    List<Post> result = new ArrayList<>();
-    String sql = "SELECT * FROM Post WHERE Title LIKE ?";
-    
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setString(1, "%" + keyword + "%");
-        try (ResultSet rs = ps.executeQuery()) {
+    public List<Post> searchPosts(String keyword) {
+        List<Post> result = new ArrayList<>();
+        String sql = """
+        SELECT p.*, c.Bc_name 
+        FROM Post p 
+        JOIN Blogs_category c ON p.Bc_id = c.Bc_id
+        WHERE p.Title LIKE ? OR p.Content LIKE ? OR c.Bc_name LIKE ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String likeKeyword = "%" + keyword + "%";
+            ps.setString(1, likeKeyword);
+            ps.setString(2, likeKeyword);
+            ps.setString(3, likeKeyword);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Post post = new Post();
+                    post.setPost_id(rs.getInt("Post_id"));
+                    post.setTitle(rs.getString("Title"));
+                    post.setAuthor(rs.getString("Author"));
+                    post.setUpdated_date(rs.getTimestamp("Updated_date"));
+                    post.setContent(rs.getString("Content"));
+                    post.setBc_id(rs.getInt("Bc_id"));
+                    post.setBc_name(rs.getString("Bc_name"));
+                    post.setThumbnail(rs.getString("Thumbnail"));
+                    post.setBrief(rs.getString("Brief"));
+                    post.setAdd_id(rs.getInt("Add_id"));
+                    post.setStatus(rs.getInt("status"));
+
+                    result.add(post);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public List<Post> getPostsByCategorySorted(int bc_id, String sortOrder) {
+        List<Post> list = new ArrayList<>();
+        String sql = "SELECT * FROM Post WHERE Bc_id = ?";
+
+        if ("latest".equalsIgnoreCase(sortOrder)) {
+            sql += " ORDER BY Updated_date DESC";
+        } else if ("oldest".equalsIgnoreCase(sortOrder)) {
+            sql += " ORDER BY Updated_date ASC";
+        } // nếu sortOrder là null hoặc "default" thì không thêm ORDER BY
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, bc_id);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Post post = new Post();
                 post.setPost_id(rs.getInt("Post_id"));
@@ -258,51 +434,16 @@ public class Blog_CateDAO extends DBContext {
                 post.setThumbnail(rs.getString("Thumbnail"));
                 post.setBrief(rs.getString("Brief"));
                 post.setAdd_id(rs.getInt("Add_id"));
-                result.add(post);
+                post.setStatus(rs.getInt("status"));
+
+                list.add(post);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+
+        return list;
     }
-    
-    return result;
-}
-
-public List<Post> getPostsByCategorySorted(int bc_id, String sortOrder) {
-    List<Post> list = new ArrayList<>();
-    String sql = "SELECT * FROM Post WHERE Bc_id = ?";
-
-    if ("latest".equalsIgnoreCase(sortOrder)) {
-        sql += " ORDER BY Updated_date DESC";
-    } else if ("oldest".equalsIgnoreCase(sortOrder)) {
-        sql += " ORDER BY Updated_date ASC";
-    } // nếu sortOrder là null hoặc "default" thì không thêm ORDER BY
-
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, bc_id);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            Post post = new Post();
-            post.setPost_id(rs.getInt("Post_id"));
-            post.setTitle(rs.getString("Title"));
-            post.setAuthor(rs.getString("Author"));
-            post.setUpdated_date(rs.getTimestamp("Updated_date"));
-            post.setContent(rs.getString("Content"));
-            post.setBc_id(rs.getInt("Bc_id"));
-            post.setThumbnail(rs.getString("Thumbnail"));
-            post.setBrief(rs.getString("Brief"));
-            post.setAdd_id(rs.getInt("Add_id"));
-            list.add(post);
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-
-    return list;
-}
-
-
-    
 
     public static void main(String[] args) {
         Blog_CateDAO dao = new Blog_CateDAO();
@@ -311,32 +452,32 @@ public List<Post> getPostsByCategorySorted(int bc_id, String sortOrder) {
         //            System.out.println(o);
         //        }
         //        System.out.println(dao.getAllBlogCategory());
-                System.out.println(dao.getAllPost());
 
         //        System.out.println(dao.countAllPosts());
-        //        Post p = new Post();
-        //        p.setTitle("Giới thiệu Laptop mới");
-        //        p.setAuthor("Nguyễn Văn A");
-        //        p.setUpdated_date(new Timestamp(System.currentTimeMillis())); // ngày hiện tại
-        //        p.setContent("Nội dung chi tiết về sản phẩm mới...");
-        //        p.setBc_id(1); // id danh mục blog (phải tồn tại trong DB)
-        //        p.setThumbnail("images/laptop-new.jpg");
-        //        p.setBrief("Laptop hiệu suất cao, giá tốt.");
-        //        p.setAdd_id(1); // id admin người đăng (phải tồn tại trong DB)
-        //
-        //        dao.insertPost(p); // thực hiện thêm
-        //        System.out.println("Đã chèn bài viết thành công.");
-        //          System.out.println(dao.getPostById(1));
+        Post p = new Post();
+        p.setTitle("Giới thiệu Laptop mới");
+        p.setAuthor("Nguyễn Văn A");
+        p.setUpdated_date(new Timestamp(System.currentTimeMillis())); // ngày hiện tại
+        p.setContent("Nội dung chi tiết về sản phẩm mới...");
+        p.setBc_id(1); // id danh mục blog (phải tồn tại trong DB)
+        p.setThumbnail("images/laptop-new.jpg");
+        p.setBrief("Laptop hiệu suất cao, giá tốt.");
+        p.setAdd_id(1); // id admin người đăng (phải tồn tại trong DB)
+
+        dao.insertPost(p); // thực hiện thêm
+        System.out.println("Đã chèn bài viết thành công.");
+//                  System.out.println(dao.getPostById(1));
 //        Post p = new Post();
 //        p.setPost_id(1); // ID của bài viết cần cập nhật
-//        p.setTitle("Cập nhật tiêu đề bài viết");
-//        p.setAuthor("Nguyễn Văn B");
+//        p.setTitle("Top 5 Budget Laptops for Students in 2025");
+//        p.setAuthor("NinhTT");
 //        p.setUpdated_date(new java.sql.Timestamp(System.currentTimeMillis())); // ngày hiện tại
-//        p.setContent("Nội dung đã được cập nhật...");
+//        p.setContent("Choosing the right laptop as a student can be tough. In this article, we review the top 5 budget laptops in 2025 that balance price and performance.");
 //        p.setBc_id(2); // ID danh mục blog mới (đảm bảo tồn tại)
-//        p.setThumbnail("images/updated-thumbnail.jpg");
-//        p.setBrief("Tóm tắt nội dung mới.");
+//        p.setThumbnail("https://i.ytimg.com/vi/pKFc0wedO_M/maxresdefault.jpg");
+//        p.setBrief("A quick guide to the best affordable laptops for students.");
 //        p.setAdd_id(1); // ID admin (đảm bảo tồn tại)
+//        p.setStatus(1);
 //
 //        dao.updatePost(p);
 //        System.out.println("Đã cập nhật bài viết thành công.");
