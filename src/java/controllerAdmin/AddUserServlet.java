@@ -86,6 +86,7 @@ public class AddUserServlet extends HttpServlet {
         String phoneNumber = request.getParameter("phoneNumber");
         String address = request.getParameter("address");
         String roleID = request.getParameter("roleID");
+        String startDate = request.getParameter("startDate");
         RoleDAO roleDao = new RoleDAO();
         UserDAO userDao = new UserDAO();
         ArrayList<Role> roles = roleDao.getRoles();
@@ -118,21 +119,33 @@ public class AddUserServlet extends HttpServlet {
             request.setAttribute("address", address);
             request.setAttribute("roleID", roleID);
             request.setAttribute("roles", roles);
-            // Thêm nhận lỗi cho toast
             request.setAttribute("toast", error);
             request.setAttribute("toastType", "error");
+            request.setAttribute("startDate", startDate);
             RequestDispatcher rs = request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/addNewUser.jsp");
             rs.forward(request, response);
             return;
         } else {
             try {
                 String newPassword = "123456"; // Mật khẩu mặc định, có thể thay đổi sau
-                boolean addUser = userDao.createNewUser(email, fullName, address, phoneNumber, newPassword, Integer.parseInt(roleID));
+                boolean addUser = userDao.createNewUser(email, fullName, phoneNumber, newPassword, Integer.parseInt(roleID), startDate);
                 if (addUser) {
                     HttpSession session = request.getSession();
                     session.setAttribute("toast", "Add user succesfully!");
                     session.setAttribute("toastType", "success");
-                    response.sendRedirect(request.getContextPath() + "/Admin/user");
+                    if (null != roleID) switch (roleID) {
+                        case "1":
+                            response.sendRedirect(request.getContextPath() + "/Admin/user");
+                            break;
+                        case "2":
+                            response.sendRedirect(request.getContextPath() + "/Admin/user?type=sale");
+                            break;
+                        case "4":
+                            response.sendRedirect(request.getContextPath() + "/Admin/user?type=shipper");
+                            break;
+                        default:
+                            break;
+                    }
                 } else {
                     request.setAttribute("toast", "Add user failed!");
                     request.setAttribute("toastType", "error");

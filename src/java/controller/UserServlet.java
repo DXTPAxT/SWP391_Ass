@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ * Click nfs://netbeans/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nfs://netbeans/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package controller;
 
@@ -14,9 +14,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import models.User;
 import models.Role;
 import utils.MailUtils;
@@ -28,20 +31,10 @@ import utils.PasswordUtils;
  */
 public class UserServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -54,25 +47,15 @@ public class UserServlet extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         UserDAO userDAO = new UserDAO();
-        ArrayList<User> users = userDAO.getUsers();
-        request.setAttribute("users", users);
 
         String service = request.getParameter("service");
-        if ("resetPassword".equals(request.getParameter("service"))) {
+        if ("resetPassword".equals(service)) {
             int userID = Integer.parseInt(request.getParameter("userID"));
+            String roleID = request.getParameter("roleID");
             UserDAO dao = new UserDAO();
             User user = dao.getUserByID(userID);
             if (user != null) {
@@ -90,12 +73,15 @@ public class UserServlet extends HttpServlet {
                         request.setAttribute("toast", "Reset password failed to send email!");
                         request.setAttribute("toastType", "warning");
                     }
-                    request.getRequestDispatcher("/AdminLTE/AdminPages/pages/tables/viewUser.jsp").forward(request, response);
                 }
             } else {
                 request.setAttribute("toast", "User not found!");
                 request.setAttribute("toastType", "error");
-                request.getRequestDispatcher("/AdminLTE/AdminPages/pages/tables/viewUser.jsp").forward(request, response);
+            }
+            if ("3".equals(roleID)) {
+                response.sendRedirect("Admin/user?type=customer");
+            } else {
+                response.sendRedirect("Admin/user?type=staff");
             }
         } else if ("toggleStatus".equals(service)) {
             int userID = Integer.parseInt(request.getParameter("userID"));
@@ -103,27 +89,27 @@ public class UserServlet extends HttpServlet {
             boolean toggle = dao.toggleStatus(userID);
             HttpSession session = request.getSession();
             if (toggle) {
-                session.setAttribute("toast", "Update user succesfully!");
+                session.setAttribute("toast", "Update user successfully!");
                 session.setAttribute("toastType", "success");
             } else {
                 session.setAttribute("toast", "Update user failed!");
                 session.setAttribute("toastType", "error");
             }
             response.sendRedirect("Admin/user");
+        } else if ("myAccount".equals(service)) {
+            HttpSession session = request.getSession();
+            User user = (User) session.getAttribute("user");
+            if (user != null) {
+                request.setAttribute("user", user);
+                request.getRequestDispatcher("/ShopPages/Pages/myAccount.jsp").forward(request, response);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/ShopPages/Pages/login.jsp");
+            }
         } else {
-            // Default: show user list
-            request.getRequestDispatcher("/AdminLTE/AdminPages/pages/tables/viewUser.jsp").forward(request, response);
+            response.sendRedirect("Admin/user?type=customer");
         }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -134,18 +120,21 @@ public class UserServlet extends HttpServlet {
             String fullName = request.getParameter("fullName");
             String address = request.getParameter("address");
             String phoneNumber = request.getParameter("phoneNumber");
+            String roleID = request.getParameter("roleID");
+            String StartedDate = request.getParameter("StartedDate");
+            String EndDate = request.getParameter("EndDate");
             int userID = Integer.parseInt(request.getParameter("userID"));
             int status = Integer.parseInt(request.getParameter("status"));
             boolean isEmailExist = dao.isEmailExist(email);
             boolean isPhoneNumberExisted = dao.isPhoneNumberExisted(phoneNumber);
             String error = null;
-            if (utils.Validator.isNullOrEmpty(email)) {
+            if (utils.Validator.isNullOrEmpty(fullName)) {
+                error = "Full name is required!";
+            } else if (utils.Validator.isNullOrEmpty(email)) {
                 error = "Email is required!";
             } else if (isEmailExist && !email.equals(dao.getUserByID(userID).getEmail())) {
                 error = "Email existed!";
-            } else if (utils.Validator.isNullOrEmpty(fullName)) {
-                error = "Full name is required!";
-            } else if (utils.Validator.isNullOrEmpty(address)) {
+            } else if (utils.Validator.isNullOrEmpty(address) && "3".equals(roleID)) {
                 error = "Address is required!";
             } else if (utils.Validator.isNullOrEmpty(phoneNumber)) {
                 error = "Phone number is required!";
@@ -155,64 +144,112 @@ public class UserServlet extends HttpServlet {
                 error = "Phone number existed!";
             }
             if (error != null) {
+                request.setAttribute("error", error);
                 User user = dao.getUserByID(userID);
                 user.setFullname(fullName);
                 user.setEmail(email);
-                user.setAddress(address);
                 user.setPhoneNumber(phoneNumber);
-                user.setStatus(status);
-                // Lấy roleMap
-                RoleDAO roleDAO = new RoleDAO();
-                ArrayList<Role> roles = roleDAO.getRoles();
-                Map<Integer, String> roleMap = new HashMap<>();
-                for (Role r : roles) {
-                    roleMap.put(r.getRoleID(), r.getRoleName());
-                }
-                request.setAttribute("roleMap", roleMap);
-                request.setAttribute("error", error);
                 request.setAttribute("user", user);
+                if (address != null) {
+                    request.setAttribute("address", address);
+                }
                 request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/updateUser.jsp").forward(request, response);
+            } else {
+                try {
+                    boolean updated = dao.updateUser(userID, fullName, email, phoneNumber, status, address, StartedDate, EndDate);
+                    if (updated) {
+                        request.setAttribute("toast", "User updated successfully!");
+                        request.setAttribute("toastType", "success");
+                    } else {
+                        request.setAttribute("toast", "Failed to update user!");
+                        request.setAttribute("toastType", "error");
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                switch (roleID) {
+                    case "1":
+                    response.sendRedirect("Admin/user?type=admin");
+                    break;
+                    case "2":
+                    response.sendRedirect("Admin/user?type=sale");
+                    break;
+                    case "3":
+                    response.sendRedirect("Admin/user?type=customer");
+                    break;
+                    case "4":
+                    response.sendRedirect("Admin/user?type=shipper");
+                    break;
+                    default:
+                    response.sendRedirect("Admin/user?type=admin");
+                }
+            }
+        } else if ("updateProfile".equals(service)) {
+            UserDAO dao = new UserDAO();
+            HttpSession session = request.getSession();
+            User currentUser = (User) session.getAttribute("user");
+            if (currentUser == null) {
+                response.sendRedirect(request.getContextPath() + "/ShopPages/Pages/login.jsp");
                 return;
             }
-            try {
-                boolean updated = dao.updateUser(userID, fullName, email, phoneNumber, address, status);
-                if (updated) {
-                    HttpSession session = request.getSession();
-                    session.setAttribute("toast", "Update user succesfully!");
-                    session.setAttribute("toastType", "success");
-                    response.sendRedirect("Admin/user");
-                } else {
-                    request.setAttribute("error", "Cập nhật thất bại!");
-                    User user = dao.getUserByID(userID);
-                    request.setAttribute("user", user);
-                    // Lấy roleMap cho trường hợp cập nhật thất bại hoặc lỗi exception
-                    RoleDAO roleDAO = new RoleDAO();
-                    ArrayList<Role> roles = roleDAO.getRoles();
-                    Map<Integer, String> roleMap = new HashMap<>();
-                    for (Role r : roles) {
-                        roleMap.put(r.getRoleID(), r.getRoleName());
-                    }
-                    request.setAttribute("roleMap", roleMap);
-                    request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/updateUser.jsp").forward(request, response);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                request.setAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
+            String email = request.getParameter("email");
+            String fullName = request.getParameter("fullName");
+            String address = request.getParameter("address");
+            String phoneNumber = request.getParameter("phoneNumber");
+            int userID = Integer.parseInt(request.getParameter("userID"));
+            int status = currentUser.getStatus();
+
+            boolean isEmailExist = dao.isEmailExist(email);
+            boolean isPhoneNumberExisted = dao.isPhoneNumberExisted(phoneNumber);
+            String error = null;
+            if (utils.Validator.isNullOrEmpty(email)) {
+                error = "Email is required!";
+            } else if (isEmailExist && !email.equals(dao.getUserByID(userID).getEmail())) {
+                error = "Email already exists!";
+            } else if (utils.Validator.isNullOrEmpty(fullName)) {
+                error = "Full name is required!";
+            } else if (utils.Validator.isNullOrEmpty(address)) {
+                error = "Address is required!";
+            } else if (utils.Validator.isNullOrEmpty(phoneNumber)) {
+                error = "Phone number is required!";
+            } else if (!utils.Validator.isValidPhoneNumber(phoneNumber)) {
+                error = "Invalid phone number!";
+            } else if (isPhoneNumberExisted && !phoneNumber.equals(dao.getUserByID(userID).getPhoneNumber())) {
+                error = "Phone number already exists!";
+            }
+
+            if (error != null) {
+                request.setAttribute("toast", error);
+                request.setAttribute("toastType", "error");
                 User user = dao.getUserByID(userID);
+                user.setFullname(fullName);
+                user.setEmail(email);
+                user.setPhoneNumber(phoneNumber);
                 request.setAttribute("user", user);
-                request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/updateUser.jsp").forward(request, response);
+                request.getRequestDispatcher("/ShopPages/Pages/myAccount.jsp").forward(request, response);
+            } else {
+                try {
+                    boolean updated = dao.updateUser(userID, fullName, email, phoneNumber, status, address, null, null);
+                    if (updated) {
+                        User updatedUser = dao.getUserByID(userID);
+                        session.setAttribute("user", updatedUser);
+                        request.setAttribute("toast", "Profile updated successfully!");
+                        request.setAttribute("toastType", "success");
+                    } else {
+                        request.setAttribute("toast", "Failed to update profile!");
+                        request.setAttribute("toastType", "error");
+                    }
+                    request.setAttribute("user", dao.getUserByID(userID));
+                    request.getRequestDispatcher("/ShopPages/Pages/myAccount.jsp").forward(request, response);
+                } catch (SQLException ex) {
+                    Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "UserServlet handles user-related operations";
+    }
 }

@@ -4,7 +4,7 @@
  */
 package controllerAdmin;
 
-import dalAdmin.BraComAdminDAO;
+import dalAdmin.BrandComAdminDAO;
 import dalAdmin.BrandAdminDAO;
 import dalAdmin.CategoryAdminDAO;
 import dalAdmin.ComponentAdminDAO;
@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import models.BraComs;
+import models.BrandComs;
 import models.Brands;
 import models.Categories;
 import models.Components;
@@ -29,22 +29,18 @@ import models.Products;
  *
  * @author Admin
  */
-
 public class AdminDashbordServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-          
-            
-            
+            CategoryAdminDAO dao = new CategoryAdminDAO();
             ComponentAdminDAO Com = new ComponentAdminDAO();
             List<Components> com = Com.getAllComponent();
             request.setAttribute("com", com);
-            
-           
-            
+            List<Categories> list = dao.getAllCategoriesByInvenory();
+            request.setAttribute("list", list);
             request.getRequestDispatcher("AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);
         }
     }

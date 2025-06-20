@@ -2,23 +2,23 @@
 package models;
 
 
-public class BraComs {
-    private int BraComID;
+public class BrandComs {
+    private int BrandComID;
     private int BrandID;
     private String BrandName;
     private int ComponentID;
     private String ComponentName;
     private int Quantity;
 
-    public BraComs(int BraComID, int BrandID, int ComponentID, int Quantity) {
-        this.BraComID = BraComID;
+    public BrandComs(int BrandComID, int BrandID, int ComponentID, int Quantity) {
+        this.BrandComID = BrandComID;
         this.BrandID = BrandID;
         this.ComponentID = ComponentID;
         this.Quantity = Quantity;
     }
 
-    public BraComs(int BraComID, int BrandID, String BrandName, int ComponentID, String ComponentName, int Quantity) {
-        this.BraComID = BraComID;
+    public BrandComs(int BrandComID, int BrandID, String BrandName, int ComponentID, String ComponentName, int Quantity) {
+        this.BrandComID = BrandComID;
         this.BrandID = BrandID;
         this.BrandName = BrandName;
         this.ComponentID = ComponentID;
@@ -27,13 +27,13 @@ public class BraComs {
     }
     
     
-    public BraComs(int BrandID, int ComponentID, int Quantity) {
+    public BrandComs(int BrandID, int ComponentID, int Quantity) {
         this.BrandID = BrandID;
         this.ComponentID = ComponentID;
         this.Quantity = Quantity;
     }
 
-    public BraComs() {
+    public BrandComs() {
     }
 
     public String getBrandName() {
@@ -53,12 +53,12 @@ public class BraComs {
     }
     
     
-    public int getBraComID() {
-        return BraComID;
+    public int getBrandComID() {
+        return BrandComID;
     }
 
-    public void setBraComID(int BraComID) {
-        this.BraComID = BraComID;
+    public void setBrandComID(int BrandComID) {
+        this.BrandComID = BrandComID;
     }
 
     public int getBrandID() {

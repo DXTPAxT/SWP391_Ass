@@ -100,7 +100,7 @@
                                                             <td>${category.quantity}</td>
                                                             <td>${category.inventory}</td>
                                                             <td>${category.price}</td>
-                                                            <td>${category.description}</td>
+                                                            <td style="white-space: normal; word-break: break-word; max-width: 200px;">${category.description}</td>
                                                             <td>
                                                                 <c:choose>
                                                                     <c:when test="${category.status == 0}">Disable</c:when>
@@ -130,7 +130,7 @@
                                                 </c:when>
                                                 <c:otherwise>
                                                     <tr>
-                                                        <td colspan="11" class="text-center text-muted">No categories found.</td>
+                                                        <td colspan="13" class="text-center text-muted">No categories found.</td>
                                                     </tr>
                                                 </c:otherwise>
                                             </c:choose>

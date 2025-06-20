@@ -53,8 +53,8 @@
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">BraCom</a></li>
-                        <li class="active">view BraCom</li>
+                        <li><a href="#">Brand Com</a></li>
+                        <li class="active">view Brand Com</li>
                     </ol>
                 </section>
 
@@ -67,23 +67,28 @@
                                     <table  id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>BraCom ID</th>
+                                                <th>Brand-Com ID</th>
                                                 <th>Brand Name</th>
                                                 <th>Component Name</th>
                                                 <th>Quantity</th>
-                                                <th>View</th>
+                                                <th>View Category</th>
+                                                <th>View Warranty</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <c:if test="${not empty braCom}">
                                                 <c:forEach var="bc" items="${braCom}">
                                                     <tr>
-                                                        <td>${bc.braComID}</td>
+                                                        <td>${bc.brandComID}</td>
                                                         <td>${bc.brandName}</td>
                                                         <td>${bc.componentName}</td>
                                                         <td>${bc.quantity}</td>
                                                         <td>
-                                                            <a href="CateAdmin?service=listbybcid&braComID=${bc.braComID}" 
+                                                            <a href="CateAdmin?service=listbybcid&brandComID=${bc.brandComID}" 
+                                                               class="btn btn-warning btn-sm">View</a>
+                                                        </td>
+                                                        <td>
+                                                            <a href="WDA?service=listbybrandcomid&brandComID=${bc.brandComID}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                     </tr>

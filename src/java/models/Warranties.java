@@ -8,21 +8,35 @@ package models;
 public class Warranties {
     private int WarrantyID;
     private int WarrantyPeriod ;
+    private String Description;
     private int Status;
 
     public Warranties() {
     }
 
-    public Warranties(int WarrantyID, int WarrantyPeriod, int Status) {
+    public Warranties(int WarrantyID, int WarrantyPeriod, String Description, int Status) {
         this.WarrantyID = WarrantyID;
         this.WarrantyPeriod = WarrantyPeriod;
+        this.Description = Description;
         this.Status = Status;
     }
 
-    public Warranties(int WarrantyPeriod, int Status) {
+    public Warranties(int WarrantyPeriod, String Description, int Status) {
         this.WarrantyPeriod = WarrantyPeriod;
+        this.Description = Description;
         this.Status = Status;
     }
+
+    public String getDescription() {
+        return Description;
+    }
+
+    public void setDescription(String Description) {
+        this.Description = Description;
+    }
+    
+    
+    
 
     public int getWarrantyID() {
         return WarrantyID;

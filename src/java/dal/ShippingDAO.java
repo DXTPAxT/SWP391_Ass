@@ -1,51 +1,36 @@
 package dal;
 
-import java.sql.*;
-import java.util.*;
 import models.Shipping;
+import models.User; // Thêm import này để tham chiếu lớp User
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ShippingDAO extends DBContext {
 
-    public List<Shipping> getShippingByUserID(int userID) {
-        List<Shipping> list = new ArrayList<>();
-        String sql = "SELECT s.* FROM Shipping s JOIN Orders o ON s.OrderID = o.OrderID WHERE o.CustomerID = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, userID);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Shipping ship = new Shipping(
-                        rs.getInt("ShippingID"),
-                        rs.getInt("OrderID"),
-                        rs.getInt("ShipperID"),
-                        rs.getString("ShippingStatus"),
-                        rs.getString("Feedback")
-                );
-                list.add(ship);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
+    private final UserDAO userDAO = new UserDAO();
 
-    public List<Shipping> getAllShipping() {
-        List<Shipping> list = new ArrayList<>();
-        String sql = "SELECT * FROM Shipping";
+    public int countShips1MonthByID(int UserID) {
+        int count = 0;
+        String sql = """
+                         SELECT COUNT (ShippingID) as numberOfShips
+                         FROM Shipping 
+                         WHERE ShipperID = ?
+                         and ShipTime >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1);
+                     """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, UserID);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Shipping ship = new Shipping(
-                        rs.getInt("ShippingID"),
-                        rs.getInt("OrderID"),
-                        rs.getInt("ShipperID"),
-                        rs.getString("ShippingStatus"),
-                        rs.getString("Feedback")
-                );
-                list.add(ship);
+            if (rs.next()) {
+                count = rs.getInt("numberOfShips");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.err.println("getAllBrands Error: " + e.getMessage());
         }
-        return list;
+        return count;
     }
 }

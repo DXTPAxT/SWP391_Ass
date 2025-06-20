@@ -69,10 +69,11 @@
                     <h3>Write Your Review</h3>
                     <c:if test="${sessionScope.user != null}">
                         <form id="submitFeedbackForm" action="${pageContext.request.contextPath}/submitFeedback" method="post" class="review-form">
-                            <input type="hidden" name="orderItemId" value="${categoryID}">
+                            <!-- Sửa lại tên trường cho đúng -->
+                            <input type="hidden" name="orderItemID" value="${categoryID}">
                             <div class="form-group">
                                 <label>Rating:</label>
-                                <select name="rating" required>
+                                <select name="rate" required>
                                     <option value="">Chọn đánh giá</option>
                                     <option value="5">5 sao</option>
                                     <option value="4">4 sao</option>

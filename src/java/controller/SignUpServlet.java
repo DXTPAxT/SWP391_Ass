@@ -5,157 +5,178 @@
 package controller;
 
 import dal.UserDAO;
+import dal.CustomerInfoDAO;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import models.User;
+import models.CustomerInfo;
+import utils.PasswordUtils;
+import utils.Validator;
 
 /**
- *
- * @author PC ASUS
+ * SignUpServlet handles user registration for customers only.
  */
 public class SignUpServlet extends HttpServlet {
+    private static final Logger LOGGER = Logger.getLogger(SignUpServlet.class.getName());
+    private final UserDAO userDAO;
+    private final CustomerInfoDAO customerInfoDAO;
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet SignUpServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet SignUpServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
+    public SignUpServlet() {
+        this.userDAO = new UserDAO();
+        this.customerInfoDAO = new CustomerInfoDAO();
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
+        
         if (user == null) {
             RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/signUp.jsp");
             rs.forward(request, response);
         } else {
-            if (user.getRoleID() != 1) {
-                String redirectURL = (String) session.getAttribute("redirectAfterLogin");
+            String redirectURL;
+            if (user.getRole().getRoleID() == 1) { // Admin role
+                redirectURL = "Admin";
+            } else {
+                redirectURL = (String) session.getAttribute("redirectAfterLogin");
                 if (redirectURL == null) {
                     redirectURL = "HomePages";
                 }
                 session.setAttribute("redirectAfterLogin", null);
-                response.sendRedirect(redirectURL);
-            } else {
-                response.sendRedirect("Admin");
             }
+            response.sendRedirect(redirectURL);
         }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        UserDAO userDAO = new UserDAO();
         String email = request.getParameter("email");
         String fullName = request.getParameter("fullName");
         String address = request.getParameter("address");
         String phoneNumber = request.getParameter("phoneNumber");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
-        boolean isEmailExist = userDAO.isEmailExist(email);
-        boolean isPhoneNumberExisted = userDAO.isPhoneNumberExisted(phoneNumber);
-        // Validate all String inputs for null or empty using isNullOrEmpty, in the same order as the JSP fields
-        if (utils.Validator.isNullOrEmpty(email)) {
-            setSignUpAttributes(request, "Email is required!", email, fullName, address, phoneNumber, password, confirmPassword);
-        } else if (isEmailExist) {
-            setSignUpAttributes(request, "Email existed!", email, fullName, address, phoneNumber, password, confirmPassword);
-        } else if (utils.Validator.isNullOrEmpty(fullName)) {
-            setSignUpAttributes(request, "Full name is required!", email, fullName, address, phoneNumber, password, confirmPassword);
-        } else if (utils.Validator.isNullOrEmpty(address)) {
-            setSignUpAttributes(request, "Address is required!", email, fullName, address, phoneNumber, password, confirmPassword);
-        } else if (utils.Validator.isNullOrEmpty(phoneNumber)) {
-            setSignUpAttributes(request, "Phone number is required!", email, fullName, address, phoneNumber, password, confirmPassword);
-        } else if (!utils.Validator.isValidPhoneNumber(phoneNumber)) {
-            setSignUpAttributes(request, "Invalid phone number", email, fullName, address, phoneNumber, password, confirmPassword);
-        } else if (isPhoneNumberExisted) {
-            setSignUpAttributes(request, "Phone number existed!", email, fullName, address, phoneNumber, password, confirmPassword);
-        } else if (utils.Validator.isNullOrEmpty(password)) {
-            setSignUpAttributes(request, "Password is required!", email, fullName, address, phoneNumber, password, confirmPassword);
-        } else if (utils.Validator.isNullOrEmpty(confirmPassword)) {
-            setSignUpAttributes(request, "Confirm password is required!", email, fullName, address, phoneNumber, password, confirmPassword);
-        } else if (!password.equals(confirmPassword)) {
-            setSignUpAttributes(request, "Confirm password not match!", email, fullName, address, phoneNumber, password, confirmPassword);
-        } else {
-            // Tạm thời không hash password, dùng password thường
-            // String hashedPassword = utils.PasswordUtils.hashPassword(password);
-            boolean isSuccess = userDAO.createNewUser(email, fullName, address, phoneNumber, password, 3);
-            if (isSuccess) {
-                request.setAttribute("isSuccess", isSuccess);
-                RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/login.jsp");
-                rs.forward(request, response);
+
+        try {
+            // Validate input
+            String error = validateSignUpInput(email, fullName, address, phoneNumber, password, confirmPassword);
+            if (error != null) {
+                setSignUpAttributes(request, error, email, fullName, address, phoneNumber);
+                forwardToSignUp(request, response);
                 return;
-            } else {
-                setSignUpAttributes(request, "Sign up failed!", email, fullName, address, phoneNumber, password, confirmPassword);
             }
+
+            // Check email and phone number existence
+            if (userDAO.isEmailExist(email)) {
+                setSignUpAttributes(request, "Email already exists!", email, fullName, address, phoneNumber);
+                forwardToSignUp(request, response);
+                return;
+            }
+
+            if (userDAO.isPhoneNumberExisted(phoneNumber)) {
+                setSignUpAttributes(request, "Phone number already exists!", email, fullName, address, phoneNumber);
+                forwardToSignUp(request, response);
+                return;
+            }
+
+            // Hash password and create user
+//            String hashedPassword = PasswordUtils.hashPassword(password);
+            
+            // Create user with role 3 (customer)
+            boolean userCreated = userDAO.createNewUser(email, fullName, phoneNumber, password, 3, null);
+            
+            if (userCreated) {
+                // Get the newly created user's ID and create customer info
+                User createdUser = userDAO.getUserByEmail(email);
+                if (createdUser != null) {
+                    boolean customerInfoCreated = customerInfoDAO.createCustomerInfo(createdUser.getUserId(), address);
+                    
+                    if (customerInfoCreated) {
+                        LOGGER.log(Level.INFO, String.format("New customer registered successfully: %s", email));
+                        request.setAttribute("toast", "Sign up successfully! Please login.");
+                        request.setAttribute("toastType", "success");
+                        response.sendRedirect("Login");
+                        return;
+                    }
+                }
+                
+                // If we get here, customer info creation failed - rollback user creation
+                userDAO.deleteUser(createdUser.getUserId());
+                LOGGER.log(Level.SEVERE, String.format("Failed to create customer info for user: %s", email));
+            }
+            
+            // If we get here, something went wrong
+            LOGGER.log(Level.SEVERE, String.format("Failed to create user account for: %s", email));
+            setSignUpAttributes(request, "Sign up failed! Please try again.", email, fullName, address, phoneNumber);
+            forwardToSignUp(request, response);
+            
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error during user registration", e);
+            setSignUpAttributes(request, "An error occurred during registration. Please try again.", 
+                    email, fullName, address, phoneNumber);
+            forwardToSignUp(request, response);
         }
-        // If any error, always forward to sign up page
-        RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/signUp.jsp");
-        rs.forward(request, response);
     }
 
-    // Helper method to set all sign up attributes
-    private void setSignUpAttributes(HttpServletRequest request, String error, String email, String fullName, String address, String phoneNumber, String password, String confirmPassword) {
+    private String validateSignUpInput(String email, String fullName, String address,
+            String phoneNumber, String password, String confirmPassword) {
+        if (Validator.isNullOrEmpty(email)) {
+            return "Email is required!";
+        }
+        if (!Validator.isValidEmail(email)) {
+            return "Invalid email format!";
+        }
+        if (Validator.isNullOrEmpty(fullName)) {
+            return "Full name is required!";
+        }
+        if (Validator.isNullOrEmpty(address)) {
+            return "Address is required!";
+        }
+        if (Validator.isNullOrEmpty(phoneNumber)) {
+            return "Phone number is required!";
+        }
+        if (!Validator.isValidPhoneNumber(phoneNumber)) {
+            return "Invalid phone number format!";
+        }
+        if (Validator.isNullOrEmpty(password)) {
+            return "Password is required!";
+        }
+        if (Validator.isNullOrEmpty(confirmPassword)) {
+            return "Confirm password is required!";
+        }
+        if (!password.equals(confirmPassword)) {
+            return "Passwords do not match!";
+        }
+        return null;
+    }
+
+    private void setSignUpAttributes(HttpServletRequest request, String error, 
+            String email, String fullName, String address, String phoneNumber) {
         request.setAttribute("error", error);
         request.setAttribute("email", email);
         request.setAttribute("fullName", fullName);
         request.setAttribute("address", address);
         request.setAttribute("phoneNumber", phoneNumber);
-        request.setAttribute("password", password);
-        request.setAttribute("confirmPassword", confirmPassword);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+    private void forwardToSignUp(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/signUp.jsp");
+        rs.forward(request, response);
+    }
+
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "SignUp Servlet - Handles customer registration";
+    }
 }

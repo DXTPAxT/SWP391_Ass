@@ -1,11 +1,11 @@
 <%-- 
-    Document   : insertProduct
+    Document   : insertCategory
     Created on : May 28, 2025, 9:48:28 PM
     Author     : Admin
 --%>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+<%@page contentType="text/html" pageEncoding="windows-1252"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
@@ -25,7 +25,6 @@
         <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages//plugins/datatables/dataTables.bootstrap.css">
         <!-- Theme style -->
         <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages//dist/css/AdminLTE.min.css">
-        <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages//dist/css/custom.css">
         <!-- AdminLTE Skins. Choose a skin from the css/skins
              folder instead of downloading all of them to reduce the load. -->
         <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages//dist/css/skins/_all-skins.min.css">
@@ -50,127 +49,88 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        User Tables
-                        <small>advanced tables</small>
+                        Warranty Detail Tables
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Tables</a></li>
-                        <li class="active">User tables</li>
+                        <li><a href="#">Warranty Detail</a></li>
+                        <li class="active">view Warranty Detail</li>
                     </ol>
                 </section>
+
                 <!-- Main content -->
                 <section class="content">
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="box">
+
                                 <!-- /.box-header -->
                                 <div class="box-body">
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>User ID</th>
-                                                <th>Full Name</th>
-                                                <th>Email</th>
-                                                <th>Phone number</th>
-                                                <th>Address</th>
-                                                <th>Role</th>
-                                                <th>Created At</th>
+                                                <th>Warranty Detail ID</th>
+                                                <th>Component</th>
+                                                <th>Brand</th>
+                                                <th>Warranty Period (months)</th>
+                                                <th>Description</th>                                                
+                                                <th>Price</th>
                                                 <th>Status</th>
-                                                <th>Action</th>
+                                                <th>Update</th> 
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:if test="${not empty users}">
-                                                <c:forEach var="user" items="${users}">
+                                            <c:if test="${not empty requestScope.warrantyDetails}">
+                                                <c:forEach var="warranty" items="${requestScope.warrantyDetails}">
                                                     <tr>
-                                                        <td>${user.userID}</td>
-                                                        <td>${user.fullname}</td>
-                                                        <td>${user.email}</td>
-                                                        <td>${user.phoneNumber}</td>
-                                                        <td>${user.address}</td>
-                                                        <td>${roleMap[user.roleID]}</td>
-                                                        <td>
-                                                            <fmt:parseDate value="${user.createdAt}" pattern="yyyy-MM-dd HH:mm:ss" var="createdDate"/>
-                                                            <fmt:formatDate value="${createdDate}" pattern="yyyy-MM-dd"/>
+
+                                                        <td>${warranty.warrantyDetailID}</td>     
+                                                        <td>${warranty.componentName}</td>
+                                                        <td>${warranty.brandName}</td>
+                                                        <td>${warranty.warrantyPeriod}</td>
+                                                        <td class="text-wrap" style="word-break: break-word; max-width: 300px;">
+                                                            ${warranty.description}
                                                         </td>
+                                                        <td>${warranty.price}</td>
                                                         <td>
                                                             <c:choose>
-                                                                <c:when test="${user.status == 1}">
+                                                                <c:when test="${warranty.status == 1}">
                                                                     <span class="label label-success">Active</span>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    <span class="label label-warning">Inactive</span>
+                                                                    <span class="label label-danger">Inactive</span>
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </td>
                                                         <td>
-                                                            <a href="${ctx}/Admin/user/update?userID=${user.userID}" class="btn btn-primary btn-sm">Update</a>
-                                                            <a href="${ctx}/User?service=resetPassword&userID=${user.userID}"
-                                                               onclick="return confirm(`Reset user's password?`);"
-                                                               class="btn btn-danger btn-sm">Reset Password</a>
+                                                            <a href="WDA?service=update&warrantyDetailID=${warranty.warrantyDetailID}" 
+                                                               class="btn btn-warning btn-sm">
+                                                                Update
+                                                            </a>
                                                         </td>
                                                     </tr>
                                                 </c:forEach>
-                                            </c:if>
-                                            <c:if test="${empty users}">
-                                                <tr>
-                                                    <td colspan="9" style="text-align:center;">No User.</td>
-                                                </tr>
                                             </c:if>
                                         </tbody>
                                     </table>
                                 </div>
 
                             </div>
+                            <!-- /.box-body -->
                         </div>
                     </div>
+
                     <!-- /.box-body -->
             </div>
             <!-- /.box -->
 
             <!-- /.content-wrapper -->
             <jsp:include page="../../components/footer.jsp" />
-
             <jsp:include page="../../components/control-sidebar.jsp" />
+            <!-- Add the sidebar's background. This div must be placed
+                 immediately after the control sidebar -->
+            <div class="control-sidebar-bg"></div>
         </div>
-
-        <!-- Toast Container -->
-        <div id="toastContainer" style="
-             position: fixed;
-             top: 20px;
-             right: 20px;
-             z-index: 9999;
-             min-width: 250px;
-             ">
-        </div>
-
-        <!-- Toast style -->
-        <style>
-            .custom-toast {
-                min-width: 250px;
-                padding: 12px 20px;
-                margin-bottom: 12px;
-                border-radius: 6px;
-                color: white;
-                font-weight: bold;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-                opacity: 1;
-                transition: opacity 0.5s ease;
-            }
-
-            .custom-toast.success {
-                background-color: #28a745;
-            }
-            .custom-toast.error {
-                background-color: #dc3545;
-            }
-            .custom-toast.warning {
-                background-color: #ffc107;
-                color: #333;
-            }
-        </style>
-
         <!-- ./wrapper -->
 
         <!-- jQuery 2.2.3 -->
@@ -189,34 +149,6 @@
         <!-- AdminLTE for demo purposes -->
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- page script -->
-
-        <script>
-                                                                   function showToast(message, toastType) {
-                                                                       const toast = document.createElement('div');
-                                                                       toast.className = `custom-toast ${toastType}`;
-                                                                       toast.textContent = message;
-                                                                       console.log("Toast type:", toastType);
-                                                                       document.getElementById('toastContainer').appendChild(toast);
-
-                                                                       setTimeout(() => {
-                                                                           toast.style.opacity = '0';
-                                                                           setTimeout(() => toast.remove(), 500);
-                                                                       }, 3000);
-                                                                   }
-        </script>
-
-
-        <script>
-            window.addEventListener('DOMContentLoaded', function () {
-                const alertBox = document.getElementById("alertBox");
-                if (alertBox) {
-                    setTimeout(function () {
-                        // Bootstrap 3: use jQuery .alert('close')
-                        $(alertBox).alert('close');
-                    }, 5000); // Tự biến mất sau 4 giây
-                }
-            });
-        </script>
         <script>
             $(function () {
                 $("#example1").DataTable();
@@ -236,24 +168,5 @@
             });
         </script>
     </body>
-    <c:if test="${not empty toast}">
-        <script>
-            showToast("${toast}", "${toastType}");
-        </script>
-    </c:if>
-    <%
-        String toast = (String) session.getAttribute("toast");
-        String toastType = (String) session.getAttribute("toastType");
-        if (toast != null) {
-            // Xoá sau khi hiển thị
-            session.removeAttribute("toast");
-            session.removeAttribute("toastType");
-        }
-    %>
-
-
-
-
-
 </html>
 
