@@ -2,6 +2,7 @@
 <%@ page import="models.Blog_Cate" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+
 <html>
     <head>
         <title>Add blogs</title>
@@ -33,49 +34,45 @@
                 <input type="hidden" name="action" value="create" />
                 <input type="hidden" name="csrf_token" value="${sessionScope.csrfToken}" />
                 <div class="form-group">
-                    <label for="title">Title:</label>
+                    <label>Title</label>
                     <input type="text" class="form-control" id="title" name="title" required maxlength="200" />
-                    <small class="error-message" id="title-error"></small>
+                    
                 </div>
                 <div class="form-group">
-                    <label for="author">Author:</label>
+                    <label>Author</label>
                     <input type="text" class="form-control" id="author" name="author" required maxlength="100" />
-                    <small class="error-message" id="author-error"></small>
+                    
                 </div>
-                <div>
-                    <label for="content" >Content:</label>
+                
+                <div class="form-group">
+                    <label>Content</label>
+                    <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
+                    
+                </div>
+                <div class="form-group">
+                    <label>Thumbnail</label>
+                    <input type="file" class="form-control-file" id="thumbnail" name="thumbnail" accept="image/*" />
+                    <small class="form-text text-muted">Chọn file ảnh (jpg, png, gif).</small>
+                    
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="bc_id" id="bc_id" class="form-select" aria-label="Select category" required>
+                        <option value="" disabled selected>Choose Category</option>
+                        <c:forEach var="cat" items="${blog_categories}">
+                            <option value="${cat.bc_id}">${cat.bc_name}</option>
+                        </c:forEach>
+                    </select>
+                    
                 </div>
 
                 <div class="form-group">
-                    <label for="content">Content:</label>
-                    <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
-                    <small class="error-message" id="content-error"></small>
-                </div>
-                <div class="form-group">
-                    <label for="thumbnail">Thumbnail:</label>
-                    <input type="file" class="form-control-file" id="thumbnail" name="thumbnail" accept="image/*" />
-                    <small class="form-text text-muted">Chọn file ảnh (jpg, png, gif).</small>
-                    <small class="error-message" id="thumbnail-error"></small>
-                </div>
-                <div class="form-group">
-                    <label for="bc_id">Category:</label>
-                    <select class="form-control" id="bc_id" name="bc_id" required>
-                        <option value="">Choose Category</option>
-                        <c:forEach var="cat" items="${blog_categories}">
-                            <li>
-                                <a href="blogc?Bc_id=${cat.bc_id}" style="color: black;">${cat.bc_name}</a>
-                            </li>
-                        </c:forEach>
-                    </select>
-                    <small class="error-message" id="bc_id-error"></small>
-                </div>
-                <div class="form-group">
-                    <label for="brief">Brief:</label>
+                    <label>Brief</label>
                     <input type="text" class="form-control" id="brief" name="brief" required maxlength="500" />
-                    <small class="error-message" id="brief-error"></small>
+                   
                 </div>
                 <div class="form-group">
-                    <label for="add_id">Author_Id:</label>
+                    <label>Author_Id</label>
                     <input type="number" class="form-control" id="add_id" name="add_id" value="${sessionScope.user.id}" required readonly />
                     <small class="form-text text-muted">ID của admin đăng nhập.</small>
                 </div>
@@ -129,4 +126,4 @@
             }
         </script>
     </body>
-</html>
+</html> 

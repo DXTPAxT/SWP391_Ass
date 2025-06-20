@@ -118,7 +118,7 @@
                         <div class="col-sm-3">
                             <div class="search_box pull-right">
                                 <form action="blogc" method="get">
-                                    <input type="text" name="search" value="${searchKeyword}" placeholder="Search" />
+                                    <input type="text" name="search" value="${searchKeyword}" placeholder="Search by title, content, or category..." />
                                 </form>
                             </div>
                         </div>

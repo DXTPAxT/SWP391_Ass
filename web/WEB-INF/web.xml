@@ -102,10 +102,6 @@
         <servlet-class>controllerAdmin.UpdateUserServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>BlogDeleteServlet</servlet-name>
-        <servlet-class>controllerAdmin.BlogDeleteServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>BlogUpdateServlet</servlet-name>
         <servlet-class>controllerAdmin.BlogUpdateServlet</servlet-class>
     </servlet>
@@ -224,10 +220,6 @@
     <servlet-mapping>
         <servlet-name>UpdateUserServlet</servlet-name>
         <url-pattern>/Admin/user/update</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>BlogDeleteServlet</servlet-name>
-        <url-pattern>/blogdelete</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>BlogUpdateServlet</servlet-name>
