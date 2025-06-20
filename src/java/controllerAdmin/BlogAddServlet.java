@@ -63,39 +63,16 @@ public class BlogAddServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       
-        String Bc_id_raw = request.getParameter("Bc_id");
-        String Post_id_raw = request.getParameter("Post_id");
-        String Title = request.getParameter("Title");
-        String Author = request.getParameter("Author");
-        String Updated_date = request.getParameter("Updated_date");
-        String Content = request.getParameter("Content");
-        String Thumbnail = request.getParameter("Thumbnail");
-        String Brief = request.getParameter("Brief");
-        String Add_id_raw = request.getParameter("Add_id");
-        
-        int Post_id;
-        int Bc_id;
-        int Add_id;
-        Blog_CateDAO bcd = new Blog_CateDAO();
-        
-        try {
-            Post_id = Integer.parseInt(Post_id_raw);
-            Bc_id = Integer.parseInt(Bc_id_raw);
-            Add_id = Integer.parseInt(Add_id_raw);
-            Post c = bcd.getPostById(Post_id);
-            if (c == null) {
-                Post cNew = new Post(Post_id, Title, Author, Timestamp.valueOf(Updated_date + " 00:00:00"), Content, Bc_id, Thumbnail, Brief, Add_id);
 
-                bcd.insertPost(cNew);
-                response.sendRedirect("listpo");
-            } else {
-                request.setAttribute("error", Post_id + "exitsed");
-                request.getRequestDispatcher("AdminLTE/AdminPages/post-create.jsp").forward(request, response);
-            }
-        } catch (NumberFormatException e) {
-            System.out.println(e);
-        }
+        
+            
+                // Lấy danh sách danh mục để đổ vào form
+        Blog_CateDAO dao = new Blog_CateDAO();
+        List<Blog_Cate> blog_categories = dao.getAllBlogCategory();
+        request.setAttribute("blog_categories", blog_categories);
+
+        // Hiển thị form thêm blog
+        request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/insertBlog.jsp").forward(request, response);
     }
 
     /**
@@ -109,7 +86,38 @@ public class BlogAddServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+try {
+            request.setCharacterEncoding("UTF-8"); // Đảm bảo tiếng Việt
 
+            String Post_id_raw = request.getParameter("Post_id");
+            String Title = request.getParameter("Title");
+            String Author = request.getParameter("Author");
+            String Updated_date = request.getParameter("Updated_date");
+            String Content = request.getParameter("Content");
+            String Thumbnail = request.getParameter("Thumbnail");
+            String Bc_id_raw = request.getParameter("Bc_id");
+            String Brief = request.getParameter("Brief");
+            String Add_id_raw = request.getParameter("Add_id");
+
+            int Post_id = Integer.parseInt(Post_id_raw);
+            int Bc_id = Integer.parseInt(Bc_id_raw);
+            int Add_id = Integer.parseInt(Add_id_raw);
+
+            Timestamp updateTime = Timestamp.valueOf(Updated_date + " 00:00:00");
+
+            Post newPost = new Post(Post_id, Title, Author, updateTime, Content, Bc_id, Thumbnail, Brief, Add_id);
+
+            Blog_CateDAO dao = new Blog_CateDAO();
+            dao.insertPost(newPost);
+
+            // Chuyển hướng sau khi thêm thành công
+            response.sendRedirect(request.getContextPath() + "/bloglist"); // hoặc thay bằng danh sách bài viết
+
+        } catch (Exception e) {
+            // Xử lý lỗi
+            request.setAttribute("error", "Lỗi thêm blog: " + e.getMessage());
+            request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/insertBlog.jsp").forward(request, response);
+        }
     }
 
     /**

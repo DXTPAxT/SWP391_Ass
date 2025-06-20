@@ -128,30 +128,30 @@
                 text-decoration: underline;
             }
             .blog-list {
-    display: grid;
-    grid-template-rows: repeat(5, auto);
-    row-gap: 12px;
-    margin-top: 10px;
-}
+                display: grid;
+                grid-template-rows: repeat(5, auto);
+                row-gap: 12px;
+                margin-top: 10px;
+            }
 
-.blog-card {
-    padding: 14px;
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-.blog-card a {
-    font-family: 'Arial', sans-serif;
-    font-size: 13px;
-    font-weight: normal;
-    text-decoration: none;
-    color: #000;
-    display: block;
-}
+            .blog-card {
+                padding: 14px;
+                background-color: #f0f0f0;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+            .blog-card a {
+                font-family: 'Arial', sans-serif;
+                font-size: 13px;
+                font-weight: normal;
+                text-decoration: none;
+                color: #000;
+                display: block;
+            }
 
         </style>
-        
+
     </head>
     <body>
         <jsp:include page="/ShopPages/Pages/components/header.jsp">
@@ -174,25 +174,28 @@
                                     </c:forEach>
 
                                 </ul>
-                                <h2 style="padding-top: 20px">Top 5 New Blogs</h2>
-                            <ul>
-                                <div class="blog-list">
-                                <c:forEach items="${top5Posts}" var="p">
-                                   
-                                    <li>
-                                        <div class="blog-card">
-                                        <a <a href="blogdetail?Post_id=${p.post_id}" style="color: black">
->
-                                            ${p.title} - <fmt:formatDate value="${p.updated_date}" pattern="dd/MM/yyyy"/>
-                                        </a>
-                                        </div>
-                                    </li>
-                                    
-                                </c:forEach>
-                                </div>
-                            </ul>
+                                <h2 style="padding-top: 20px">Latest Blogs</h2>
+                                <ul>
+                                    <div class="blog-list">
+                                        <c:forEach items="${top5Posts}" var="p">
+
+                                            <li>
+                                                <div class="blog-card">
+                                                    <a <a href="blogdetail?Post_id=${p.post_id}" style="color: black">
+                                                        >
+                                                        ${p.title} - <fmt:formatDate value="${p.updated_date}" pattern="dd/MM/yyyy"/>
+                                                    </a>
+                                                </div>
+                                            </li>
+
+                                        </c:forEach>
+
+                                        <a href="blogc" class="btn btn-primary">VIEW ALL BLOGS</a>
+
+                                    </div>
+                                </ul>
                             </div>
-                           
+
 
                         </div>
                     </div>
@@ -233,26 +236,33 @@
                             <!-- Comments Section -->
                             <div class="comments-section">
                                 <h3>Comments</h3>
+
                                 <c:forEach var="comment" items="${comments}">
                                     <div class="comment">
                                         <div class="comment-meta">
-                                            <strong>${comment.author}</strong> on ${comment.created_date}
+                                            <strong>User ID: ${comment.UserID}</strong> on ${comment.CreatedAt}
                                         </div>
-                                        <div class="comment-content">${comment.content}</div>
+                                        <div class="comment-content">
+                                            ${comment.CommentText}
+                                        </div>
                                     </div>
                                 </c:forEach>
 
                                 <!-- Comment Form -->
                                 <div class="comment-form">
                                     <h3>Add a Comment</h3>
-                                    <form action="${ctx}/comment" method="post">
-                                        <input type="hidden" name="Post_id" value="${post.post_id}">
-                                        <input type="text" name="author" placeholder="Your Name" required>
-                                        <textarea name="content" placeholder="Your Comment" rows="4" required></textarea>
+                                    <form action="blogdetail" method="post">
+                                        <input type="hidden" name="Post_id" value="${post.post_id}" />
+
+                                        <%-- Nếu có login user, không cần nhập tên --%>
+                                        <%-- <input type="text" name="author" placeholder="Your Name" required> --%>
+
+                                        <textarea name="comment_text" placeholder="Your Comment" rows="4" required></textarea>
                                         <button type="submit">Submit Comment</button>
                                     </form>
                                 </div>
                             </div>
+
 
                             <a href="${ctx}/blogc" class="back-link">Back to Blog List</a>
                         </div>
