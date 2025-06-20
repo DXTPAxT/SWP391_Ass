@@ -5,8 +5,6 @@
 package controller;
 
 import dal.UserDAO;
-import dal.RoleDAO;
-import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,13 +13,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.User;
-import models.Role;
 import utils.MailUtils;
 import utils.PasswordUtils;
 
@@ -53,6 +47,7 @@ public class UserServlet extends HttpServlet {
         UserDAO userDAO = new UserDAO();
 
         String service = request.getParameter("service");
+
         if ("resetPassword".equals(service)) {
             int userID = Integer.parseInt(request.getParameter("userID"));
             String roleID = request.getParameter("roleID");
@@ -78,10 +73,16 @@ public class UserServlet extends HttpServlet {
                 request.setAttribute("toast", "User not found!");
                 request.setAttribute("toastType", "error");
             }
-            if ("3".equals(roleID)) {
+            if ("1".equals(roleID)) {
+                response.sendRedirect("Admin/user?type=admin");
+            } else if ("2".equals(roleID)) {
+                response.sendRedirect("Admin/user?type=sale");
+            } else if ("3".equals(roleID)) {
                 response.sendRedirect("Admin/user?type=customer");
+            } else if ("4".equals(roleID)) {
+                response.sendRedirect("Admin/user?type=shipper");
             } else {
-                response.sendRedirect("Admin/user?type=staff");
+                response.sendRedirect("Login");
             }
         } else if ("toggleStatus".equals(service)) {
             int userID = Integer.parseInt(request.getParameter("userID"));
@@ -105,8 +106,10 @@ public class UserServlet extends HttpServlet {
             } else {
                 response.sendRedirect(request.getContextPath() + "/ShopPages/Pages/login.jsp");
             }
+        } else if ("forgotPassword".equals(service)) {
+            request.getRequestDispatcher("/ShopPages/Pages/forgotPassword.jsp").forward(request, response);
         } else {
-            response.sendRedirect("Admin/user?type=customer");
+            response.sendRedirect("Homepages");
         }
     }
 
@@ -169,19 +172,19 @@ public class UserServlet extends HttpServlet {
                 }
                 switch (roleID) {
                     case "1":
-                    response.sendRedirect("Admin/user?type=admin");
-                    break;
+                        response.sendRedirect("Admin/user?type=admin");
+                        break;
                     case "2":
-                    response.sendRedirect("Admin/user?type=sale");
-                    break;
+                        response.sendRedirect("Admin/user?type=sale");
+                        break;
                     case "3":
-                    response.sendRedirect("Admin/user?type=customer");
-                    break;
+                        response.sendRedirect("Admin/user?type=customer");
+                        break;
                     case "4":
-                    response.sendRedirect("Admin/user?type=shipper");
-                    break;
+                        response.sendRedirect("Admin/user?type=shipper");
+                        break;
                     default:
-                    response.sendRedirect("Admin/user?type=admin");
+                        response.sendRedirect("Admin/user?type=admin");
                 }
             }
         } else if ("updateProfile".equals(service)) {
@@ -244,6 +247,26 @@ public class UserServlet extends HttpServlet {
                 } catch (SQLException ex) {
                     Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }
+        } else if (service == "sendResetLink") {
+            String email = request.getParameter("email");
+            UserDAO dao = new UserDAO();
+            boolean isExisted = dao.isEmailExist(email);
+            String error = "";
+            if (isExisted) {
+                User user = dao.getUserByEmail(email);
+                String otp = "123456";
+                boolean mailSent = MailUtils.send(user.getEmail(),
+                        "Your password has been reset",
+                        "Your OTP is: " + otp);
+                if (mailSent) {
+                    request.getRequestDispatcher("/ShopPages/Pages/myAccount.jsp").forward(request, response);
+                } else {
+                    request.setAttribute("toast", "Reset password failed to send email!");
+                    request.setAttribute("toastType", "warning");
+                }
+            } else {
+
             }
         }
     }

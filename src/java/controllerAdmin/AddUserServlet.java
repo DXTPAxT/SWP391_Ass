@@ -105,9 +105,9 @@ public class AddUserServlet extends HttpServlet {
             error = "Invalid phone number!";
         } else if (userDao.isPhoneNumberExisted(phoneNumber)) {
             error = "Phone number existed!";
-        } else if (utils.Validator.isNullOrEmpty(address)) {
+        } else if (utils.Validator.isNullOrEmpty(address) && roleID == "3") {
             error = "Address is required!";
-        } else if (!("admin".equalsIgnoreCase(roleID) || "staff".equalsIgnoreCase(roleID) || "1".equals(roleID) || "2".equals(roleID))) {
+        } else if (roleID == "3") {
             error = "Only Admin and Staff accounts can be added!";
         }
 
