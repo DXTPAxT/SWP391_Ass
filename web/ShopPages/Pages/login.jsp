@@ -55,12 +55,6 @@
                                 <c:if test="${error == 'Password is required!' || error == 'Incorrect password!'}">
                                     <p class="text-danger error-message">${error}</p>
                                 </c:if>
-<!--                                <div class="d-flex justify-content-between align-items-center">
-                                    <span>
-                                        <input type="checkbox" class="checkbox"> 
-                                        Keep me signed in
-                                    </span>
-                                </div>-->
                                 <div class="d-flex justify-content-between align-items-end">
                                     <a href="${ctx}/User?service=forgotPassword" class="forgot-password-link">Forgot Password?</a>
                                 </div>

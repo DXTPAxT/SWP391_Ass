@@ -8,6 +8,7 @@
     <title>Forgot Password | E-Shopper</title>
     <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/main.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/custom.css" rel="stylesheet">
     <style>
         .forgot-container {
             display: flex;
@@ -80,16 +81,13 @@
             <h2>Forgot Password</h2>
             <form action="User" method="POST">
                 <label for="email" class="form">Enter your email address</label>
-                <input type="hidden" name="service" value="sendResetLink"/>
-                <input type="email" id="email" name="email" class="form-control" required placeholder="Email address"/>
+                <input type="hidden" name="service" value="sendOTP"/>
+                <input type="email" id="email" name="email" class="form-control ${error == null ? '' : 'is-invalid'}" required placeholder="Email address" value="${email}"/>
                 <c:if test="${not empty error}">
                     <div class="alert alert-danger">${error}</div>
                 </c:if>
-                <c:if test="${not empty message}">
-                    <div class="alert alert-success">${message}</div>
-                </c:if>
                 <div class="custom-between mt-3">
-                    <button type="submit" class="btn-modern">Send Reset Link</button>
+                    <button type="submit" class="btn-modern">Send OTP</button>
                     <a href="Login">Back to Login</a>
                 </div>
             </form>
