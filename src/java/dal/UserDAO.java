@@ -303,6 +303,18 @@ public class UserDAO extends DBContext {
         }
     }
 
+    public boolean updatePasswordByEmail(String email, String hashedPassword) {
+        String sql = "UPDATE Users SET PasswordHash = ? WHERE Email = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, hashedPassword);
+            ps.setString(2, email);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error updating password by email", e);
+        }
+        return false;
+    }
+
     // Toggle user's status (activate/deactivate)
     public boolean toggleStatus(int userId) {
         String sql = "UPDATE Users SET Status = CASE WHEN Status = 1 THEN 0 ELSE 1 END WHERE UserID = ?";
@@ -379,5 +391,9 @@ public class UserDAO extends DBContext {
             LOGGER.log(Level.SEVERE, "Error testing database connection", e);
             return false;
         }
+    }
+    
+    public static void main(String[] args) {
+        
     }
 }
