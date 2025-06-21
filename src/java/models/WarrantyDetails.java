@@ -4,6 +4,7 @@ public class WarrantyDetails {
 
     private int WarrantyDetailID;
     private int WarrantyID;
+    private Warranties warranty;
     private int WarrantyPeriod;
     private String Description;
     private int BrandComID;
@@ -13,6 +14,19 @@ public class WarrantyDetails {
     private int status;
 
     public WarrantyDetails() {
+    }
+
+    public WarrantyDetails(int WarrantyDetailID, int WarrantyID, Warranties warranty, int WarrantyPeriod, String Description, int BrandComID, String BrandName, String ComponentName, int price, int status) {
+        this.WarrantyDetailID = WarrantyDetailID;
+        this.WarrantyID = WarrantyID;
+        this.warranty = warranty;
+        this.WarrantyPeriod = WarrantyPeriod;
+        this.Description = Description;
+        this.BrandComID = BrandComID;
+        this.BrandName = BrandName;
+        this.ComponentName = ComponentName;
+        this.price = price;
+        this.status = status;
     }
 
     public WarrantyDetails(int WarrantyDetailID, int WarrantyID, int WarrantyPeriod, String Description, int BrandComID, String BrandName, String ComponentName, int price, int status) {
@@ -78,6 +92,14 @@ public class WarrantyDetails {
         this.BrandComID = BrandComID;
         this.price = price;
         this.status = status;
+    }
+
+    public Warranties getWarranty() {
+        return warranty;
+    }
+
+    public void setWarranty(Warranties warranty) {
+        this.warranty = warranty;
     }
 
     public String getBrandName() {
