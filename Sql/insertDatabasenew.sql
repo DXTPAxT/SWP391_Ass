@@ -1484,3 +1484,14 @@ VALUES (1, 3, 'Very informative post, thank you!');
 
  INSERT INTO Users (RoleID, FullName, Email, PhoneNumber,  PasswordHash, CreatedAt, Status)
 VALUES (3, 'LinhNV', 'customer@example.com', '0912345678', 'hashedpassword3', GETDATE(), 1);
+
+
+INSERT INTO Build_PC ( Status) VALUES ( 1);
+INSERT INTO Build_PC_Items (BuildPCItemID, BuildPCID, CategoryID, WarrantyDetailID, Price)
+VALUES
+(7, 2, 7, 2, 2100),  -- MainBoard
+(8, 2, 8, 2, 3050),  -- CPU
+(9, 2, 9, 2, 7050),  -- GPU
+(10, 2, 10, 2, 1550), -- RAM
+(11, 2, 11, 2, 2250), -- SSD
+(12, 2, 12, 2, 1050); -- CASE

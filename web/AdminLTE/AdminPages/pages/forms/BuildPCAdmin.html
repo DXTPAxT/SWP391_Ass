@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>AdminLTE 2 | Build PC - Create</title>
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+        <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+        <link rel="stylesheet" href="../../dist/css/AdminLTE.min.css">
+        <link rel="stylesheet" href="../../dist/css/skins/_all-skins.min.css">
+        <style>
+            .component-block {
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                padding: 15px;
+                margin-bottom: 20px;
+                background: #f9f9f9;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .component-image {
+                width: 100px;
+                height: 100px;
+                margin-right: 15px;
+            }
+            .d-flex {
+                display: flex;
+                align-items: center;
+            }
+            .component-meta, .component-price {
+                margin-top: 5px;
+            }
+        </style>
+    </head>
+
+    <body class="hold-transition skin-blue sidebar-mini">
+        <div class="wrapper">
+
+
+            <!-- HEADER -->
+            <header class="main-header">
+                <!-- Logo -->
+                <a href="${ctx}/AdminDashbordServlet" class="logo">
+                    <span class="logo-mini"><b>A</b>LT</span>
+                    <span class="logo-lg"><b>Admin</b>LTE</span>
+                </a>
+                <!-- Navbar -->
+                <nav class="navbar navbar-static-top">
+                    <button class="sidebar-toggle" data-toggle="offcanvas" aria-label="Toggle navigation">
+                        <span class="sr-only">Toggle navigation</span>
+                    </button>
+                    <div class="navbar-custom-menu">
+                        <ul class="nav navbar-nav">
+                            <!-- Messages -->
+                            <li class="dropdown messages-menu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-envelope-o"></i>
+                                    <span class="label label-success">4</span>
+                                </a>
+                                <!-- Message Dropdown Here -->
+                            </li>
+                            <!-- Notifications -->
+                            <li class="dropdown notifications-menu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-bell-o"></i>
+                                    <span class="label label-warning">10</span>
+                                </a>
+                                <!-- Notifications Dropdown Here -->
+                            </li>
+                            <!-- Tasks -->
+                            <li class="dropdown tasks-menu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-flag-o"></i>
+                                    <span class="label label-danger">9</span>
+                                </a>
+                                <!-- Tasks Dropdown Here -->
+                            </li>
+                            <!-- User Account -->
+                            <li class="dropdown user user-menu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <img src="${ctx}/AdminLTE/dist/img/user2-160x160.jpg" class="user-image" alt="User">
+                                    <span class="hidden-xs">Alexander Pierce</span>
+                                </a>
+                                <!-- User Menu Dropdown Here -->
+                            </li>
+                            <!-- Settings -->
+                            <li>
+                                <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </header>
+            <!-- SIDEBAR -->
+            <aside class="main-sidebar">
+                <section class="sidebar">
+                    <div class="user-panel">
+                        <div class="pull-left image">
+                            <img src="/ComputerOnlineShop/AdminLTE/AdminPages/dist/img/user2-160x160.jpg" class="img-circle" alt="User">
+                        </div>
+                        <div class="pull-left info">
+                            <p>Alexander Pierce</p>
+                            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                        </div>
+                    </div>
+                    <form action="#" method="get" class="sidebar-form">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control" placeholder="Search...">
+                            <span class="input-group-btn">
+                                <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </form>
+                    <ul class="sidebar-menu">
+                        <li class="header">MAIN NAVIGATION</li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Brand</span>
+                                <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="/ComputerOnlineShop/BrandAdmin"><i class="fa fa-circle-o"></i>View Brand</a></li>
+                                <li><a href="/ComputerOnlineShop/BrandAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Brand</a></li>
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Component</span>
+                                <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="/ComputerOnlineShop/ComAdmin"><i class="fa fa-circle-o"></i>View Component</a></li>
+                                <li><a href="/ComputerOnlineShop/ComAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Component</a></li>
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>BraCom</span>
+                                <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="/ComputerOnlineShop/BrandComAdmin"><i class="fa fa-circle-o"></i>View Bra-Com</a></li>
+                                <li><a href="/ComputerOnlineShop/BrandComAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Brand-Com</a></li>
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Category</span>
+                                <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="/ComputerOnlineShop/CateAdmin"><i class="fa fa-circle-o"></i>View Category</a></li>
+                                <li><a href="/ComputerOnlineShop/CateAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Category</a></li>
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Import</span>
+                                <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="/ComputerOnlineShop/Import"><i class="fa fa-circle-o"></i>View Import</a></li>
+                                <li><a href="/ComputerOnlineShop/Import?service=insert"><i class="fa fa-circle-o"></i>Insert new Import</a></li>
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Product</span>
+                                <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="/ComputerOnlineShop/ProductAdmin"><i class="fa fa-circle-o"></i>View Product</a></li>
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Warranty</span>
+                                <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="/ComputerOnlineShop/WarrantyAdmin"><i class="fa fa-circle-o"></i>View Warranty</a></li>
+                                <li><a href="/ComputerOnlineShop/WarrantyAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert Warranty</a></li>
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Warranty Detail</span>
+                                <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="/ComputerOnlineShop/WDA"><i class="fa fa-circle-o"></i>View Warranty Detail</a></li>
+                                <li><a href="/ComputerOnlineShop/WDA?service=insert"><i class="fa fa-circle-o"></i>Insert Warranty Detail</a></li>
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Order</span>
+                                <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="/ComputerOnlineShop/OrderAdmin"><i class="fa fa-circle-o"></i>View Order</a></li>
+                                <li><a href="/ComputerOnlineShop/OrderAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Order</a></li>
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Feedback</span>
+                                <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="/ComputerOnlineShop/FeedBackAdmin"><i class="fa fa-circle-o"></i>View Feedback</a></li>
+                                <li><a href="/ComputerOnlineShop/FeedBackAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Feedback</a></li>
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>Blogs</span>
+                                <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="/ComputerOnlineShop/bloga"><i class="fa fa-circle-o"></i>View Blog</a></li>
+                                <li><a href="/ComputerOnlineShop/BlogAdmin&service=insert"><i class="fa fa-circle-o"></i>Insert new Blog</a></li>
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-users"></i> <span>User Management</span>
+                                <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="/ComputerOnlineShop/Admin/user?type=admin"><i class="fa fa-circle-o"></i>View Admins</a></li>
+                                <li><a href="/ComputerOnlineShop/Admin/user?type=customer"><i class="fa fa-circle-o"></i>View Customers</a></li>
+                                <li><a href="/ComputerOnlineShop/Admin/user?type=sale"><i class="fa fa-circle-o"></i>View Sales</a></li>
+                                <li><a href="/ComputerOnlineShop/Admin/user?type=shipper"><i class="fa fa-circle-o"></i>View Shippers</a></li>
+                                <li><a href="/ComputerOnlineShop/Admin/user/add"><i class="fa fa-circle-o"></i>Create new user</a></li>
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-laptop"></i> <span>BuildPC</span>
+                                <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="/ComputerOnlineShop/BuildPC_AdminView"><i class="fa fa-circle-o"></i> View PC</a></li>
+                                <li><a href="/ComputerOnlineShop/AdminLTE/AdminPages/pages/forms/BuildPCAdmin.html"><i class="fa fa-circle-o"></i>Create new PC</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+            </aside>
+
+            <!-- CONTENT -->
+            <div class="content-wrapper">
+                <section class="content-header">
+                    <h1 class="text-center">Build Your PC</h1>
+                </section>
+                <section class="content">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <!-- MainBoard -->
+                                <div class="component-block" id="component-2">
+                                    <div class="d-flex align-items-center">
+                                        <img id="img-2" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" alt="MainBoard" class="component-image">
+                                        <div>
+                                            <strong>MainBoard</strong>
+                                            <div id="meta-2" class="component-meta"></div>
+                                            <div id="price-2" class="component-price"></div>
+                                            <button id="remove-2" class="btn btn-sm btn-danger mt-2" style="display:none;" onclick="removeComponent(2)">Remove</button>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-sm btn-primary" onclick="openModal(2, 'MainBoard')">Choose</button>
+                                </div>
+
+                                <!-- CPU -->
+                                <div class="component-block" id="component-3">
+                                    <div class="d-flex align-items-center">
+                                        <img id="img-3" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" alt="CPU" class="component-image">
+                                        <div>
+                                            <strong>CPU</strong>
+                                            <div id="meta-3" class="component-meta"></div>
+                                            <div id="price-3" class="component-price"></div>
+                                            <button id="remove-3" class="btn btn-sm btn-danger mt-3" style="display:none;" onclick="removeComponent(3)">Remove</button>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-sm btn-primary" onclick="openModal(3, 'CPU')">Choose</button>
+                                </div>
+
+                                <!-- GPU -->
+                                <div class="component-block" id="component-4">
+                                    <div class="d-flex align-items-center">
+                                        <img id="img-4" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" alt="GPU" class="component-image">
+                                        <div>
+                                            <strong>GPU</strong>
+                                            <div id="meta-4" class="component-meta"></div>
+                                            <div id="price-4" class="component-price"></div>
+                                            <button id="remove-4" class="btn btn-sm btn-danger mt-4" style="display:none;" onclick="removeComponent(4)">Remove</button>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-sm btn-primary" onclick="openModal(4, 'GPU')">Choose</button>
+                                </div>
+
+                                <!-- RAM -->
+                                <div class="component-block" id="component-5">
+                                    <div class="d-flex align-items-center">
+                                        <img id="img-5" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" alt="RAM" class="component-image">
+                                        <div>
+                                            <strong>RAM</strong>
+                                            <div id="meta-5" class="component-meta"></div>
+                                            <div id="price-5" class="component-price"></div>
+                                            <button id="remove-5" class="btn btn-sm btn-danger mt-5" style="display:none;" onclick="removeComponent(5)">Remove</button>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-sm btn-primary" onclick="openModal(5, 'RAM')">Choose</button>
+                                </div>
+
+                                <!-- SSD -->
+                                <div class="component-block" id="component-6">
+                                    <div class="d-flex align-items-center">
+                                        <img id="img-6" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" alt="SSD" class="component-image">
+                                        <div>
+                                            <strong>SSD</strong>
+                                            <div id="meta-6" class="component-meta"></div>
+                                            <div id="price-6" class="component-price"></div>
+                                            <button id="remove-6" class="btn btn-sm btn-danger mt-6" style="display:none;" onclick="removeComponent(6)">Remove</button>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-sm btn-primary" onclick="openModal(6, 'SSD')">Choose</button>
+                                </div>
+
+                                <!-- Case -->
+                                <div class="component-block" id="component-7">
+                                    <div class="d-flex align-items-center">
+                                        <img id="img-7" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" alt="Case" class="component-image">
+                                        <div>
+                                            <strong>Case</strong>
+                                            <div id="meta-7" class="component-meta"></div>
+                                            <div id="price-7" class="component-price"></div>
+                                            <button id="remove-7" class="btn btn-sm btn-danger mt-7" style="display:none;" onclick="removeComponent(7)">Remove</button>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-sm btn-primary" onclick="openModal(7, 'Case')">Choose</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script src="../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+        <script src="../../bootstrap/js/bootstrap.min.js"></script>
+        <script src="../../dist/js/app.min.js"></script>
+    </body>
+</html>
