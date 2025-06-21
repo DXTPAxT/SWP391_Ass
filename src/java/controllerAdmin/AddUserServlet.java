@@ -135,7 +135,7 @@ public class AddUserServlet extends HttpServlet {
                     session.setAttribute("toastType", "success");
                     if (null != roleID) switch (roleID) {
                         case "1":
-                            response.sendRedirect(request.getContextPath() + "/Admin/user");
+                            response.sendRedirect(request.getContextPath() + "/Admin/user?type=admin");
                             break;
                         case "2":
                             response.sendRedirect(request.getContextPath() + "/Admin/user?type=sale");
@@ -144,6 +144,7 @@ public class AddUserServlet extends HttpServlet {
                             response.sendRedirect(request.getContextPath() + "/Admin/user?type=shipper");
                             break;
                         default:
+                            response.sendRedirect(request.getContextPath() + "/Admin/user?type=admin");
                             break;
                     }
                 } else {
