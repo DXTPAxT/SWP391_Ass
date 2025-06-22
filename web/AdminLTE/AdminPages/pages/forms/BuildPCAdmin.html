@@ -33,6 +33,26 @@
             .component-meta, .component-price {
                 margin-top: 5px;
             }
+            .modal-overplay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0,0,0,0.5);
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+
+            .modal-content {
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                width: 80%;
+                max-width: 600px;
+            }
         </style>
     </head>
 
@@ -348,8 +368,20 @@
                                 </div>
 
                             </div>
+                            <div class="modal-overplay" id="customModal">
+                                <div class="modal-content">
+                                    <span class="close-btn" id="closeModal">&times;</span>
+                                    <h4 id="modalTitle">SelectComponent</h4>
+                                    <div id="modalBody">Loading...</div>
+                                </div>
+                                <div class="card border p-3 mt-3">
+                                    <h4 class="text-center mb-3">Tổng tiền</h4>
+                                    <h3 class="text-center text-success"><span id="totalPrice">0</span>₫</h3>
+                                </div>
+
+
+                            </div>
                         </div>
-                    </div>
                 </section>
             </div>
         </div>
@@ -358,5 +390,139 @@
         <script src="../../plugins/jQuery/jquery-2.2.3.min.js"></script>
         <script src="../../bootstrap/js/bootstrap.min.js"></script>
         <script src="../../dist/js/app.min.js"></script>
+        <script>
+                                        const ctx = "/ComputerOnlineShop"; // Change if needed
+                                        const modal = document.getElementById('customModal');
+                                        const modalTitle = document.getElementById('modalTitle');
+                                        const modalBody = document.getElementById('modalBody');
+                                        const totalDisplay = document.getElementById('totalPrice');
+
+                                        let selectedComponents = JSON.parse(localStorage.getItem("selectedComponents")) || {};
+                                        // open
+                                        function openModal(componentid, componentName) {
+                                            modal.style.display = 'flex';
+                                            modalTitle.innerText = `Select ${componentName}`;
+                                            modalBody.innerHTML = `<p>Loading...</p>`;
+                                            fetch(`${ctx}/BuildPC_ListCate?service=filter&componentID=${componentid}&ajax=true`)
+
+                                                    .then(res => res.text())
+                                                    .then(html => {
+                                                        modalBody.innerHTML = html;
+                                                        attachFilterFormHandler(componentid, componentName);
+                                                        attachPaginationHandler(componentid, componentName);
+                                                    })
+                                                    .catch(() => {
+                                                        modalBody.innerHTML = "<p style='color:red;'>Failed to load data</p>";
+                                                    });
+                                        }
+
+                                        document.getElementById('closeModal').addEventListener('click', () => {
+                                            modal.style.display = 'none';
+                                        });
+                                        window.addEventListener('click', function (e) {
+                                            const modalOverlay = document.getElementById('customModal');
+                                            const modalContent = document.querySelector('.modal-content');
+
+                                            const isModalOpen = modalOverlay.style.display === 'flex';
+
+
+                                            if (isModalOpen && e.target === modalOverlay) {
+                                                modalOverlay.style.display = 'none';
+                                            }
+                                        });
+
+
+                                        function attachFilterFormHandler(componentID, componentName) {
+                                            const filterForm = modalBody.querySelector('#filterForm');
+                                            if (filterForm) {
+                                                filterForm.addEventListener('submit', function (e) {
+                                                    e.preventDefault();
+                                                    const url = filterForm.action + '?' + new URLSearchParams(new FormData(filterForm)).toString();
+                                                    fetch(url)
+                                                            .then(res => res.text())
+                                                            .then(innerHtml => {
+                                                                modalBody.innerHTML = innerHtml;
+                                                                attachFilterFormHandler(componentID, componentName);
+                                                                attachPaginationHandler(componentID, componentName);
+                                                            });
+                                                });
+                                            }
+                                        }
+
+                                        function attachPaginationHandler(componentID, componentName) {
+                                            modalBody.querySelectorAll(".page-link").forEach(link => {
+                                                link.addEventListener("click", function (e) {
+                                                    e.preventDefault();
+                                                    const page = parseInt(this.textContent.trim());
+                                                    if (!isNaN(page)) {
+                                                        goToPage(page, componentID, componentName);
+                                                    }
+                                                });
+                                            });
+                                        }
+
+                                        function goToPage(page, componentID, componentName) {
+                                            const filterForm = modalBody.querySelector('#filterForm');
+                                            if (filterForm) {
+                                                const formData = new FormData(filterForm);
+                                                formData.set("page", page);
+                                                const url = filterForm.action + "?" + new URLSearchParams(formData).toString();
+                                                modalBody.innerHTML = "<p>Loading...</p>";
+                                                fetch(url)
+                                                        .then(res => res.text())
+                                                        .then(html => {
+                                                            modalBody.innerHTML = html;
+                                                            attachFilterFormHandler(componentID, componentName);
+                                                            attachPaginationHandler(componentID, componentName);
+                                                            modalBody.scrollTop = 0;
+                                                        });
+                                            }
+                                        }
+
+                                        function selectProduct(componentID, categoryName, brandName, price, imgURL, categoryID) {
+                                            document.getElementById(`meta-${componentID}`).innerText = `${categoryName} - ${brandName}`;
+                                            document.getElementById(`price-${componentID}`).innerText = `${price.toLocaleString()}₫`;
+                                            document.getElementById(`remove-${componentID}`).style.display = 'inline-block';
+
+                                            const image = document.getElementById(`img-${componentID}`);
+                                            if (image) {
+                                                image.src = `${ctx}/ShopPages/Pages/images/anhproduct/${imgURL}`;
+                                            }
+
+                                            selectedComponents[componentID] = {
+                                                categoryID: categoryID,
+                                                categoryName: categoryName,
+                                                brandName: brandName,
+                                                price: price,
+                                                imgURL: imgURL
+                                            };
+                                            localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
+                                            updateTotal();
+
+                                            document.getElementById('customModal').style.display = 'none';
+                                        }
+
+
+
+
+                                        function removeComponent(componentID) {
+                                            delete selectedComponents[componentID];
+                                            localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
+                                            document.getElementById(`img-${componentID}`).src = document.getElementById(`img-${componentID}`).dataset.default;
+                                            document.getElementById(`meta-${componentID}`).innerText = "";
+                                            document.getElementById(`price-${componentID}`).innerText = "";
+                                            document.getElementById(`remove-${componentID}`).style.display = 'none';
+                                            updateTotal();
+                                        }
+
+                                        function updateTotal() {
+                                            let total = 0;
+                                            Object.values(selectedComponents).forEach(comp => total += comp.price);
+                                            totalDisplay.innerText = total.toLocaleString() + "₫";
+                                        }
+
+
+        </script>
+
     </body>
 </html>
