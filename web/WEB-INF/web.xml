@@ -138,6 +138,10 @@
         <servlet-name>OTP</servlet-name>
         <servlet-class>controller.OTP</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>BuildPC_ListCate</servlet-name>
+        <servlet-class>controllerAdmin.BuildPC_ListCate</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
         <url-pattern>/Demo</url-pattern>
@@ -273,5 +277,9 @@
     <servlet-mapping>
         <servlet-name>OTP</servlet-name>
         <url-pattern>/OTP</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BuildPC_ListCate</servlet-name>
+        <url-pattern>/BuildPC_ListCate</url-pattern>
     </servlet-mapping>
 </web-app>

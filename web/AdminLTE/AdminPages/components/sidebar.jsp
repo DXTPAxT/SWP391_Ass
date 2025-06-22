@@ -181,7 +181,7 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">                               
-                    <li><a href="${pageContext.request.contextPath}/BuildPC_AdminView">
+                    <li><a href="${pageContext.request.contextPath}/BuildPC_ListCate?service=list">
                             <i class="fa fa-circle-o"></i> View PC</a>
                     </li>
 

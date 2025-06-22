@@ -1485,13 +1485,48 @@ VALUES (1, 3, 'Very informative post, thank you!');
  INSERT INTO Users (RoleID, FullName, Email, PhoneNumber,  PasswordHash, CreatedAt, Status)
 VALUES (3, 'LinhNV', 'customer@example.com', '0912345678', 'hashedpassword3', GETDATE(), 1);
 
+-- Build_PC #1
+INSERT INTO Build_PC (Price, Status) VALUES (18300000, 1);
+-- Giả sử các CategoryID bên dưới thuộc ComponentID từ 2 đến 7 (MainBoard → CASE)
+INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 3, 2000000, 1, 1); -- MainBoard (ComponentID = 2)
+INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 17, 5000000, 2, 1); -- CPU (3)
+INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 6, 7000000, 3, 1); -- GPU (4)
+INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 103, 1500000, 4, 1); -- RAM (5)
+INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 79, 1800000, 5, 1); -- SSD (6)
+INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 2, 1000000, 6, 1); -- CASE (7)
 
-INSERT INTO Build_PC ( Status) VALUES ( 1);
-INSERT INTO Build_PC_Items (BuildPCItemID, BuildPCID, CategoryID, WarrantyDetailID, Price)
-VALUES
-(7, 2, 7, 2, 2100),  -- MainBoard
-(8, 2, 8, 2, 3050),  -- CPU
-(9, 2, 9, 2, 7050),  -- GPU
-(10, 2, 10, 2, 1550), -- RAM
-(11, 2, 11, 2, 2250), -- SSD
-(12, 2, 12, 2, 1050); -- CASE
+
+SELECT 
+    bpi.BuildPCID,
+    bpi.BuildPCItemID,
+    bc.ComponentID,
+    comp.ComponentName,
+    bpi.CategoryID,
+    c.CategoryName,
+    bpi.Price,
+    bpi.Status
+FROM 
+    Build_PC_Items bpi
+JOIN Categories c ON bpi.CategoryID = c.CategoryID
+JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+JOIN Components comp ON bc.ComponentID = comp.ComponentID
+ORDER BY 
+    bpi.BuildPCID, bc.ComponentID;
+
+	SELECT 
+    bp.BuildPCID,
+    MAX(CASE WHEN bc.ComponentID = 2 THEN c.CategoryName END) AS MainBoard,
+    MAX(CASE WHEN bc.ComponentID = 3 THEN c.CategoryName END) AS CPU,
+    MAX(CASE WHEN bc.ComponentID = 4 THEN c.CategoryName END) AS GPU,
+    MAX(CASE WHEN bc.ComponentID = 5 THEN c.CategoryName END) AS RAM,
+    MAX(CASE WHEN bc.ComponentID = 6 THEN c.CategoryName END) AS SSD,
+    MAX(CASE WHEN bc.ComponentID = 7 THEN c.CategoryName END) AS CASE_,
+    SUM(bpi.Price) AS Price,
+    MAX(bp.Status) AS Status
+FROM 
+    Build_PC bp
+LEFT JOIN Build_PC_Items bpi ON bp.BuildPCID = bpi.BuildPCID
+LEFT JOIN Categories c ON bpi.CategoryID = c.CategoryID
+LEFT JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+GROUP BY bp.BuildPCID
+ORDER BY bp.BuildPCID;

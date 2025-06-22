@@ -281,7 +281,7 @@
             modalTitle.innerText = `Select ${componentName}`;
             modalBody.innerHTML = "<p>Loading...</p>";
 
-            fetch(`/ComputerOnlineShop/BuildPC?service=filter&componentID=${componentID}&ajax=true`)
+            fetch(`${ctx}/BuildPC?service=filter&componentID=${componentID}&ajax=true`)
                     .then(res => res.text())
                     .then(html => {
                         modalBody.innerHTML = html;
@@ -315,7 +315,17 @@
             modal.style.display = 'none';
         });
 
+        window.addEventListener('click', function (e) {
+            const modalOverlay = document.getElementById('customModal');
+            const modalContent = document.querySelector('.modal-content');
 
+            const isModalOpen = modalOverlay.style.display === 'flex';
+
+            // Nếu modal đang mở và click trực tiếp vào phần overlay (không phải modal-content)
+            if (isModalOpen && e.target === modalOverlay) {
+                modalOverlay.style.display = 'none';
+            }
+        });
 
 
 
@@ -415,7 +425,7 @@
                         });
             }
         }
-            function attachPaginationHandler(componentID, componentName) {
+        function attachPaginationHandler(componentID, componentName) {
             modalBody.querySelectorAll(".page-link").forEach(link => {
                 link.addEventListener("click", function (e) {
                     e.preventDefault();
