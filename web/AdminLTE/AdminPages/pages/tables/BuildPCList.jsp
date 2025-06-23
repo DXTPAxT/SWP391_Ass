@@ -1,14 +1,7 @@
-<%-- 
-    Document   : insertProduct
-    Created on : May 28, 2025, 9:48:28 PM
-    Author     : Admin
---%>
-
-<%@page contentType="text/html" pageEncoding="windows-1252"%>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="ctx" value="${pageContext.request.contextPath}" />
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
     <head>
@@ -45,103 +38,80 @@
             <jsp:include page="../../components/sidebar.jsp">
                 <jsp:param name="ctx" value="${ctx}" />
             </jsp:include>
-
-            <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
-                <!-- Content Header (Page header) -->
                 <section class="content-header">
-                    <h1>
-                        Data Tables
-                    </h1>
-                    <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Component</a></li>
-                        <li class="active"></li>
-                    </ol>
+                    <h1>Build PC List</h1>
                 </section>
 
-                <!-- Main content -->
-
                 <section class="content">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <div class="box">
-                                <div class="box-header with-border">
-                                    <div class="row align-items-center">
-                                        <!-- Optional: place search or filter tools here -->
-                                    </div>
-                                </div>
-                                <form action="BuilPC_ListCate" method="get">
-                                    <div class="box-body">
-                                        <table id="example2" class="table table-bordered table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>Select</th>
-                                                    <th>MainBoard</th>
-                                                    <th>CPU</th>
-                                                    <th>GPU</th>
-                                                    <th>RAM</th>
-                                                    <th>SSD</th>
-                                                    <th>CASE</th>
-                                                    <th>Price</th>
-                                                    <th>Status</th>
-                                                    <th>Update</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <c:forEach var="b" items="${buildPCList}">
-                                                    <tr>
-                                                        <td>
-                                                            <input type="radio" name="buildPCID" value="${b.buildPCID}" required />
-                                                            ${b.buildPCID}
-                                                        </td>
-                                                        <td>${b.mainBoard != null ? b.mainBoard : 'N/A'}</td>
-                                                        <td>${b.cpu != null ? b.cpu : 'N/A'}</td>
-                                                        <td>${b.gpu != null ? b.gpu : 'N/A'}</td>
-                                                        <td>${b.ram != null ? b.ram : 'N/A'}</td>
-                                                        <td>${b.ssd != null ? b.ssd : 'N/A'}</td>
-                                                        <td>${b.pcCase != null ? b.pcCase : 'N/A'}</td>
-                                                        <td><fmt:formatNumber value="${b.price}" type="currency"/></td>
-                                                        <td>
-                                                            <span class="label label-${b.status == 1 ? 'success' : 'danger'}">
-                                                                ${b.status == 1 ? 'Active' : 'Inactive'}
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            <a href="${ctx}/admin/buildpc-update?bid=${b.buildPCID}" class="btn btn-warning btn-sm">Update</a>
-                                                        </td>
-                                                    </tr>
-                                                </c:forEach>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="box-footer text-right">
-                                        <button type="submit" class="btn btn-success">Choose Build</button>
-                                    </div>
-                                </form>
+                    <div class="box">
+                        <form id="deleteForm" action="${ctx}/BuildPC_ListCate" method="post">
+                            <input type="hidden" name="service" value="delete">
+                            <input type="hidden" name="buildPCID" id="deleteBuildPCID">
+                        </form>
+
+                        <div class="box-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>MainBoard</th>
+                                        <th>CPU</th>
+                                        <th>GPU</th>
+                                        <th>RAM</th>
+                                        <th>SSD</th>
+                                        <th>CASE</th>
+                                        <th>Price</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="b" items="${buildPCList}">
+                                        <tr>
+                                            <td>${b.buildPCID}</td>
+                                            <td>${b.mainBoard != null ? b.mainBoard : 'N/A'}</td>
+                                            <td>${b.cpu != null ? b.cpu : 'N/A'}</td>
+                                            <td>${b.gpu != null ? b.gpu : 'N/A'}</td>
+                                            <td>${b.ram != null ? b.ram : 'N/A'}</td>
+                                            <td>${b.ssd != null ? b.ssd : 'N/A'}</td>
+                                            <td>${b.pcCase != null ? b.pcCase : 'N/A'}</td>
+                                            <td><fmt:formatNumber value="${b.price}" type="currency"/></td>
+                                            <td>
+                                                <span class="label label-${b.status == 1 ? 'success' : 'danger'}">
+                                                    ${b.status == 1 ? 'Active' : 'Inactive'}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-warning btn-sm"
+                                                        onclick="goToUpdate(${b.buildPCID})">
+                                                    Update
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                        onclick="confirmDelete(${b.buildPCID})">
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="box-footer text-right">
+                          <a href="${ctx}/AdminLTE/AdminPages/pages/forms/BuildPCAdmin.html" class="btn btn-success">
 
 
-                            </div>
+                                Create New Build PC
+                            </a>
                         </div>
                     </div>
-
-                    <!-- /.box-body -->
+                </section>
             </div>
-            <!-- /.box -->
 
-            <!-- /.content-wrapper -->
-            <jsp:include page="../../components/footer.jsp" />
-
-
-            <jsp:include page="../../components/control-sidebar.jsp" />
-
-            <!-- Add the sidebar's background. This div must be placed
-                 immediately after the control sidebar -->
+            <jsp:include page="../../components/footer.jsp"/>
+            <jsp:include page="../../components/control-sidebar.jsp"/>
             <div class="control-sidebar-bg"></div>
         </div>
-        <!-- ./wrapper -->
-
-        <!-- jQuery 2.2.3 -->
         <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
         <!-- Bootstrap 3.3.6 -->
         <script src="${ctx}/AdminLTE/AdminPages/bootstrap/js/bootstrap.min.js"></script>
@@ -156,25 +126,19 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/app.min.js"></script>
         <!-- AdminLTE for demo purposes -->
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
-        <!-- page script -->
+        <!-- Scripts -->
         <script>
-            $(function () {
-                $("#example1").DataTable();
-                $('#example2').DataTable({
-                    "paging": true,
-                    "lengthChange": true,
-                    "searching": true,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": true
-                });
-            });
-        </script>
-        <script>
-            $(function () {
-                $('.sidebar-menu').tree();
-            });
+                                                            function confirmDelete(buildPCID) {
+                                                                if (confirm("Are you sure you want to delete Build PC ID: " + buildPCID + "?")) {
+                                                                    document.getElementById("deleteBuildPCID").value = buildPCID;
+                                                                    document.getElementById("deleteForm").submit();
+                                                                }
+                                                            }
+
+                                                            function goToUpdate(buildPCID) {
+                                                             window.location.href = '${ctx}/AdminLTE/AdminPages/pages/forms/BuildPCAdmin.html?buildPCID=' + buildPCID;
+
+                                                            }
         </script>
     </body>
 </html>
-
