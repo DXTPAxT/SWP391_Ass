@@ -9,7 +9,8 @@ package models;
  * @author PC
  */
 public class BuildPCView {
-   private int buildPCID;
+
+    private int buildPCID;
     private String mainBoard;
     private String cpu;
     private String gpu;
@@ -18,8 +19,33 @@ public class BuildPCView {
     private String pcCase;
     private int price;
     private int status;
+    // use for Cus
+    private String imgMain;
+    private String imgCPU;
+    private String imgGPU;
+    private String imgRAM;
+    private String imgSSD;
+    private String imgCase;
 
     public BuildPCView() {
+    }
+
+    public BuildPCView(int buildPCID, String mainBoard, String cpu, String gpu, String ram, String ssd, String pcCase, int price, int status, String imgMain, String imgCPU, String imgGPU, String imgRAM, String imgSSD, String imgCase) {
+        this.buildPCID = buildPCID;
+        this.mainBoard = mainBoard;
+        this.cpu = cpu;
+        this.gpu = gpu;
+        this.ram = ram;
+        this.ssd = ssd;
+        this.pcCase = pcCase;
+        this.price = price;
+        this.status = status;
+        this.imgMain = imgMain;
+        this.imgCPU = imgCPU;
+        this.imgGPU = imgGPU;
+        this.imgRAM = imgRAM;
+        this.imgSSD = imgSSD;
+        this.imgCase = imgCase;
     }
 
     public BuildPCView(int buildPCID, String mainBoard, String cpu, String gpu, String ram, String ssd, String pcCase, int price, int status) {
@@ -32,6 +58,54 @@ public class BuildPCView {
         this.pcCase = pcCase;
         this.price = price;
         this.status = status;
+    }
+
+    public String getImgMain() {
+        return imgMain;
+    }
+
+    public void setImgMain(String imgMain) {
+        this.imgMain = imgMain;
+    }
+
+    public String getImgCPU() {
+        return imgCPU;
+    }
+
+    public void setImgCPU(String imgCPU) {
+        this.imgCPU = imgCPU;
+    }
+
+    public String getImgGPU() {
+        return imgGPU;
+    }
+
+    public void setImgGPU(String imgGPU) {
+        this.imgGPU = imgGPU;
+    }
+
+    public String getImgRAM() {
+        return imgRAM;
+    }
+
+    public void setImgRAM(String imgRAM) {
+        this.imgRAM = imgRAM;
+    }
+
+    public String getImgSSD() {
+        return imgSSD;
+    }
+
+    public void setImgSSD(String imgSSD) {
+        this.imgSSD = imgSSD;
+    }
+
+    public String getImgCase() {
+        return imgCase;
+    }
+
+    public void setImgCase(String imgCase) {
+        this.imgCase = imgCase;
     }
 
     public int getBuildPCID() {

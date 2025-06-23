@@ -38,8 +38,18 @@
                 <div class="product-item border p-2 d-flex gap-3 align-items-center">
                     <img src="${ctx}/ShopPages/Pages/images/anhproduct/${p.imgURL}" alt="${p.categoryName}" style="width: 80px; height: 80px; object-fit: cover; border: 1px solid #ccc;" />
                     <div>
-                        <div><strong>${p.categoryName}</strong> - ${p.brandName}</div>
-                        <div>Giá: <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫</div>
+                        <div>
+                            <div><strong>${p.categoryName}</strong> - ${p.brandName}</div>
+                            <div>Mô tả: <span style="font-size: 90%;">${p.description}</span></div>
+                            <div>Giá: <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫</div>
+                            <div style="margin-top: 5px;">
+                                <a href="${ctx}/CategoriesController?service=detail&categoryID=${p.categoryID}" class="btn btn-info btn-xs" target="_blank">
+                                    View Detail
+                                </a>
+
+                            </div>
+                        </div>
+
                         <button class="btn btn-sm btn-success mt-2"
                                 onclick="selectProduct('${p.componentID}', '${fn:escapeXml(p.categoryName)}', '${fn:escapeXml(p.brandName)}', ${p.price})">
                             Chọn
@@ -48,20 +58,23 @@
                 </div>
             </div>
         </c:forEach>
+
+
     </div>
+
+
+
 </div>
 
-<!-- PHÂN TRANG -->
-<c:if test="${totalPages > 1}">
-    <nav>
-        <ul class="pagination d-flex justify-content-center flex-wrap" style="gap: 5px;">
-            <c:forEach begin="1" end="${totalPages}" var="i">
-                <li class="page-item ${i == currentPage ? 'active' : ''}">
-                    <a class="page-link"
-                       href="javascript:void(0);"
-                       onclick="goToPage(${i})">${i}</a>
-                </li>
-            </c:forEach>
-        </ul>
-    </nav>
-</c:if>
+
+        <c:if test="${totalPages > 1}">
+            <nav>
+                <ul class="pagination">
+                    <c:forEach begin="1" end="${totalPages}" var="i">
+                        <li class="${i == currentPage ? 'active' : ''}">
+                            <a href="javascript:void(0);" class="page-link" data-page="${i}">${i}</a>
+                        </li>
+                    </c:forEach>
+                </ul>
+            </nav>
+        </c:if>
