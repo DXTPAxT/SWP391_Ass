@@ -208,7 +208,7 @@ public class BuildPCAdminDAO extends DBAdminContext {
         FROM Categories c
         JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
         JOIN Brands b ON bc.BrandID = b.BrandID
-        WHERE bc.ComponentID = ? AND c.Status = 2
+        WHERE bc.ComponentID = ? AND c.Status IN (1, 2)
     """);
         List<Object> params = new ArrayList<>();
         params.add(componentID);
