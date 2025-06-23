@@ -18,8 +18,19 @@ public class BuildPCAdmin {
     private int WarrantyDetailID;
     private int Price;
     private int Status;
+    private String brandName;
+    private String imgURL;
 
     public BuildPCAdmin() {
+    }
+
+    public BuildPCAdmin(int ComponentID, int CateID, String CateName, String brandName, int Price, String imgURL) {
+        this.ComponentID = ComponentID;
+        this.CateID = CateID;
+        this.CateName = CateName;
+        this.brandName = brandName;
+        this.Price = Price;
+        this.imgURL = imgURL;
     }
 
     public BuildPCAdmin(int BuildPCIterm, int CateID, String CateName, int ComponentID, int Price, int Status) {
@@ -120,6 +131,22 @@ public class BuildPCAdmin {
 
     public void setComponentID(int ComponentID) {
         this.ComponentID = ComponentID;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
+
+    public String getImgURL() {
+        return imgURL;
+    }
+
+    public void setImgURL(String imgURL) {
+        this.imgURL = imgURL;
     }
 
 }
