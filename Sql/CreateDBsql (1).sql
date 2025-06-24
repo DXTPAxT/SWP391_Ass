@@ -174,7 +174,8 @@ CREATE TABLE CartItems (
 	UserID INT NOT NULL,
 	CategoryID INT NOT NULL,
 	WarrantyDetailID INT NOT NULL,
-	Status INT NOT NULL,
+	Quantity INT NOT NULL,
+	Status INT NOT NULL DEFAULT 1,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
     FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
