@@ -634,7 +634,6 @@ input[type="number"]:focus {
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    min-height: 4.5em;
     max-height: 7em;
     line-height: 1.7;
     margin-bottom: 10px;

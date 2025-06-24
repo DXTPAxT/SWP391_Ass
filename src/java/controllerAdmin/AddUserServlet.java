@@ -105,9 +105,9 @@ public class AddUserServlet extends HttpServlet {
             error = "Invalid phone number!";
         } else if (userDao.isPhoneNumberExisted(phoneNumber)) {
             error = "Phone number existed!";
-        } else if (utils.Validator.isNullOrEmpty(address)) {
+        } else if (utils.Validator.isNullOrEmpty(address) && roleID == "3") {
             error = "Address is required!";
-        } else if (!("admin".equalsIgnoreCase(roleID) || "staff".equalsIgnoreCase(roleID) || "1".equals(roleID) || "2".equals(roleID))) {
+        } else if (roleID == "3") {
             error = "Only Admin and Staff accounts can be added!";
         }
 
@@ -135,7 +135,7 @@ public class AddUserServlet extends HttpServlet {
                     session.setAttribute("toastType", "success");
                     if (null != roleID) switch (roleID) {
                         case "1":
-                            response.sendRedirect(request.getContextPath() + "/Admin/user");
+                            response.sendRedirect(request.getContextPath() + "/Admin/user?type=admin");
                             break;
                         case "2":
                             response.sendRedirect(request.getContextPath() + "/Admin/user?type=sale");
@@ -144,6 +144,7 @@ public class AddUserServlet extends HttpServlet {
                             response.sendRedirect(request.getContextPath() + "/Admin/user?type=shipper");
                             break;
                         default:
+                            response.sendRedirect(request.getContextPath() + "/Admin/user?type=admin");
                             break;
                     }
                 } else {

@@ -6,6 +6,8 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page import="models.User" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,11 +15,13 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <c:if test="${user.getUserRoleID() != 1}">
-            <% response.sendRedirect(request.getContextPath() + "/HomePages"); %>
-        </c:if>
-        <c:if test="${user.getUserRoleID() == 1}">
-            <% response.sendRedirect(request.getContextPath() + "/Admin"); %>
-        </c:if>
+        <%
+            Object u = session.getAttribute("user");
+            if (u == null || ((User) u).getRole().getRoleID() == 3) {
+                response.sendRedirect(request.getContextPath() + "/HomePages");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/AdminDashbordServlet");
+            }
+        %>
     </body>
 </html>

@@ -175,7 +175,8 @@ CREATE TABLE CartItems (
 	UserID INT NOT NULL,
 	CategoryID INT NOT NULL,
 	WarrantyDetailID INT NOT NULL,
-	Status INT NOT NULL,
+	Quantity INT NOT NULL,
+	Status INT NOT NULL DEFAULT 1,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
     FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
@@ -271,6 +272,18 @@ CREATE TABLE OrderPreparements (
 	Foreign key(UserID) references Users(UserID),
 	Foreign key(OrderID) references Orders(OrderID),
 )
+
+-- 25 OTP
+CREATE TABLE OTP (
+    OTP_ID INT PRIMARY KEY IDENTITY(1,1),         -- Mã định danh riêng cho mỗi OTP
+    Email VARCHAR(100) NOT NULL,                  -- Hoặc có thể dùng PhoneNumber nếu xác thực qua SMS
+    OTP_Code VARCHAR(10) NOT NULL,                -- Mã OTP (thường 6 ký tự)
+    ExpirationTime DATETIME NOT NULL,             -- Thời điểm mã hết hạn (ví dụ: tạo + 5 phút)
+    CreatedAt DATETIME DEFAULT GETDATE(),         -- Thời điểm tạo
+    IsUsed BIT DEFAULT 0,                          -- Đánh dấu mã đã sử dụng hay chưa (0 = chưa, 1 = đã dùng)
+	Foreign key(Email) References Users(Email)
+);
+
 -- 25. Build PC
 CREATE TABLE Build_PC (
     BuildPCID INT PRIMARY KEY IDENTITY(1,1),
@@ -329,6 +342,7 @@ CREATE TABLE Comments (
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (ParentCommentID) REFERENCES Comments(CommentID)
 );
+
 -- 30. bảng này Order của Build PC
 CREATE TABLE Order_BuildPCItems (
     OrderBuildPCItemID INT PRIMARY KEY IDENTITY(1,1),
@@ -358,5 +372,4 @@ CREATE TABLE Order_BuildPC_Products (
     FOREIGN KEY (OrderBuildPCDetailID) REFERENCES Order_BuildPCDetails(OrderBuildPCDetailID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
-
 

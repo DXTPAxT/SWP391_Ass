@@ -95,14 +95,6 @@
                                     <p style="color: red;">${error}</p>
                                 </c:if>
                             </div>
-                            <!-- Address -->
-                            <div class="form-group">
-                                <label for="address">Address</label>
-                                <textarea id="address" name="address" class="form-control${error eq 'Address is required!' ? ' is-invalid' : ''}" placeholder="Enter address" required>${address}</textarea>
-                                <c:if test="${error == 'Address is required!'}">
-                                    <p style="color: red;">${error}</p>
-                                </c:if>
-                            </div>
                             <!-- Role -->
                             <div class="form-group">
                                 <label for="roleID">Role</label>

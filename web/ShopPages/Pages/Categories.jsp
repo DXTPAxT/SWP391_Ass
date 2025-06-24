@@ -257,16 +257,6 @@
                                                     </h2>
                                                     <p>${product.categoryName}</p>
                                                 </a>
-                                                <button class="add-to-cart"
-                                                        data-userid="${user.userID}"
-                                                        data-productid="${product.categoryID}"
-                                                        data-name="${product.categoryName}"
-                                                        data-image="${ctx}/ShopPages/Pages/images/shop/product12.jpg"
-                                                        data-price="${product.price}"
-                                                        class="btn btn-default add-to-cart">
-                                                    <i class="fa fa-shopping-cart"></i>
-                                                    Add to cart
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
