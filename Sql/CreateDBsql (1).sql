@@ -109,6 +109,7 @@ CREATE TABLE Products (
 	ProductCode Varchar(100) NOT null,
     Status int DEFAULT 1 NOT NULL,
 	ImportID INT NOT NULL,
+	Note text default null,
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
     FOREIGN KEY (ImportID) REFERENCES Imports(ImportID)
 );
@@ -187,6 +188,7 @@ CREATE TABLE Shipping (
     ShipperID INT NOT NULL,
     ShippingStatus VARCHAR(50) NOT NULL,
     ShipTime DATE NOT NULL,
+	Note text default null,
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
     FOREIGN KEY (ShipperID) REFERENCES Users(UserID),
 );
