@@ -23,8 +23,8 @@
     </select>
 
     <div style="display: flex; gap: 10px;">
-        <input type="number" name="minPrice" value="${param.minPrice}" placeholder="Min price" class="form-control" style="width: 120px;" />
-        <input type="number" name="maxPrice" value="${param.maxPrice}" placeholder="Max price" class="form-control" style="width: 120px;" />
+        <input type="text" name="minPrice" value="${param.minPrice}" placeholder="Min price" class="form-control" style="width: 120px;" />
+        <input type="text" name="maxPrice" value="${param.maxPrice}" placeholder="Max price" class="form-control" style="width: 120px;" />
     </div>
 
     <button type="submit" class="btn btn-sm btn-primary">Lọc</button>

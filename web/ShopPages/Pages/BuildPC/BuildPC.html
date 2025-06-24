@@ -157,6 +157,10 @@
         <div>
             <button class="btn btn-sm btn-success col-sm-12" onclick="openPCList()">PC Case (Xem PC đã build)</button>
         </div>
+        <div>
+            <button class="btn btn-sm btn-warning col-sm-12" onclick="resetAllComponents()">Reset All</button>
+        </div>
+
         <!-- Modal hiển thị danh sách PC -->
         <div class="modal-overlay" id="pcListModal" style="display:none;">
             <div class="modal-content">
@@ -309,6 +313,8 @@
         function attachFilterFormHandler(componentID, componentName) {
             const filterForm = modalBody.querySelector('#filterForm');
             if (filterForm) {
+                attachPriceValidation(); // ✅ Gắn validate cho form vừa được load
+
                 filterForm.addEventListener('submit', function (e) {
                     e.preventDefault();
                     const url = filterForm.action + '?' + new URLSearchParams(new FormData(filterForm)).toString();
@@ -370,6 +376,34 @@
             }
             totalDisplay.innerText = total.toLocaleString();
         }
+// reset All choose
+        function resetAllComponents() {
+            if (!confirm("Bạn có chắc chắn muốn reset tất cả các linh kiện đã chọn không?"))
+                return;
+
+            // delete localStorage
+            localStorage.removeItem("selectedComponents");
+
+            for (let id = 2; id <= 7; id++) {
+                document.getElementById(`meta-${id}`).innerText = "";
+                document.getElementById(`price-${id}`).innerText = "";
+                document.getElementById(`remove-${id}`).style.display = 'none';
+
+                // Reset picture
+                const img = document.getElementById(`img-${id}`);
+                if (img) {
+                    img.src = img.getAttribute("data-default");
+                }
+            }
+
+            // Reset mỏny
+            totalDisplay.innerText = "0";
+
+            // Reset  JS
+            for (let key in selectedComponents)
+                delete selectedComponents[key];
+        }
+
     </script>
     <script>
         // Take Data form chose catgegory
@@ -435,19 +469,46 @@
         }
 
 
-   function attachPaginationHandler() {
-    modalBody.querySelectorAll(".page-link").forEach(link => {
-        link.addEventListener("click", function (e) {
-            e.preventDefault();
-            const page = parseInt(this.getAttribute("data-page"));
-            if (!isNaN(page)) {
-                goToPage(page);
-            }
-        });
-    });
-}
+        function attachPaginationHandler() {
+            modalBody.querySelectorAll(".page-link").forEach(link => {
+                link.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    const page = parseInt(this.getAttribute("data-page"));
+                    if (!isNaN(page)) {
+                        goToPage(page);
+                    }
+                });
+            });
+        }
 
     </script>
+    <script>
+        function attachPriceValidation() {
+            const priceInputs = document.querySelectorAll('input[name="minPrice"], input[name="maxPrice"]');
+
+            priceInputs.forEach(input => {
+                input.addEventListener('keypress', function (e) {
+                    const char = String.fromCharCode(e.which);
+                    if (!/^[0-9]$/.test(char))
+                        e.preventDefault();
+                });
+
+                input.addEventListener('paste', function (e) {
+                    const paste = (e.clipboardData || window.clipboardData).getData('text');
+                    if (!/^\d+$/.test(paste))
+                        e.preventDefault();
+                });
+
+                input.addEventListener('input', function () {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+            });
+        }
+
+    </script>
+
+
+
     // Chosse PC in DATABASE
     <script>
         function openPCList() {

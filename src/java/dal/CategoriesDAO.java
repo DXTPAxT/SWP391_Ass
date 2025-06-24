@@ -168,9 +168,9 @@ public class CategoriesDAO extends DBContext {
             JOIN BrandComs bc ON c.BrandComID   = bc.BrandComID
             JOIN Brands b ON bc.BrandID = b.BrandID
             JOIN Components comp ON bc.ComponentID = comp.ComponentID
-            WHERE bc.ComponentID = ? 
-            ORDER BY c.CategoryID
-            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY Where c.Status= 2 And c.Status=1 
+            WHERE bc.ComponentID = ? and  c.Status IN (1, 2) 
+            ORDER BY c.CategoryID 
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY 
             """;
         List<Categories> list = new ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
