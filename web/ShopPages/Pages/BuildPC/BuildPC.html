@@ -109,8 +109,8 @@
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav" style="padding-top: 50px">
                                     <!-- Static for HTML, no session check -->
-                                    <li><a href="Login"><i class="fa fa-lock"></i> Login</a></li>
-                                    <li><a href="SignUp"><i class="fa fa-user-plus"></i> Sign Up</a></li>
+                                    <li><a href="http://localhost:8080/ComputerOnlineShop/Login"><i class="fa fa-lock"></i> Login</a></li>
+                                    <li><a href="http://localhost:8080/ComputerOnlineShop/SignUp"><i class="fa fa-user-plus"></i> Sign Up</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -153,6 +153,23 @@
 
 
         <h1 class="text-center">Build Your PC</h1>
+
+        <div>
+            <button class="btn btn-sm btn-success col-sm-12" onclick="openPCList()">PC Case (Xem PC đã build)</button>
+        </div>
+        <div>
+            <button class="btn btn-sm btn-warning col-sm-12" onclick="resetAllComponents()">Reset All</button>
+        </div>
+
+        <!-- Modal hiển thị danh sách PC -->
+        <div class="modal-overlay" id="pcListModal" style="display:none;">
+            <div class="modal-content">
+                <span class="close-btn" onclick="document.getElementById('pcListModal').style.display = 'none'">&times;</span>
+                <h4>Danh sách PC đã build</h4>
+                <div id="pcListBody">Đang tải...</div>
+            </div>
+        </div>
+
         <div class="container">
             <div class="row">
                 <div class="col-md-7">
@@ -281,7 +298,7 @@
             modalTitle.innerText = `Select ${componentName}`;
             modalBody.innerHTML = "<p>Loading...</p>";
 
-            fetch(`/ComputerOnlineShop/BuildPC?service=filter&componentID=${componentID}&ajax=true`)
+            fetch(`${ctx}/BuildPC?service=filter&componentID=${componentID}&ajax=true`)
                     .then(res => res.text())
                     .then(html => {
                         modalBody.innerHTML = html;
@@ -296,6 +313,8 @@
         function attachFilterFormHandler(componentID, componentName) {
             const filterForm = modalBody.querySelector('#filterForm');
             if (filterForm) {
+                attachPriceValidation(); // ✅ Gắn validate cho form vừa được load
+
                 filterForm.addEventListener('submit', function (e) {
                     e.preventDefault();
                     const url = filterForm.action + '?' + new URLSearchParams(new FormData(filterForm)).toString();
@@ -315,7 +334,17 @@
             modal.style.display = 'none';
         });
 
+        window.addEventListener('click', function (e) {
+            const modalOverlay = document.getElementById('customModal');
+            const modalContent = document.querySelector('.modal-content');
 
+            const isModalOpen = modalOverlay.style.display === 'flex';
+
+            // Nếu modal đang mở và click trực tiếp vào phần overlay (không phải modal-content)
+            if (isModalOpen && e.target === modalOverlay) {
+                modalOverlay.style.display = 'none';
+            }
+        });
 
 
 
@@ -347,6 +376,34 @@
             }
             totalDisplay.innerText = total.toLocaleString();
         }
+// reset All choose
+        function resetAllComponents() {
+            if (!confirm("Bạn có chắc chắn muốn reset tất cả các linh kiện đã chọn không?"))
+                return;
+
+            // delete localStorage
+            localStorage.removeItem("selectedComponents");
+
+            for (let id = 2; id <= 7; id++) {
+                document.getElementById(`meta-${id}`).innerText = "";
+                document.getElementById(`price-${id}`).innerText = "";
+                document.getElementById(`remove-${id}`).style.display = 'none';
+
+                // Reset picture
+                const img = document.getElementById(`img-${id}`);
+                if (img) {
+                    img.src = img.getAttribute("data-default");
+                }
+            }
+
+            // Reset mỏny
+            totalDisplay.innerText = "0";
+
+            // Reset  JS
+            for (let key in selectedComponents)
+                delete selectedComponents[key];
+        }
+
     </script>
     <script>
         // Take Data form chose catgegory
@@ -396,37 +453,127 @@
     </script>
     <!--Select Pages-->
     <script>
-        function goToPage(page, componentID, componentName) {
-            const filterForm = modalBody.querySelector('#filterForm');
-            if (filterForm) {
-                const formData = new FormData(filterForm);
-                formData.set("page", page);
-                const queryString = new URLSearchParams(formData).toString();
-                const url = filterForm.action + "?" + queryString;
+        function goToPage(page) {
+            const form = document.getElementById("filterForm");
+            const formData = new FormData(form);
+            formData.set("page", page);
+            const queryString = new URLSearchParams(formData).toString();
 
-                modalBody.innerHTML = "<p>Loading...</p>";
-                fetch(url)
-                        .then(res => res.text())
-                        .then(html => {
-                            modalBody.innerHTML = html;
-                            attachFilterFormHandler(componentID, componentName);
-                            attachPaginationHandler(componentID, componentName); // Gắn lại pagination
-                            modalBody.scrollTop = 0;
-                        });
-            }
+            fetch(`${ctx}/BuildPC?${queryString}`)
+                    .then(res => res.text())
+                    .then(html => {
+                        document.getElementById("modalBody").innerHTML = html;
+                        attachFilterFormHandler(); // để có thể tiếp tục lọc
+                        attachPaginationHandler(); // ⚠️ bắt lại sự kiện click trang mới
+                    });
         }
-            function attachPaginationHandler(componentID, componentName) {
+
+
+        function attachPaginationHandler() {
             modalBody.querySelectorAll(".page-link").forEach(link => {
                 link.addEventListener("click", function (e) {
                     e.preventDefault();
-                    const page = parseInt(this.textContent.trim());
+                    const page = parseInt(this.getAttribute("data-page"));
                     if (!isNaN(page)) {
-                        goToPage(page, componentID, componentName);
+                        goToPage(page);
                     }
                 });
             });
         }
+
     </script>
+    <script>
+        function attachPriceValidation() {
+            const priceInputs = document.querySelectorAll('input[name="minPrice"], input[name="maxPrice"]');
+
+            priceInputs.forEach(input => {
+                input.addEventListener('keypress', function (e) {
+                    const char = String.fromCharCode(e.which);
+                    if (!/^[0-9]$/.test(char))
+                        e.preventDefault();
+                });
+
+                input.addEventListener('paste', function (e) {
+                    const paste = (e.clipboardData || window.clipboardData).getData('text');
+                    if (!/^\d+$/.test(paste))
+                        e.preventDefault();
+                });
+
+                input.addEventListener('input', function () {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+            });
+        }
+
+    </script>
+
+
+
+    // Chosse PC in DATABASE
+    <script>
+        function openPCList() {
+            const modal = document.getElementById("pcListModal");
+            const body = document.getElementById("pcListBody");
+            modal.style.display = "flex";
+            body.innerHTML = "Đang tải...";
+
+            fetch(ctx + "/BuildPC?service=pc", {
+                method: "POST"
+            })
+                    .then(res => res.text())
+                    .then(html => {
+                        body.innerHTML = html;
+                    })
+                    .catch(err => {
+                        body.innerHTML = "<p style='color:red;'>Lỗi khi tải danh sách PC</p>";
+                    });
+        }
+        function loadPC(buildPCID, imgMain, imgCPU, imgGPU, imgRAM, imgSSD, imgCase) {
+            fetch(`${ctx}/BuildPC_ListCate?service=loadBuildPC&buildPCID=${buildPCID}`)
+                    .then(res => res.json())
+                    .then(items => {
+                        const components = {};
+                        items.forEach(item => {
+                            const id = item.componentID;
+                            let img = item.imgURL;
+
+                            // Ghi đè bằng ảnh truyền vào nếu có
+                            if (id === 2 && imgMain)
+                                img = imgMain;
+                            if (id === 3 && imgCPU)
+                                img = imgCPU;
+                            if (id === 4 && imgGPU)
+                                img = imgGPU;
+                            if (id === 5 && imgRAM)
+                                img = imgRAM;
+                            if (id === 6 && imgSSD)
+                                img = imgSSD;
+                            if (id === 7 && imgCase)
+                                img = imgCase;
+
+                            components[id] = {
+                                categoryName: item.categoryName,
+                                brandName: item.brandName,
+                                price: item.price,
+                                imgURL: img
+                            };
+                        });
+
+                        localStorage.setItem("selectedComponents", JSON.stringify(components));
+
+                        // ✅ Hiện ảnh demo của thẻ đã chọn
+                        const img = document.getElementById(`img-pc-${buildPCID}`);
+                        if (img)
+                            img.style.display = 'block';
+
+                        location.reload();
+                    })
+                    .catch(() => alert("❌ Lỗi khi tải cấu hình"));
+        }
+
+
+    </script>
+
 </body>
 
 </html>

@@ -1,6 +1,7 @@
 package controller;
 
 import dal.CategoriesDAO;
+import dal.WarrantyDetailDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -9,6 +10,7 @@ import models.Categories;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import models.WarrantyDetails;
 
 @WebServlet(name = "CategoriesController", urlPatterns = {"/CategoriesController"})
 public class CategoriesController extends HttpServlet {
@@ -21,14 +23,24 @@ public class CategoriesController extends HttpServlet {
 
         response.setContentType("text/html;charset=UTF-8");
         String service = request.getParameter("service");
-        if (service == null) service = "list";
+        if (service == null) {
+            service = "list";
+        }
 
         // --- Chi tiết sản phẩm ---
         if ("detail".equals(service)) {
             int categoryId = parseIntegerOrDefault(request.getParameter("categoryID"), -1);
             ArrayList<Categories> detailList = new ArrayList<>(dao.getCategoryByID(categoryId));
+            List<WarrantyDetails> warrantyDetailList = (new WarrantyDetailDAO()).getWarrantyDetailsByCategoryId(categoryId);
+            String currentURL = request.getRequestURL().toString();
+            String queryString = request.getQueryString();
+            if (queryString != null) {
+                currentURL += "?" + queryString;
+            }
+            request.getSession().setAttribute("redirectAfterLogin", currentURL);
             if (!detailList.isEmpty()) {
                 request.setAttribute("product", detailList.get(0));
+                request.setAttribute("warrantyList", warrantyDetailList);
                 // Lấy feedbackList
                 dal.FeedbackDAO feedbackDAO = new dal.FeedbackDAO();
                 ArrayList<models.Feedback> feedbackList = new ArrayList<>(feedbackDAO.getFeedbackByCategoryId(categoryId));
