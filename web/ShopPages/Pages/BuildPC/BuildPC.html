@@ -65,6 +65,27 @@
                 cursor: pointer;
                 font-weight: bold;
             }
+            .build-pc-banner {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 30px 0;
+                background: linear-gradient(to right, #f9f9f9, #ffffff);
+            }
+
+            .build-pc-banner img {
+                max-width: 350px;
+                width: 100%;
+                height: auto;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                border-radius: 12px;
+                transition: transform 0.3s ease;
+            }
+
+            .build-pc-banner img:hover {
+                transform: scale(1.03);
+            }
+
         </style>
     </head>
     <body><!-- comment -->
@@ -152,10 +173,13 @@
         </header>
 
 
-        <h1 class="text-center">Build Your PC</h1>
+        <div class="build-pc-banner">
+            <img src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/BuildPC.png" alt="Build Your PC" style="max-width: 20%; height: auto;">
+        </div>
+
 
         <div>
-            <button class="btn btn-sm btn-success col-sm-12" onclick="openPCList()">PC Case (Xem PC đã build)</button>
+            <button class="btn btn-sm btn-success col-sm-12" onclick="openPCList()">PC Case</button>
         </div>
         <div>
             <button class="btn btn-sm btn-warning col-sm-12" onclick="resetAllComponents()">Reset All</button>
