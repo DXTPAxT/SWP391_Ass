@@ -1495,38 +1495,3 @@ INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Stat
 INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 79, 1800000, 5, 1); -- SSD (6)
 INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 2, 1000000, 6, 1); -- CASE (7)
 
-
-SELECT 
-    bpi.BuildPCID,
-    bpi.BuildPCItemID,
-    bc.ComponentID,
-    comp.ComponentName,
-    bpi.CategoryID,
-    c.CategoryName,
-    bpi.Price,
-    bpi.Status
-FROM 
-    Build_PC_Items bpi
-JOIN Categories c ON bpi.CategoryID = c.CategoryID
-JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-JOIN Components comp ON bc.ComponentID = comp.ComponentID
-ORDER BY 
-    bpi.BuildPCID, bc.ComponentID;
-
-	SELECT 
-    bp.BuildPCID,
-    MAX(CASE WHEN bc.ComponentID = 2 THEN c.CategoryName END) AS MainBoard,
-    MAX(CASE WHEN bc.ComponentID = 3 THEN c.CategoryName END) AS CPU,
-    MAX(CASE WHEN bc.ComponentID = 4 THEN c.CategoryName END) AS GPU,
-    MAX(CASE WHEN bc.ComponentID = 5 THEN c.CategoryName END) AS RAM,
-    MAX(CASE WHEN bc.ComponentID = 6 THEN c.CategoryName END) AS SSD,
-    MAX(CASE WHEN bc.ComponentID = 7 THEN c.CategoryName END) AS CASE_,
-    SUM(bpi.Price) AS Price,
-    MAX(bp.Status) AS Status
-FROM 
-    Build_PC bp
-LEFT JOIN Build_PC_Items bpi ON bp.BuildPCID = bpi.BuildPCID
-LEFT JOIN Categories c ON bpi.CategoryID = c.CategoryID
-LEFT JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-GROUP BY bp.BuildPCID
-ORDER BY bp.BuildPCID;
