@@ -134,4 +134,71 @@ public class FeedbackAdminDAO extends DBAdminContext {
         }
         return false;
     }
+
+    public List<Feedback> getUsersWithFeedbackSummary() {
+        List<Feedback> list = new ArrayList<>();
+        String sql = "SELECT DISTINCT u.UserID, u.FullName, " +
+                     "COUNT(f.FeedbackID) as totalFeedbacks, " +
+                     "SUM(CASE WHEN f.Status = 0 THEN 1 ELSE 0 END) as inactiveCount, " +
+                     "SUM(CASE WHEN f.Status = 1 THEN 1 ELSE 0 END) as activeCount, " +
+                     "SUM(CASE WHEN f.Status = 2 THEN 1 ELSE 0 END) as repliedCount, " +
+                     "MAX(f.FeedbackID) as latestFeedbackID, " +
+                     "MAX(f.Status) as latestStatus " +
+                     "FROM Users u " +
+                     "LEFT JOIN Feedbacks f ON u.UserID = f.UserID " +
+                     "WHERE f.FeedbackID IS NOT NULL " +
+                     "GROUP BY u.UserID, u.FullName " +
+                     "ORDER BY totalFeedbacks DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                // Tạo một Feedback object để chứa thông tin tổng hợp
+                Feedback f = new Feedback();
+                f.setUserID(rs.getInt("UserID"));
+                f.setFullname(rs.getString("FullName"));
+                f.setFeedbackID(rs.getInt("latestFeedbackID"));
+                f.setStatus(rs.getInt("latestStatus"));
+                // Sử dụng content để lưu thông tin tổng hợp
+                f.setContent("Total: " + rs.getInt("totalFeedbacks") + 
+                           " | Active: " + rs.getInt("activeCount") + 
+                           " | Inactive: " + rs.getInt("inactiveCount") + 
+                           " | Replied: " + rs.getInt("repliedCount"));
+                list.add(f);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Feedback> getFeedbacksByUserId(int userID) {
+        List<Feedback> list = new ArrayList<>();
+        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName, f.Reply " +
+                     "FROM Feedbacks f " +
+                     "JOIN Users u ON f.UserID = u.UserID " +
+                     "WHERE f.UserID = ? " +
+                     "ORDER BY f.CreatedAt DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userID);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Feedback f = new Feedback(
+                        rs.getInt("FeedbackID"),
+                        rs.getInt("UserID"),
+                        rs.getString("Content"),
+                        rs.getInt("OrderItemID"),
+                        rs.getString("CreatedAt"),
+                        rs.getInt("Rate"),
+                        rs.getInt("Status"),
+                        rs.getString("FullName"),
+                        rs.getString("Reply")
+                    );
+                    list.add(f);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

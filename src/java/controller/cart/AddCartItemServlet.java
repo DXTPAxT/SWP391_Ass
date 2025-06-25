@@ -11,9 +11,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import static java.awt.SystemColor.window;
-import models.User;
 
 /**
  *
@@ -76,38 +73,26 @@ public class AddCartItemServlet extends HttpServlet {
         response.setContentType("text/plain");
 
         try {
-            HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
-            if (user == null) {
-                String lastPage = request.getParameter("lastPage");
-                session.setAttribute("lastPage", lastPage);
-                response.sendRedirect("Login");
-            } else {
-                String userIDparam = request.getParameter("userID");
-                String productIDparam = request.getParameter("productID");
-                String warrantyDetailIDparam = request.getParameter("warrantyDetailID");
-                String quantityparam = request.getParameter("quantity");
+            String userIDparam = request.getParameter("userID");
+            String productIDparam = request.getParameter("productID");
+            String quantityparam = request.getParameter("quantity");
 
-                int userID = Integer.parseInt(userIDparam);
-                int productID = Integer.parseInt(productIDparam);
-                int warrantyDetailID = Integer.parseInt(warrantyDetailIDparam);
-                int quantity = Integer.parseInt(quantityparam);
+//            if (cartItemParam == null || quantityParam == null
+//                    || cartItemParam.isEmpty() || quantityParam.isEmpty()) {
+//                response.getWriter().write("missing_parameters");
+//                return;
+//            }
+            int userID = Integer.parseInt(userIDparam);
+            int productID = Integer.parseInt(productIDparam);
+            int quantity = Integer.parseInt(quantityparam);
 
-                CartItemDAO dao = new CartItemDAO();
-                boolean added = dao.addCartItem(userID, productID, warrantyDetailID, quantity);
+            CartItemDAO dao = new CartItemDAO();
+            boolean deleted = dao.addCartItem(userID, productID, quantity);
 
-                if (added) {
-                    session.setAttribute("toast", "Add to cart successfully!");
-                    session.setAttribute("toastType", "success");
-                } else {
-                    session.setAttribute("toast", "Add to cart failed!");
-                    session.setAttribute("toastType", "error");
-                }
-                String lastPage = request.getParameter("lastPage");
-                response.sendRedirect(lastPage);
-            }
+            response.getWriter().write(deleted ? "success" : "fail");
         } catch (Exception e) {
             e.printStackTrace(); // để xem trong console
+            response.getWriter().write("error");
         }
     }
 

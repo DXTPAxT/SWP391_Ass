@@ -13,6 +13,10 @@ public class Feedback {
     private int categoryID;
     private String categoryName;
 
+    // Constructor mặc định
+    public Feedback() {
+    }
+
     // Constructor đầy đủ cho JOIN lấy category
     public Feedback(int feedbackID, int userID, String content, int orderItemID, String createdAt, int rate, int status, String fullname, String reply, int categoryID, String categoryName) {
         this.feedbackID = feedbackID;

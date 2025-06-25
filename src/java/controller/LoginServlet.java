@@ -19,7 +19,7 @@ import models.User;
  * @author PC ASUS
  */
 public class LoginServlet extends HttpServlet {
-    private static final String REDIRECT_AFTER_LOGIN = "lastPage";
+    private static final String REDIRECT_AFTER_LOGIN = "redirectAfterLogin";
 
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -38,7 +38,7 @@ public class LoginServlet extends HttpServlet {
             RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/login.jsp");
             rs.forward(request, response);
         } else {
-            if (user.getRole().getRoleID() == 3) {
+            if (user.getRole().getRoleID() == 2) {
                 String redirectURL = (String) session.getAttribute(REDIRECT_AFTER_LOGIN);
                 if (redirectURL == null) {
                     redirectURL = "HomePages";
