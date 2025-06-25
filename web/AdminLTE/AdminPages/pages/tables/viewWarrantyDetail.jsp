@@ -104,7 +104,7 @@
                                                         </td>
                                                         <td>
                                                             <a href="WDA?service=update&warrantyDetailID=${warranty.warrantyDetailID}" 
-                                                               class="btn btn-warning btn-sm">
+                                                               class="btn btn-primary btn-sm">
                                                                 Update
                                                             </a>
                                                         </td>

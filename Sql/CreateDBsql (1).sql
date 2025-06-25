@@ -136,6 +136,7 @@ Create table WarrantyDetails(
 -- 13. Orders
 CREATE TABLE Orders (
     OrderID INT PRIMARY KEY IDENTITY(1,1),
+	Product_Type int default null, -- 0 là cate, 1 là build PC
     CustomerID INT NOT NULL,
     OrderDate DATETIME DEFAULT GETDATE() NOT NULL,
     Address TEXT NOT NULL,

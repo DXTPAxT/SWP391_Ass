@@ -97,7 +97,7 @@
                                                         </td>
                                                         <td>
                                                             <a href="WarrantyAdmin?service=update&warrantyID=${warranty.warrantyID}"
-                                                               class="btn btn-warning btn-sm">
+                                                               class="btn btn-primary btn-sm">
                                                                 Update
                                                             </a>
                                                         </td>
