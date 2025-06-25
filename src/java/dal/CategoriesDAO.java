@@ -5,12 +5,63 @@ import java.util.*;
 import java.util.logging.*;
 import models.BrandByComponentName;
 import models.Brands;
+import models.BuildPCView;
 import models.Categories;
 import models.Components;
 
 public class CategoriesDAO extends DBContext {
 
     private static final Logger LOGGER = Logger.getLogger(CategoriesDAO.class.getName());
+
+    private Categories extractCategory(ResultSet rs) throws SQLException {
+        Categories category = new Categories(
+                rs.getInt("CategoryID"),
+                rs.getString("CategoryName"),
+                rs.getInt("ComponentID"),
+                rs.getInt("BrandID"),
+                rs.getString("BrandName"),
+                rs.getInt("Quantity"),
+                rs.getInt("Price"),
+                rs.getString("Description"),
+                rs.getInt("Status")
+        );
+        try {
+            category.setComponentName(rs.getString("ComponentName"));
+        } catch (SQLException e) {
+            // Optionally log or ignore if not present
+        }
+        return category;
+    }
+
+    private List<Object> buildFilter(
+            StringBuilder sql,
+            String componentName, String brandName,
+            Integer minPrice, Integer maxPrice,
+            String keyword) {
+
+        List<Object> params = new ArrayList<>();
+        if (componentName != null && !componentName.isEmpty()) {
+            sql.append(" AND comp.ComponentName = ? ");
+            params.add(componentName);
+        }
+        if (brandName != null && !brandName.isEmpty()) {
+            sql.append(" AND b.BrandName = ? ");
+            params.add(brandName);
+        }
+        if (minPrice != null) {
+            sql.append(" AND c.Price >= ? ");
+            params.add(minPrice);
+        }
+        if (maxPrice != null) {
+            sql.append(" AND c.Price <= ? ");
+            params.add(maxPrice);
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND LOWER(c.CategoryName) LIKE ? ");
+            params.add("%" + keyword.toLowerCase() + "%");
+        }
+        return params;
+    }
 
     public List<Brands> getAllBrands() {
         String sql = "SELECT BrandID, BrandName, Quantity, Status FROM Brands";
@@ -117,9 +168,9 @@ public class CategoriesDAO extends DBContext {
             JOIN BrandComs bc ON c.BrandComID   = bc.BrandComID
             JOIN Brands b ON bc.BrandID = b.BrandID
             JOIN Components comp ON bc.ComponentID = comp.ComponentID
-            WHERE bc.ComponentID = ? 
-            ORDER BY c.CategoryID
-            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+            WHERE bc.ComponentID = ? and  c.Status IN (1, 2) 
+            ORDER BY c.CategoryID 
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY 
             """;
         List<Categories> list = new ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -219,7 +270,7 @@ public class CategoriesDAO extends DBContext {
             JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
             JOIN Brands b ON bc.BrandID= b.BrandID
             JOIN Components comp  ON bc.ComponentID = comp.ComponentID
-            WHERE 1=1
+            WHERE c.Status IN (1, 2)
             """);
         List<Object> params = buildFilter(sql, componentName, brandName, minPrice, maxPrice, keyword);
         sql.append(" ORDER BY c.CategoryID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
@@ -269,108 +320,25 @@ public class CategoriesDAO extends DBContext {
         return 0;
     }
 
-    //  Lấy danh sách sản phẩm theo tên component
-   public List<Categories> getCategoriesByComponentID(int componentID) {
-    // Nếu componentID là 1 thì bỏ qua
-    if (componentID == 1) return new ArrayList<>();     
-    String sql = """
-        SELECT
-          c.*,
-          bc.ComponentID,
-          bc.BrandID,
-          b.BrandName,
-          comp.ComponentName
-        FROM Categories c
-        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-        JOIN Brands b ON bc.BrandID = b.BrandID
-        JOIN Components comp ON bc.ComponentID = comp.ComponentID
-        WHERE bc.ComponentID = ? 
-        ORDER BY c.CategoryID
-    """;
-
-    List<Categories> list = new ArrayList<>();
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, componentID);
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                list.add(extractCategory(rs));
-            }
-        }
-    } catch (SQLException e) {
-        LOGGER.log(Level.SEVERE, null, e);
-    }
-    return list;
-}
-
-
-    // Phương pháp tiện ích
-    private Categories extractCategory(ResultSet rs) throws SQLException {
-        Categories category = new Categories(
-                rs.getInt("CategoryID"),
-                rs.getString("CategoryName"),
-                rs.getInt("ComponentID"),
-                rs.getInt("BrandID"),
-                rs.getString("BrandName"),
-                rs.getInt("Quantity"),
-                rs.getInt("Price"),
-                rs.getString("Description"),
-                rs.getInt("Status")
-        );
-        try {
-            category.setComponentName(rs.getString("ComponentName"));
-        } catch (SQLException e) {
-            // Optionally log or ignore if not present
-        }
-        return category;
-    }
-
-    private List<Object> buildFilter(
-            StringBuilder sql,
-            String componentName, String brandName,
-            Integer minPrice, Integer maxPrice,
-            String keyword) {
-
-        List<Object> params = new ArrayList<>();
-        if (componentName != null && !componentName.isEmpty()) {
-            sql.append(" AND comp.ComponentName = ? ");
-            params.add(componentName);
-        }
-        if (brandName != null && !brandName.isEmpty()) {
-            sql.append(" AND b.BrandName = ? ");
-            params.add(brandName);
-        }
-        if (minPrice != null) {
-            sql.append(" AND c.Price >= ? ");
-            params.add(minPrice);
-        }
-        if (maxPrice != null) {
-            sql.append(" AND c.Price <= ? ");
-            params.add(maxPrice);
-        }
-        if (keyword != null && !keyword.isEmpty()) {
-            sql.append(" AND LOWER(c.CategoryName) LIKE ? ");
-            params.add("%" + keyword.toLowerCase() + "%");
-        }
-        return params;
-    }
-
     private void setParams(PreparedStatement ps, List<Object> params) throws SQLException {
         for (int i = 0; i < params.size(); i++) {
             ps.setObject(i + 1, params.get(i));
         }
     }
- public List<Categories> getCategoriesFiltered2(
-    int componentID, String brand, String keyword,
-    int minPrice, int maxPrice, int start, int size) {
 
-    List<Categories> list = new ArrayList<>();
-    StringBuilder sql = new StringBuilder("""
+    // BuilDPC_ListCate
+    public List<Categories> getCategoriesFiltered2(
+            int componentID, String brand, String keyword,
+            int minPrice, int maxPrice, int start, int size) {
+
+        List<Categories> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("""
         SELECT 
           c.*, 
           bc.ComponentID, 
           bc.BrandID, 
           b.BrandName, 
-          comp.ComponentName
+          comp.ComponentID
         FROM Categories c
         JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
         JOIN Brands b ON bc.BrandID = b.BrandID
@@ -378,111 +346,181 @@ public class CategoriesDAO extends DBContext {
         WHERE  bc.ComponentID = ?
     """);
 
-    List<Object> params = new ArrayList<>();
-    params.add(componentID);
+        List<Object> params = new ArrayList<>();
+        params.add(componentID);
 
-    if (brand != null && !brand.trim().isEmpty()) {
-        sql.append(" AND b.BrandName = ? ");
-        params.add(brand.trim());
-    }
-    if (keyword != null && !keyword.trim().isEmpty()) {
-        sql.append(" AND LOWER(c.CategoryName) LIKE ? ");
-        params.add("%" + keyword.trim().toLowerCase() + "%");
-    }
-    if (minPrice >= 0) {
-        sql.append(" AND c.Price >= ? ");
-        params.add(minPrice);
-    }
-    if (maxPrice < Integer.MAX_VALUE) {
-        sql.append(" AND c.Price <= ? ");
-        params.add(maxPrice);
-    }
-
-    sql.append(" ORDER BY c.CategoryID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
-    params.add(start);
-    params.add(size);
-
-    try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
-        for (int i = 0; i < params.size(); i++) {
-            ps.setObject(i + 1, params.get(i));
+        if (brand != null && !brand.trim().isEmpty()) {
+            sql.append(" AND b.BrandName = ? ");
+            params.add(brand.trim());
+        }
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND LOWER(c.CategoryName) LIKE ? ");
+            params.add("%" + keyword.trim().toLowerCase() + "%");
+        }
+        if (minPrice >= 0) {
+            sql.append(" AND c.Price >= ? ");
+            params.add(minPrice);
+        }
+        if (maxPrice < Integer.MAX_VALUE) {
+            sql.append(" AND c.Price <= ? ");
+            params.add(maxPrice);
         }
 
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                list.add(extractCategory(rs));
+        sql.append(" ORDER BY c.CategoryID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        params.add(start);
+        params.add(size);
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
             }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(extractCategory(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, null, e);
         }
-    } catch (SQLException e) {
-        LOGGER.log(Level.SEVERE, null, e);
+
+        return list;
     }
 
-    return list;
-}
-public int countFilteredByComponent(int componentID, String brand, int minPrice, int maxPrice, String keyword) {
-    StringBuilder sql = new StringBuilder("""
+    public int countFilteredByComponent(int componentID, String brand, int minPrice, int maxPrice, String keyword) {
+        StringBuilder sql = new StringBuilder("""
         SELECT COUNT(*)
         FROM Categories c
         JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
         JOIN Brands b ON bc.BrandID = b.BrandID
-        WHERE bc.ComponentID = ? AND c.Status = 2
+        WHERE bc.ComponentID = ? AND c.Status IN (1, 2)
     """);
-    List<Object> params = new ArrayList<>();
-    params.add(componentID);
+        List<Object> params = new ArrayList<>();
+        params.add(componentID);
 
-    if (brand != null && !brand.isEmpty()) {
-        sql.append(" AND b.BrandName = ?");
-        params.add(brand);
-    }
-    if (minPrice >= 0) {
-        sql.append(" AND c.Price >= ?");
-        params.add(minPrice);
-    }
-    if (maxPrice < Integer.MAX_VALUE) {
-        sql.append(" AND c.Price <= ?");
-        params.add(maxPrice);
-    }
-    if (keyword != null && !keyword.isEmpty()) {
-        sql.append(" AND LOWER(c.CategoryName) LIKE ?");
-        params.add("%" + keyword.toLowerCase() + "%");
-    }
-
-    try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
-        for (int i = 0; i < params.size(); i++) {
-            ps.setObject(i + 1, params.get(i));
+        if (brand != null && !brand.isEmpty()) {
+            sql.append(" AND b.BrandName = ?");
+            params.add(brand);
         }
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) return rs.getInt(1);
+        if (minPrice >= 0) {
+            sql.append(" AND c.Price >= ?");
+            params.add(minPrice);
         }
-    } catch (SQLException e) {
-        LOGGER.log(Level.SEVERE, null, e);
-    }
-    return 0;
-}
+        if (maxPrice < Integer.MAX_VALUE) {
+            sql.append(" AND c.Price <= ?");
+            params.add(maxPrice);
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND LOWER(c.CategoryName) LIKE ?");
+            params.add("%" + keyword.toLowerCase() + "%");
+        }
 
-public List<Brands> getBrandsByComponent(int componentID) {
-    List<Brands> list = new ArrayList<>();
-    String sql = """
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+        return 0;
+    }
+
+    public List<Brands> getBrandsByComponent(int componentID) {
+        List<Brands> list = new ArrayList<>();
+        String sql = """
         SELECT DISTINCT b.BrandID, b.BrandName, b.Quantity, b.Status
         FROM BrandComs bc
         JOIN Brands b ON bc.BrandID = b.BrandID
         WHERE bc.ComponentID = ?
     """;
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, componentID);
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                list.add(new Brands(
-                        rs.getInt("BrandID"),
-                        rs.getString("BrandName"),
-                        rs.getInt("Quantity"),
-                        rs.getInt("Status")
-                ));
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, componentID);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new Brands(
+                            rs.getInt("BrandID"),
+                            rs.getString("BrandName"),
+                            rs.getInt("Quantity"),
+                            rs.getInt("Status")
+                    ));
+                }
             }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, null, e);
         }
-    } catch (SQLException e) {
-        LOGGER.log(Level.SEVERE, null, e);
+        return list;
     }
-    return list;
+
+public List<BuildPCView> getBuiltPCsForCustomer() {
+    List<BuildPCView> result = new ArrayList<>();
+    Map<Integer, BuildPCView> map = new LinkedHashMap<>();
+
+    String sql = """
+        SELECT bp.BuildPCID, bp.Price, bp.Status,
+               c.CategoryName, b.BrandName, comp.ComponentID,
+               c.ImageURL
+        FROM Build_PC bp
+        JOIN Build_PC_Items bi ON bp.BuildPCID = bi.BuildPCID
+        JOIN Categories c ON bi.CategoryID = c.CategoryID
+        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        JOIN Components comp ON bc.ComponentID = comp.ComponentID
+        WHERE bp.Status = 1
+        ORDER BY bp.BuildPCID DESC
+    """;
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int buildID = rs.getInt("BuildPCID");
+            BuildPCView pc = map.getOrDefault(buildID, new BuildPCView());
+            pc.setBuildPCID(buildID);
+            pc.setPrice(rs.getInt("Price"));
+            pc.setStatus(rs.getInt("Status"));
+
+            int componentID = rs.getInt("ComponentID");
+            String name = rs.getString("CategoryName") + " (" + rs.getString("BrandName") + ")";
+            String img = rs.getString("ImageURL");
+
+            switch (componentID) {
+                case 2 -> {
+                    pc.setMainBoard(name);
+                    pc.setImgMain(img);
+                }
+                case 3 -> {
+                    pc.setCpu(name);
+                    pc.setImgCPU(img);
+                }
+                case 4 -> {
+                    pc.setGpu(name);
+                    pc.setImgGPU(img);
+                }
+                case 5 -> {
+                    pc.setRam(name);
+                    pc.setImgRAM(img);
+                }
+                case 6 -> {
+                    pc.setSsd(name);
+                    pc.setImgSSD(img);
+                }
+                case 7 -> {
+                    pc.setPcCase(name);
+                    pc.setImgCase(img);
+                }
+            }
+
+            map.put(buildID, pc);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return new ArrayList<>(map.values());
 }
 
 }
