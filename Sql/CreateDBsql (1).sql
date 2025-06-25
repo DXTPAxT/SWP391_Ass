@@ -1,4 +1,4 @@
-﻿Use master;
+Use master;
 
 -- Xóa database nếu đã tồn tại
 IF EXISTS (SELECT name FROM sys.databases WHERE name = N'ComputerOnlineShop')
@@ -176,7 +176,8 @@ CREATE TABLE CartItems (
 	UserID INT NOT NULL,
 	CategoryID INT NOT NULL,
 	WarrantyDetailID INT NOT NULL,
-	Status INT NOT NULL,
+	Quantity INT NOT NULL,
+	Status INT NOT NULL DEFAULT 1,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
     FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
@@ -342,3 +343,34 @@ CREATE TABLE Comments (
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (ParentCommentID) REFERENCES Comments(CommentID)
 );
+
+-- 30. bảng này Order của Build PC
+CREATE TABLE Order_BuildPCItems (
+    OrderBuildPCItemID INT PRIMARY KEY IDENTITY(1,1),
+    OrderID INT NOT NULL,
+    BuildPCID INT NOT NULL,
+    Price INT NOT NULL,
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY (BuildPCID) REFERENCES Build_PC(BuildPCID)
+);
+--31
+CREATE TABLE Order_BuildPCDetails (
+    OrderBuildPCDetailID INT PRIMARY KEY IDENTITY(1,1),
+    OrderBuildPCItemID INT NOT NULL,
+    CategoryID INT NOT NULL,
+    WarrantyDetailID INT NOT NULL,
+    Price INT NOT NULL,
+    Status INT DEFAULT 1 NOT NULL,
+    FOREIGN KEY (OrderBuildPCItemID) REFERENCES Order_BuildPCItems(OrderBuildPCItemID),
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
+    FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
+);
+--32
+CREATE TABLE Order_BuildPC_Products (
+    OrderBuildPCProductID INT PRIMARY KEY IDENTITY(1,1),
+    OrderBuildPCDetailID INT NOT NULL,
+    ProductID INT NOT NULL,
+    FOREIGN KEY (OrderBuildPCDetailID) REFERENCES Order_BuildPCDetails(OrderBuildPCDetailID),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
