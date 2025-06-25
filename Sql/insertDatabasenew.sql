@@ -1495,6 +1495,9 @@ INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Stat
 INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 79, 1800000, 5, 1); -- SSD (6)
 INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 2, 1000000, 6, 1); -- CASE (7)
 
+UPDATE Orders
+SET Product_Type = 0;
+
 
 SELECT 
     bpi.BuildPCID,

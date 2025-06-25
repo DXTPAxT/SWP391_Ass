@@ -7,6 +7,8 @@
 <%@page contentType="text/html" pageEncoding="windows-1252"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -49,12 +51,12 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Data Tables
+                        Order Tables
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Component</a></li>
-                        <li class="active"></li>
+                        <li><a href="#">Order</a></li>
+                        <li class="activ21e">view Order</li>
                     </ol>
                 </section>
 
@@ -63,77 +65,70 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="box">
-                                <div class="box-header with-border">
-                                    <div class="row align-items-center">
-                                        <!-- Optional: place search or filter tools here -->
-                                    </div>
-                                </div>
 
+                                <!-- /.box-header -->
                                 <div class="box-body">
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Category ID</th>
-                                                <th>Category Name</th>
-                                                <th>Component Name</th>
-                                                <th>Brand Name</th>
-                                                <th>Quantity</th>
-                                                <th>Inventory</th>
-                                                <th>Price</th>
-                                                <th>Description</th>
+                                                <th>Order ID</th>
+                                                <th>Customer Name</th>
+                                                <th>Order Date</th>
+                                                <th>Product Type</th>
+                                                <th>Total Amount</th>
                                                 <th>Status</th>
                                                 <th>Update</th>
-                                                <th>View Product</th>
-                                                <th>View Import</th>
-                                                <th>View Feedback</th>
+                                                <th>View Order Items</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:choose>
-                                                <c:when test="${not empty list}">
-                                                    <c:forEach var="category" items="${list}">
-                                                        <tr>
-                                                            <td>${category.categoryID}</td>
-                                                            <td>${category.categoryName}</td>
-                                                            <td>${category.componentName}</td>
-                                                            <td>${category.brandName}</td>
-                                                            <td>${category.quantity}</td>
-                                                            <td>${category.inventory}</td>
-                                                            <td>${category.price}</td>
-                                                            <td style="white-space: normal; word-break: break-word; max-width: 200px;">${category.description}</td>
-                                                            <td>
-                                                                <c:choose>
-                                                                    <c:when test="${category.status == 0}">Disable</c:when>
-                                                                    <c:when test="${category.status == 1}">Active</c:when>
-                                                                    <c:when test="${category.status == 2}">On Sale</c:when>
-                                                                    <c:otherwise>Unknown</c:otherwise>
-                                                                </c:choose>
-                                                            </td>
-                                                            <td>
-                                                                <a href="CateAdmin?service=update&categoryID=${category.categoryID}" 
-                                                                   class="btn btn-primary btn-sm">Update</a>
-                                                            </td>
-                                                            <td>
-                                                                <a href="ProductAdmin?service=listbycate&categoryID=${category.categoryID}" 
-                                                                   class="btn btn-warning btn-sm">View</a>
-                                                            </td>
-                                                            <td>
-                                                                <a href="Import?service=listbycate&categoryID=${category.categoryID}" 
-                                                                   class="btn btn-warning btn-sm">View</a>
-                                                            </td>
-                                                            <td>
-                                                                <a href="Import?service=listbycate&categoryID=${category.categoryID}" 
-                                                                   class="btn btn-warning btn-sm">View</a>
-                                                            </td>
-                                                        </tr>
-                                                    </c:forEach>
-                                                </c:when>
-                                                <c:otherwise>
+                                            <c:if test="${not empty orders}">
+                                                <c:forEach var="order" items="${orders}">
                                                     <tr>
-                                                        <td colspan="13" class="text-center text-muted">No categories found.</td>
+                                                        <td>${order.orderID}</td>
+                                                        <td>${order.fullName}</td>
+                                                        <td><fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd HH:mm" /></td>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${order.product_Type == 0}">Category</c:when>
+                                                                <c:when test="${order.product_Type == 1}">Build PC</c:when>
+                                                            </c:choose>
+                                                        </td>
+                                                        <td>${order.totalAmount}</td>
+
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${order.status == 0}">
+                                                                    <span class="label label-danger">Canceled</span>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 1}">
+                                                                    <span class="label label-default">Processing</span>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 2}">
+                                                                    <span class="label label-warning">Shipping</span>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 3}">
+                                                                    <span class="label label-success">Completed</span>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 4}">
+                                                                    <span class="label label-danger">Return</span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <span class="label label-danger">Unknown</span>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+
+
+                                                        <td>
+                                                            <a href="OrderAdmin?service=update&orderID=${order.orderID}" class="btn btn-primary btn-sm">Update</a>
+                                                        </td>
+                                                        <!-- nut view nay se tro ve orderItems neu Product_Type = 0 con 1 ve OrderBuildPCItems -->
+                                                        <td><a href="WDA?service=listbybrandcomid&brandComID=${bc.brandComID}" 
+                                                               class="btn btn-warning btn-sm">View</a></td>
                                                     </tr>
-                                                </c:otherwise>
-                                            </c:choose>
+                                                </c:forEach>
+                                            </c:if>
                                         </tbody>
                                     </table>
                                 </div>
@@ -142,18 +137,13 @@
                     </div>
 
                     <!-- /.box-body -->
+                </section>
             </div>
             <!-- /.box -->
 
             <!-- /.content-wrapper -->
             <jsp:include page="../../components/footer.jsp" />
-
-
             <jsp:include page="../../components/control-sidebar.jsp" />
-
-            <!-- Add the sidebar's background. This div must be placed
-                 immediately after the control sidebar -->
-            <div class="control-sidebar-bg"></div>
         </div>
         <!-- ./wrapper -->
 
