@@ -172,8 +172,7 @@ public class UserDAO extends DBContext {
             }
         }
     }
-    // Update user with role-specific information
-
+    
     // Update user with role-specific information
     public boolean updateUser(int userId, String fullName, String email, String phoneNumber, int status, String address, String StartedDate, String EndDate) throws SQLException {
         connection.setAutoCommit(false);

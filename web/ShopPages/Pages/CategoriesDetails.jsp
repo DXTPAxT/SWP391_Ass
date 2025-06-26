@@ -227,12 +227,15 @@
                                             <input type="hidden" name="quantity" id="formQuantity" value="1" />
                                         </form>
                                         <!-- ADD TO CART BUTTON -->
-                                        <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
-                                            <button type="button" class="btn btn-success btn-sm" id="addToCartBtn">
-                                                <i class="fa fa-shopping-cart"></i>
-                                                Add to cart
-                                            </button>
-                                        </div>
+
+                                        <c:if test="${sessionScope.user.role.roleID == 3}">
+                                            <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                                                <button type="button" class="btn btn-success btn-sm" id="addToCartBtn">
+                                                    <i class="fa fa-shopping-cart"></i>
+                                                    Add to cart
+                                                </button>
+                                            </div>
+                                        </c:if>
                                     </div>
                                 </div>
                             </div>

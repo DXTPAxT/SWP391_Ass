@@ -99,12 +99,16 @@ public class UserServlet extends HttpServlet {
             response.sendRedirect("Admin/user");
         } else if ("myAccount".equals(service)) {
             HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
-            if (user != null) {
-                request.setAttribute("user", user);
+            User sessionUser = (User) session.getAttribute("user");
+
+            if (sessionUser != null) {
+                // Cập nhật lại bản mới nhất từ DB để tránh thông tin cũ
+                UserDAO dao = new UserDAO();
+                User latestUser = dao.getUserByID(sessionUser.getUserId());
+                request.setAttribute("user", latestUser);
                 request.getRequestDispatcher("/ShopPages/Pages/myAccount.jsp").forward(request, response);
             } else {
-                response.sendRedirect(request.getContextPath() + "/ShopPages/Pages/login.jsp");
+                response.sendRedirect(request.getContextPath() + "/Login");
             }
         } else if ("forgotPassword".equals(service)) {
             request.getRequestDispatcher("/ShopPages/Pages/forgotPassword.jsp").forward(request, response);
@@ -184,31 +188,32 @@ public class UserServlet extends HttpServlet {
                         response.sendRedirect("Admin/user?type=shipper");
                         break;
                     default:
-                        response.sendRedirect("Admin/user?type=admin");
+                        response.sendRedirect("Admin");
                 }
             }
         } else if ("updateProfile".equals(service)) {
             UserDAO dao = new UserDAO();
             HttpSession session = request.getSession();
             User currentUser = (User) session.getAttribute("user");
+
             if (currentUser == null) {
-                response.sendRedirect(request.getContextPath() + "/ShopPages/Pages/login.jsp");
+                response.sendRedirect(request.getContextPath() + "/Login");
                 return;
             }
+
             String email = request.getParameter("email");
             String fullName = request.getParameter("fullName");
             String address = request.getParameter("address");
             String phoneNumber = request.getParameter("phoneNumber");
-            int userID = Integer.parseInt(request.getParameter("userID"));
+
+            int userID = currentUser.getUserId();
             int status = currentUser.getStatus();
 
-            boolean isEmailExist = dao.isEmailExist(email);
-            boolean isPhoneNumberExisted = dao.isPhoneNumberExisted(phoneNumber);
             String error = null;
+
+            // Kiểm tra điều kiện đầu vào
             if (utils.Validator.isNullOrEmpty(email)) {
                 error = "Email is required!";
-            } else if (isEmailExist && !email.equals(dao.getUserByID(userID).getEmail())) {
-                error = "Email already exists!";
             } else if (utils.Validator.isNullOrEmpty(fullName)) {
                 error = "Full name is required!";
             } else if (utils.Validator.isNullOrEmpty(address)) {
@@ -217,18 +222,29 @@ public class UserServlet extends HttpServlet {
                 error = "Phone number is required!";
             } else if (!utils.Validator.isValidPhoneNumber(phoneNumber)) {
                 error = "Invalid phone number!";
-            } else if (isPhoneNumberExisted && !phoneNumber.equals(dao.getUserByID(userID).getPhoneNumber())) {
-                error = "Phone number already exists!";
+            } else {
+                // Kiểm tra trùng email nhưng KHÁC với hiện tại
+                boolean emailExisted = dao.isEmailExist(email);
+                if (emailExisted && !email.equalsIgnoreCase(currentUser.getEmail())) {
+                    error = "Email already exists!";
+                }
+
+                // Kiểm tra trùng số điện thoại nhưng KHÁC với hiện tại
+                boolean phoneExisted = dao.isPhoneNumberExisted(phoneNumber);
+                if (phoneExisted && !phoneNumber.equals(currentUser.getPhoneNumber())) {
+                    error = "Phone number already exists!";
+                }
             }
 
             if (error != null) {
                 request.setAttribute("toast", error);
                 request.setAttribute("toastType", "error");
-                User user = dao.getUserByID(userID);
-                user.setFullname(fullName);
-                user.setEmail(email);
-                user.setPhoneNumber(phoneNumber);
-                request.setAttribute("user", user);
+
+                // Gán lại thông tin đã nhập
+                currentUser.setFullname(fullName);
+                currentUser.setEmail(email);
+                currentUser.setPhoneNumber(phoneNumber);
+                request.setAttribute("user", currentUser);
                 request.getRequestDispatcher("/ShopPages/Pages/myAccount.jsp").forward(request, response);
             } else {
                 try {
@@ -244,8 +260,9 @@ public class UserServlet extends HttpServlet {
                     }
                     request.setAttribute("user", dao.getUserByID(userID));
                     request.getRequestDispatcher("/ShopPages/Pages/myAccount.jsp").forward(request, response);
-                } catch (SQLException ex) {
-                    Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response.sendRedirect("HomePages");
                 }
             }
         } else if ("sendOTP".equals(service)) {
@@ -255,7 +272,7 @@ public class UserServlet extends HttpServlet {
             String error = "";
             if (isExisted) {
                 // Tạo OTP thực tế
-                String otp = String.valueOf((int)((Math.random() * 900000) + 100000));
+                String otp = String.valueOf((int) ((Math.random() * 900000) + 100000));
                 java.util.Date now = new java.util.Date();
                 java.util.Date expiration = new java.util.Date(now.getTime() + 5 * 60 * 1000); // 5 phút
                 dal.OTPDAO otpDAO = new dal.OTPDAO();
