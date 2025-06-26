@@ -1480,23 +1480,10 @@ INSERT INTO Shipping(OrderID, ShipperID, ShippingStatus, ShipTime) values
 (1, 4, 'On going', GETDATE()), 
 (2, 4, 'On going', GETDATE()), 
 (3, 4, 'On going', GETDATE()), 
-(4, 4, 'On going', GETDATE());
+(4, 4, 'On going', GETDATE());	
 
 INSERT INTO Comments (Post_id, UserID, CommentText)
 VALUES (1, 3, 'Very informative post, thank you!');
-
--- Build_PC #1
-INSERT INTO Build_PC (Price, Status) VALUES (18300000, 1);
--- Giả sử các CategoryID bên dưới thuộc ComponentID từ 2 đến 7 (MainBoard → CASE)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 3, 2000000, 1, 1); -- MainBoard (ComponentID = 2)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 17, 5000000, 2, 1); -- CPU (3)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 6, 7000000, 3, 1); -- GPU (4)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 103, 1500000, 4, 1); -- RAM (5)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 79, 1800000, 5, 1); -- SSD (6)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 2, 1000000, 6, 1); -- CASE (7)
-
-UPDATE Orders
-SET Product_Type = 0;
 
 
 -- Notification

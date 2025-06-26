@@ -80,8 +80,6 @@ public class CategoriesController extends HttpServlet {
         request.setAttribute("Components", dao.getAllComponents());
         request.setAttribute("BrandWithComponent", dao.getBrandsGroupedByComponent());
         request.setAttribute("listBrand", dao.getAllBrands());
-
-        // Không dùng AJAX → luôn load Categories.jsp
         request.getRequestDispatcher("/ShopPages/Pages/Categories.jsp").forward(request, response);
     }
 
