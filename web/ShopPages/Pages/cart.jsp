@@ -69,13 +69,13 @@
                                         </td>
                                         <td class="cart_description">
                                             <div>
-                                                <h4><a href="#">${cartItem.getProduct().getName()}</a></h4>
-                                                <p>ID: ${cartItem.getProduct().getProductID()}</p>
+                                                <h4><a href="#">${cartItem.category.categoryName}</a></h4>
+                                                <p>ID: ${cartItem.category.categoryID}</p>
                                             </div>
                                         </td>
                                         <td class="cart_price" data-label="Giá">
                                             <p class="mb-0">
-                                                <fmt:formatNumber value="${cartItem.getProduct().getPrice()}" type="number" groupingUsed="true"/> VND
+                                                <fmt:formatNumber value="${cartItem.category.price}" type="number" groupingUsed="true"/> VND
                                             </p>
                                         </td>
                                         <td class="cart_quantity" data-label="Số lượng">
@@ -84,11 +84,11 @@
                                                 <input class="cart_quantity_input"
                                                        type="number" 
                                                        name="quantity" 
-                                                       value="${cartItem.getQuantity()}" 
+                                                       value="${cartItem.quantity}" 
                                                        autocomplete="off"
-                                                       data-itemid="${cartItem.getCartItemID()}"
-                                                       data-price="${cartItem.getProduct().getPrice()}"
-                                                       data-old-value="${cartItem.getQuantity()}"
+                                                       data-itemid="${cartItem.cartItemID}"
+                                                       data-price="${cartItem.category.price}"
+                                                       data-old-value="${cartItem.quantity}"
                                                        oninput="changeQty(this, 0)"
                                                        onchange="debounceTrigger(this)">    
                                                 <button onclick="changeQty(this, 1)">+</button>
@@ -96,11 +96,11 @@
                                         </td>
                                         <td class="cart_total" data-label="Tổng">
                                             <p class="cart_total_price">
-                                                <fmt:formatNumber value="${cartItem.getProduct().getPrice() * cartItem.getQuantity()}" type="number" groupingUsed="true"/> VND
+                                                <fmt:formatNumber value="${cartItem.category.price * cartItem.quantity}" type="number" groupingUsed="true"/> VND
                                             </p>
                                         </td>
                                         <td class="cart_delete" data-label="Xoá">
-                                            <button onclick="confirmDelete(this, ${cartItem.getCartItemID()})"><i class="fa fa-times"></i></button>
+                                            <button onclick="confirmDelete(this, ${cartItem.cartItemID})"><i class="fa fa-times"></i></button>
                                         </td>
                                     </tr>
                                 </c:forEach>

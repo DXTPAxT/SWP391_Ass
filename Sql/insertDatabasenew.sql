@@ -1100,11 +1100,11 @@ INSERT INTO Orders (CustomerID, OrderDate, Address, TotalAmount, Status) VALUES 
 INSERT INTO Orders (CustomerID, OrderDate, Address, TotalAmount, Status) VALUES (2, '2024-12-11 05:34:02', N'Customer 2 Address #50', 9077684, 2);
 
 -- Insert data into CartItems
-INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (2, 167, 60, 1, 1);
-INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (2, 12, 25, 1, 1);
-INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (2, 196, 46, 1, 1);
-INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (2, 71, 12, 1, 1);
-INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (2, 112, 21, 1, 0);
+INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (3, 167, 60, 1, 1);
+INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (3, 12, 25, 1, 1);
+INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (3, 196, 46, 1, 1);
+INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (3, 71, 12, 1, 1);
+INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (3, 112, 21, 1, 0);
 
 -- Insert data into OrderItems
 INSERT INTO OrderItems (OrderID, CategoryID, Quantity, Price) VALUES (47, 189, 3, 1574055);

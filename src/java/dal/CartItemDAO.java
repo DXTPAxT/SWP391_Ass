@@ -156,4 +156,26 @@ public class CartItemDAO extends DBContext {
         }
         return true;
     }
+
+    public static void main(String[] args) {
+        CartItemDAO dao = new CartItemDAO();
+        int testUserId = 3; // Thay bằng UserID bạn muốn test
+
+        ArrayList<CartItem> cartItems = dao.getCartItemsByUserId(testUserId);
+
+        for (CartItem item : cartItems) {
+            System.out.println("CartItemID: " + item.getCartItemID());
+            System.out.println("UserID: " + item.getUserID());
+            System.out.println("Category: " + item.getCategory().getCategoryName());
+            System.out.println("Warranty Period: " + item.getWarranty().getWarranty().getWarrantyPeriod() + " months");
+            System.out.println("Warranty Price: " + item.getWarranty().getPrice());
+            System.out.println("Quantity: " + item.getQuantity());
+            System.out.println("Status: " + item.getStatus());
+            System.out.println("--------");
+        }
+
+        if (cartItems.isEmpty()) {
+            System.out.println("No cart items found for userID = " + testUserId);
+        }
+    }
 }
