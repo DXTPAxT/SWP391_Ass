@@ -374,3 +374,15 @@ CREATE TABLE Order_BuildPC_Products (
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
 
+--33 Notification
+CREATE TABLE Notifications (
+    NotificationID INT PRIMARY KEY IDENTITY(1,1),
+    UserID INT NOT NULL,         -- Người nhận thông báo (admin hoặc user)
+    SenderID INT NOT NULL,       -- Người gửi thông báo (admin hoặc user)
+    Title NVARCHAR(255) NOT NULL,
+    Message NVARCHAR(MAX) NOT NULL,
+    IsRead BIT DEFAULT 0,        -- 0: chưa đọc, 1: đã đọc
+    CreatedAt DATETIME DEFAULT GETDATE() NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (SenderID) REFERENCES Users(UserID)
+);
