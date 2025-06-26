@@ -1,4 +1,4 @@
-﻿Use master;
+Use master;
 
 -- Xóa database nếu đã tồn tại
 IF EXISTS (SELECT name FROM sys.databases WHERE name = N'ComputerOnlineShop')
@@ -109,6 +109,7 @@ CREATE TABLE Products (
 	ProductCode Varchar(100) NOT null,
     Status int DEFAULT 1 NOT NULL,
 	ImportID INT NOT NULL,
+	Note text default null,
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
     FOREIGN KEY (ImportID) REFERENCES Imports(ImportID)
 );
@@ -135,6 +136,7 @@ Create table WarrantyDetails(
 -- 13. Orders
 CREATE TABLE Orders (
     OrderID INT PRIMARY KEY IDENTITY(1,1),
+	Product_Type int default null, -- 0 là cate, 1 là build PC
     CustomerID INT NOT NULL,
     OrderDate DATETIME DEFAULT GETDATE() NOT NULL,
     Address TEXT NOT NULL,
@@ -188,6 +190,7 @@ CREATE TABLE Shipping (
     ShipperID INT NOT NULL,
     ShippingStatus VARCHAR(50) NOT NULL,
     ShipTime DATE NOT NULL,
+	Note text default null,
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
     FOREIGN KEY (ShipperID) REFERENCES Users(UserID),
 );

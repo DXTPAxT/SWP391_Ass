@@ -1,11 +1,13 @@
-
 package models;
 
 import java.util.Date;
 
 public class Order {
+
     private int OrderID;
+    private int Product_Type;
     private int CustomerID;
+    private String FullName;
     private Date OrderDate;
     private String Address;
     private int TotalAmount;
@@ -14,8 +16,9 @@ public class Order {
     public Order() {
     }
 
-    public Order(int OrderID, int CustomerID, Date OrderDate, String Address, int TotalAmount, int Status) {
+    public Order(int OrderID, int Product_Type, int CustomerID, Date OrderDate, String Address, int TotalAmount, int Status) {
         this.OrderID = OrderID;
+        this.Product_Type = Product_Type;
         this.CustomerID = CustomerID;
         this.OrderDate = OrderDate;
         this.Address = Address;
@@ -23,12 +26,50 @@ public class Order {
         this.Status = Status;
     }
 
-    public Order(int CustomerID, Date OrderDate, String Address, int TotalAmount, int Status) {
+    public Order(int Product_Type, int CustomerID, Date OrderDate, String Address, int TotalAmount, int Status) {
+        this.Product_Type = Product_Type;
         this.CustomerID = CustomerID;
         this.OrderDate = OrderDate;
         this.Address = Address;
         this.TotalAmount = TotalAmount;
         this.Status = Status;
+    }
+
+    public Order(int OrderID, int Product_Type, int CustomerID, String FullName, Date OrderDate, String Address, int TotalAmount, int Status) {
+        this.OrderID = OrderID;
+        this.Product_Type = Product_Type;
+        this.CustomerID = CustomerID;
+        this.FullName = FullName;
+        this.OrderDate = OrderDate;
+        this.Address = Address;
+        this.TotalAmount = TotalAmount;
+        this.Status = Status;
+    }
+
+    public Order(int Product_Type, int CustomerID, String FullName, Date OrderDate, String Address, int TotalAmount, int Status) {
+        this.Product_Type = Product_Type;
+        this.CustomerID = CustomerID;
+        this.FullName = FullName;
+        this.OrderDate = OrderDate;
+        this.Address = Address;
+        this.TotalAmount = TotalAmount;
+        this.Status = Status;
+    }
+
+    public int getProduct_Type() {
+        return Product_Type;
+    }
+
+    public void setProduct_Type(int Product_Type) {
+        this.Product_Type = Product_Type;
+    }
+
+    public String getFullName() {
+        return FullName;
+    }
+
+    public void setFullName(String FullName) {
+        this.FullName = FullName;
     }
 
     public int getOrderID() {
@@ -78,6 +119,5 @@ public class Order {
     public void setStatus(int Status) {
         this.Status = Status;
     }
-    
-    
+
 }

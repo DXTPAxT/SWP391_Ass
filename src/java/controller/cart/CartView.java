@@ -61,15 +61,15 @@ public class CartView extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-
-        CartItemDAO dao = new CartItemDAO();
-        ArrayList<CartItem> cart = dao.getCartItemsByUserId(user.getRole().getRoleID());
-
-        session.setAttribute("cart", cart);
-        RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/cart.jsp");
-        rs.forward(request, response);
+//        HttpSession session = request.getSession();
+//        User user = (User) session.getAttribute("user");
+//
+//        CartItemDAO dao = new CartItemDAO();
+//        ArrayList<CartItem> cart = dao.getCartItemsByUserId(user.getRoleId());
+//
+//        session.setAttribute("cart", cart);
+//        RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/cart.jsp");
+//        rs.forward(request, response);
     }
 
     /**
