@@ -12,13 +12,14 @@ public class Feedback {
     private String reply;
     private int categoryID;
     private String categoryName;
+    private String roleName;
 
     // Constructor mặc định
     public Feedback() {
     }
 
-    // Constructor đầy đủ cho JOIN lấy category
-    public Feedback(int feedbackID, int userID, String content, int orderItemID, String createdAt, int rate, int status, String fullname, String reply, int categoryID, String categoryName) {
+    // Constructor đầy đủ cho JOIN lấy category và role
+    public Feedback(int feedbackID, int userID, String content, int orderItemID, String createdAt, int rate, int status, String fullname, String reply, int categoryID, String categoryName, String roleName) {
         this.feedbackID = feedbackID;
         this.userID = userID;
         this.content = content;
@@ -30,6 +31,7 @@ public class Feedback {
         this.reply = reply;
         this.categoryID = categoryID;
         this.categoryName = categoryName;
+        this.roleName = roleName;
     }
 
     // Giữ nguyên tất cả constructor cũ (ví dụ):
@@ -77,6 +79,8 @@ public class Feedback {
     public void setCategoryID(int categoryID) { this.categoryID = categoryID; }
     public String getCategoryName() { return categoryName; }
     public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
+    public String getRoleName() { return roleName; }
+    public void setRoleName(String roleName) { this.roleName = roleName; }
 
     @Override
     public String toString() {

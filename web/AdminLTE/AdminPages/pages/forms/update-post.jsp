@@ -58,114 +58,84 @@
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
-                    <h1>INSERT CATEGORY </h1>
+                    <h1>UPDATE BLOG</h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Category</a></li>
-                        <li class="active">Insert Category</li>
+                        <li><a href="#">Blog</a></li>
+                        <li class="active">Update Blog</li>
                     </ol>
                 </section>
                 <!-- Main content -->
                 <div class="box box-success">
                     <div class="box-body">
-                        <c:if test="${not empty errors}">
-                            <div class="alert alert-danger" style="font-weight:bold;">
-                                <ul>
-                                    <c:forEach var="err" items="${errors}">
-                                        <li>${err}</li>
-                                        </c:forEach>
-                                </ul>
-                            </div>
+                        <c:if test="${not empty error}">
+                            <div class="alert alert-danger" style="font-weight:bold;">${error}</div>
                         </c:if>
 
-                        <form method="post" action="${ctx}/CateAdmin">
-                            <input type="hidden" name="service" value="insert">
+
+                        <form action="${ctx}/blogupdate" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="service" value="update">
                             <input type="hidden" name="submit" value="submit">
 
-                            <!-- Category Name -->
                             <div class="form-group">
-                                <label for="categoryName">Category Name</label>
-                                <input type="text" id="categoryName" name="categoryName"
-                                       class="form-control"
-                                       placeholder="Enter category name"
-                                       value="${param.categoryName}">
+                                <label>Title</label>
+                                <input type="text" class="form-control" id="title" name="title" value="${post.title}" required maxlength="200" />
                             </div>
 
-                            <!-- Brand -->
                             <div class="form-group">
-                                <label for="brandID">Brand</label>
-                                <select id="brandID" name="brandID" class="form-control">
-                                    <option value="">-- Select Brand --</option>
-                                    <c:forEach var="b" items="${brands}">
-                                        <option value="${b.brandID}"
-                                                <c:if test="${param.brandID == b.brandID}">selected</c:if>>
-                                            ${b.brandName}
-                                        </option>
+                                <label>Author</label>
+                                <input type="text" class="form-control" id="author" name="author" value="${post.author}" required maxlength="100" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Content</label>
+                                <textarea class="form-control" id="content" name="content" rows="10" required>${post.content}</textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Thumbnail</label>
+                                <input type="file" class="form-control-file" id="thumbnail" name="thumbnail" accept="image/*" />
+                                <small class="form-text text-muted">(jpg, png, gif).</small>
+                                <c:if test="${not empty post.thumbnail}">
+                                    <div class="mt-2">
+                                        <img src="images/${post.thumbnail}" alt="Current Thumbnail" width="150" />
+                                    </div>
+                                </c:if>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="form-group">
+                                <label for="bc_id">Category</label>
+                                <select id="bc_id" name="bc_id" class="form-control" required>
+                                    <option value="">Choose Category</option>
+                                    <c:forEach var="cat" items="${blog_categories}">
+                                        <option value="${cat.bc_id}" ${cat.bc_id == bc_id ? 'selected' : ''}>${cat.bc_name}</option>
                                     </c:forEach>
                                 </select>
                             </div>
 
-                            <!-- Component -->
                             <div class="form-group">
-                                <label for="componentID">Component</label>
-                                <select id="componentID" name="componentID" class="form-control">
-                                    <option value="">-- Select Component --</option>
-                                    <c:forEach var="c" items="${components}">
-                                        <option value="${c.componentID}"
-                                                <c:if test="${param.componentID == c.componentID}">selected</c:if>>
-                                            ${c.componentName}
-                                        </option>
-                                    </c:forEach>
-                                </select>
+                                <label>Brief</label>
+                                <input type="text" class="form-control" id="brief" name="brief" value="${post.brief}" required maxlength="500" />
                             </div>
 
-                            <!-- Price -->
                             <div class="form-group">
-                                <label for="price">Price</label>
-                                <input type="text" id="price" name="price"
-                                       class="form-control"
-                                       value="${param.price}">
+                                <label>Author_Id</label>
+                                <input type="number" class="form-control" id="add_id" name="add_id" value="${sessionScope.user.id}" required readonly />
+                                <small class="form-text text-muted">ID</small>
                             </div>
 
-                            <!-- Description -->
-                            <div class="form-group">
-                                <label for="description">Description</label>
-                                <textarea id="description" name="description"
-                                          class="form-control" rows="3">${param.description}</textarea>
-                            </div>
-
-                            <!-- Status -->
-                            <div class="form-group">
-                                <label for="status">Status</label>
-                                <select id="status" name="status" class="form-control">
-                                    <option value="1" <c:if test="${param.status == '1'}">selected</c:if>>Active</option>
-                                    <option value="0" <c:if test="${param.status == '0'}">selected</c:if>>Inactive</option>
-                                    <option value="2" <c:if test="${param.status == '2'}">selected</c:if>>On Sale</option>
-                                    </select>
-                                </div>
-
-                                <!-- Image URL -->
-                                <div class="form-group">
-                                    <label for="imageURL">Image URL</label>
-                                    <input type="text" id="imageURL" name="imageURL"
-                                           class="form-control"
-                                           placeholder="Enter image URL"
-                                           value="${param.imageURL}">
-                            </div>
-
-                            <!-- Submit -->
-                            <button type="submit" class="btn btn-primary">Insert Category</button>
-                            <a href="${ctx}/CateAdmin?service=list" class="btn btn-default">Cancel</a>
+                            <input type="submit" class="btn btn-primary" value="Update Blog" />
                         </form>
                     </div>
 
-
-
-                    <!-- /.box -->
                 </div>
-                <jsp:include page="../../components/footer.jsp" />
-                <jsp:include page="../../components/control-sidebar.jsp" />
+                <!-- /.box -->
             </div>
+
+            <jsp:include page="../../components/footer.jsp" />
+            <jsp:include page="../../components/control-sidebar.jsp" />
+            < /div>
             <!-- ./wrapper -->
             <!-- jQuery 2.2.3 -->
             <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
@@ -197,24 +167,7 @@
             <!-- AdminLTE for demo purposes -->
             <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
             <!-- Page script -->
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    const inputs = document.querySelectorAll(".is-invalid");
+        </script>
 
-                    inputs.forEach(input => {
-                        input.addEventListener("input", function () {
-                            // B? class 'is-invalid'
-                            input.classList.remove("is-invalid");
-
-                            // T�m ph?n t? <p> b�o l?i g?n input nh?t v� x�a
-                            const errorMsg = input.parentElement.querySelector("p");
-                            if (errorMsg) {
-                                errorMsg.remove();
-                            }
-                        });
-                    });
-                });
-            </script>
-    </body>
+</body>
 </html>
-

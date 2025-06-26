@@ -103,9 +103,18 @@
                                                             <td style="white-space: normal; word-break: break-word; max-width: 200px;">${category.description}</td>
                                                             <td>
                                                                 <c:choose>
-                                                                    <c:when test="${category.status == 0}">Disable</c:when>
-                                                                    <c:when test="${category.status == 1}">Active</c:when>
-                                                                    <c:when test="${category.status == 2}">On Sale</c:when>
+                                                                    <c:when test="${category.status == 0}"> 
+                                                                        <label class="label label-warning">Inactive</label>
+                                                                    </c:when>
+                                                                    <c:when test="${category.status == 1}">
+                                                                        <span class="label label-success">Active</span>
+                                                                    </c:when>
+                                                                    <c:when test="${category.status == 2}">
+                                                                        <span class="label label-success">On Sale</span>
+                                                                    </c:when>
+                                                                        <c:when test="${category.status == 3}">
+                                                                        <span class="label label-danger">Disable</span>
+                                                                    </c:when>
                                                                     <c:otherwise>Unknown</c:otherwise>
                                                                 </c:choose>
                                                             </td>

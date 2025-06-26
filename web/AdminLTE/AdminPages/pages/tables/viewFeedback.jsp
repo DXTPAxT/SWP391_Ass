@@ -46,95 +46,81 @@
                                 <thead>
                                     <tr>
                                         <th>Feedback ID</th>
-                                        <th>User ID</th>
                                         <th>Full Name</th>
                                         <th>Review</th>
                                         <th>Admin Reply</th>
-                                        <th>Order Item ID</th>
                                         <th>Category</th>
                                         <th>Rate</th>
                                         <th>Created At</th>
                                         <th>Status</th>
                                         <th>Action</th>
-                                        <th>Feedback User</th>
+                                        <th>Reply</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach var="feedback" items="${feedbacks}">
-                                        <tr>
-                                            <td>${feedback.feedbackID}</td>
-                                            <td>${feedback.userID}</td>
-                                            <td>${feedback.fullname}</td>
-                                            <td>${feedback.content}</td>
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="${not empty feedback.reply}">
-                                                        ${feedback.reply}
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <span class="text-muted">Not replied</span>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </td>
-                                            <td>${feedback.orderItemID}</td>
-                                            <td>
-                                                <a href="${pageContext.request.contextPath}/CategoriesController?service=detail&categoryID=${feedback.categoryID}" 
-                                                   class="btn btn-xs btn-info" target="_blank">
-                                                    ${feedback.categoryName}
-                                                </a>
-                                            </td>
-                                            <td>${feedback.rate}</td>
-                                            <td>${feedback.createdAt}</td>
-                                            <td>
-                                                <span class="label 
-                                                    <c:choose>
-                                                        <c:when test="${feedback.status == 0}">label-warning</c:when>
-                                                        <c:when test="${not empty feedback.reply}">label-primary</c:when>
-                                                        <c:when test="${feedback.status == 1}">label-success</c:when>
-                                                        <c:otherwise>label-default</c:otherwise>
-                                                    </c:choose>
-                                                ">
-                                                    <c:choose>
-                                                        <c:when test="${feedback.status == 0}">Inactive</c:when>
-                                                        <c:when test="${not empty feedback.reply}">Replied</c:when>
-                                                        <c:when test="${feedback.status == 1}">Not replied</c:when>
-                                                        <c:otherwise>Unknown</c:otherwise>
-                                                    </c:choose>
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <c:if test="${feedback.status == 1 || feedback.status == 2}">
-                                                    <form action="${pageContext.request.contextPath}/admin/updateFeedbackStatus" method="post" style="display:inline;">
-                                                        <input type="hidden" name="feedbackID" value="${feedback.feedbackID}" />
-                                                        <button type="submit" name="status" value="0"
-                                                            class="btn btn-xs btn-warning">
-                                                            Set Inactive
-                                                        </button>
-                                                    </form>
-                                                </c:if>
-                                                <c:if test="${feedback.status == 0}">
-                                                    <form action="${pageContext.request.contextPath}/admin/updateFeedbackStatus" method="post" style="display:inline;">
-                                                        <input type="hidden" name="feedbackID" value="${feedback.feedbackID}" />
-                                                        <button type="submit" name="status" value="1"
-                                                            class="btn btn-xs btn-success">
-                                                            Set Active
-                                                        </button>
-                                                    </form>
-                                                </c:if>
-                                                <c:if test="${feedback.status == 1}">
-                                                    <a href="${pageContext.request.contextPath}/admin/replyFeedback?feedbackID=${feedback.feedbackID}" 
-                                                       class="btn btn-xs btn-primary" style="margin-left:5px;">Reply</a>
-                                                </c:if>
-                                                <c:if test="${feedback.status == 2}">
-                                                    <a href="${pageContext.request.contextPath}/admin/replyFeedback?feedbackID=${feedback.feedbackID}&edit=true" 
-                                                       class="btn btn-xs btn-info" style="margin-left:5px;">Edit</a>
-                                                </c:if>
-                                            </td>
-                                            <td>
-                                                <a href="${pageContext.request.contextPath}/admin/userFeedback?userID=${feedback.userID}" class="btn btn-xs btn-info">View</a>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
+                                    <c:choose>
+                                        <c:when test="${not empty feedbacks}">
+                                            <c:forEach var="feedback" items="${feedbacks}">
+                                                <tr>
+                                                    <td>${feedback.feedbackID}</td>
+                                                    <td>${feedback.fullname}</td>
+                                                    <td>${feedback.content}</td>
+                                                    <td>
+                                                        <c:choose>
+                                                            <c:when test="${not empty feedback.reply}">${feedback.reply}</c:when>
+                                                            <c:otherwise><span class="text-muted">Not replied</span></c:otherwise>
+                                                        </c:choose>
+                                                    </td>
+                                                    <td>${feedback.categoryName}</td>
+                                                    <td>${feedback.rate}</td>
+                                                    <td>${feedback.createdAt}</td>
+                                                    <td>
+                                                        <span class="label 
+                                                            <c:choose>
+                                                                <c:when test="${feedback.status == 0}">label-danger</c:when>
+                                                                <c:when test="${not empty feedback.reply}">label-primary</c:when>
+                                                                <c:when test="${feedback.status == 1}">label-success</c:when>
+                                                                <c:otherwise>label-default</c:otherwise>
+                                                            </c:choose>">
+                                                            <c:choose>
+                                                                <c:when test="${feedback.status == 0}">Inactive</c:when>
+                                                                <c:when test="${not empty feedback.reply}">Replied</c:when>
+                                                                <c:when test="${feedback.status == 1}">Not replied</c:when>
+                                                                <c:otherwise>Unknown</c:otherwise>
+                                                            </c:choose>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <c:if test="${feedback.status == 1 || feedback.status == 2}">
+                                                            <form action="${pageContext.request.contextPath}/admin/updateFeedbackStatus" method="post" style="display:inline;">
+                                                                <input type="hidden" name="feedbackID" value="${feedback.feedbackID}" />
+                                                                <button type="submit" name="status" value="0" class="btn btn-xs btn-danger">Set Inactive</button>
+                                                            </form>
+                                                        </c:if>
+                                                        <c:if test="${feedback.status == 0}">
+                                                            <form action="${pageContext.request.contextPath}/admin/updateFeedbackStatus" method="post" style="display:inline;">
+                                                                <input type="hidden" name="feedbackID" value="${feedback.feedbackID}" />
+                                                                <button type="submit" name="status" value="1" class="btn btn-xs btn-success">Set Active</button>
+                                                            </form>
+                                                        </c:if>
+                                                    </td>
+                                                    <td>
+                                                        <c:if test="${feedback.status == 1}">
+                                                            <a href="${pageContext.request.contextPath}/admin/replyFeedback?feedbackID=${feedback.feedbackID}" class="btn btn-xs btn-primary">Reply</a>
+                                                        </c:if>
+                                                        <c:if test="${feedback.status == 2}">
+                                                            <a href="${pageContext.request.contextPath}/admin/replyFeedback?feedbackID=${feedback.feedbackID}&edit=true" class="btn btn-xs btn-info">Edit</a>
+                                                        </c:if>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <tr>
+                                                <td colspan="11" class="text-center text-muted">No feedback found.</td>
+                                            </tr>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </tbody>
                             </table>
                         </div>
