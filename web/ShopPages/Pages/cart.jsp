@@ -39,12 +39,6 @@
 
         <section id="cart_items">
             <div class="container">
-                <div class="breadcrumbs">
-                    <ol class="breadcrumb">
-                        <li><a href="#">Home</a></li>
-                        <li class="active">Shopping Cart</li>
-                    </ol>
-                </div>
                 <h2 class="mb-4 cartTableTitle">Shopping cart</h2>
                 <div class="table-responsive cart_info scrollable-table">
                     <table class="table table-condensed">
@@ -63,19 +57,24 @@
                             <tbody>
                                 <c:forEach var="cartItem" items="${cart}">
                                     <tr>
-                                        <td><input type="checkbox" class="select-item ml-3 mr-3" value="${cartItem.getCartItemID()}"/></td>
+                                        <td><input type="checkbox" class="select-item ml-3 mr-3" value="${cartItem.cartItemID}"/></td>
                                         <td class="cart_product">
                                             <a href="#"><img src="${pageContext.request.contextPath}/ShopPages/Pages/images/cart/two.png" alt=""></a>
                                         </td>
                                         <td class="cart_description">
                                             <div>
-                                                <h4><a href="#">${cartItem.getProduct().getName()}</a></h4>
-                                                <p>ID: ${cartItem.getProduct().getProductID()}</p>
+                                                <h4><a href="#">${cartItem.category.categoryName}</a></h4>
+                                                <p>ID: ${cartItem.category.categoryID}</p>
+                                                <p>Bảo hành: ${cartItem.warranty.warranty.warrantyPeriod} tháng</p>
+                                                <small class="text-muted">(${cartItem.warranty.warranty.description})</small>
                                             </div>
                                         </td>
                                         <td class="cart_price" data-label="Giá">
-                                            <p class="mb-0">
-                                                <fmt:formatNumber value="${cartItem.getProduct().getPrice()}" type="number" groupingUsed="true"/> VND
+                                            <p class="mb-0">SP: 
+                                                <fmt:formatNumber value="${cartItem.category.price}" type="number" groupingUsed="true"/> VND
+                                            </p>
+                                            <p class="mb-0 text-secondary">BH: 
+                                                <fmt:formatNumber value="${cartItem.warranty.price}" type="number" groupingUsed="true"/> VND
                                             </p>
                                         </td>
                                         <td class="cart_quantity" data-label="Số lượng">
@@ -84,11 +83,11 @@
                                                 <input class="cart_quantity_input"
                                                        type="number" 
                                                        name="quantity" 
-                                                       value="${cartItem.getQuantity()}" 
+                                                       value="${cartItem.quantity}" 
                                                        autocomplete="off"
-                                                       data-itemid="${cartItem.getCartItemID()}"
-                                                       data-price="${cartItem.getProduct().getPrice()}"
-                                                       data-old-value="${cartItem.getQuantity()}"
+                                                       data-itemid="${cartItem.cartItemID}"
+                                                       data-price="${cartItem.category.price + cartItem.warranty.price}"
+                                                       data-old-value="${cartItem.quantity}"
                                                        oninput="changeQty(this, 0)"
                                                        onchange="debounceTrigger(this)">    
                                                 <button onclick="changeQty(this, 1)">+</button>
@@ -96,11 +95,13 @@
                                         </td>
                                         <td class="cart_total" data-label="Tổng">
                                             <p class="cart_total_price">
-                                                <fmt:formatNumber value="${cartItem.getProduct().getPrice() * cartItem.getQuantity()}" type="number" groupingUsed="true"/> VND
+                                                <fmt:formatNumber 
+                                                    value="${(cartItem.category.price + cartItem.warranty.price) * cartItem.quantity}" 
+                                                    type="number" groupingUsed="true"/> VND
                                             </p>
                                         </td>
                                         <td class="cart_delete" data-label="Xoá">
-                                            <button onclick="confirmDelete(this, ${cartItem.getCartItemID()})"><i class="fa fa-times"></i></button>
+                                            <button onclick="confirmDelete(this, ${cartItem.cartItemID})"><i class="fa fa-times"></i></button>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -111,7 +112,7 @@
                     <c:if test="${cart.size() == 0}">
                         <center class="mb-4 fs-3">
                             <p>No items. Please order new products at </p>
-                            <a href="CategoriesController" class="btn btn-success">Products</a>
+                            <a href="Product" class="btn btn-success">Products</a>
                         </center>
                     </c:if>
                 </div>

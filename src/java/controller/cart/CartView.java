@@ -65,7 +65,7 @@ public class CartView extends HttpServlet {
         User user = (User) session.getAttribute("user");
 
         CartItemDAO dao = new CartItemDAO();
-        ArrayList<CartItem> cart = dao.getCartItemsByUserId(user.getRole().getRoleID());
+        ArrayList<CartItem> cart = dao.getCartItemsByUserId(user.getUserId());
 
         session.setAttribute("cart", cart);
         RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/cart.jsp");

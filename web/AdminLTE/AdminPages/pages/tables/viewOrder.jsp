@@ -1,5 +1,5 @@
 <%-- 
-    Document   : insertCategory
+    Document   : insertProduct
     Created on : May 28, 2025, 9:48:28 PM
     Author     : Admin
 --%>
@@ -7,6 +7,8 @@
 <%@page contentType="text/html" pageEncoding="windows-1252"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -49,12 +51,12 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Warranty Tables
+                        Order Tables
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Warranty</a></li>
-                        <li class="active">view Warranty</li>
+                        <li><a href="#">Order</a></li>
+                        <li class="activ21e">view Order</li>
                     </ol>
                 </section>
 
@@ -69,60 +71,79 @@
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Warranty ID</th>
-                                                <th>Warranty Period (months)</th>
-                                                <th>Description</th>
+                                                <th>Order ID</th>
+                                                <th>Customer Name</th>
+                                                <th>Order Date</th>
+                                                <th>Product Type</th>
+                                                <th>Total Amount</th>
                                                 <th>Status</th>
-                                                <th>Update</th> 
+                                                <th>Update</th>
+                                                <th>View Order Items</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:if test="${not empty requestScope.warranties}">
-                                                <c:forEach var="warranty" items="${requestScope.warranties}">
+                                            <c:if test="${not empty orders}">
+                                                <c:forEach var="order" items="${orders}">
                                                     <tr>
-                                                        <td>${warranty.warrantyID}</td>
-                                                        <td>${warranty.warrantyPeriod}</td>
-                                                        <td class="text-wrap" style="word-break: break-word; max-width: 300px;">
-                                                            ${warranty.description}
-                                                        </td>
+                                                        <td>${order.orderID}</td>
+                                                        <td>${order.fullName}</td>
+                                                        <td><fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                         <td>
                                                             <c:choose>
-                                                                <c:when test="${warranty.status == 1}">
-                                                                    <span class="label label-success">Active</span>
+                                                                <c:when test="${order.product_Type == 0}">Category</c:when>
+                                                                <c:when test="${order.product_Type == 1}">Build PC</c:when>
+                                                            </c:choose>
+                                                        </td>
+                                                        <td>${order.totalAmount}</td>
+
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${order.status == 0}">
+                                                                    <span class="label label-danger">Canceled</span>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 1}">
+                                                                    <span class="label label-default">Processing</span>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 2}">
+                                                                    <span class="label label-warning">Shipping</span>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 3}">
+                                                                    <span class="label label-success">Completed</span>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 4}">
+                                                                    <span class="label label-danger">Return</span>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    <span class="label label-danger">Inactive</span>
+                                                                    <span class="label label-danger">Unknown</span>
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </td>
+
+
                                                         <td>
-                                                            <a href="WarrantyAdmin?service=update&warrantyID=${warranty.warrantyID}"
-                                                               class="btn btn-primary btn-sm">
-                                                                Update
-                                                            </a>
+                                                            <a href="OrderAdmin?service=update&orderID=${order.orderID}" class="btn btn-primary btn-sm">Update</a>
                                                         </td>
+                                                        <!-- nut view nay se tro ve orderItems neu Product_Type = 0 con 1 ve OrderBuildPCItems -->
+                                                        <td><a href="WDA?service=listbybrandcomid&brandComID=${bc.brandComID}" 
+                                                               class="btn btn-warning btn-sm">View</a></td>
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
                                         </tbody>
                                     </table>
                                 </div>
-
                             </div>
-                            <!-- /.box-body -->
                         </div>
                     </div>
 
                     <!-- /.box-body -->
+                </section>
             </div>
             <!-- /.box -->
 
             <!-- /.content-wrapper -->
             <jsp:include page="../../components/footer.jsp" />
             <jsp:include page="../../components/control-sidebar.jsp" />
-            <!-- Add the sidebar's background. This div must be placed
-                 immediately after the control sidebar -->
-            <div class="control-sidebar-bg"></div>
         </div>
         <!-- ./wrapper -->
 

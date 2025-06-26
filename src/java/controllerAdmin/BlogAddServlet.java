@@ -87,7 +87,7 @@ public class BlogAddServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 try {
-            request.setCharacterEncoding("UTF-8"); // Đảm bảo tiếng Việt
+            
 
             String Post_id_raw = request.getParameter("Post_id");
             String Title = request.getParameter("Title");
@@ -111,7 +111,7 @@ try {
             dao.insertPost(newPost);
 
             // Chuyển hướng sau khi thêm thành công
-            response.sendRedirect(request.getContextPath() + "/bloglist"); // hoặc thay bằng danh sách bài viết
+            response.sendRedirect(request.getContextPath() + "/bloglist"); 
 
         } catch (Exception e) {
             // Xử lý lỗi

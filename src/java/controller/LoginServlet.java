@@ -19,7 +19,8 @@ import models.User;
  * @author PC ASUS
  */
 public class LoginServlet extends HttpServlet {
-    private static final String REDIRECT_AFTER_LOGIN = "lastPage";
+
+    private static final String REDIRECT_AFTER_LOGIN = "redirectAfterLogin";
 
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -32,22 +33,30 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/login.jsp");
-            rs.forward(request, response);
-        } else {
-            if (user.getRole().getRoleID() == 3) {
-                String redirectURL = (String) session.getAttribute(REDIRECT_AFTER_LOGIN);
-                if (redirectURL == null) {
-                    redirectURL = "HomePages";
-                }
-                session.setAttribute(REDIRECT_AFTER_LOGIN, null);
-                response.sendRedirect(redirectURL);
+        try {
+            HttpSession session = request.getSession();
+            User user = (User) session.getAttribute("user");
+            if (user == null) {
+                RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/login.jsp");
+                rs.forward(request, response);
             } else {
-                response.sendRedirect("AdminDashbordServlet");
+                if (user.getRole().getRoleID() == 3) {
+                    String redirectURL = (String) session.getAttribute(REDIRECT_AFTER_LOGIN);
+
+                    if (redirectURL == null || redirectURL.trim().isEmpty() || "null".equalsIgnoreCase(redirectURL)) {
+                        redirectURL = request.getContextPath() + "/HomePages";
+                    }
+
+                    session.removeAttribute(REDIRECT_AFTER_LOGIN);
+                    response.sendRedirect(redirectURL);
+                } else {
+                    response.sendRedirect("AdminDashbordServlet");
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace(); // Có thể thay bằng log framework như Log4j
+            request.setAttribute("error", "An unexpected error occurred in login page.");
+            request.getRequestDispatcher("/ShopPages/Pages/error.jsp").forward(request, response);
         }
     }
 
@@ -62,51 +71,60 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        UserDAO userDAO = new UserDAO();
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
+        try {
+            UserDAO userDAO = new UserDAO();
+            String email = request.getParameter("email");
+            String password = request.getParameter("password");
 
-        if (utils.Validator.isNullOrEmpty(email)) {
-            setLoginAttributes(request, "Email is required!", email, password);
-            forwardToLogin(request, response);
-            return;
-        } else if (utils.Validator.isNullOrEmpty(password)) {
-            setLoginAttributes(request, "Password is required!", email, password);
-            forwardToLogin(request, response);
-            return;
-        }
-
-        boolean isEmailExist = userDAO.isEmailExist(email);
-        if (!isEmailExist) {
-            setLoginAttributes(request, "Email does not exist!", email, password);
-            forwardToLogin(request, response);
-            return;
-        }        User user = userDAO.getUserByEmailAndPassword(email, password);
-        if (user != null) {
-            if (user.getStatus() != 1) {
-                setLoginAttributes(request, "Your account has been disabled!", email, password);
+            if (utils.Validator.isNullOrEmpty(email)) {
+                setLoginAttributes(request, "Email is required!", email, password);
+                forwardToLogin(request, response);
+                return;
+            } else if (utils.Validator.isNullOrEmpty(password)) {
+                setLoginAttributes(request, "Password is required!", email, password);
                 forwardToLogin(request, response);
                 return;
             }
-            
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-            session.setAttribute("id", user.getUserId());
-            
-            // Redirect based on role
-            if (user.isAdmin()) {
-                response.sendRedirect("AdminDashbordServlet");
-            } else {
-                String redirectURL = (String) session.getAttribute(REDIRECT_AFTER_LOGIN);
-                if (redirectURL == null) {
-                    redirectURL = "HomePages";
-                }
-                session.setAttribute(REDIRECT_AFTER_LOGIN, null);
-                response.sendRedirect(redirectURL);
+
+            boolean isEmailExist = userDAO.isEmailExist(email);
+            if (!isEmailExist) {
+                setLoginAttributes(request, "Email does not exist!", email, password);
+                forwardToLogin(request, response);
+                return;
             }
-        } else {
-            setLoginAttributes(request, "Incorrect password!", email, password);
-            forwardToLogin(request, response);
+
+            User user = userDAO.getUserByEmailAndPassword(email, password);
+            if (user != null) {
+                if (user.getStatus() != 1) {
+                    setLoginAttributes(request, "Your account has been disabled!", email, password);
+                    forwardToLogin(request, response);
+                    return;
+                }
+
+                HttpSession session = request.getSession();
+                session.setAttribute("user", user);
+                session.setAttribute("id", user.getUserId());
+
+                if (user.getRole().getRoleID() != 3) {
+                    response.sendRedirect("AdminDashbordServlet");
+                } else {
+                    String redirectURL = (String) session.getAttribute(REDIRECT_AFTER_LOGIN);
+
+                    if (redirectURL == null || redirectURL.trim().isEmpty() || "null".equalsIgnoreCase(redirectURL)) {
+                        redirectURL = request.getContextPath() + "/HomePages";
+                    }
+
+                    session.removeAttribute(REDIRECT_AFTER_LOGIN);
+                    response.sendRedirect(redirectURL);
+                }
+            } else {
+                setLoginAttributes(request, "Incorrect password!", email, password);
+                forwardToLogin(request, response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Ghi log chi tiết lỗi
+            request.setAttribute("error", "An unexpected error occurred during login.");
+            request.getRequestDispatcher("/ShopPages/Pages/login.jsp").forward(request, response);
         }
     }
 

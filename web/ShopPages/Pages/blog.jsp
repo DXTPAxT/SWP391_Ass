@@ -116,18 +116,18 @@
                                         <div class="col-sm-6 d-flex" style="padding-bottom: 20px">
                                             <div class="w-100 d-flex flex-column mb-4" style="border:1px solid #ccc; padding:15px; height:100%;">
                                                 <a href="${ctx}/blogdetail?Post_id=${post.post_id}" style="color: black;">
-                                                <h3>${post.title}</h3>
-                                                <p>${post.author}</p>
-                                                <p>${post.updated_date}</p>
-                                                <p class="brief-text">${post.brief}</p>
+                                                    <h3>${post.title}</h3>
+                                                    <p>${post.author}</p>
+                                                    <p>${post.updated_date}</p>
+                                                    <p class="brief-text">${post.brief}</p>
 
-                                                <c:if test="${not empty post.thumbnail}">
-                                                    <img 
-                                                        src="${post.thumbnail}" 
-                                                        alt="Thumbnail" 
-                                                        style="width:100%; height:200px; object-fit:cover; margin-top:auto;" />
-                                                </c:if>
-                                                    </a>
+                                                    <c:if test="${not empty post.thumbnail}">
+                                                        <img 
+                                                            src="${post.thumbnail}" 
+                                                            alt="Thumbnail" 
+                                                            style="width:100%; height:200px; object-fit:cover; margin-top:auto;" />
+                                                    </c:if>
+                                                </a>
 
                                             </div>
                                         </div>
@@ -135,24 +135,25 @@
                                         <c:if test="${status.index % 2 == 1 || status.last}">
                                         </div>
                                     </c:if>
-                               
+
 
                                 </c:forEach>
 
                                 <div class="pagination-area">
                                     <ul class="pagination">
                                         <c:forEach begin="1" end="${endP}" var="i">
-                                            <li>
-                                                <a href="blogc=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
+                                            <li class="${i == currentPage ? 'active' : ''}">
+                                                <a href="blogc?page=${i}">${i}</a>
                                             </li>
                                         </c:forEach>
                                         <li>
-                                            <a href="blogc=${endP + 1}">
+                                            <a href="blogc?page=${currentPage + 1 > endP ? endP : currentPage + 1}">
                                                 <i class="fa fa-angle-double-right"></i>
                                             </a>
                                         </li>
                                     </ul>
                                 </div>
+
 
                             </div>
                         </div>

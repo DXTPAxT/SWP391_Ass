@@ -150,6 +150,56 @@
                 display: block;
             }
 
+
+            .title {
+                font-size: 28px;
+                text-align: center;
+                margin-top: 30px;
+                margin-bottom: 20px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            .post-title {
+                font-size: 36px;
+                font-weight: 700;
+                margin-bottom: 10px;
+                color: #222;
+                text-align: center;
+            }
+
+            .post-meta {
+                text-align: center;
+                font-size: 14px;
+                color: #777;
+                margin-bottom: 30px;
+            }
+
+            .post-meta span {
+                margin: 0 10px;
+            }
+
+            .post-thumbnail {
+                display: block;
+                max-width: 100%;
+                height: auto;
+                margin: 0 auto 30px auto;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+
+            .post-content {
+                font-size: 18px;
+                line-height: 1.7;
+                color: #444;
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
+            .post-content p {
+                margin-bottom: 20px;
+            }
+
         </style>
 
     </head>
@@ -204,14 +254,14 @@
                             <!-- Breadcrumb navigation -->
                             <nav aria-label="breadcrumb" style="margin-bottom: 18px;">
                                 <ol class="breadcrumb" style="background: none; padding: 0; margin: 0;">
-                                    <li class="breadcrumb-item"><a href="${ctx}/index.jsp" style="color: #fe980f;">Home</a></li>
-                                    <c:forEach var="cat" items="${blog_categories}">
-            <c:if test="${cat.bc_id == post.bc_id}">
-                <li class="breadcrumb-item">
-                    <a href="${ctx}/blogc?Bc_id=${cat.bc_id}" style="color: #fe980f;">${cat.bc_name}</a>
-                </li>
-            </c:if>
-        </c:forEach>
+                                    <li class="breadcrumb-item"><a href="${ctx}/blogc" style="color: #fe980f;">Blog</a></li>
+                                        <c:forEach var="cat" items="${blog_categories}">
+                                            <c:if test="${cat.bc_id == post.bc_id}">
+                                            <li class="breadcrumb-item">
+                                                <a href="${ctx}/blogc?Bc_id=${cat.bc_id}" style="color: #fe980f;">${cat.bc_name}</a>
+                                            </li>
+                                        </c:if>
+                                    </c:forEach>
                                     <li class="breadcrumb-item active" aria-current="page" style="color: #333;">${post.title}</li>
                                 </ol>
                             </nav>

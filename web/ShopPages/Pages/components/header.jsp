@@ -89,19 +89,24 @@
                         <ul class="nav navbar-nav"  style=" padding-top: 50px ">
                             <c:choose>
                                 <c:when test="${not empty sessionScope.user}">
-                                    <li class="cart-dropdown">
-                                        <a href="#"><i class="fa fa-shopping-cart"></i> Cart</a>
-
-                                        <div class="dropdown-content">
-                                            <div class="arrow-up"></div>
-                                            <a href="Cart">CartItem</a>
-                                            <a href="CardBuildPc">CartPC</a>
-                                        </div>
-                                    </li>
 
 
                                     <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="checkout.html"><i class="fa fa-check-square-o"></i> Checklist</a></li>
+
+                                    <c:if test="${not empty sessionScope.user and sessionScope.user.role.roleID == 3}">
+                                         <li class="cart-dropdown">
+                                        <a href="#"><i class="fa fa-shopping-cart"></i> Cart</a>
+                                        <div class="dropdown-content">
+                                            <div class="arrow-up"></div>
+                                            <a href="${pageContext.request.contextPath}/Cart">CartItem</a>
+                                            <a href="CardBuildPc">CartPC</a>
+                                        </div>
+                                    </li>
+                                        <li><a href="${pageContext.request.contextPath}/User?service=myAccount"><i class="fa fa-user"></i> Account</a></li>
+                                        <li><a href="checkout.html"><i class="fa fa-check-square-o"></i> Checklist</a></li>
+                                        </c:if>
+
                                     <li><a href="Logout"><i class="fa fa-sign-out"></i> Logout</a></li>
                                     </c:when>
                                     <c:otherwise>

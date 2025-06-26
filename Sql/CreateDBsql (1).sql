@@ -1,4 +1,4 @@
-﻿Use master;
+Use master;
 
 -- Xóa database nếu đã tồn tại
 IF EXISTS (SELECT name FROM sys.databases WHERE name = N'ComputerOnlineShop')
@@ -109,6 +109,7 @@ CREATE TABLE Products (
 	ProductCode Varchar(100) NOT null,
     Status int DEFAULT 1 NOT NULL,
 	ImportID INT NOT NULL,
+	Note text default null,
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
     FOREIGN KEY (ImportID) REFERENCES Imports(ImportID)
 );
@@ -135,6 +136,7 @@ Create table WarrantyDetails(
 -- 13. Orders
 CREATE TABLE Orders (
     OrderID INT PRIMARY KEY IDENTITY(1,1),
+	Product_Type int default null, -- 0 là cate, 1 là build PC
     CustomerID INT NOT NULL,
     OrderDate DATETIME DEFAULT GETDATE() NOT NULL,
     Address TEXT NOT NULL,
@@ -188,6 +190,7 @@ CREATE TABLE Shipping (
     ShipperID INT NOT NULL,
     ShippingStatus VARCHAR(50) NOT NULL,
     ShipTime DATE NOT NULL,
+	Note text default null,
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
     FOREIGN KEY (ShipperID) REFERENCES Users(UserID),
 );
@@ -373,3 +376,15 @@ CREATE TABLE Order_BuildPC_Products (
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
 
+--33 Notification
+CREATE TABLE Notifications (
+    NotificationID INT PRIMARY KEY IDENTITY(1,1),
+    UserID INT NOT NULL,         -- Người nhận thông báo (admin hoặc user)
+    SenderID INT NOT NULL,       -- Người gửi thông báo (admin hoặc user)
+    Title NVARCHAR(255) NOT NULL,
+    Message NVARCHAR(MAX) NOT NULL,
+    IsRead BIT DEFAULT 0,        -- 0: chưa đọc, 1: đã đọc
+    CreatedAt DATETIME DEFAULT GETDATE() NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (SenderID) REFERENCES Users(UserID)
+);

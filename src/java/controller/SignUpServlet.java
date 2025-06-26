@@ -47,11 +47,11 @@ public class SignUpServlet extends HttpServlet {
             if (user.getRole().getRoleID() == 1) { // Admin role
                 redirectURL = "Admin";
             } else {
-                redirectURL = (String) session.getAttribute("lastPage");
+                redirectURL = (String) session.getAttribute("redirectAfterLogin");
                 if (redirectURL == null) {
                     redirectURL = "HomePages";
                 }
-                session.setAttribute("lastPage", null);
+                session.setAttribute("redirectAfterLogin", null);
             }
             response.sendRedirect(redirectURL);
         }

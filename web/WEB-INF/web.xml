@@ -145,6 +145,10 @@
     <servlet>
         <servlet-name>CardBuildPcController</servlet-name>
         <servlet-class>controller.CardBuildPcController</servlet-class>
+
+        <servlet-name>OrderAdminServlet</servlet-name>
+        <servlet-class>controllerAdmin.OrderAdminServlet</servlet-class>
+
     </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
@@ -289,5 +293,9 @@
     <servlet-mapping>
         <servlet-name>CardBuildPcController</servlet-name>
         <url-pattern>/CardBuildPc</url-pattern>
+
+        <servlet-name>OrderAdminServlet</servlet-name>
+        <url-pattern>/OrderAdmin</url-pattern>
+
     </servlet-mapping>
 </web-app>
