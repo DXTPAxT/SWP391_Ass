@@ -1485,8 +1485,7 @@ INSERT INTO Shipping(OrderID, ShipperID, ShippingStatus, ShipTime) values
 INSERT INTO Comments (Post_id, UserID, CommentText)
 VALUES (1, 3, 'Very informative post, thank you!');
 
- INSERT INTO Users (RoleID, FullName, Email, PhoneNumber,  PasswordHash, CreatedAt, Status)
-VALUES (3, 'LinhNV', 'customer@example.com', '0912345678', 'hashedpassword3', GETDATE(), 1);
+
 -- Notification
 INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Đơn hàng mới', N'Bạn có đơn hàng mới cần xử lý.', 0, '2025-06-03 08:00:00');
 INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Phản hồi khách hàng', N'Khách hàng vừa gửi feedback mới.', 0, '2025-06-03 09:00:00');
@@ -1498,4 +1497,3 @@ INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) 
 INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Khuyến mãi mới', N'Chương trình khuyến mãi mới đã bắt đầu.', 0, '2025-06-03 15:00:00');
 INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Phản hồi đã trả lời', N'Bạn vừa trả lời một feedback của khách.', 0, '2025-06-03 16:00:00');
 INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Đơn hàng giao thành công', N'Một đơn hàng đã giao thành công.', 0, '2025-06-03 17:00:00');
-

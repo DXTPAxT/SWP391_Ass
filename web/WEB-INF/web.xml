@@ -129,7 +129,7 @@
         <servlet-name>WarrantyDetailAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.WarrantyDetailAdminServlet</servlet-class>
     </servlet>
-    <!-- === MAPPINGS === -->
+
     <servlet>
         <servlet-name>BuildPC</servlet-name>
         <servlet-class>controller.BuildPC</servlet-class>
@@ -143,9 +143,14 @@
         <servlet-class>controllerAdmin.BuildPC_ListCate</servlet-class>
     </servlet>
     <servlet>
+
         <servlet-name>CardBuildPcController</servlet-name>
         <servlet-class>controller.CardBuildPcController</servlet-class>
 
+        <servlet-name>OrderAdminServlet</servlet-name>
+        <servlet-class>controllerAdmin.OrderAdminServlet</servlet-class>
+
+=======
         <servlet-name>OrderAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.OrderAdminServlet</servlet-class>
 
@@ -291,8 +296,12 @@
         <url-pattern>/BuildPC_ListCate</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+
         <servlet-name>CardBuildPcController</servlet-name>
         <url-pattern>/CardBuildPc</url-pattern>
+
+        <servlet-name>OrderAdminServlet</servlet-name>
+        <url-pattern>/OrderAdmin</url-pattern>
 
         <servlet-name>OrderAdminServlet</servlet-name>
         <url-pattern>/OrderAdmin</url-pattern>

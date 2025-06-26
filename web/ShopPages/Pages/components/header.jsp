@@ -89,13 +89,8 @@
                         <ul class="nav navbar-nav"  style=" padding-top: 50px ">
                             <c:choose>
                                 <c:when test="${not empty sessionScope.user}">
-
-
-                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="checkout.html"><i class="fa fa-check-square-o"></i> Checklist</a></li>
-
                                     <c:if test="${not empty sessionScope.user and sessionScope.user.role.roleID == 3}">
-                                         <li class="cart-dropdown">
+                                        <li class="cart-dropdown">
                                         <a href="#"><i class="fa fa-shopping-cart"></i> Cart</a>
                                         <div class="dropdown-content">
                                             <div class="arrow-up"></div>
