@@ -4,7 +4,7 @@
     Author     : Admin
 --%>
 
-<%@page contentType="text/html" pageEncoding="windows-1252"%>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
@@ -646,6 +646,8 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/pages/dashboard.js"></script>
         <!-- AdminLTE for demo purposes -->
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
+        <!-- Notification Updater -->
+        <script src="${ctx}/AdminLTE/AdminPages/js/notification-updater.js"></script>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const rowsPerPage = 5;

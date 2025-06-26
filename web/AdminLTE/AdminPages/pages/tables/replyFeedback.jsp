@@ -52,6 +52,12 @@
                                 </div>
                                 <button type="submit" class="btn btn-success">Gửi trả lời</button>
                                 <a href="${pageContext.request.contextPath}/FeedBackAdmin" class="btn btn-default" style="margin-left:10px;">Quay lại</a>
+                                <c:if test="${not empty feedback.reply}">
+                                    <button type="submit" name="deleteReply" value="true" class="btn btn-danger" style="margin-left:10px;"
+                                        onclick="return confirm('Bạn có chắc muốn xóa trả lời này không?');">
+                                        Xóa trả lời
+                                    </button>
+                                </c:if>
                             </form>
                         </div>
                     </div>

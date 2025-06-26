@@ -15,7 +15,7 @@ import jakarta.mail.internet.*;
 
 public class MailUtils {
 
-    public static boolean send(String to, String subject, String content) {
+    public static boolean send(String to, String subject, String content)  {
         final String from = MailConfig.get("mail.username");
         final String password = MailConfig.get("mail.password");
 

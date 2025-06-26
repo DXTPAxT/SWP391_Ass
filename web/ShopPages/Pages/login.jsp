@@ -37,7 +37,7 @@
 
     <body>
         <%@ include file="components/header.jsp" %>
-        
+
         <section id="login-section" class="position-container"><!--form-->
             <div class="container form-wrapper">
                 <div class="row custom-center">
@@ -55,10 +55,9 @@
                                 <c:if test="${error == 'Password is required!' || error == 'Incorrect password!'}">
                                     <p class="text-danger error-message">${error}</p>
                                 </c:if>
-                                <span>
-                                    <input type="checkbox" class="checkbox"> 
-                                    Keep me signed in
-                                </span>
+                                <div class="d-flex justify-content-between align-items-end">
+                                    <a href="${ctx}/User?service=forgotPassword" class="forgot-password-link">Forgot Password?</a>
+                                </div>
                                 <div class="custom-between mt-3">
                                     <button type="submit" id="loginButton" class="btn-modern">Login</button>
                                     <a href="SignUp">SignUp</a>

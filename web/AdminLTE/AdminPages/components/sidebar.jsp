@@ -129,7 +129,8 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">                               
-                    <li><a href="${param.ctx}/OrderAdmin"><i class="fa fa-circle-o"></i>View Order</a></li>
+                    <li><a href="${param.ctx}/OrderAdmin"><i class="fa fa-circle-o"></i>View Order Category</a></li>
+                    <li><a href="${param.ctx}/OrderBuildPCAdmin"><i class="fa fa-circle-o"></i>View Order Build PC</a></li>
                     <li><a href="${param.ctx}/OrderAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Order</a></li> 
                 </ul>
             </li>
@@ -142,8 +143,6 @@
                 </a>
                 <ul class="treeview-menu">                               
                     <li><a href="${param.ctx}/FeedBackAdmin"><i class="fa fa-circle-o"></i>View Feedback</a></li> 
-                    <li><a href="${param.ctx}/FeedBackAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Feedback</a></li>                                         
-
                 </ul>
             </li>
             <li class="treeview">
@@ -160,7 +159,7 @@
             </li>
             <li class="treeview">
                 <a href="#">
-                    <i class="fa fa-users"></i> <span>User Management</span>
+                    <i class="fa fa-users"></i> <span>User</span>
                     <span class="pull-right-container">
                         <i class="fa fa-angle-left pull-right"></i>
                     </span>
@@ -172,7 +171,22 @@
                     <li><a href="${param.ctx}/Admin/user?type=shipper"><i class="fa fa-circle-o"></i>View Shippers</a></li>   
                     <li><a href="${param.ctx}/Admin/user/add"><i class="fa fa-circle-o"></i>Create new user</a></li>
                 </ul>
-            </li>      
+            </li>  
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-laptop"></i> <span>Build PC</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">                               
+                    <li><a href="${pageContext.request.contextPath}/BuildPC_ListCate?service=list">
+                            <i class="fa fa-circle-o"></i> View PC</a>
+                    </li>
+
+                    <li><a href="${param.ctx}/AdminLTE/AdminPages/pages/forms/BuildPCAdmin.html"><i class="fa fa-circle-o"></i>Creative new PC    </a></li>
+                </ul>
+            </li>
         </ul>
     </section>
     <!-- /.sidebar -->

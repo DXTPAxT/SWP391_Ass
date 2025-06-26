@@ -1,4 +1,4 @@
-﻿Use master;
+Use master;
 
 -- Xóa database nếu đã tồn tại
 IF EXISTS (SELECT name FROM sys.databases WHERE name = N'ComputerOnlineShop')
@@ -109,6 +109,7 @@ CREATE TABLE Products (
 	ProductCode Varchar(100) NOT null,
     Status int DEFAULT 1 NOT NULL,
 	ImportID INT NOT NULL,
+	Note text default null,
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
     FOREIGN KEY (ImportID) REFERENCES Imports(ImportID)
 );
@@ -135,6 +136,7 @@ Create table WarrantyDetails(
 -- 13. Orders
 CREATE TABLE Orders (
     OrderID INT PRIMARY KEY IDENTITY(1,1),
+	Product_Type int default null, -- 0 là cate, 1 là build PC
     CustomerID INT NOT NULL,
     OrderDate DATETIME DEFAULT GETDATE() NOT NULL,
     Address TEXT NOT NULL,
@@ -174,7 +176,8 @@ CREATE TABLE CartItems (
 	UserID INT NOT NULL,
 	CategoryID INT NOT NULL,
 	WarrantyDetailID INT NOT NULL,
-	Status INT NOT NULL,
+	Quantity INT NOT NULL,
+	Status INT NOT NULL DEFAULT 1,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
     FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
@@ -187,6 +190,7 @@ CREATE TABLE Shipping (
     ShipperID INT NOT NULL,
     ShippingStatus VARCHAR(50) NOT NULL,
     ShipTime DATE NOT NULL,
+	Note text default null,
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
     FOREIGN KEY (ShipperID) REFERENCES Users(UserID),
 );
@@ -269,3 +273,116 @@ CREATE TABLE OrderPreparements (
 	Foreign key(UserID) references Users(UserID),
 	Foreign key(OrderID) references Orders(OrderID),
 )
+
+-- 25 OTP
+CREATE TABLE OTP (
+    OTP_ID INT PRIMARY KEY IDENTITY(1,1),         -- Mã định danh riêng cho mỗi OTP
+    Email VARCHAR(100) NOT NULL,                  -- Hoặc có thể dùng PhoneNumber nếu xác thực qua SMS
+    OTP_Code VARCHAR(10) NOT NULL,                -- Mã OTP (thường 6 ký tự)
+    ExpirationTime DATETIME NOT NULL,             -- Thời điểm mã hết hạn (ví dụ: tạo + 5 phút)
+    CreatedAt DATETIME DEFAULT GETDATE(),         -- Thời điểm tạo
+    IsUsed BIT DEFAULT 0,                          -- Đánh dấu mã đã sử dụng hay chưa (0 = chưa, 1 = đã dùng)
+	Foreign key(Email) References Users(Email)
+);
+
+-- 25. Build PC
+CREATE TABLE Build_PC (
+    BuildPCID INT PRIMARY KEY IDENTITY(1,1),
+	Price int not null,
+	Status INT NOT NULL DEFAULT 1,
+);
+
+-- 26. Build PC Item
+
+CREATE TABLE Build_PC_Items (
+    BuildPCItemID INT PRIMARY KEY IDENTITY(1,1),
+	BuildPCID INT not null,
+	CategoryID int not null, 
+	price int not null,
+	WarrantyDetailID INT NOT NULL,
+	Status INT NOT NULL DEFAULT 1,
+	FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
+	FOREIGN KEY (BuildPCID) REFERENCES Build_PC(BuildPCID),
+    FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
+);
+
+-- 27. Cart Build PC
+CREATE TABLE Cart_Build_PC (
+	CartBuildPCID INT PRIMARY KEY IDENTITY(1,1),
+	UserID INT NOT NULL,
+	-- giá bán cả case PC 
+	Price int not null, 
+	Status INT NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+);
+
+-- 28. Cart Build PC Item
+CREATE TABLE Cart_Build_PC_Items (
+	CartBuildPCItemID INT PRIMARY KEY IDENTITY(1,1),
+	CartBuildPCID INT not null,
+	CategoryID int not null,
+	WarrantyDetailID INT NOT NULL,
+	-- giá bán của item 
+	price int not null,
+	Status INT NOT NULL,
+	FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
+	FOREIGN KEY (CartBuildPCID) REFERENCES Cart_Build_PC(CartBuildPCID),
+    FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
+);
+
+-- 29. Comments
+CREATE TABLE Comments (
+    CommentID INT IDENTITY(1,1) PRIMARY KEY,
+    Post_id INT NOT NULL,            
+    UserID INT NOT NULL,              
+    CommentText TEXT NOT NULL,        
+    CreatedAt DATETIME DEFAULT GETDATE(),  
+    ParentCommentID INT NULL,         
+
+    FOREIGN KEY (Post_id) REFERENCES Post(Post_id),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (ParentCommentID) REFERENCES Comments(CommentID)
+);
+
+-- 30. bảng này Order của Build PC
+CREATE TABLE Order_BuildPCItems (
+    OrderBuildPCItemID INT PRIMARY KEY IDENTITY(1,1),
+    OrderID INT NOT NULL,
+    BuildPCID INT NOT NULL,
+    Price INT NOT NULL,
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY (BuildPCID) REFERENCES Build_PC(BuildPCID)
+);
+--31
+CREATE TABLE Order_BuildPCDetails (
+    OrderBuildPCDetailID INT PRIMARY KEY IDENTITY(1,1),
+    OrderBuildPCItemID INT NOT NULL,
+    CategoryID INT NOT NULL,
+    WarrantyDetailID INT NOT NULL,
+    Price INT NOT NULL,
+    Status INT DEFAULT 1 NOT NULL,
+    FOREIGN KEY (OrderBuildPCItemID) REFERENCES Order_BuildPCItems(OrderBuildPCItemID),
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
+    FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
+);
+--32
+CREATE TABLE Order_BuildPC_Products (
+    OrderBuildPCProductID INT PRIMARY KEY IDENTITY(1,1),
+    OrderBuildPCDetailID INT NOT NULL,
+    ProductID INT NOT NULL,
+    FOREIGN KEY (OrderBuildPCDetailID) REFERENCES Order_BuildPCDetails(OrderBuildPCDetailID),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+--33 Notification
+CREATE TABLE Notifications (
+    NotificationID INT PRIMARY KEY IDENTITY(1,1),
+    UserID INT NOT NULL,         -- Người nhận thông báo (admin hoặc user)
+    SenderID INT NOT NULL,       -- Người gửi thông báo (admin hoặc user)
+    Title NVARCHAR(255) NOT NULL,
+    Message NVARCHAR(MAX) NOT NULL,
+    IsRead BIT DEFAULT 0,        -- 0: chưa đọc, 1: đã đọc
+    CreatedAt DATETIME DEFAULT GETDATE() NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (SenderID) REFERENCES Users(UserID)
+);

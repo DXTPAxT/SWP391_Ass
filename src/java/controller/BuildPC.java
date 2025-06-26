@@ -1,23 +1,32 @@
 package controller;
 
+import dal.CategoriesDAO;
+import models.Brands;
+import models.BuildPCView;
+import models.Categories;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import dal.CategoriesDAO;
-import models.Categories;
-import models.Brands;
 
 public class BuildPC extends HttpServlet {
 
-    private CategoriesDAO dao;
+    private int parseIntOrDefault(String raw, int def) {
+        try {
+            return Integer.parseInt(raw);
+        } catch (Exception e) {
+            return def;
+        }
+    }
 
-    @Override
-    public void init() throws ServletException {
-        dao = new CategoriesDAO();
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.println("<h1>No service handled</h1>");
+        }
     }
 
     @Override
@@ -26,6 +35,7 @@ public class BuildPC extends HttpServlet {
 
         String service = request.getParameter("service");
         boolean ajax = "true".equalsIgnoreCase(request.getParameter("ajax"));
+        CategoriesDAO dao = new CategoriesDAO();
 
         if ("filter".equals(service)) {
             int componentID = parseIntOrDefault(request.getParameter("componentID"), -1);
@@ -37,11 +47,9 @@ public class BuildPC extends HttpServlet {
             int pageSize = 5;
             int start = (page - 1) * pageSize;
 
-            // Đếm theo componentID
             int total = dao.countFilteredByComponent(componentID, brand, minPrice, maxPrice, keyword);
             int totalPages = (int) Math.ceil((double) total / pageSize);
 
-            // Phân trang đúng theo component
             List<Categories> filtered = dao.getCategoriesFiltered2(componentID, brand, keyword, minPrice, maxPrice, start, pageSize);
             List<Brands> brands = dao.getBrandsByComponent(componentID);
 
@@ -59,17 +67,23 @@ public class BuildPC extends HttpServlet {
             return;
         }
 
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<h1>No service handled</h1>");
-        }
+        processRequest(request, response);
     }
 
-    private int parseIntOrDefault(String raw, int def) {
-        try {
-            return Integer.parseInt(raw);
-        } catch (Exception e) {
-            return def;
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String service = request.getParameter("service");
+        CategoriesDAO dao = new CategoriesDAO();
+
+        if ("pc".equalsIgnoreCase(service)) {
+            List<BuildPCView> pcList = dao.getBuiltPCsForCustomer();
+            request.setAttribute("pcList", pcList);
+            request.getRequestDispatcher("/ShopPages/Pages/BuildPC/ViewPC.jsp").forward(request, response);
+            return;
         }
+
+        processRequest(request, response);
     }
 }

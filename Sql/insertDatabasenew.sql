@@ -1100,11 +1100,12 @@ INSERT INTO Orders (CustomerID, OrderDate, Address, TotalAmount, Status) VALUES 
 INSERT INTO Orders (CustomerID, OrderDate, Address, TotalAmount, Status) VALUES (2, '2024-12-11 05:34:02', N'Customer 2 Address #50', 9077684, 2);
 
 -- Insert data into CartItems
-INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Status) VALUES (2, 167, 60, 1);
-INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Status) VALUES (2, 12, 25, 1);
-INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Status) VALUES (2, 196, 46, 1);
-INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Status) VALUES (2, 71, 12, 1);
-INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Status) VALUES (2, 112, 21, 0);
+INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (3, 167, 60, 1, 1);
+INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (3, 12, 25, 1, 1);
+INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (3, 196, 46, 1, 1);
+INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (3, 71, 12, 1, 1);
+INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (3, 112, 21, 1, 0);
+
 
 -- Insert data into OrderItems
 INSERT INTO OrderItems (OrderID, CategoryID, Quantity, Price) VALUES (47, 189, 3, 1574055);
@@ -1478,3 +1479,35 @@ INSERT INTO Shipping(OrderID, ShipperID, ShippingStatus, ShipTime) values
 (2, 4, 'On going', GETDATE()), 
 (3, 4, 'On going', GETDATE()), 
 (4, 4, 'On going', GETDATE());
+
+INSERT INTO Comments (Post_id, UserID, CommentText)
+VALUES (1, 3, 'Very informative post, thank you!');
+
+ INSERT INTO Users (RoleID, FullName, Email, PhoneNumber,  PasswordHash, CreatedAt, Status)
+VALUES (3, 'LinhNV', 'customer@example.com', '0912345678', 'hashedpassword3', GETDATE(), 1);
+
+-- Build_PC #1
+INSERT INTO Build_PC (Price, Status) VALUES (18300000, 1);
+-- Giả sử các CategoryID bên dưới thuộc ComponentID từ 2 đến 7 (MainBoard → CASE)
+INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 3, 2000000, 1, 1); -- MainBoard (ComponentID = 2)
+INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 17, 5000000, 2, 1); -- CPU (3)
+INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 6, 7000000, 3, 1); -- GPU (4)
+INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 103, 1500000, 4, 1); -- RAM (5)
+INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 79, 1800000, 5, 1); -- SSD (6)
+INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 2, 1000000, 6, 1); -- CASE (7)
+
+UPDATE Orders
+SET Product_Type = 0;
+
+
+-- Notification
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Đơn hàng mới', N'Bạn có đơn hàng mới cần xử lý.', 0, '2025-06-03 08:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Phản hồi khách hàng', N'Khách hàng vừa gửi feedback mới.', 0, '2025-06-03 09:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Báo cáo doanh thu', N'Báo cáo doanh thu tháng 6 đã sẵn sàng.', 0, '2025-06-03 10:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Kho hàng', N'Một số sản phẩm sắp hết hàng.', 0, '2025-06-03 11:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Đăng ký mới', N'Có người dùng mới đăng ký tài khoản.', 0, '2025-06-03 12:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Đơn hàng bị hủy', N'Một đơn hàng vừa bị hủy.', 0, '2025-06-03 13:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Bảo trì hệ thống', N'Hệ thống sẽ bảo trì vào 23:00 hôm nay.', 0, '2025-06-03 14:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Khuyến mãi mới', N'Chương trình khuyến mãi mới đã bắt đầu.', 0, '2025-06-03 15:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Phản hồi đã trả lời', N'Bạn vừa trả lời một feedback của khách.', 0, '2025-06-03 16:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Đơn hàng giao thành công', N'Một đơn hàng đã giao thành công.', 0, '2025-06-03 17:00:00');

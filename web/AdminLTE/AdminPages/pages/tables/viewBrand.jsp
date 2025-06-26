@@ -86,14 +86,18 @@
                                                         <td>${brand.quantity}</td>
                                                         <td>
                                                             <c:choose>
-                                                                <c:when test="${brand.status == 0}">Disable</c:when>
-                                                                <c:when test="${brand.status == 1}">Active</c:when>
+                                                                <c:when  test="${brand.status == 0}">
+                                                                    <label class="label label-danger">Disable</label>
+                                                                </c:when>
+                                                                <c:when test="${brand.status == 1}">
+                                                                    <label class="label label-success">Active</label>
+                                                                </c:when>
                                                                 <c:otherwise>Unknown</c:otherwise>
                                                             </c:choose>
                                                         </td>
                                                         <td>
                                                             <a href="BrandComAdmin?service=listbybrand&brandID=${brand.brandID}" 
-                                                               class="btn btn-info btn-sm">View</a>
+                                                               class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                         <td>
                                                             <c:choose>
@@ -156,17 +160,17 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- page script -->
         <script>
-                   $(function () {
-                       $("#example1").DataTable();
-                       $('#example2').DataTable({
-                           "paging": true,
-                           "lengthChange": true,
-                           "searching": true,
-                           "ordering": true,
-                           "info": true,
-                           "autoWidth": true
-                       });
-                   });
+                                                                           $(function () {
+                                                                               $("#example1").DataTable();
+                                                                               $('#example2').DataTable({
+                                                                                   "paging": true,
+                                                                                   "lengthChange": true,
+                                                                                   "searching": true,
+                                                                                   "ordering": true,
+                                                                                   "info": true,
+                                                                                   "autoWidth": true
+                                                                               });
+                                                                           });
         </script>
         <script>
             $(function () {

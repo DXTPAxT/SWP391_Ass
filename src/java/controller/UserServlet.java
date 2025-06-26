@@ -5,8 +5,6 @@
 package controller;
 
 import dal.UserDAO;
-import dal.RoleDAO;
-import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,13 +13,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.User;
-import models.Role;
 import utils.MailUtils;
 import utils.PasswordUtils;
 
@@ -53,6 +47,7 @@ public class UserServlet extends HttpServlet {
         UserDAO userDAO = new UserDAO();
 
         String service = request.getParameter("service");
+
         if ("resetPassword".equals(service)) {
             int userID = Integer.parseInt(request.getParameter("userID"));
             String roleID = request.getParameter("roleID");
@@ -78,10 +73,16 @@ public class UserServlet extends HttpServlet {
                 request.setAttribute("toast", "User not found!");
                 request.setAttribute("toastType", "error");
             }
-            if ("3".equals(roleID)) {
+            if ("1".equals(roleID)) {
+                response.sendRedirect("Admin/user?type=admin");
+            } else if ("2".equals(roleID)) {
+                response.sendRedirect("Admin/user?type=sale");
+            } else if ("3".equals(roleID)) {
                 response.sendRedirect("Admin/user?type=customer");
+            } else if ("4".equals(roleID)) {
+                response.sendRedirect("Admin/user?type=shipper");
             } else {
-                response.sendRedirect("Admin/user?type=staff");
+                response.sendRedirect("Login");
             }
         } else if ("toggleStatus".equals(service)) {
             int userID = Integer.parseInt(request.getParameter("userID"));
@@ -105,8 +106,10 @@ public class UserServlet extends HttpServlet {
             } else {
                 response.sendRedirect(request.getContextPath() + "/ShopPages/Pages/login.jsp");
             }
+        } else if ("forgotPassword".equals(service)) {
+            request.getRequestDispatcher("/ShopPages/Pages/forgotPassword.jsp").forward(request, response);
         } else {
-            response.sendRedirect("Admin/user?type=customer");
+            response.sendRedirect("Homepages");
         }
     }
 
@@ -169,19 +172,19 @@ public class UserServlet extends HttpServlet {
                 }
                 switch (roleID) {
                     case "1":
-                    response.sendRedirect("Admin/user?type=admin");
-                    break;
+                        response.sendRedirect("Admin/user?type=admin");
+                        break;
                     case "2":
-                    response.sendRedirect("Admin/user?type=sale");
-                    break;
+                        response.sendRedirect("Admin/user?type=sale");
+                        break;
                     case "3":
-                    response.sendRedirect("Admin/user?type=customer");
-                    break;
+                        response.sendRedirect("Admin/user?type=customer");
+                        break;
                     case "4":
-                    response.sendRedirect("Admin/user?type=shipper");
-                    break;
+                        response.sendRedirect("Admin/user?type=shipper");
+                        break;
                     default:
-                    response.sendRedirect("Admin/user?type=admin");
+                        response.sendRedirect("Admin/user?type=admin");
                 }
             }
         } else if ("updateProfile".equals(service)) {
@@ -243,6 +246,72 @@ public class UserServlet extends HttpServlet {
                     request.getRequestDispatcher("/ShopPages/Pages/myAccount.jsp").forward(request, response);
                 } catch (SQLException ex) {
                     Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } else if ("sendOTP".equals(service)) {
+            String email = request.getParameter("email");
+            UserDAO dao = new UserDAO();
+            boolean isExisted = dao.isEmailExist(email);
+            String error = "";
+            if (isExisted) {
+                // Tạo OTP thực tế
+                String otp = String.valueOf((int)((Math.random() * 900000) + 100000));
+                java.util.Date now = new java.util.Date();
+                java.util.Date expiration = new java.util.Date(now.getTime() + 5 * 60 * 1000); // 5 phút
+                dal.OTPDAO otpDAO = new dal.OTPDAO();
+                otpDAO.insertOTP(email, otp, expiration);
+                User user = dao.getUserByEmail(email);
+                boolean mailSent = utils.MailUtils.send(user.getEmail(),
+                        "Online Computer Shop - OTP to reset your password.",
+                        "Your OTP is: " + otp + "\nThis OTP is valid for 1 minutes.");
+                // Lấy OTP mới nhất
+                models.OTP latestOtp = otpDAO.getLatestOTP(email, otp);
+                if (mailSent && latestOtp != null) {
+                    request.setAttribute("email", email);
+                    request.setAttribute("expirationTime", latestOtp.getExpirationTime().getTime());
+                    request.getRequestDispatcher("/ShopPages/Pages/otp.jsp").forward(request, response);
+                } else {
+                    error = "Fail to send OTP email.";
+                    request.setAttribute("error", error);
+                    request.getRequestDispatcher("/ShopPages/Pages/forgotPassword.jsp").forward(request, response);
+                }
+            } else {
+                error = "This email is not registered in our system. Please check and try again.";
+                request.setAttribute("email", email);
+                request.setAttribute("error", error);
+                request.getRequestDispatcher("/ShopPages/Pages/forgotPassword.jsp").forward(request, response);
+            }
+        } else if ("changePassword".equals(service)) {
+            String email = request.getParameter("email");
+            String password = request.getParameter("password");
+            String confirmPassword = request.getParameter("confirmPassword");
+            String errorPassword = null;
+            String errorConfirm = null;
+            boolean hasError = false;
+            if (password == null || password.length() < 6) {
+                errorPassword = "Password must be at least 6 characters.";
+                hasError = true;
+            }
+            if (confirmPassword == null || !confirmPassword.equals(password)) {
+                errorConfirm = "Passwords do not match.";
+                hasError = true;
+            }
+            if (hasError) {
+                request.setAttribute("errorPassword", errorPassword);
+                request.setAttribute("errorConfirm", errorConfirm);
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("/ShopPages/Pages/changePassword.jsp").forward(request, response);
+            } else {
+                UserDAO dao = new UserDAO();
+                String hashedPassword = utils.PasswordUtils.hashPassword(password);
+                boolean updated = dao.updatePasswordByEmail(email, hashedPassword);
+                if (updated) {
+                    request.setAttribute("message", "Password changed successfully. Please login.");
+                    request.getRequestDispatcher("/ShopPages/Pages/login.jsp").forward(request, response);
+                } else {
+                    request.setAttribute("errorPassword", "Failed to update password. Please try again.");
+                    request.setAttribute("email", email);
+                    request.getRequestDispatcher("/ShopPages/Pages/changePassword.jsp").forward(request, response);
                 }
             }
         }

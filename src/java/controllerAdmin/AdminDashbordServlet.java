@@ -9,6 +9,7 @@ import dalAdmin.BrandAdminDAO;
 import dalAdmin.CategoryAdminDAO;
 import dalAdmin.ComponentAdminDAO;
 import dalAdmin.ImportDAO;
+import dalAdmin.NotificationAdminDAO;
 import dalAdmin.ProductAdminDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,6 +30,7 @@ import models.Products;
  *
  * @author Admin
  */
+@WebServlet(name="AdminDashbordServlet", urlPatterns={"/AdminDashbordServlet"})
 public class AdminDashbordServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -37,10 +39,17 @@ public class AdminDashbordServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             CategoryAdminDAO dao = new CategoryAdminDAO();
             ComponentAdminDAO Com = new ComponentAdminDAO();
+            NotificationAdminDAO notificationDAO = new NotificationAdminDAO();
+            
             List<Components> com = Com.getAllComponent();
             request.setAttribute("com", com);
             List<Categories> list = dao.getAllCategoriesByInvenory();
             request.setAttribute("list", list);
+            
+            // Load số lượng thông báo chưa đọc cho admin (UserID = 1)
+            int unreadCount = notificationDAO.getUnreadCount(1);
+            request.setAttribute("unreadCount", unreadCount);
+            
             request.getRequestDispatcher("AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);
         }
     }
