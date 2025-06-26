@@ -13,9 +13,10 @@ public class FeedbackDAO extends DBContext {
     public List<Feedback> getAllFeedbacks() {
         List<Feedback> list = new ArrayList<>();
         String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName, f.Reply, " +
-                     "c.CategoryID, c.CategoryName " +
+                     "c.CategoryID, c.CategoryName, r.RoleName " +
                      "FROM Feedbacks f " +
                      "JOIN Users u ON f.UserID = u.UserID " +
+                     "JOIN Roles r ON u.RoleID = r.RoleID " +
                      "JOIN OrderItems oi ON f.OrderItemID = oi.OrderItemID " +
                      "JOIN Categories c ON oi.CategoryID = c.CategoryID " +
                      "ORDER BY f.CreatedAt DESC";
@@ -33,7 +34,8 @@ public class FeedbackDAO extends DBContext {
                     rs.getString("FullName"),
                     rs.getString("Reply"),
                     rs.getInt("CategoryID"),
-                    rs.getString("CategoryName")
+                    rs.getString("CategoryName"),
+                    rs.getString("RoleName")
                 );
                 list.add(f);
             }
@@ -60,10 +62,11 @@ public class FeedbackDAO extends DBContext {
 
     public List<Feedback> getFeedbackByCategoryId(int categoryId) {
         List<Feedback> list = new ArrayList<>();
-        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName, f.Reply " +
+        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName, f.Reply, r.RoleName " +
                      "FROM Feedbacks f " +
                      "JOIN OrderItems oi ON f.OrderItemID = oi.OrderItemID " +
                      "JOIN Users u ON f.UserID = u.UserID " +
+                     "JOIN Roles r ON u.RoleID = r.RoleID " +
                      "WHERE oi.CategoryID = ? ORDER BY f.CreatedAt DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, categoryId);
@@ -78,7 +81,10 @@ public class FeedbackDAO extends DBContext {
                         rs.getInt("Rate"),
                         rs.getInt("Status"),
                         rs.getString("FullName"),
-                        rs.getString("Reply")
+                        rs.getString("Reply"),
+                        0, // categoryID (không lấy ở đây)
+                        null, // categoryName (không lấy ở đây)
+                        rs.getString("RoleName")
                     );
                     list.add(f);
                 }
@@ -90,8 +96,8 @@ public class FeedbackDAO extends DBContext {
     }
 
     public Feedback getFeedbackById(int feedbackID) {
-        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName, f.Reply " +
-                     "FROM Feedbacks f JOIN Users u ON f.UserID = u.UserID WHERE f.FeedbackID = ?";
+        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName, f.Reply, r.RoleName " +
+                     "FROM Feedbacks f JOIN Users u ON f.UserID = u.UserID JOIN Roles r ON u.RoleID = r.RoleID WHERE f.FeedbackID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, feedbackID);
             try (ResultSet rs = ps.executeQuery()) {
@@ -105,7 +111,10 @@ public class FeedbackDAO extends DBContext {
                         rs.getInt("Rate"),
                         rs.getInt("Status"),
                         rs.getString("FullName"),
-                        rs.getString("Reply")
+                        rs.getString("Reply"),
+                        0, // categoryID (không lấy ở đây)
+                        null, // categoryName (không lấy ở đây)
+                        rs.getString("RoleName")
                     );
                 }
             }
@@ -143,8 +152,8 @@ public class FeedbackDAO extends DBContext {
 
     public List<Feedback> getFeedbackByUserId(int userID) {
         List<Feedback> list = new ArrayList<>();
-        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName, f.Reply " +
-                     "FROM Feedbacks f JOIN Users u ON f.UserID = u.UserID WHERE f.UserID = ?";
+        String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName, f.Reply, r.RoleName " +
+                     "FROM Feedbacks f JOIN Users u ON f.UserID = u.UserID JOIN Roles r ON u.RoleID = r.RoleID WHERE f.UserID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userID);
             try (ResultSet rs = ps.executeQuery()) {
@@ -158,7 +167,10 @@ public class FeedbackDAO extends DBContext {
                         rs.getInt("Rate"),
                         rs.getInt("Status"),
                         rs.getString("FullName"),
-                        rs.getString("Reply")
+                        rs.getString("Reply"),
+                        0, // categoryID (không lấy ở đây)
+                        null, // categoryName (không lấy ở đây)
+                        rs.getString("RoleName")
                     );
                     list.add(f);
                 }
