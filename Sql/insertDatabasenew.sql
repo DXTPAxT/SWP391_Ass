@@ -981,6 +981,7 @@ INSERT INTO Products (CategoryID, ProductCode, Status, ImportID) VALUES (2, 'PRD
 INSERT INTO Products (CategoryID, ProductCode, Status, ImportID) VALUES (158, 'PRD0499', 2, 61);
 
 -- Insert data into Warranties
+INSERT INTO Warranties (WarrantyPeriod, Description) VALUES(0, N'No Warranty.'
 INSERT INTO Warranties (WarrantyPeriod, Description) VALUES (3, N'3-month limited warranty covering manufacturer defects.');
 INSERT INTO Warranties (WarrantyPeriod, Description) VALUES (6, N'6-month standard warranty with replacement options.');
 INSERT INTO Warranties (WarrantyPeriod, Description) VALUES (12, N'12-month full warranty including parts and labor.');
@@ -1477,7 +1478,7 @@ INSERT INTO Shipping(OrderID, ShipperID, ShippingStatus, ShipTime) values
 (1, 4, 'On going', GETDATE()), 
 (2, 4, 'On going', GETDATE()), 
 (3, 4, 'On going', GETDATE()), 
-(4, 4, 'On going', GETDATE());
+(4, 4, 'On going', GETDATE());	
 
 INSERT INTO Comments (Post_id, UserID, CommentText)
 VALUES (1, 3, 'Very informative post, thank you!');
@@ -1485,48 +1486,3 @@ VALUES (1, 3, 'Very informative post, thank you!');
  INSERT INTO Users (RoleID, FullName, Email, PhoneNumber,  PasswordHash, CreatedAt, Status)
 VALUES (3, 'LinhNV', 'customer@example.com', '0912345678', 'hashedpassword3', GETDATE(), 1);
 
--- Build_PC #1
-INSERT INTO Build_PC (Price, Status) VALUES (18300000, 1);
--- Giả sử các CategoryID bên dưới thuộc ComponentID từ 2 đến 7 (MainBoard → CASE)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 3, 2000000, 1, 1); -- MainBoard (ComponentID = 2)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 17, 5000000, 2, 1); -- CPU (3)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 6, 7000000, 3, 1); -- GPU (4)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 103, 1500000, 4, 1); -- RAM (5)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 79, 1800000, 5, 1); -- SSD (6)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 2, 1000000, 6, 1); -- CASE (7)
-
-
-SELECT 
-    bpi.BuildPCID,
-    bpi.BuildPCItemID,
-    bc.ComponentID,
-    comp.ComponentName,
-    bpi.CategoryID,
-    c.CategoryName,
-    bpi.Price,
-    bpi.Status
-FROM 
-    Build_PC_Items bpi
-JOIN Categories c ON bpi.CategoryID = c.CategoryID
-JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-JOIN Components comp ON bc.ComponentID = comp.ComponentID
-ORDER BY 
-    bpi.BuildPCID, bc.ComponentID;
-
-	SELECT 
-    bp.BuildPCID,
-    MAX(CASE WHEN bc.ComponentID = 2 THEN c.CategoryName END) AS MainBoard,
-    MAX(CASE WHEN bc.ComponentID = 3 THEN c.CategoryName END) AS CPU,
-    MAX(CASE WHEN bc.ComponentID = 4 THEN c.CategoryName END) AS GPU,
-    MAX(CASE WHEN bc.ComponentID = 5 THEN c.CategoryName END) AS RAM,
-    MAX(CASE WHEN bc.ComponentID = 6 THEN c.CategoryName END) AS SSD,
-    MAX(CASE WHEN bc.ComponentID = 7 THEN c.CategoryName END) AS CASE_,
-    SUM(bpi.Price) AS Price,
-    MAX(bp.Status) AS Status
-FROM 
-    Build_PC bp
-LEFT JOIN Build_PC_Items bpi ON bp.BuildPCID = bpi.BuildPCID
-LEFT JOIN Categories c ON bpi.CategoryID = c.CategoryID
-LEFT JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-GROUP BY bp.BuildPCID
-ORDER BY bp.BuildPCID;

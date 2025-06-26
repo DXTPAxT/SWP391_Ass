@@ -165,7 +165,7 @@ CREATE TABLE OrderDetails (
 	Status int DEFAULT 1 NOT NULL,
     FOREIGN KEY (OrderItemID) REFERENCES OrderItems(OrderItemID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
-	FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID),
+	FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
 );
 
 -- 16.CartItems
@@ -287,6 +287,8 @@ CREATE TABLE Build_PC (
     BuildPCID INT PRIMARY KEY IDENTITY(1,1),
 	Price int not null,
 	Status INT NOT NULL DEFAULT 1,
+	UserID INT NOT NULL,
+	FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
 -- 26. Build PC Item
@@ -296,7 +298,7 @@ CREATE TABLE Build_PC_Items (
 	BuildPCID INT not null,
 	CategoryID int not null, 
 	price int not null,
-	WarrantyDetailID INT NOT NULL,
+	WarrantyDetailID INT NULL,
 	Status INT NOT NULL DEFAULT 1,
 	FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
 	FOREIGN KEY (BuildPCID) REFERENCES Build_PC(BuildPCID),
@@ -310,7 +312,7 @@ CREATE TABLE Cart_Build_PC (
 	-- giá bán cả case PC 
 	Price int not null, 
 	Status INT NOT NULL,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
 -- 28. Cart Build PC Item
@@ -318,7 +320,7 @@ CREATE TABLE Cart_Build_PC_Items (
 	CartBuildPCItemID INT PRIMARY KEY IDENTITY(1,1),
 	CartBuildPCID INT not null,
 	CategoryID int not null,
-	WarrantyDetailID INT NOT NULL,
+	WarrantyDetailID INT NULL,
 	-- giá bán của item 
 	price int not null,
 	Status INT NOT NULL,
