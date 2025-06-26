@@ -223,7 +223,7 @@ public class Blog_CateDAO extends DBContext {
             st.setString(6, p.getThumbnail());
             st.setString(7, p.getBrief());
             st.setInt(8, p.getAdd_id());
-            st.setInt(9, p.getStatus());       // thêm dòng này
+            st.setInt(9, p.getStatus());       
             st.setInt(10, p.getPost_id());
             st.executeUpdate();
         } catch (Exception e) {
@@ -306,6 +306,7 @@ public class Blog_CateDAO extends DBContext {
                         rs.getString("Author"),
                         rs.getTimestamp("Updated_date"),
                         rs.getString("Content"),
+                        rs.getString("Bc_name"),
                         rs.getInt("Bc_id"),
                         rs.getString("Thumbnail"),
                         rs.getString("Brief"),
