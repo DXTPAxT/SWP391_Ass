@@ -127,10 +127,7 @@ public class CateAdminServlet extends HttpServlet {
                         errors.add("Description contains invalid characters.");
                     }
 
-                    // Validate status
-                    if (statusRaw == null || !(statusRaw.equals("0") || statusRaw.equals("1"))) {
-                        errors.add("Invalid status.");
-                    }
+                 
 
                     if (!errors.isEmpty()) {
                         // Load danh sách lại nếu có lỗi
@@ -246,10 +243,6 @@ public class CateAdminServlet extends HttpServlet {
                         errors.add("Description contains invalid characters.");
                     }
 
-                    // Validate status
-                    if (statusRaw == null || !(statusRaw.equals("0") || statusRaw.equals("1"))) {
-                        errors.add("Invalid status.");
-                    }
 
                     try {
                         if (!errors.isEmpty()) {

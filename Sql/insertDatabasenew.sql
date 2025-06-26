@@ -1499,37 +1499,14 @@ UPDATE Orders
 SET Product_Type = 0;
 
 
-SELECT 
-    bpi.BuildPCID,
-    bpi.BuildPCItemID,
-    bc.ComponentID,
-    comp.ComponentName,
-    bpi.CategoryID,
-    c.CategoryName,
-    bpi.Price,
-    bpi.Status
-FROM 
-    Build_PC_Items bpi
-JOIN Categories c ON bpi.CategoryID = c.CategoryID
-JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-JOIN Components comp ON bc.ComponentID = comp.ComponentID
-ORDER BY 
-    bpi.BuildPCID, bc.ComponentID;
-
-	SELECT 
-    bp.BuildPCID,
-    MAX(CASE WHEN bc.ComponentID = 2 THEN c.CategoryName END) AS MainBoard,
-    MAX(CASE WHEN bc.ComponentID = 3 THEN c.CategoryName END) AS CPU,
-    MAX(CASE WHEN bc.ComponentID = 4 THEN c.CategoryName END) AS GPU,
-    MAX(CASE WHEN bc.ComponentID = 5 THEN c.CategoryName END) AS RAM,
-    MAX(CASE WHEN bc.ComponentID = 6 THEN c.CategoryName END) AS SSD,
-    MAX(CASE WHEN bc.ComponentID = 7 THEN c.CategoryName END) AS CASE_,
-    SUM(bpi.Price) AS Price,
-    MAX(bp.Status) AS Status
-FROM 
-    Build_PC bp
-LEFT JOIN Build_PC_Items bpi ON bp.BuildPCID = bpi.BuildPCID
-LEFT JOIN Categories c ON bpi.CategoryID = c.CategoryID
-LEFT JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-GROUP BY bp.BuildPCID
-ORDER BY bp.BuildPCID;
+-- Notification
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Đơn hàng mới', N'Bạn có đơn hàng mới cần xử lý.', 0, '2025-06-03 08:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Phản hồi khách hàng', N'Khách hàng vừa gửi feedback mới.', 0, '2025-06-03 09:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Báo cáo doanh thu', N'Báo cáo doanh thu tháng 6 đã sẵn sàng.', 0, '2025-06-03 10:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Kho hàng', N'Một số sản phẩm sắp hết hàng.', 0, '2025-06-03 11:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Đăng ký mới', N'Có người dùng mới đăng ký tài khoản.', 0, '2025-06-03 12:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Đơn hàng bị hủy', N'Một đơn hàng vừa bị hủy.', 0, '2025-06-03 13:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Bảo trì hệ thống', N'Hệ thống sẽ bảo trì vào 23:00 hôm nay.', 0, '2025-06-03 14:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Khuyến mãi mới', N'Chương trình khuyến mãi mới đã bắt đầu.', 0, '2025-06-03 15:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Phản hồi đã trả lời', N'Bạn vừa trả lời một feedback của khách.', 0, '2025-06-03 16:00:00');
+INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Đơn hàng giao thành công', N'Một đơn hàng đã giao thành công.', 0, '2025-06-03 17:00:00');

@@ -140,6 +140,7 @@
                                 <select id="status" name="status" class="form-control">
                                     <option value="1" <c:if test="${param.status == '1'}">selected</c:if>>Active</option>
                                     <option value="0" <c:if test="${param.status == '0'}">selected</c:if>>Inactive</option>
+                                    <option value="2" <c:if test="${param.status == '2'}">selected</c:if>>On Sale</option>
                                     </select>
                                 </div>
 
