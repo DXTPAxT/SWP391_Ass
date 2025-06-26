@@ -983,7 +983,6 @@ INSERT INTO Products (CategoryID, ProductCode, Status, ImportID) VALUES (2, 'PRD
 INSERT INTO Products (CategoryID, ProductCode, Status, ImportID) VALUES (158, 'PRD0499', 2, 61);
 
 -- Insert data into Warranties
-INSERT INTO Warranties (WarrantyPeriod, Description) VALUES(0, N'No Warranty.'
 INSERT INTO Warranties (WarrantyPeriod, Description) VALUES (3, N'3-month limited warranty covering manufacturer defects.');
 INSERT INTO Warranties (WarrantyPeriod, Description) VALUES (6, N'6-month standard warranty with replacement options.');
 INSERT INTO Warranties (WarrantyPeriod, Description) VALUES (12, N'12-month full warranty including parts and labor.');
@@ -1488,22 +1487,6 @@ VALUES (1, 3, 'Very informative post, thank you!');
 
  INSERT INTO Users (RoleID, FullName, Email, PhoneNumber,  PasswordHash, CreatedAt, Status)
 VALUES (3, 'LinhNV', 'customer@example.com', '0912345678', 'hashedpassword3', GETDATE(), 1);
-
-
--- Build_PC #1
-INSERT INTO Build_PC (Price, Status) VALUES (18300000, 1);
--- Giả sử các CategoryID bên dưới thuộc ComponentID từ 2 đến 7 (MainBoard → CASE)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 3, 2000000, 1, 1); -- MainBoard (ComponentID = 2)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 17, 5000000, 2, 1); -- CPU (3)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 6, 7000000, 3, 1); -- GPU (4)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 103, 1500000, 4, 1); -- RAM (5)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 79, 1800000, 5, 1); -- SSD (6)
-INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) VALUES (1, 2, 1000000, 6, 1); -- CASE (7)
-
-UPDATE Orders
-SET Product_Type = 0;
-
-
 -- Notification
 INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Đơn hàng mới', N'Bạn có đơn hàng mới cần xử lý.', 0, '2025-06-03 08:00:00');
 INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (1, 1, N'Phản hồi khách hàng', N'Khách hàng vừa gửi feedback mới.', 0, '2025-06-03 09:00:00');
