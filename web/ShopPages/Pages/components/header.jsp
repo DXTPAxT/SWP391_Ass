@@ -45,16 +45,18 @@
                         <ul class="nav navbar-nav"  style=" padding-top: 50px ">
                             <c:choose>
                                 <c:when test="${not empty sessionScope.user}">
-                                    <li><a href="Cart"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="checkout.html"><i class="fa fa-check-square-o"></i> Checklist</a></li>
+                                    <c:if test="${not empty sessionScope.user and sessionScope.user.role.roleID == 3}">
+                                        <li><a href="${pageContext.request.contextPath}/Cart"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/User?service=myAccount"><i class="fa fa-user"></i> Account</a></li>
+                                        <li><a href="checkout.html"><i class="fa fa-check-square-o"></i> Checklist</a></li>
+                                        </c:if>
                                     <li><a href="Logout"><i class="fa fa-sign-out"></i> Logout</a></li>
-                                </c:when>
-                                <c:otherwise>
+                                    </c:when>
+                                    <c:otherwise>
                                     <li><a href="Login"><i class="fa fa-lock"></i> Login</a></li>
                                     <li><a href="SignUp"><i class="fa fa-user-plus"></i> Sign Up</a></li>
-                                </c:otherwise>
-                            </c:choose>
+                                    </c:otherwise>
+                                </c:choose>
                         </ul>
                     </div>
                 </div>
@@ -83,7 +85,7 @@
                             <li><a href="contact-us.html" class="${activePage == 'contact' ? 'active' : ''}">Contact</a></li>
 
                         </ul>
-   
+
                     </div>
                 </div>
                 <div class="search_box pull-right">
