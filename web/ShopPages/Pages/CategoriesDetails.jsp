@@ -10,6 +10,14 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <fmt:setLocale value="vi_VN" />
+<c:set var="sessionUser" value="${sessionScope.user}" />
+<%
+    if (session.getAttribute("user") == null) {
+        String query = request.getQueryString() != null ? "?" + request.getQueryString() : "";
+        String redirectServlet = request.getContextPath() + "/CategoriesController" + query;
+        session.setAttribute("redirectAfterLogin", redirectServlet);
+    }
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -28,8 +36,8 @@
         <link href="${ctx}/ShopPages/Pages/css/responsive.css" rel="stylesheet">
         <link href="${ctx}/ShopPages/Pages/css/custom.css?v=1.0.14" rel="stylesheet">
         <!--[if lt IE 9]>
-        <script src="js/html5shiv.js"></script>
-        <script src="js/respond.min.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/html5shiv.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/respond.min.js"></script>
         <![endif]-->       
         <link rel="shortcut icon" href="images/ico/favicon.ico">
         <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
@@ -211,21 +219,26 @@
                                                 </div>
                                             </div>
                                         </c:if>
-                                        <button class="btn btn-success mt-3"
-                                                data-userid="${user.userId}"
-                                                data-productid="${product.categoryID}"
-                                                data-name="${product.categoryName}"
-                                                data-image="${ctx}/ShopPages/Pages/images/shop/product12.jpg"
-                                                data-price="${product.price}"
-                                                class="btn btn-default add-to-cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                            Add to cart
-                                        </button>
+                                        <!-- ADD TO CART FORM (HIDDEN) -->
+                                        <form id="addToCartForm" method="post" action="${ctx}/AddCartItem" style="display:none;">
+                                            <input type="hidden" name="userID" id="formUserID" value="${sessionUser.userId}" />
+                                            <input type="hidden" name="categoryID" id="formProductID" value="${product.categoryID}" />
+                                            <input type="hidden" name="warrantyDetailID" id="formWarrantyDetailID" value="" />
+                                            <input type="hidden" name="quantity" id="formQuantity" value="1" />
+                                        </form>
+                                        <!-- ADD TO CART BUTTON -->
+                                        <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                                            <button type="button" class="btn btn-success btn-sm" id="addToCartBtn">
+                                                <i class="fa fa-shopping-cart"></i>
+                                                Add to cart
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div><!--/product-details-->
+
                     <div class="category-tab shop-details-tab"><!--category-tab-->
                         <div class="col-sm-12">
                             <ul class="nav nav-tabs">
@@ -283,7 +296,7 @@
                                                     </p>
                                                     <p>${fb.content}</p>
                                                     <div>
-                                                        <c:if test="${sessionScope.user != null && (sessionScope.user.userID == fb.userID || sessionScope.user.roleID == 1)}">
+                                                        <c:if test="${sessionScope.user != null && (sessionScope.user.userId == fb.userID || sessionScope.user.role.roleID == 1)}">
                                                             <a href="${pageContext.request.contextPath}/feedback?action=edit&id=${fb.feedbackID}&categoryID=${categoryID}" class="btn btn-primary btn-sm">Sửa</a>
                                                             <a href="${pageContext.request.contextPath}/feedback?action=delete&id=${fb.feedbackID}&categoryID=${categoryID}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa feedback này?')">Xóa</a>
                                                         </c:if>
@@ -398,8 +411,61 @@
         </div>
     </section>
 
+    <!-- LOGIN REQUIRED MODAL -->
+    <div class="modal fade" id="loginRequiredModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-warning" style="background-color: #fcf8e3;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="loginModalLabel">Require sign in.</h4>
+                </div>
+                <div class="modal-body">
+                    You have to sign in to add to cart.
+                </div>
+                <div class="modal-footer" style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <a href="${ctx}/SignUp" class="btn btn-default" style="flex: 1;">Sign up</a>
+                    <a href="${ctx}/Login" class="btn btn-primary" style="flex: 1; margin-top: 0">Sign in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <c:if test="${not empty sessionScope.toast}">
+        <div class="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+            <div class="alert alert-${sessionScope.toastType == 'error' ? 'danger' : 'success'} alert-dismissible" role="alert" id="toastMessage">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                ${sessionScope.toast}
+            </div>
+        </div>
+        <c:remove var="toast" scope="session" />
+        <c:remove var="toastType" scope="session" />
+    </c:if>
+
     <jsp:include page="/ShopPages/Pages/components/footer.jsp" />
 
+    <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
+    <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
+
+    <!-- TOAST AUTO-CLOSE SCRIPT -->
+    <script>
+                                                                setTimeout(function () {
+                                                                    var toast = document.getElementById("toastMessage");
+                                                                    if (toast) {
+                                                                        $(toast).fadeOut("slow", function () {
+                                                                            $(this).remove();
+                                                                        });
+                                                                    }
+                                                                }, 3000);
+    </script>
 
     <script>
         // Highlight thẻ được chọn (toggle selection)
@@ -441,11 +507,30 @@
             }
         }
     </script>
-    <script src="js/jquery.js"></script>
-    <script src="js/price-range.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
+
+    <!-- ADD TO CART HANDLER SCRIPT -->
+    <script>
+        document.getElementById('addToCartBtn').addEventListener('click', function () {
+            var sessionUser = "<c:out value='${sessionUser}' />";
+            if (!sessionUser || sessionUser === "null" || sessionUser.trim() === "") {
+                $('#loginRequiredModal').modal('show');
+                return;
+            }
+
+            var checkedWarranty = document.querySelector('input[name="warrantyOption"]:checked');
+            if (!checkedWarranty) {
+                var firstWarranty = document.querySelector('input[name="warrantyOption"]');
+                if (firstWarranty) {
+                    firstWarranty.checked = true;
+                    checkedWarranty = firstWarranty;
+                }
+            }
+
+            var warrantyDetailID = checkedWarranty ? checkedWarranty.value : '';
+            document.getElementById('formWarrantyDetailID').value = warrantyDetailID;
+            document.getElementById('formQuantity').value = 1;
+            document.getElementById('addToCartForm').submit();
+        });
+    </script>
 </body>
 </html>
