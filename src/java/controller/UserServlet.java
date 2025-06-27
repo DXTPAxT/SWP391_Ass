@@ -289,6 +289,7 @@ public class UserServlet extends HttpServlet {
                     request.getRequestDispatcher("/ShopPages/Pages/otp.jsp").forward(request, response);
                 } else {
                     error = "Fail to send OTP email.";
+                    request.setAttribute("email", email);
                     request.setAttribute("error", error);
                     request.getRequestDispatcher("/ShopPages/Pages/forgotPassword.jsp").forward(request, response);
                 }
@@ -302,20 +303,18 @@ public class UserServlet extends HttpServlet {
             String email = request.getParameter("email");
             String password = request.getParameter("password");
             String confirmPassword = request.getParameter("confirmPassword");
-            String errorPassword = null;
-            String errorConfirm = null;
+            String error = null;
             boolean hasError = false;
             if (password == null || password.length() < 6) {
-                errorPassword = "Password must be at least 6 characters.";
+                error = "Password must be at least 6 characters.";
                 hasError = true;
             }
-            if (confirmPassword == null || !confirmPassword.equals(password)) {
-                errorConfirm = "Passwords do not match.";
+            if ((confirmPassword == null || !confirmPassword.equals(password))&&  error == null) {
+                error = "Passwords do not match.";
                 hasError = true;
             }
             if (hasError) {
-                request.setAttribute("errorPassword", errorPassword);
-                request.setAttribute("errorConfirm", errorConfirm);
+                request.setAttribute("error", error);
                 request.setAttribute("email", email);
                 request.getRequestDispatcher("/ShopPages/Pages/changePassword.jsp").forward(request, response);
             } else {
