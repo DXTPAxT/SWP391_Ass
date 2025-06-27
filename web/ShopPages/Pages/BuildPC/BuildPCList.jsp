@@ -41,7 +41,8 @@
                         <div>
                             <div><strong>${p.categoryName}</strong> - ${p.brandName}</div>
                             <div>Mô tả: <span style="font-size: 90%;">${p.description}</span></div>
-                            <div>Giá: <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫</div>
+                           <div>Giá: <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫</div>
+
                             <div style="margin-top: 5px;">
                                 <a href="${ctx}/CategoriesController?service=detail&categoryID=${p.categoryID}" class="btn btn-info btn-xs" target="_blank">
                                     View Detail
@@ -51,9 +52,10 @@
                         </div>
 
                         <button class="btn btn-sm btn-success mt-2"
-                                onclick="selectProduct('${p.componentID}', '${fn:escapeXml(p.categoryName)}', '${fn:escapeXml(p.brandName)}', ${p.price})">
+                                onclick="selectProduct('${p.componentID}', '${fn:escapeXml(p.categoryName)}', '${fn:escapeXml(p.brandName)}', ${p.price}, '${fn:escapeXml(p.imgURL)}')">
                             Chọn
                         </button>
+
                     </div>
                 </div>
             </div>
@@ -67,14 +69,14 @@
 </div>
 
 
-        <c:if test="${totalPages > 1}">
-            <nav>
-                <ul class="pagination">
-                    <c:forEach begin="1" end="${totalPages}" var="i">
-                        <li class="${i == currentPage ? 'active' : ''}">
-                            <a href="javascript:void(0);" class="page-link" data-page="${i}">${i}</a>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </nav>
-        </c:if>
+<c:if test="${totalPages > 1}">
+    <nav>
+        <ul class="pagination">
+            <c:forEach begin="1" end="${totalPages}" var="i">
+                <li class="${i == currentPage ? 'active' : ''}">
+                    <a href="javascript:void(0);" class="page-link" data-page="${i}">${i}</a>
+                </li>
+            </c:forEach>
+        </ul>
+    </nav>
+</c:if>

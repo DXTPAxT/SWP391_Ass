@@ -1,6 +1,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -42,75 +44,128 @@
                 <section class="content-header">
                     <h1>Build PC List</h1>
                 </section>
-<section class="content">
-    <div class="box">
-        <form id="deleteForm" action="${ctx}/BuildPC_ListCate" method="post">
-            <input type="hidden" name="service" value="delete">
-            <input type="hidden" name="buildPCID" id="deleteBuildPCID">
-        </form>
+                <section class="content">
+                    <div class="box">
+                        <form id="deleteForm" action="${ctx}/BuildPC_ListCate" method="post">
+                            <input type="hidden" name="service" value="delete">
+                            <input type="hidden" name="buildPCID" id="deleteBuildPCID">
+                        </form>
 
-        <!-- ✅ Box Header in English -->
-        <div class="box-header with-border">
-            <h3 class="box-title">Build PC List</h3>
-            <div class="box-tools pull-right">
-                <a href="${ctx}/AdminLTE/AdminPages/pages/forms/BuildPCAdmin.html" class="btn btn-success btn-sm">
-                    <i class="fa fa-plus"></i> Create New Build PC
-                </a>
-            </div>
-        </div>
+                        <!-- ✅ Box Header in English -->
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Build PC List</h3>
+                            <div class="box-tools pull-right">
+                                <a href="${ctx}/AdminLTE/AdminPages/pages/forms/BuildPCAdmin.html" class="btn btn-success btn-sm">
+                                    <i class="fa fa-plus"></i> Create New Build PC
+                                </a>
+                            </div>
+                        </div>
 
-        <div class="box-body">
-            <table id="example2" class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>MainBoard</th>
-                        <th>CPU</th>
-                        <th>GPU</th>
-                        <th>RAM</th>
-                        <th>SSD</th>
-                        <th>CASE</th>
-                        <th>Price</th>
-                        <th>Status</th>
-                        <th>Update</th>
-                        <th>Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:forEach var="b" items="${buildPCList}">
-                        <tr>
-                            <td>${b.buildPCID}</td>
-                            <td>${b.mainBoard != null ? b.mainBoard : 'N/A'}</td>
-                            <td>${b.cpu != null ? b.cpu : 'N/A'}</td>
-                            <td>${b.gpu != null ? b.gpu : 'N/A'}</td>
-                            <td>${b.ram != null ? b.ram : 'N/A'}</td>
-                            <td>${b.ssd != null ? b.ssd : 'N/A'}</td>
-                            <td>${b.pcCase != null ? b.pcCase : 'N/A'}</td>
-                            <td><fmt:formatNumber value="${b.price}" type="currency"/></td>
-                            <td>
-                                <span class="label label-${b.status == 1 ? 'success' : 'danger'}">
-                                    ${b.status == 1 ? 'Active' : 'Inactive'}
-                                </span>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-warning btn-sm"
-                                        onclick="goToUpdate(${b.buildPCID})">
-                                    Update
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-danger btn-sm"
-                                        onclick="confirmDelete(${b.buildPCID})">
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</section>
+                        <div class="box-body">
+                            <table id="example2" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>MainBoard</th>
+                                        <th>CPU</th>
+                                        <th>GPU</th>
+                                        <th>RAM</th>
+                                        <th>SSD</th>
+                                        <th>CASE</th>
+                                        <th>Price</th>
+                                        <th>Name User</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Update</th>
+                                       
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="b" items="${buildPCList}">
+                                        <tr>
+                                            <td>${b.buildPCID}</td>
+                                            <td><c:out value="${b.mainBoard}" default="N/A"/></td>
+                                            <td><c:out value="${b.cpu}" default="N/A"/></td>
+                                            <td><c:out value="${b.gpu}" default="N/A"/></td>
+                                            <td><c:out value="${b.ram}" default="N/A"/></td>
+                                            <td><c:out value="${b.ssd}" default="N/A"/></td>
+                                            <td><c:out value="${b.pcCase}" default="N/A"/></td>
+
+                                            <td><fmt:formatNumber value="${b.price}" type="number" groupingUsed="true"/> VNĐ</td>
+
+                                            <td>${b.fullName}</td>
+                                            <td>${b.role}</td>
+                                            <td>
+                                                <c:choose>
+
+                                                    <%-- Trường hợp Admin --%>
+                                                    <c:when test="${b.role eq 'Admin'}">
+                                                        <c:choose>
+                                                            <c:when test="${b.status == 1}">
+                                                                <span class="label label-success">Đang bán</span>
+                                                            </c:when>
+                                                            <c:when test="${b.status == 2}">
+                                                                <span class="label label-danger">Ngừng bán</span>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <span class="label label-default">Không xác định</span>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </c:when>
+
+                                                    <%-- Các Role khác (ví dụ Customer) --%>
+                                                    <c:otherwise>
+                                                        <c:choose>
+                                                            <c:when test="${b.status == 0}">
+                                                                <span class="label label-warning">Chờ xác nhận</span>
+                                                            </c:when>
+                                                            <c:when test="${b.status == 1}">
+                                                                <span class="label label-primary">Đã xác nhận</span>
+                                                            </c:when>
+                                                            <c:when test="${b.status == 2}">
+                                                                <span class="label label-info">Đang Build PC</span>
+                                                            </c:when>
+                                                            <c:when test="${b.status == 3}">
+                                                                <span class="label label-success">Đã Build xong</span>
+                                                            </c:when>
+                                                            <c:when test="${b.status == 4}">
+                                                                <span class="label label-default">Chờ Ship</span>
+                                                            </c:when>
+                                                            <c:when test="${b.status == 5}">
+                                                                <span class="label label-info">Đang Ship</span>
+                                                            </c:when>
+                                                            <c:when test="${b.status == 6}">
+                                                                <span class="label label-success">Đã Ship</span>
+                                                            </c:when>
+                                                            <c:when test="${b.status == 7}">
+                                                                <span class="label label-success">Hoàn thành</span>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <span class="label label-danger">Không xác định</span>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </c:otherwise>
+
+                                                </c:choose>
+                                            </td>
+
+
+                                            <td>
+                                                <button type="button" class="btn btn-warning btn-sm"
+                                                        onclick="goToUpdate(${b.buildPCID}, '${b.role}', ${b.userID})">
+                                                    Update
+                                                </button>
+
+
+                                            </td>
+
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
 
             </div>
 
@@ -133,36 +188,40 @@
         <!-- AdminLTE for demo purposes -->
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- Scripts -->
-         <script>
-            $(function () {
-                $("#example1").DataTable();
-                $('#example2').DataTable({
-                    "paging": true,
-                    "lengthChange": true,
-                    "searching": true,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": true
-                });
-            });
+        <script>
+                                                            $(function () {
+                                                                $("#example1").DataTable();
+                                                                $('#example2').DataTable({
+                                                                    "paging": true,
+                                                                    "lengthChange": true,
+                                                                    "searching": true,
+                                                                    "ordering": true,
+                                                                    "info": true,
+                                                                    "autoWidth": true
+                                                                });
+                                                            });
         </script>
         <script>
             $(function () {
                 $('.sidebar-menu').tree();
             });
+
         </script>
         <script>
-                                                            function confirmDelete(buildPCID) {
-                                                                if (confirm("Are you sure you want to delete Build PC ID: " + buildPCID + "?")) {
-                                                                    document.getElementById("deleteBuildPCID").value = buildPCID;
-                                                                    document.getElementById("deleteForm").submit();
-                                                                }
-                                                            }
+            function confirmDelete(buildPCID) {
+                if (confirm("Are you sure you want to delete Build PC ID: " + buildPCID + "?")) {
+                    document.getElementById("deleteBuildPCID").value = buildPCID;
+                    document.getElementById("deleteForm").submit();
+                }
+            }
 
-                                                            function goToUpdate(buildPCID) {
-                                                             window.location.href = '${ctx}/AdminLTE/AdminPages/pages/forms/BuildPCAdmin.html?buildPCID=' + buildPCID;
+            function goToUpdate(buildPCID, role, userID) {
+                localStorage.setItem("userRole", role);
+                localStorage.setItem("userID", userID);
+                window.location.href = '${ctx}/AdminLTE/AdminPages/pages/forms/BuildPCAdmin.html?buildPCID=' + buildPCID;
+            }
 
-                                                            }
+
         </script>
     </body>
 </html>

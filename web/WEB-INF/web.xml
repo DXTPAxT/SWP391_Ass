@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
-    <!-- === SERVLETS === -->
+
+    <!-- SERVLETS -->
     <servlet>
         <servlet-name>Demo</servlet-name>
         <servlet-class>controller.Demo</servlet-class>
@@ -129,7 +130,6 @@
         <servlet-name>WarrantyDetailAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.WarrantyDetailAdminServlet</servlet-class>
     </servlet>
-    <!-- === MAPPINGS === -->
     <servlet>
         <servlet-name>BuildPC</servlet-name>
         <servlet-class>controller.BuildPC</servlet-class>
@@ -143,9 +143,15 @@
         <servlet-class>controllerAdmin.BuildPC_ListCate</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>CardBuildPcController</servlet-name>
+        <servlet-class>controller.CardBuildPcController</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>OrderAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.OrderAdminServlet</servlet-class>
     </servlet>
+
+    <!-- MAPPINGS -->
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
         <url-pattern>/Demo</url-pattern>
@@ -287,7 +293,12 @@
         <url-pattern>/BuildPC_ListCate</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>CardBuildPcController</servlet-name>
+        <url-pattern>/CardBuildPc</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>OrderAdminServlet</servlet-name>
         <url-pattern>/OrderAdmin</url-pattern>
     </servlet-mapping>
+
 </web-app>

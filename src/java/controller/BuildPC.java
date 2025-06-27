@@ -10,6 +10,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import models.User;
 
 public class BuildPC extends HttpServlet {
 
@@ -66,6 +67,29 @@ public class BuildPC extends HttpServlet {
             }
             return;
         }
+        if ("loadBuildPC".equals(service)) {
+            int buildPCID = parseIntOrDefault(request.getParameter("buildPCID"), -1);
+
+            response.setContentType("text/plain;charset=UTF-8");
+
+            try (PrintWriter out = response.getWriter()) {
+                List<Categories> items = dao.getCategoriesInBuildPC(buildPCID);
+                StringBuilder sb = new StringBuilder();
+
+                for (Categories c : items) {
+                    sb.append(c.getCategoryID()).append("|")
+                            .append(c.getCategoryName()).append("|")
+                            .append(c.getBrandName()).append("|")
+                            .append(c.getPrice()).append("|")
+                            .append(c.getImgURL() == null ? "" : c.getImgURL()).append("|") // xử lý null
+                            .append(c.getComponentID()).append(";");
+
+                }
+
+                out.print(sb.toString());
+            }
+            return;
+        }
 
         processRequest(request, response);
     }
@@ -81,6 +105,38 @@ public class BuildPC extends HttpServlet {
             List<BuildPCView> pcList = dao.getBuiltPCsForCustomer();
             request.setAttribute("pcList", pcList);
             request.getRequestDispatcher("/ShopPages/Pages/BuildPC/ViewPC.jsp").forward(request, response);
+            return;
+        }
+        if ("addBuildPCToCart".equals(service)) {
+            HttpSession session = request.getSession();
+            Object userObj = session.getAttribute("user");
+
+            if (userObj == null || !(userObj instanceof User)) {
+                response.getWriter().print("NOT_LOGGED_IN");
+                return;
+            }
+
+            User user = (User) userObj;
+
+            String[] cateIDs = request.getParameterValues("categories[]");
+            if (cateIDs == null || cateIDs.length != 6) {
+                response.getWriter().print("INVALID");
+                return;
+            }
+
+            List<Integer> categoryIDs = new java.util.ArrayList<>();
+            for (String raw : cateIDs) {
+                try {
+                    categoryIDs.add(Integer.parseInt(raw));
+                } catch (Exception e) {
+                    response.getWriter().print("INVALID");
+                    return;
+                }
+            }
+
+            boolean success = dao.insertBuildPCToCart(categoryIDs, user.getUserId());
+
+            response.getWriter().print(success ? "SUCCESS" : "ERROR");
             return;
         }
 

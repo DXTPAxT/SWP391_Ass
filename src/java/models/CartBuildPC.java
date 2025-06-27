@@ -1,8 +1,16 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package models;
 
-public class BuildPCView {
+/**
+ *
+ * @author PC
+ */
+public class CartBuildPC {
 
-    private int buildPCID;
+    private int cartBuildPCID;
     private String mainBoard;
     private String cpu;
     private String gpu;
@@ -23,11 +31,11 @@ public class BuildPCView {
     private String imgSSD;
     private String imgCase;
 
-    public BuildPCView() {
+    public CartBuildPC() {
     }
 
-    public BuildPCView(int buildPCID, String mainBoard, String cpu, String gpu, String ram, String ssd, String pcCase, int price, int status, int userID, String fullName, String role) {
-        this.buildPCID = buildPCID;
+    public CartBuildPC(int cartBuildPCID, String mainBoard, String cpu, String gpu, String ram, String ssd, String pcCase, int price, int status, int userID, String fullName, String role) {
+        this.cartBuildPCID = cartBuildPCID;
         this.mainBoard = mainBoard;
         this.cpu = cpu;
         this.gpu = gpu;
@@ -41,8 +49,8 @@ public class BuildPCView {
         this.role = role;
     }
 
-    public BuildPCView(int buildPCID, String mainBoard, String cpu, String gpu, String ram, String ssd, String pcCase, int price, int status, String imgMain, String imgCPU, String imgGPU, String imgRAM, String imgSSD, String imgCase) {
-        this.buildPCID = buildPCID;
+    public CartBuildPC(int cartBuildPCID, String mainBoard, String cpu, String gpu, String ram, String ssd, String pcCase, int price, int status, int userID, String fullName, String role, String imgMain, String imgCPU, String imgGPU, String imgRAM, String imgSSD, String imgCase) {
+        this.cartBuildPCID = cartBuildPCID;
         this.mainBoard = mainBoard;
         this.cpu = cpu;
         this.gpu = gpu;
@@ -51,6 +59,9 @@ public class BuildPCView {
         this.pcCase = pcCase;
         this.price = price;
         this.status = status;
+        this.userID = userID;
+        this.fullName = fullName;
+        this.role = role;
         this.imgMain = imgMain;
         this.imgCPU = imgCPU;
         this.imgGPU = imgGPU;
@@ -59,24 +70,12 @@ public class BuildPCView {
         this.imgCase = imgCase;
     }
 
-    public BuildPCView(int buildPCID, String mainBoard, String cpu, String gpu, String ram, String ssd, String pcCase, int price, int status) {
-        this.buildPCID = buildPCID;
-        this.mainBoard = mainBoard;
-        this.cpu = cpu;
-        this.gpu = gpu;
-        this.ram = ram;
-        this.ssd = ssd;
-        this.pcCase = pcCase;
-        this.price = price;
-        this.status = status;
+    public int getCartBuildPCID() {
+        return cartBuildPCID;
     }
 
-    public int getBuildPCID() {
-        return buildPCID;
-    }
-
-    public void setBuildPCID(int buildPCID) {
-        this.buildPCID = buildPCID;
+    public void setCartBuildPCID(int cartBuildPCID) {
+        this.cartBuildPCID = cartBuildPCID;
     }
 
     public String getMainBoard() {
@@ -143,6 +142,30 @@ public class BuildPCView {
         this.status = status;
     }
 
+    public int getUserID() {
+        return userID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public String getImgMain() {
         return imgMain;
     }
@@ -190,28 +213,7 @@ public class BuildPCView {
     public void setImgCase(String imgCase) {
         this.imgCase = imgCase;
     }
-
-    public int getUserID() {
-        return userID;
-    }
-
-    public void setUserID(int userID) {
-        this.userID = userID;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
+    
 }
+
+   

@@ -11,6 +11,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import models.User;
 
 /**
  *
@@ -73,26 +75,29 @@ public class AddCartItemServlet extends HttpServlet {
         response.setContentType("text/plain");
 
         try {
-            String userIDparam = request.getParameter("userID");
-            String productIDparam = request.getParameter("productID");
+            HttpSession session = request.getSession();
+            User user = (User) session.getAttribute("user");
+            String categoryIDparam = request.getParameter("categoryID");
+            String warrantyDetailIDparam = request.getParameter("warrantyDetailID");
             String quantityparam = request.getParameter("quantity");
 
-//            if (cartItemParam == null || quantityParam == null
-//                    || cartItemParam.isEmpty() || quantityParam.isEmpty()) {
-//                response.getWriter().write("missing_parameters");
-//                return;
-//            }
-            int userID = Integer.parseInt(userIDparam);
-            int productID = Integer.parseInt(productIDparam);
+            int categoryID = Integer.parseInt(categoryIDparam);
             int quantity = Integer.parseInt(quantityparam);
+            int warrantyDetailID = Integer.parseInt(warrantyDetailIDparam);
 
             CartItemDAO dao = new CartItemDAO();
-            boolean deleted = dao.addCartItem(userID, productID, quantity);
-
-            response.getWriter().write(deleted ? "success" : "fail");
+            boolean added = dao.addCartItem(user.getUserId(), categoryID, quantity, warrantyDetailID);
+            if (added) {
+                session.setAttribute("toastType", "success");
+                session.setAttribute("toast", "Add to cart successfully!");
+            } else {
+                session.setAttribute("toastType", "success");
+                session.setAttribute("toast", "Add to cart fail!");
+            }
+            response.sendRedirect(request.getContextPath() + "/CategoriesController?service=detail&categoryID=" + categoryID);
         } catch (Exception e) {
             e.printStackTrace(); // để xem trong console
-            response.getWriter().write("error");
+            response.getWriter().write(e.getMessage());
         }
     }
 

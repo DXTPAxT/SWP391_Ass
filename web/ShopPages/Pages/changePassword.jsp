@@ -69,14 +69,14 @@
                     <input type="hidden" name="service" value="changePassword"/>
                     <input type="hidden" name="email" value="${email}"/>
                     <label for="password" class="form">New Password</label>
-                    <input type="password" id="password" name="password" class="form-control${not empty errorPassword ? ' is-invalid' : ''}" required placeholder="Enter new password"/>
-                    <c:if test="${not empty errorPassword}">
-                        <div class="alert alert-danger">${errorPassword}</div>
+                    <input type="password" id="password" name="password" class="form-control${error == 'Password must be at least 6 characters.' ? ' is-invalid' : ''}" required placeholder="Enter new password"/>
+                    <c:if test="${error == 'Password must be at least 6 characters.'}">
+                        <div class="alert alert-danger">${error}</div>
                     </c:if>
                     <label for="confirmPassword" class="form">Confirm Password</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control${not empty errorConfirm ? ' is-invalid' : ''}" required placeholder="Confirm new password"/>
-                    <c:if test="${not empty errorConfirm}">
-                        <div class="alert alert-danger">${errorConfirm}</div>
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control${error == 'Passwords do not match.' ? ' is-invalid' : ''}" required placeholder="Confirm new password"/>
+                    <c:if test="${error == 'Passwords do not match.'}">
+                        <div class="alert alert-danger">${error}</div>
                     </c:if>
                     <c:if test="${not empty message}">
                         <div class="alert alert-success">${message}</div>

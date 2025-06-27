@@ -65,6 +65,27 @@
                 cursor: pointer;
                 font-weight: bold;
             }
+            .build-pc-banner {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 30px 0;
+                background: linear-gradient(to right, #f9f9f9, #ffffff);
+            }
+
+            .build-pc-banner img {
+                max-width: 350px;
+                width: 100%;
+                height: auto;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                border-radius: 12px;
+                transition: transform 0.3s ease;
+            }
+
+            .build-pc-banner img:hover {
+                transform: scale(1.03);
+            }
+
         </style>
     </head>
     <body><!-- comment -->
@@ -152,10 +173,13 @@
         </header>
 
 
-        <h1 class="text-center">Build Your PC</h1>
+        <div class="build-pc-banner">
+            <img src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/BuildPC.png" alt="Build Your PC" style="max-width: 20%; height: auto;">
+        </div>
+
 
         <div>
-            <button class="btn btn-sm btn-success col-sm-12" onclick="openPCList()">PC Case (Xem PC đã build)</button>
+            <button class="btn btn-sm btn-success col-sm-12" onclick="openPCList()">PC Case</button>
         </div>
         <div>
             <button class="btn btn-sm btn-warning col-sm-12" onclick="resetAllComponents()">Reset All</button>
@@ -279,6 +303,9 @@
                         <h3 class="text-center text-success"><span id="totalPrice">0</span>₫</h3>
                     </div>
                 </div>
+                <button class="btn btn-sm btn-success add-to-cart-btn">
+                    Thêm vào giỏ Build PC
+                </button>
 
             </div>
         </div>
@@ -354,13 +381,16 @@
                 Object.assign(selectedComponents, JSON.parse(stored));
                 for (let key in selectedComponents) {
                     const data = selectedComponents[key];
-                    document.getElementById(`meta-${key}`).innerText = `${data.categoryName} - ${data.brandName}`;
-                    document.getElementById(`price-${key}`).innerText = `${data.price.toLocaleString()}₫`;
-                    document.getElementById(`remove-${key}`).style.display = 'inline-block';
-                    // ✅ Khôi phục ảnh
-                    const img = document.querySelector(`#component-${key} img`);
-                    if (img && data.imageURL) {
-                        img.src = ctx + "/ShopPages/Pages/images/anhproduct/" + data.imageURL;
+                    const meta = document.getElementById(`meta-${key}`);
+                    const price = document.getElementById(`price-${key}`);
+                    const removeBtn = document.getElementById(`remove-${key}`);
+                    const img = document.getElementById(`img-${key}`);
+
+                    if (meta && price && removeBtn && img) {
+                        meta.innerText = `${data.categoryName} - ${data.brandName}`;
+                        price.innerText = `${data.price.toLocaleString()}₫`;
+                        removeBtn.style.display = 'inline-block';
+                        img.src = `${ctx}/ShopPages/Pages/images/anhproduct/${data.imgURL}`;
                     }
                 }
                 updateTotal();
@@ -385,15 +415,19 @@
             localStorage.removeItem("selectedComponents");
 
             for (let id = 2; id <= 7; id++) {
-                document.getElementById(`meta-${id}`).innerText = "";
-                document.getElementById(`price-${id}`).innerText = "";
-                document.getElementById(`remove-${id}`).style.display = 'none';
-
-                // Reset picture
+                const meta = document.getElementById(`meta-${id}`);
+                const price = document.getElementById(`price-${id}`);
+                const removeBtn = document.getElementById(`remove-${id}`);
                 const img = document.getElementById(`img-${id}`);
-                if (img) {
+
+                if (meta)
+                    meta.innerText = "";
+                if (price)
+                    price.innerText = "";
+                if (removeBtn)
+                    removeBtn.style.display = "none";
+                if (img)
                     img.src = img.getAttribute("data-default");
-                }
             }
 
             // Reset mỏny
@@ -406,8 +440,9 @@
 
     </script>
     <script>
-        // Take Data form chose catgegory
         function selectProduct(componentID, categoryName, brandName, price, imgURL) {
+            price = parseInt(price); // Đảm bảo giá là số nguyên
+
             document.getElementById(`meta-${componentID}`).innerText = `${categoryName} - ${brandName}`;
             document.getElementById(`price-${componentID}`).innerText = `${price.toLocaleString()}₫`;
             document.getElementById(`remove-${componentID}`).style.display = 'inline-block';
@@ -418,14 +453,24 @@
             }
 
             selectedComponents[componentID] = {
-                categoryName: categoryName,
-                brandName: brandName,
-                price: price,
-                imgURL: imgURL
+                categoryID: componentID,
+                categoryName,
+                brandName,
+                price,
+                imgURL
             };
+
             localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
             updateTotal();
-            modal.style.display = 'none';
+            document.getElementById("customModal").style.display = "none";
+        }
+
+        function updateTotal() {
+            let total = 0;
+            for (let key in selectedComponents) {
+                total += selectedComponents[key].price;
+            }
+            totalDisplay.innerText = total.toLocaleString();
         }
 
 // Delete Component
@@ -507,9 +552,6 @@
 
     </script>
 
-
-
-    // Chosse PC in DATABASE
     <script>
         function openPCList() {
             const modal = document.getElementById("pcListModal");
@@ -529,47 +571,100 @@
                     });
         }
         function loadPC(buildPCID, imgMain, imgCPU, imgGPU, imgRAM, imgSSD, imgCase) {
-            fetch(`${ctx}/BuildPC_ListCate?service=loadBuildPC&buildPCID=${buildPCID}`)
-                    .then(res => res.json())
-                    .then(items => {
+            fetch(`${ctx}/BuildPC?service=loadBuildPC&buildPCID=${buildPCID}`)
+                    .then(res => res.text())
+                    .then(data => {
+                        const items = data.split(';').filter(Boolean);
                         const components = {};
-                        items.forEach(item => {
-                            const id = item.componentID;
-                            let img = item.imgURL;
 
-                            // Ghi đè bằng ảnh truyền vào nếu có
-                            if (id === 2 && imgMain)
+                        items.forEach(line => {
+                            const parts = line.split('|');
+                            if (parts.length !== 6) {
+                                console.error("Lỗi dữ liệu thiếu thông tin:", line);
+                                return;
+                            }
+
+                            const [categoryID, categoryName, brandName, price, imageURL, componentID] = parts;
+
+                            let img = imageURL || "default.jpg";
+                            if (componentID == 2 && imgMain)
                                 img = imgMain;
-                            if (id === 3 && imgCPU)
+                            if (componentID == 3 && imgCPU)
                                 img = imgCPU;
-                            if (id === 4 && imgGPU)
+                            if (componentID == 4 && imgGPU)
                                 img = imgGPU;
-                            if (id === 5 && imgRAM)
+                            if (componentID == 5 && imgRAM)
                                 img = imgRAM;
-                            if (id === 6 && imgSSD)
+                            if (componentID == 6 && imgSSD)
                                 img = imgSSD;
-                            if (id === 7 && imgCase)
+                            if (componentID == 7 && imgCase)
                                 img = imgCase;
 
-                            components[id] = {
-                                categoryName: item.categoryName,
-                                brandName: item.brandName,
-                                price: item.price,
+                            components[componentID] = {
+                                categoryID,
+                                categoryName,
+                                brandName,
+                                price: parseInt(price),
                                 imgURL: img
                             };
                         });
 
-                        localStorage.setItem("selectedComponents", JSON.stringify(components));
+                        // Lưu vào selectedComponents
+                        for (let id = 2; id <= 7; id++) {
+                            const comp = components[id];
+                            if (comp) {
+                                document.getElementById(`meta-${id}`).innerText = `${comp.categoryName} - ${comp.brandName}`;
+                                document.getElementById(`price-${id}`).innerText = `${comp.price.toLocaleString()}₫`;
+                                document.getElementById(`remove-${id}`).style.display = 'inline-block';
+                                const img = document.getElementById(`img-${id}`);
+                                img.src = `${ctx}/ShopPages/Pages/images/anhproduct/${comp.imgURL}`;
+                                selectedComponents[id] = {
+                                    categoryID: comp.categoryID,
+                                    categoryName: comp.categoryName,
+                                    brandName: comp.brandName,
+                                    price: comp.price,
+                                    imgURL: comp.imgURL
+                                };
+                            }
+                        }
 
-                        // ✅ Hiện ảnh demo của thẻ đã chọn
-                        const img = document.getElementById(`img-pc-${buildPCID}`);
-                        if (img)
-                            img.style.display = 'block';
-
-                        location.reload();
+                        localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
+                        updateTotal();
+                        document.getElementById("pcListModal").style.display = 'none';
                     })
                     .catch(() => alert("❌ Lỗi khi tải cấu hình"));
         }
+
+        document.querySelector(".add-to-cart-btn").addEventListener("click", function () {
+            if (Object.keys(selectedComponents).length !== 6) {
+                alert("Bạn cần chọn đầy đủ 6 linh kiện để thêm vào giỏ hàng.");
+                return;
+            }
+
+            const categoryIDs = Object.values(selectedComponents).map(comp => comp.categoryID);
+            const params = new URLSearchParams();
+            params.append("service", "addBuildPCToCart");
+            categoryIDs.forEach(id => params.append("categories[]", id));
+
+            fetch(`${ctx}/BuildPC`, {
+                method: "POST",
+                headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                body: params
+            })
+                    .then(res => res.text())
+                    .then(msg => {
+                        if (msg === "NOT_LOGGED_IN") {
+                            alert("Vui lòng đăng nhập để thực hiện chức năng này.");
+                            window.location.href = ctx + "/Login";
+                        } else if (msg === "SUCCESS") {
+                            alert("Đã thêm vào giỏ hàng thành công!");
+                            resetAllComponents();
+                        } else {
+                            alert("Có lỗi xảy ra khi thêm vào giỏ hàng.");
+                        }
+                    })
+                    .catch(() => alert("Lỗi kết nối tới server!"));
+        });
 
 
     </script>
