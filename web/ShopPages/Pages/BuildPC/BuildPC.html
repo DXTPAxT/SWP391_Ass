@@ -440,8 +440,9 @@
 
     </script>
     <script>
-        // Take Data form chose catgegory
-        function selectProduct(componentID, categoryID, categoryName, brandName, price, imgURL) {
+        function selectProduct(componentID, categoryName, brandName, price, imgURL) {
+            price = parseInt(price); // Đảm bảo giá là số nguyên
+
             document.getElementById(`meta-${componentID}`).innerText = `${categoryName} - ${brandName}`;
             document.getElementById(`price-${componentID}`).innerText = `${price.toLocaleString()}₫`;
             document.getElementById(`remove-${componentID}`).style.display = 'inline-block';
@@ -452,15 +453,24 @@
             }
 
             selectedComponents[componentID] = {
-                categoryID,
+                categoryID: componentID,
                 categoryName,
                 brandName,
                 price,
                 imgURL
             };
+
             localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
             updateTotal();
-            modal.style.display = 'none';
+            document.getElementById("customModal").style.display = "none";
+        }
+
+        function updateTotal() {
+            let total = 0;
+            for (let key in selectedComponents) {
+                total += selectedComponents[key].price;
+            }
+            totalDisplay.innerText = total.toLocaleString();
         }
 
 // Delete Component
