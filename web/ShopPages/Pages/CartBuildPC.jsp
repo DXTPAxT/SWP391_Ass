@@ -37,7 +37,7 @@
                         <thead>
                             <tr class="cart_menu">
                                 <td><input class="ml-3 mr-3" type="checkbox" id="checkAll" onchange="toggleAll(this)"/></td>
-                                <td>PC Build ID</td>
+                                <td>cartBuildPCID</td>
                                 <td>MainBoard</td>
                                 <td>CPU</td>
                                 <td>GPU</td>
