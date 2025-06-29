@@ -397,62 +397,81 @@
         <script src="../../bootstrap/js/bootstrap.min.js"></script>
         <script src="../../dist/js/app.min.js"></script>
         <script>
-                                    const ctx = "/ComputerOnlineShop";
-                                    const modal = document.getElementById('customModal');
-                                    const modalTitle = document.getElementById('modalTitle');
-                                    const modalBody = document.getElementById('modalBody');
-                                    const totalDisplay = document.getElementById('totalPrice');
-                                    let selectedComponents = JSON.parse(localStorage.getItem("selectedComponents")) || {};
-                                    function openModal(componentid, componentName) {
-                                        modal.style.display = 'flex';
-                                        modalTitle.innerText = `Select ${componentName}`;
-                                        modalBody.innerHTML = `<p>Loading...</p>`;
-                                        fetch(`${ctx}/BuildPC_ListCate?service=filter&componentID=${componentid}&ajax=true`)
-                                                .then(res => res.text())
-                                                .then(html => {
-                                                    modalBody.innerHTML = html;
-                                                    attachFilterFormHandler(componentid, componentName);
-                                                    attachPaginationHandler(componentid, componentName);
-                                                })
-                                                .catch(() => {
-                                                    modalBody.innerHTML = "<p style='color:red;'>Failed to load data</p>";
-                                                });
+
+                                    const params = new URLSearchParams(window.location.search);
+                                    const userIDParam = params.get("userID");
+                                    const roleParam = params.get("role");
+
+                                    if (userIDParam && roleParam) {
+                                        localStorage.setItem("userID", userIDParam);
+                                        localStorage.setItem("userRole", roleParam);
                                     }
-                                    document.getElementById('closeModal').addEventListener('click', () => {
-                                        modal.style.display = 'none';
-                                    });
-                                    window.addEventListener('click', function (e) {
-                                        if (modal.style.display === 'flex' && e.target === modal) {
-                                            modal.style.display = 'none';
-                                        }
-                                    });
-                                    window.addEventListener("DOMContentLoaded", function () {
-                                        const urlParams = new URLSearchParams(window.location.search);
-                                        const buildPCID = urlParams.get("buildPCID");
-                                        const role = localStorage.getItem("userRole") || "Customer";
-                                        const statusSelect = document.getElementById("statusSelect");
-                                        const statusWrapper = document.getElementById("statusWrapper");
-                                        const btn = document.getElementById("createPCBtn");
+        </script>
 
-                                        // Load các linh kiện đã chọn (nếu có)
-                                        for (const compID of Object.keys(selectedComponents)) {
-                                            const comp = selectedComponents[compID];
-                                            selectProduct(compID, comp.categoryName, comp.brandName, comp.price, comp.imgURL, comp.categoryID);
-                                        }
+        <script>
 
-                                        if (buildPCID) {
-                                            btn.innerText = "Cập nhật Build PC";
-                                            btn.setAttribute("onclick", `submitUpdateBuildPC(${buildPCID})`);
+            const ctx = "/ComputerOnlineShop";
+            const modal = document.getElementById('customModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            const totalDisplay = document.getElementById('totalPrice');
+            let selectedComponents = JSON.parse(localStorage.getItem("selectedComponents")) || {};
+            function openModal(componentid, componentName) {
+                modal.style.display = 'flex';
+                modalTitle.innerText = `Select ${componentName}`;
+                modalBody.innerHTML = `<p>Loading...</p>`;
+                fetch(`${ctx}/BuildPC_ListCate?service=filter&componentID=${componentid}&ajax=true`)
+                        .then(res => res.text())
+                        .then(html => {
+                            modalBody.innerHTML = html;
+                            attachFilterFormHandler(componentid, componentName);
+                            attachPaginationHandler(componentid, componentName);
+                        })
+                        .catch(() => {
+                            modalBody.innerHTML = "<p style='color:red;'>Failed to load data</p>";
+                        });
+            }
+            document.getElementById('closeModal').addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+            window.addEventListener('click', function (e) {
+                if (modal.style.display === 'flex' && e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            window.addEventListener("DOMContentLoaded", function () {
+                const urlParams = new URLSearchParams(window.location.search);
+                const buildPCID = urlParams.get("buildPCID");
+                const role = localStorage.getItem("userRole");
 
-                                            // Phân quyền hiển thị trạng thái dựa trên role
-                                            if (role === "Admin") {
-                                                statusWrapper.style.display = "block";
-                                                statusSelect.innerHTML = `
+                if (!role) {
+                    alert("Vui lòng đăng nhập lại, thiếu thông tin người dùng.");
+                    window.location.href = "/ComputerOnlineShop/Login"; // Đưa về trang login nếu cần
+                }
+
+                const statusSelect = document.getElementById("statusSelect");
+                const statusWrapper = document.getElementById("statusWrapper");
+                const btn = document.getElementById("createPCBtn");
+
+                // Load các linh kiện đã chọn (nếu có)
+                for (const compID of Object.keys(selectedComponents)) {
+                    const comp = selectedComponents[compID];
+                    selectProduct(compID, comp.categoryName, comp.brandName, comp.price, comp.imgURL, comp.categoryID);
+                }
+
+                if (buildPCID) {
+                    btn.innerText = "Cập nhật Build PC";
+                    btn.setAttribute("onclick", `submitUpdateBuildPC(${buildPCID})`);
+
+                    // Phân quyền hiển thị trạng thái dựa trên role
+                    if (role === "Admin") {
+                        statusWrapper.style.display = "block";
+                        statusSelect.innerHTML = `
                 <option value="1">Đang bán</option>
                 <option value="2">Ngừng bán</option>`;
-                                            } else if (role === "Customer" || role === "" || role == null) {
-                                                statusWrapper.style.display = "block";
-                                                statusSelect.innerHTML = `
+                    } else if (role === "Customer" || role === "" || role == null) {
+                        statusWrapper.style.display = "block";
+                        statusSelect.innerHTML = `
                 <option value="0">Chờ xác nhận</option>
                 <option value="1">Đã xác nhận</option>
                 <option value="2">Đang Build PC</option>
@@ -461,162 +480,168 @@
                 <option value="5">Đang Ship</option>
                 <option value="6">Đã Ship</option>
                 <option value="7">Hoàn thành</option>`;
-                                            } else {
-                                                statusWrapper.style.display = "none";  // Role không hợp lệ thì ẩn dropdown
-                                            }
+                    } else {
+                        statusWrapper.style.display = "none";  // Role không hợp lệ thì ẩn dropdown
+                    }
 
-                                            // Load dữ liệu PC hiện tại
-                                            fetch(`${ctx}/BuildPC_ListCate?service=loadBuildPC&buildPCID=${buildPCID}`)
-                                                    .then(res => res.text())
-                                                    .then(text => {
-                                                        const lines = text.trim().split("\n");
-                                                        lines.forEach(line => {
-                                                            const [componentID, categoryID, categoryName, brandName, price, imgURL] = line.split("|");
-                                                            updateComponentUI({
-                                                                componentID: parseInt(componentID),
-                                                                categoryID: parseInt(categoryID),
-                                                                categoryName,
-                                                                brandName,
-                                                                price: parseFloat(price),
-                                                                imgURL
-                                                            });
-                                                        });
-                                                        localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
-                                                    });
-                                        }
+                    // Load dữ liệu PC hiện tại
+                    fetch(`${ctx}/BuildPC_ListCate?service=loadBuildPC&buildPCID=${buildPCID}`)
+                            .then(res => res.text())
+                            .then(text => {
+                                const lines = text.trim().split("\n");
+                                lines.forEach(line => {
+                                    const [componentID, categoryID, categoryName, brandName, price, imgURL] = line.split("|");
+                                    updateComponentUI({
+                                        componentID: parseInt(componentID),
+                                        categoryID: parseInt(categoryID),
+                                        categoryName,
+                                        brandName,
+                                        price: parseFloat(price),
+                                        imgURL
                                     });
+                                });
+                                localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
+                            });
+                }
+            });
 
-                                    function attachFilterFormHandler(componentID, componentName) {
-                                        const filterForm = modalBody.querySelector('#filterForm');
-                                        if (filterForm) {
-                                            filterForm.addEventListener('submit', function (e) {
-                                                e.preventDefault();
-                                                const url = filterForm.action + '?' + new URLSearchParams(new FormData(filterForm)).toString();
-                                                fetch(url).then(res => res.text()).then(innerHtml => {
-                                                    modalBody.innerHTML = innerHtml;
-                                                    attachFilterFormHandler(componentID, componentName);
-                                                    attachPaginationHandler(componentID, componentName);
-                                                });
-                                            });
-                                        }
-                                    }
-                                    function attachPaginationHandler(componentID, componentName) {
-                                        modalBody.querySelectorAll(".page-link").forEach(link => {
-                                            link.addEventListener("click", function (e) {
-                                                e.preventDefault();
-                                                const page = parseInt(this.textContent.trim());
-                                                if (!isNaN(page)) {
-                                                    goToPage(page, componentID, componentName);
-                                                }
-                                            });
-                                        });
-                                    }
-                                    function goToPage(page, componentID, componentName) {
-                                        const filterForm = modalBody.querySelector('#filterForm');
-                                        if (filterForm) {
-                                            const formData = new FormData(filterForm);
-                                            formData.set("page", page);
-                                            const url = filterForm.action + "?" + new URLSearchParams(formData).toString();
-                                            modalBody.innerHTML = "<p>Loading...</p>";
-                                            fetch(url).then(res => res.text()).then(html => {
-                                                modalBody.innerHTML = html;
-                                                attachFilterFormHandler(componentID, componentName);
-                                                attachPaginationHandler(componentID, componentName);
-                                                modalBody.scrollTop = 0;
-                                            });
-                                        }
-                                    }
-                                    function selectProduct(componentID, categoryName, brandName, price, imgURL, categoryID) {
-                                        document.getElementById(`meta-${componentID}`).innerText = `${categoryName} - ${brandName}`;
-                                        document.getElementById(`price-${componentID}`).innerText = `${price.toLocaleString()}₫`;
-                                        document.getElementById(`remove-${componentID}`).style.display = 'inline-block';
-                                        document.getElementById(`img-${componentID}`).src = `${ctx}/ShopPages/Pages/images/anhproduct/${imgURL}`;
-                                        selectedComponents[componentID] = {categoryID, categoryName, brandName, price, imgURL};
-                                        localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
-                                        updateTotal();
-                                        modal.style.display = 'none';
-                                    }
-                                  
-                                    function updateTotal() {
-                                        let total = 0;
-                                        Object.values(selectedComponents).forEach(comp => total += comp.price);
-                                        totalDisplay.innerText = total.toLocaleString();
-                                    }
-                                    function updateComponentUI(item) {
-                                        selectProduct(item.componentID, item.categoryName, item.brandName, item.price, item.imgURL, item.categoryID);
-                                    }
-                                    function submitBuildPC() {
-                                        const requiredComponents = [2, 3, 4, 5, 6, 7];
-                                        const selectedIDs = Object.keys(selectedComponents).map(Number);
-                                        const hasAllRequired = requiredComponents.every(id => selectedIDs.includes(id));
-                                        const userID = localStorage.getItem("userID") || -1;
-                                        const role = localStorage.getItem("userRole") || "Customer";
-                                        if (!hasAllRequired) {
-                                            alert("Bạn cần chọn đủ 6 linh kiện: MainBoard, CPU, GPU, RAM, SSD, CASE.");
-                                            return;
-                                        }
-                                        const categoryIDs = requiredComponents.map(id => selectedComponents[id].categoryID).join(",");
-                                        fetch(`${ctx}/BuildPC_ListCate?service=insert`, {method: "POST", headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: `categoryIDs=${encodeURIComponent(categoryIDs)}&userID=${encodeURIComponent(userID)}&role=${encodeURIComponent(role)}`})
-                                                .then(res => {
-                                                    if (res.status === 409)
-                                                        throw new Error("Build PC với 6 linh kiện này đã tồn tại (Admin không được phép trùng).");
-                                                    if (!res.ok)
-                                                        return res.text().then(msg => {
-                                                            throw new Error(msg);
-                                                        });
-                                                    return res.text();
-                                                })
-                                                .then(() => {
-                                                    alert("Tạo Build PC thành công!");
-                                                    localStorage.removeItem("selectedComponents");
-                                                    window.location.href = `${ctx}/BuildPC_ListCate?service=list`;
-                                                })
-                                                .catch(err => {
-                                                    alert("Lỗi: " + err.message);
-                                                });
-                                    }
-                                    function submitUpdateBuildPC(buildPCID) {
-                                        const requiredComponents = [2, 3, 4, 5, 6, 7];
-                                        const selectedIDs = Object.keys(selectedComponents).map(Number);
-                                        const hasAllRequired = requiredComponents.every(id => selectedIDs.includes(id));
-                                        const role = localStorage.getItem("userRole") || "Customer";
+            function attachFilterFormHandler(componentID, componentName) {
+                const filterForm = modalBody.querySelector('#filterForm');
+                if (filterForm) {
+                    filterForm.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        const url = filterForm.action + '?' + new URLSearchParams(new FormData(filterForm)).toString();
+                        fetch(url).then(res => res.text()).then(innerHtml => {
+                            modalBody.innerHTML = innerHtml;
+                            attachFilterFormHandler(componentID, componentName);
+                            attachPaginationHandler(componentID, componentName);
+                        });
+                    });
+                }
+            }
+            function attachPaginationHandler(componentID, componentName) {
+                modalBody.querySelectorAll(".page-link").forEach(link => {
+                    link.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        const page = parseInt(this.textContent.trim());
+                        if (!isNaN(page)) {
+                            goToPage(page, componentID, componentName);
+                        }
+                    });
+                });
+            }
+            function goToPage(page, componentID, componentName) {
+                const filterForm = modalBody.querySelector('#filterForm');
+                if (filterForm) {
+                    const formData = new FormData(filterForm);
+                    formData.set("page", page);
+                    const url = filterForm.action + "?" + new URLSearchParams(formData).toString();
+                    modalBody.innerHTML = "<p>Loading...</p>";
+                    fetch(url).then(res => res.text()).then(html => {
+                        modalBody.innerHTML = html;
+                        attachFilterFormHandler(componentID, componentName);
+                        attachPaginationHandler(componentID, componentName);
+                        modalBody.scrollTop = 0;
+                    });
+                }
+            }
+            function selectProduct(componentID, categoryName, brandName, price, imgURL, categoryID) {
+                document.getElementById(`meta-${componentID}`).innerText = `${categoryName} - ${brandName}`;
+                document.getElementById(`price-${componentID}`).innerText = `${price.toLocaleString()}₫`;
+                document.getElementById(`remove-${componentID}`).style.display = 'inline-block';
+                document.getElementById(`img-${componentID}`).src = `${ctx}/ShopPages/Pages/images/anhproduct/${imgURL}`;
+                selectedComponents[componentID] = {categoryID, categoryName, brandName, price, imgURL};
+                localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
+                updateTotal();
+                modal.style.display = 'none';
+            }
 
-                                        if (!hasAllRequired) {
-                                            alert("Bạn cần chọn đủ 6 linh kiện: MainBoard, CPU, GPU, RAM, SSD, CASE.");
-                                            return;
-                                        }
+            function updateTotal() {
+                let total = 0;
+                Object.values(selectedComponents).forEach(comp => total += comp.price);
+                totalDisplay.innerText = total.toLocaleString();
+            }
+            function updateComponentUI(item) {
+                selectProduct(item.componentID, item.categoryName, item.brandName, item.price, item.imgURL, item.categoryID);
+            }
+            function submitBuildPC() {
+                const requiredComponents = [2, 3, 4, 5, 6, 7];
+                const selectedIDs = Object.keys(selectedComponents).map(Number);
+                const hasAllRequired = requiredComponents.every(id => selectedIDs.includes(id));
 
-                                        const categoryIDs = requiredComponents.map(id => selectedComponents[id].categoryID).join(",");
-                                        const status = parseInt(document.getElementById('statusSelect').value);
+                if (!hasAllRequired) {
+                    alert("Bạn cần chọn đủ 6 linh kiện: MainBoard, CPU, GPU, RAM, SSD, CASE.");
+                    return;
+                }
 
-                                        if (isNaN(status)) {
-                                            alert("Vui lòng chọn trạng thái hợp lệ.");
-                                            return;
-                                        }
+                const categoryIDs = requiredComponents.map(id => selectedComponents[id].categoryID).join(",");
 
-                                        fetch(`${ctx}/BuildPC_ListCate?service=update`, {
-                                            method: "POST",
-                                            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                                            body: `buildPCID=${buildPCID}&categoryIDs=${encodeURIComponent(categoryIDs)}&status=${status}&role=${encodeURIComponent(role)}`
-                                        })
-                                                .then(res => {
-                                                    if (res.status === 409)
-                                                        throw new Error("Build PC với 6 linh kiện này đã tồn tại (Admin không được phép trùng).");
-                                                    if (!res.ok)
-                                                        return res.text().then(msg => {
-                                                            throw new Error(msg);
-                                                        });
-                                                    return res.text();
-                                                })
-                                                .then(() => {
-                                                    alert("Cập nhật Build PC thành công!");
-                                                    localStorage.removeItem("selectedComponents");
-                                                    window.location.href = `${ctx}/BuildPC_ListCate?service=list`;
-                                                })
-                                                .catch(err => {
-                                                    alert("Lỗi: " + err.message);
-                                                });
-                                    }
+                fetch(`${ctx}/BuildPC_ListCate?service=insert`, {
+                    method: "POST",
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: `categoryIDs=${encodeURIComponent(categoryIDs)}`
+                })
+                        .then(res => {
+                            if (res.status === 409)
+                                throw new Error("Build PC với 6 linh kiện này đã tồn tại.");
+                            if (!res.ok)
+                                return res.text().then(msg => {
+                                    throw new Error(msg);
+                                });
+                            return res.text();
+                        })
+                        .then(() => {
+                            alert("Tạo Build PC thành công!");
+                            localStorage.removeItem("selectedComponents");
+                            window.location.href = `${ctx}/BuildPC_ListCate?service=list`;
+                        })
+                        .catch(err => {
+                            alert("Lỗi: " + err.message);
+                        });
+            }
+
+            function submitUpdateBuildPC(buildPCID) {
+                const requiredComponents = [2, 3, 4, 5, 6, 7];
+                const selectedIDs = Object.keys(selectedComponents).map(Number);
+                const hasAllRequired = requiredComponents.every(id => selectedIDs.includes(id));
+
+                if (!hasAllRequired) {
+                    alert("Bạn cần chọn đủ 6 linh kiện: MainBoard, CPU, GPU, RAM, SSD, CASE.");
+                    return;
+                }
+
+                const categoryIDs = requiredComponents.map(id => selectedComponents[id].categoryID).join(",");
+                const status = parseInt(document.getElementById('statusSelect').value);
+
+                if (isNaN(status)) {
+                    alert("Vui lòng chọn trạng thái hợp lệ.");
+                    return;
+                }
+
+                fetch(`${ctx}/BuildPC_ListCate?service=update`, {
+                    method: "POST",
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: `buildPCID=${buildPCID}&categoryIDs=${encodeURIComponent(categoryIDs)}&status=${status}`
+                })
+                        .then(res => {
+                            if (res.status === 409)
+                                throw new Error("Build PC với 6 linh kiện này đã tồn tại.");
+                            if (!res.ok)
+                                return res.text().then(msg => {
+                                    throw new Error(msg);
+                                });
+                            return res.text();
+                        })
+                        .then(() => {
+                            alert("Cập nhật Build PC thành công!");
+                            localStorage.removeItem("selectedComponents");
+                            window.location.href = `${ctx}/BuildPC_ListCate?service=list`;
+                        })
+                        .catch(err => {
+                            alert("Lỗi: " + err.message);
+                        });
+            }
+
 
         </script>
 

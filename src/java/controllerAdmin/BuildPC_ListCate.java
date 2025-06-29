@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import models.Brands;
@@ -114,15 +115,23 @@ public class BuildPC_ListCate extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         String service = request.getParameter("service");
+        HttpSession session = request.getSession();
+        models.User user = (models.User) session.getAttribute("user");
+
+        if (user == null) {
+            response.sendRedirect("/ComputerOnlineShop/Login");
+            return;
+        }
 
         if ("insert".equals(service)) {
-            handleInsert(request, response);
+            handleInsert(request, response, user);
             return;
         }
 
         if ("update".equals(service)) {
-            handleUpdate(request, response);
+            handleUpdate(request, response, user);
             return;
         }
 
@@ -134,16 +143,11 @@ public class BuildPC_ListCate extends HttpServlet {
         processRequest(request, response);
     }
 
-    private void handleInsert(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void handleInsert(HttpServletRequest request, HttpServletResponse response, models.User user) throws IOException {
         try {
             String idsRaw = request.getParameter("categoryIDs");
-            int userID = safeParseInt(request.getParameter("userID"), -1);
-            String role = request.getParameter("role");
-            if (role == null) {
-                role = "Customer";
-            }
 
-            if (idsRaw == null || idsRaw.isEmpty() || userID == -1) {
+            if (idsRaw == null || idsRaw.isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Thiếu thông tin bắt buộc.");
                 return;
             }
@@ -159,6 +163,9 @@ public class BuildPC_ListCate extends HttpServlet {
                 categoryIDs.add(Integer.parseInt(part.trim()));
             }
 
+            String role = user.getRole() != null ? user.getRole().getRoleName() : "Customer";
+            int userID = user.getUserId();
+
             if ("Admin".equalsIgnoreCase(role) && dao.isDuplicateBuildPC(categoryIDs, -1)) {
                 response.sendError(HttpServletResponse.SC_CONFLICT, "Build PC với cấu hình này đã tồn tại.");
                 return;
@@ -173,15 +180,11 @@ public class BuildPC_ListCate extends HttpServlet {
         }
     }
 
-    private void handleUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void handleUpdate(HttpServletRequest request, HttpServletResponse response, models.User user) throws IOException {
         try {
             int buildPCID = safeParseInt(request.getParameter("buildPCID"), -1);
             String idsRaw = request.getParameter("categoryIDs");
             int newStatus = safeParseInt(request.getParameter("status"), 0);
-            String role = request.getParameter("role");
-            if (role == null || role.isEmpty()) {
-                role = "Customer";
-            }
 
             if (buildPCID == -1 || idsRaw == null || idsRaw.trim().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Thiếu dữ liệu bắt buộc.");
@@ -199,7 +202,8 @@ public class BuildPC_ListCate extends HttpServlet {
                 categoryIDs.add(Integer.parseInt(part.trim()));
             }
 
-            // Chỉ kiểm tra trùng lặp nếu không phải Customer
+            String role = user.getRole() != null ? user.getRole().getRoleName() : "Customer";
+
             if (dao.isDuplicateBuildPC(categoryIDs, buildPCID) && !"Customer".equalsIgnoreCase(role)) {
                 response.sendError(HttpServletResponse.SC_CONFLICT, "Build PC đã tồn tại.");
                 return;
