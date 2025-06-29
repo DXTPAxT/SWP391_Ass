@@ -16,6 +16,7 @@ public class DBContext {
             String pass = "123";
 
 
+
             String url = "jdbc:sqlserver://LAPTOP-8RQSUOPU\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
 
 
