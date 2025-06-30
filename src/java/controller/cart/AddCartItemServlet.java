@@ -91,7 +91,7 @@ public class AddCartItemServlet extends HttpServlet {
                 session.setAttribute("toastType", "success");
                 session.setAttribute("toast", "Add to cart successfully!");
             } else {
-                session.setAttribute("toastType", "success");
+                session.setAttribute("toastType", "error");
                 session.setAttribute("toast", "Add to cart fail!");
             }
             response.sendRedirect(request.getContextPath() + "/CategoriesController?service=detail&categoryID=" + categoryID);

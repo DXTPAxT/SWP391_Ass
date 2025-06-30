@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author PC ASUS
  */
-public class DeleteCartItemServlet extends HttpServlet {
+public class DeleteSelectedCartItems extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,10 +35,10 @@ public class DeleteCartItemServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet DeleteCartItemServlet</title>");
+            out.println("<title>Servlet DeleteSelectedCartItems</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet DeleteCartItemServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DeleteSelectedCartItems at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -70,19 +70,30 @@ public class DeleteCartItemServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/plain");
-
         try {
-            String cartItemParam = request.getParameter("cartItemID");
+            String selectedItems = request.getParameter("selectedItems");
+            if (selectedItems == null || selectedItems.isEmpty()) {
+                response.getWriter().write("fail");
+                return;
+            }
 
-            int cartItemID = Integer.parseInt(cartItemParam);
-
+            String[] ids = selectedItems.split(",");
             CartItemDAO dao = new CartItemDAO();
-            boolean deleted = dao.deleteCartItem(cartItemID);
+            boolean allDeleted = true;
 
-            response.getWriter().write(deleted ? "success" : "fail");
+            for (String idStr : ids) {
+                int id = Integer.parseInt(idStr.trim());
+                boolean deleted = dao.deleteCartItem(id);
+                if (!deleted) {
+                    allDeleted = false;
+                    break; // dừng ngay nếu 1 cái fail
+                }
+            }
+
+            response.getWriter().write(allDeleted ? "success" : "fail");
+
         } catch (Exception e) {
-            e.printStackTrace(); // để xem trong console
+            e.printStackTrace();
             response.getWriter().write("error");
         }
     }
