@@ -97,7 +97,7 @@
                 <li class="dropdown notifications-menu">
                     <a href="${ctx}/NotificationServlet?service=list" class="dropdown-toggle">
                         <i class="fa fa-bell-o"></i>
-                        <span class="label label-warning">${not empty unreadCount ? unreadCount : 0}</span>
+                        <span class="label label-warning" id="notification-count">${not empty unreadCount ? unreadCount : 0}</span>
                     </a>
                 </li>
                 <!-- Tasks: style can be found in dropdown.less -->
@@ -224,3 +224,16 @@
         </div>
     </nav>
 </header>
+<script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "${ctx}/NotificationServlet?service=getUnreadCount",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#notification-count").text(data.count);
+        }
+    });
+});
+</script>
