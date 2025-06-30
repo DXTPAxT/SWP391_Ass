@@ -66,7 +66,7 @@ public class CartItemDAO extends DBContext {
         String cartItemSql = """
                                MERGE CartItems AS target
                                USING (SELECT ? AS UserID, ? AS CategoryID, ? AS Quantity, ? AS WarrantyDetailID) AS source
-                               ON target.UserID = source.UserID AND target.CategoryID = source.CategoryID
+                               ON target.UserID = source.UserID AND target.CategoryID = source.CategoryID AND target.WarrantyDetailID = source.WarrantyDetailID
                                WHEN MATCHED THEN
                                    UPDATE SET Quantity = target.Quantity + source.Quantity
                                WHEN NOT MATCHED THEN

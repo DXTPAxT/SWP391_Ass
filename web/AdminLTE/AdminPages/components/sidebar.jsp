@@ -164,8 +164,7 @@
                         <i class="fa fa-angle-left pull-right"></i>
                     </span>
                 </a>
-                <ul class="treeview-menu">                           
-                    <li><a href="${param.ctx}/Admin/user?type=admin"><i class="fa fa-circle-o"></i>View Admins</a></li>       
+                <ul class="treeview-menu">                          
                     <li><a href="${param.ctx}/Admin/user?type=customer"><i class="fa fa-circle-o"></i>View Customers</a></li>   
                     <li><a href="${param.ctx}/Admin/user?type=sale"><i class="fa fa-circle-o"></i>View Sales</a></li>   
                     <li><a href="${param.ctx}/Admin/user?type=shipper"><i class="fa fa-circle-o"></i>View Shippers</a></li>   

@@ -51,7 +51,7 @@
 
         <div class="wrapper">
 
-             <jsp:include page="../../components/header.jsp" />
+            <jsp:include page="../../components/header.jsp" />
             <jsp:include page="../../components/sidebar.jsp">
                 <jsp:param name="ctx" value="${ctx}" />
             </jsp:include>
@@ -170,25 +170,26 @@
                     </div>
                 </section>
             </div>
-           <jsp:include page="../../components/footer.jsp" />
+            <jsp:include page="../../components/footer.jsp" />
             <jsp:include page="../../components/control-sidebar.jsp" />0
             <div class="control-sidebar-bg"></div>
         </div>
         <!-- jQuery 2.2.3 -->
-        <script src="${ctx}/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
         <!-- Bootstrap 3.3.6 -->
-        <script src="${ctx}/AdminLTE/bootstrap/js/bootstrap.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/bootstrap/js/bootstrap.min.js"></script>
         <!-- DataTables -->
-        <script src="${ctx}/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
-        <script src="${ctx}/AdminLTE/plu.gins/datatables/dataTables.bootstrap.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/datatables/jquery.dataTables.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/datatables/dataTables.bootstrap.min.js"></script>
         <!-- SlimScroll -->
-        <script src="${ctx}/AdminLTE/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/slimScroll/jquery.slimscroll.min.js"></script>
         <!-- FastClick -->
-        <script src="${ctx}/AdminLTE/plugins/fastclick/fastclick.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/fastclick/fastclick.js"></script>
         <!-- AdminLTE App -->
-        <script src="${ctx}/AdminLTE/dist/js/app.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/dist/js/app.min.js"></script>
         <!-- AdminLTE for demo purposes -->
-        <script src="${ctx}/AdminLTE/dist/js/demo.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
+        <!-- page script -->
         <script>
                                             $(function () {
                                                 $('#example2').DataTable({
@@ -200,6 +201,11 @@
                                                     "autoWidth": false
                                                 });
                                             });
+        </script>
+        <script>
+            $(function () {
+                $('.sidebar-menu').tree();
+            });
         </script>
     </body>
 </html>

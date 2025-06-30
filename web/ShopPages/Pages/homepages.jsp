@@ -42,7 +42,7 @@
         <jsp:include page="components/header.jsp">
             <jsp:param name="activePage" value="home"/>
         </jsp:include>
-   
+
         <section>
             <div class="container">
                 <div class="row">

@@ -228,7 +228,7 @@
                                         </form>
                                         <!-- ADD TO CART BUTTON -->
 
-                                        <c:if test="${sessionScope.user.role.roleID == 3}">
+                                        <c:if test="${sessionScope.user == null || sessionScope.user.role.roleID == 3}">
                                             <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
                                                 <button type="button" class="btn btn-success btn-sm" id="addToCartBtn">
                                                     <i class="fa fa-shopping-cart"></i>
