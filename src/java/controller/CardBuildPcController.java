@@ -116,12 +116,15 @@ public class CardBuildPcController extends HttpServlet {
             case "deleteCartBuildPC" -> {
                 try {
                     int id = Integer.parseInt(request.getParameter("id"));
+                    System.out.println("Nhận yêu cầu xóa giỏ hàng ID: " + id);  // Log debug
                     boolean success = cartDAO.deleteCartBuildPC(id);
                     out.print(success ? "SUCCESS" : "FAIL");
                 } catch (Exception e) {
+                    e.printStackTrace();
                     out.print("FAIL");
                 }
             }
+
             case "depositBuildPC" -> {
                 String idsRaw = request.getParameter("ids");
                 if (idsRaw == null || idsRaw.isEmpty()) {
@@ -131,7 +134,6 @@ public class CardBuildPcController extends HttpServlet {
 
                 String[] idArray = idsRaw.split(",");
                 boolean allSuccess = true;
-              
 
                 for (String idStr : idArray) {
                     try {

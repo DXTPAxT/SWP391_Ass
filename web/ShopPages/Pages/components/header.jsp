@@ -3,50 +3,7 @@
 <c:set var="activePage" value="${param.activePage}" />
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!-- Header Section Extracted from homepages.jsp -->
-<style>
-    .cart-dropdown {
-        position: relative;
-        list-style: none;
-    }
-
-    .cart-dropdown .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: #fff;
-        min-width: 150px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        z-index: 100;
-        right: 0;
-        padding: 10px;
-        border-radius: 4px;
-        flex-direction: column;
-    }
-
-    .cart-dropdown .dropdown-content a {
-        display: block;
-        padding: 8px;
-        text-decoration: none;
-        color: #333;
-    }
-
-    .cart-dropdown .dropdown-content a:hover {
-        background-color: #f0f0f0;
-    }
-
-    .cart-dropdown:hover .dropdown-content {
-        display: flex;
-    }
-    .arrow-up {
-        width: 0;
-        height: 0;
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        border-bottom: 8px solid #fff;
-        position: absolute;
-        top: -8px;
-        right: 10px;
-    }
-</style>
+<link href="${pageContext.request.contextPath}/ShopPages/Pages/css/CartCss.css" rel="stylesheet">
 <header id="header"><!--header-->
     <div class="header_top"><!--header_top-->
         <div class="container">

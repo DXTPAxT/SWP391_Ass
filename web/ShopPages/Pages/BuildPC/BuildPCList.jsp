@@ -41,7 +41,7 @@
                         <div>
                             <div><strong>${p.categoryName}</strong> - ${p.brandName}</div>
                             <div>Mô tả: <span style="font-size: 90%;">${p.description}</span></div>
-                           <div>Giá: <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫</div>
+                            <div>Giá: <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫</div>
 
                             <div style="margin-top: 5px;">
                                 <a href="${ctx}/CategoriesController?service=detail&categoryID=${p.categoryID}" class="btn btn-info btn-xs" target="_blank">
@@ -52,9 +52,10 @@
                         </div>
 
                         <button class="btn btn-sm btn-success mt-2"
-                                onclick="selectProduct('${p.componentID}', '${fn:escapeXml(p.categoryName)}', '${fn:escapeXml(p.brandName)}', ${p.price}, '${fn:escapeXml(p.imgURL)}')">
+                                onclick="selectProduct(${componentID}, ${p.categoryID}, '${fn:escapeXml(p.categoryName)}', '${fn:escapeXml(p.brandName)}', ${p.price}, '${fn:escapeXml(p.imgURL)}')">
                             Chọn
                         </button>
+
 
                     </div>
                 </div>
