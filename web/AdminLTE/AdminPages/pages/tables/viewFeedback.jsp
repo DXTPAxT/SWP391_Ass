@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
@@ -38,6 +39,9 @@
                     <div class="box">
                         <div class="box-header with-border">
                             <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <h4>Tổng số feedback: <span id="total-feedback">${fn:length(feedbacks)}</span></h4>
+                                </div>
                                 <!-- Optional: place search or filter tools here -->
                             </div>
                         </div>
@@ -56,6 +60,18 @@
                                         <th>Action</th>
                                         <th>Reply</th>
                                     </tr>
+                                    <tr>
+                                        <th><input type="text" placeholder="Search ID" style="width: 100%"/></th>
+                                        <th><input type="text" placeholder="Search Name" style="width: 100%"/></th>
+                                        <th><input type="text" placeholder="Search Review" style="width: 100%"/></th>
+                                        <th><input type="text" placeholder="Search Reply" style="width: 100%"/></th>
+                                        <th><input type="text" placeholder="Search Category" style="width: 100%"/></th>
+                                        <th><input type="text" placeholder="Search Rate" style="width: 100%"/></th>
+                                        <th><input type="text" placeholder="Search Date" style="width: 100%"/></th>
+                                        <th><input type="text" placeholder="Search Status" style="width: 100%"/></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                     <c:choose>
@@ -64,12 +80,30 @@
                                                 <tr>
                                                     <td>${feedback.feedbackID}</td>
                                                     <td>${feedback.fullname}</td>
-                                                    <td>${feedback.content}</td>
                                                     <td>
-                                                        <c:choose>
-                                                            <c:when test="${not empty feedback.reply}">${feedback.reply}</c:when>
-                                                            <c:otherwise><span class="text-muted">Not replied</span></c:otherwise>
-                                                        </c:choose>
+                                                        <span class="feedback-content" title="${feedback.content}">
+                                                            <c:choose>
+                                                                <c:when test="${fn:length(feedback.content) > 50}">
+                                                                    ${fn:substring(feedback.content, 0, 50)}... <i class="fa fa-info-circle"></i>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    ${feedback.content}
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="feedback-reply" title="${feedback.reply}">
+                                                            <c:choose>
+                                                                <c:when test="${not empty feedback.reply && fn:length(feedback.reply) > 50}">
+                                                                    ${fn:substring(feedback.reply, 0, 50)}... <i class="fa fa-info-circle"></i>
+                                                                </c:when>
+                                                                <c:when test="${not empty feedback.reply}">
+                                                                    ${feedback.reply}
+                                                                </c:when>
+                                                                <c:otherwise><span class="text-muted">Not replied</span></c:otherwise>
+                                                            </c:choose>
+                                                        </span>
                                                     </td>
                                                     <td>${feedback.categoryName}</td>
                                                     <td>${feedback.rate}</td>
@@ -92,13 +126,13 @@
                                                     </td>
                                                     <td>
                                                         <c:if test="${feedback.status == 1 || feedback.status == 2}">
-                                                            <form action="${pageContext.request.contextPath}/admin/updateFeedbackStatus" method="post" style="display:inline;">
+                                                            <form action="${pageContext.request.contextPath}/admin/updateFeedbackStatus" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn thay đổi trạng thái feedback này?');">
                                                                 <input type="hidden" name="feedbackID" value="${feedback.feedbackID}" />
                                                                 <button type="submit" name="status" value="0" class="btn btn-xs btn-danger">Set Inactive</button>
                                                             </form>
                                                         </c:if>
                                                         <c:if test="${feedback.status == 0}">
-                                                            <form action="${pageContext.request.contextPath}/admin/updateFeedbackStatus" method="post" style="display:inline;">
+                                                            <form action="${pageContext.request.contextPath}/admin/updateFeedbackStatus" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn thay đổi trạng thái feedback này?');">
                                                                 <input type="hidden" name="feedbackID" value="${feedback.feedbackID}" />
                                                                 <button type="submit" name="status" value="1" class="btn btn-xs btn-success">Set Active</button>
                                                             </form>
@@ -106,10 +140,10 @@
                                                     </td>
                                                     <td>
                                                         <c:if test="${feedback.status == 1}">
-                                                            <a href="${pageContext.request.contextPath}/admin/replyFeedback?feedbackID=${feedback.feedbackID}" class="btn btn-xs btn-primary">Reply</a>
+                                                            <a href="${pageContext.request.contextPath}/admin/replyFeedback?feedbackID=${feedback.feedbackID}" class="btn btn-xs btn-primary" onclick="return confirm('Bạn có chắc chắn muốn trả lời feedback này?');">Reply</a>
                                                         </c:if>
                                                         <c:if test="${feedback.status == 2}">
-                                                            <a href="${pageContext.request.contextPath}/admin/replyFeedback?feedbackID=${feedback.feedbackID}&edit=true" class="btn btn-xs btn-info">Edit</a>
+                                                            <a href="${pageContext.request.contextPath}/admin/replyFeedback?feedbackID=${feedback.feedbackID}&edit=true" class="btn btn-xs btn-info" onclick="return confirm('Bạn có chắc chắn muốn sửa trả lời này?');">Edit</a>
                                                         </c:if>
                                                     </td>
                                                 </tr>
@@ -143,13 +177,34 @@
 <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
 <script>
     $(function () {
-        $('#example2').DataTable({
+        var table = $('#example2').DataTable({
             "paging": true,
             "lengthChange": true,
             "searching": true,
             "ordering": true,
             "info": true,
-            "autoWidth": true
+            "autoWidth": true,
+            "stateSave": true
+        });
+        // Filter từng cột
+        $('#example2 thead tr:eq(1) th').each(function (i) {
+            var input = $(this).find('input');
+            if (input.length > 0) {
+                input.on('keyup change', function () {
+                    if (table.column(i).search() !== this.value) {
+                        table.column(i).search(this.value).draw(false);
+                    }
+                });
+            }
+        });
+        // Ngăn click vào input filter làm sort lại cột
+        $('#example2 thead input').on('click', function(e) {
+            e.stopPropagation();
+        });
+        // Tooltip cho nội dung dài
+        $(document).tooltip({
+            selector: '.feedback-content, .feedback-reply',
+            placement: 'top'
         });
     });
     $(function () {
