@@ -166,9 +166,12 @@ public class BuildPC_ListCate extends HttpServlet {
             String role = user.getRole() != null ? user.getRole().getRoleName() : "Customer";
             int userID = user.getUserId();
 
-            if ("Admin".equalsIgnoreCase(role) && dao.isDuplicateBuildPC(categoryIDs, -1)) {
-                response.sendError(HttpServletResponse.SC_CONFLICT, "Build PC với cấu hình này đã tồn tại.");
-                return;
+            if ("Admin".equalsIgnoreCase(role)) {
+    
+                if (dao.isDuplicateBuildPC(categoryIDs, -1)) {
+                    response.sendError(HttpServletResponse.SC_CONFLICT, "Build PC với cấu hình này đã tồn tại.");
+                    return;
+                }
             }
 
             boolean success = dao.insertBuildPC(categoryIDs, userID);
@@ -204,9 +207,12 @@ public class BuildPC_ListCate extends HttpServlet {
 
             String role = user.getRole() != null ? user.getRole().getRoleName() : "Customer";
 
-            if (dao.isDuplicateBuildPC(categoryIDs, buildPCID) && !"Customer".equalsIgnoreCase(role)) {
-                response.sendError(HttpServletResponse.SC_CONFLICT, "Build PC đã tồn tại.");
-                return;
+            if ("Admin".equalsIgnoreCase(role)) {
+                // Admin không được trùng với bất kỳ cấu hình nào khác
+                if (dao.isDuplicateBuildPC(categoryIDs, buildPCID)) {
+                    response.sendError(HttpServletResponse.SC_CONFLICT, "Build PC đã tồn tại.");
+                    return;
+                }
             }
 
             boolean success = dao.updateBuildPC(buildPCID, categoryIDs, newStatus, role);

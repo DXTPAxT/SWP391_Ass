@@ -14,6 +14,7 @@
         <link href="/ComputerOnlineShop/ShopPages/Pages/css/animate.css" rel="stylesheet">
         <link href="/ComputerOnlineShop/ShopPages/Pages/css/main.css" rel="stylesheet">
         <link href="/ComputerOnlineShop/ShopPages/Pages/css/responsive.css" rel="stylesheet">
+         <link href="/ComputerOnlineShop/ShopPages/Pages/css/CartCss.css" rel="stylesheet">
 
         <!--[if lt IE 9]>
         <script src="/ComputerOnlineShop/ShopPages/Pages/js/html5shiv.js"></script>
@@ -89,88 +90,92 @@
         </style>
     </head>
     <body><!-- comment -->
-        <header id="header">
-            <div class="header_top">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="contactinfo">
-                                <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> 0337593524</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> CyberBeast@gmail.com</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="social-icons pull-right">
-                                <ul class="nav navbar-nav">
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
+       <header id="header">
+    <div class="header_top">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="contactinfo">
+                        <ul class="nav nav-pills">
+                            <li><a href="#"><i class="fa fa-phone"></i> 0337593524</a></li>
+                            <li><a href="#"><i class="fa fa-envelope"></i> CyberBeast@gmail.com</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="social-icons pull-right">
+                        <ul class="nav navbar-nav">
+                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                            <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                            <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                            <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="header-middle">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="logo pull-left">
-                                <a href="/ComputerOnlineShop/HomePages">
-                                    <img src="/ComputerOnlineShop/ShopPages/Pages/images/home/CyberBeast2.png" style="height: 150px; width: 200px;" />
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="shop-menu pull-right">
-                                <ul class="nav navbar-nav" style="padding-top: 50px">
-                                    <!-- Static for HTML, no session check -->
-                                    <li><a href="http://localhost:8080/ComputerOnlineShop/Login"><i class="fa fa-lock"></i> Login</a></li>
-                                    <li><a href="http://localhost:8080/ComputerOnlineShop/SignUp"><i class="fa fa-user-plus"></i> Sign Up</a></li>
-                                </ul>
-                            </div>
-                        </div>
+    <div class="header-middle">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="logo pull-left">
+                        <a href="/ComputerOnlineShop/HomePages"><img src="/ComputerOnlineShop/ShopPages/Pages/images/home/CyberBeast2.png" style="height: 150px; width: 200px;" /></a>
                     </div>
                 </div>
-            </div>
+                <div class="col-sm-8">
+                    <div class="shop-menu pull-right">
+                        <ul class="nav navbar-nav" style="padding-top: 50px;">
+                            
+                            <!-- Khi đã đăng nhập với role = 3 -->
+                            <li class="cart-dropdown">
+                                <a href="#"><i class="fa fa-shopping-cart"></i> Cart</a>
+                                <div class="dropdown-content">
+                                    <div class="arrow-up"></div>
+                                    <a href="/ComputerOnlineShop/Cart">CartItem</a>
+                                    <a href="/ComputerOnlineShop/CardBuildPc">CartPC</a>
+                                </div>
+                            </li>
+                            <li><a href="/ComputerOnlineShop/User?service=myAccount"><i class="fa fa-user"></i> Account</a></li>
+                            <li><a href="/ComputerOnlineShop/checkout.html"><i class="fa fa-check-square-o"></i> Checklist</a></li>
+                            <li><a href="Logout"><i class="fa fa-sign-out"></i> Logout</a></li>
 
-            <div class="header-bottom">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-9">
-                            <div class="navbar-header">
-                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                                    <span class="sr-only">Toggle navigation</span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                </button>
-                            </div>
-                            <div class="mainmenu pull-left">
-                                <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="/ComputerOnlineShop/HomePages" class="">Home</a></li>
-                                    <li><a href="/ComputerOnlineShop/CategoriesController?service=list" class="">Products</a></li>
-                                    <li><a href="/ComputerOnlineShop/blogc" class="">Blog</a></li>
-                                    <li><a href="404.html" class="">404</a></li>
-                                    <li><a href="contact-us.html" class="">Contact</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="search_box pull-right">
-                            <form action="/ComputerOnlineShop/CategoriesController" method="get" style="display: flex;">
-                                <input type="hidden" name="service" value="filter" />
-                                <input type="text" name="keyword" class="form-control" placeholder="Insert name product" style="width: 180px;" />
-                            </form>
-                        </div>
+                        </ul>
                     </div>
                 </div>
             </div>
-        </header>
+        </div>
+    </div>
+
+    <div class="header-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-9">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                    </div>
+                    <div class="mainmenu pull-left">
+                        <ul class="nav navbar-nav collapse navbar-collapse">
+                            <li><a href="/ComputerOnlineShop/HomePages" class="active">Home</a></li>
+                            <li><a href="/ComputerOnlineShop/CategoriesController?service=list">Products</a></li>
+                            <li><a href="/ComputerOnlineShop/blogc">Blog</a></li>
+                     
+                            <li><a href="/ComputerOnlineShop/contact-us.html">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</header>
 
 
         <div class="build-pc-banner">
@@ -440,30 +445,31 @@
 
     </script>
     <script>
-        function selectProduct(componentID, categoryName, brandName, price, imgURL) {
-            price = parseInt(price); // Đảm bảo giá là số nguyên
+     function selectProduct(componentID, realCategoryID, categoryName, brandName, price, imgURL) {
+    price = parseInt(price); // Đảm bảo giá là số nguyên
 
-            document.getElementById(`meta-${componentID}`).innerText = `${categoryName} - ${brandName}`;
-            document.getElementById(`price-${componentID}`).innerText = `${price.toLocaleString()}₫`;
-            document.getElementById(`remove-${componentID}`).style.display = 'inline-block';
+    document.getElementById(`meta-${componentID}`).innerText = `${categoryName} - ${brandName}`;
+    document.getElementById(`price-${componentID}`).innerText = `${price.toLocaleString()}₫`;
+    document.getElementById(`remove-${componentID}`).style.display = 'inline-block';
 
-            const image = document.getElementById(`img-${componentID}`);
-            if (image) {
-                image.src = `${ctx}/ShopPages/Pages/images/anhproduct/${imgURL}`;
-            }
+    const image = document.getElementById(`img-${componentID}`);
+    if (image) {
+        image.src = `${ctx}/ShopPages/Pages/images/anhproduct/${imgURL}`;
+    }
 
-            selectedComponents[componentID] = {
-                categoryID: componentID,
-                categoryName,
-                brandName,
-                price,
-                imgURL
-            };
+    selectedComponents[componentID] = {
+        categoryID: realCategoryID, // Gán đúng ID thực tế của sản phẩm
+        categoryName,
+        brandName,
+        price,
+        imgURL
+    };
 
-            localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
-            updateTotal();
-            document.getElementById("customModal").style.display = "none";
-        }
+    localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
+    updateTotal();
+    document.getElementById("customModal").style.display = "none";
+}
+
 
         function updateTotal() {
             let total = 0;
