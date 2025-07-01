@@ -47,8 +47,8 @@
                     </thead>
                     <c:choose>
                         <c:when test="${cart.size() > 0}">
-                            <c:forEach var="cartItem" items="${cart}">
-                                <tbody>
+                            <tbody>
+                                <c:forEach var="cartItem" items="${cart}">
                                     <tr>
                                         <td><input type="checkbox" class="select-item" value="${cartItem.cartItemID}"></td>
                                         <td>
@@ -84,9 +84,9 @@
                                             </button>
                                         </td>
                                     </tr>
-                                </tbody>
-                            </table>
-                        </c:forEach>
+                                </c:forEach>
+                            </tbody>
+                        </table>
                     </c:when>
                     <c:otherwise>
                         </table>
