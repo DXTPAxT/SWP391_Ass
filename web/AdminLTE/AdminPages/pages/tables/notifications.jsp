@@ -60,7 +60,7 @@
                                 <div class="box-header">
                                     <h3 class="box-title">All Notifications</h3>
                                     <div class="box-tools pull-right">
-                                        <a href="${ctx}/NotificationServlet?service=markAllAsRead&userID=1" 
+                                        <a href="${ctx}/NotificationServlet?service=markAllAsRead" 
                                            class="btn btn-success btn-sm" onclick="return confirm('Mark all notifications as read?')">
                                             <i class="fa fa-check"></i> Mark All as Read
                                         </a>

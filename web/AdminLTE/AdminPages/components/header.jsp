@@ -96,10 +96,21 @@
                 <!-- Notifications: style can be found in dropdown.less -->
                 <c:if test="${not empty sessionScope.user}">
                     <li class="dropdown notifications-menu">
-                        <a href="${ctx}/NotificationServlet?service=list" class="dropdown-toggle">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                             <i class="fa fa-bell-o"></i>
                             <span class="label label-warning" id="notification-count">0</span>
                         </a>
+                        <ul class="dropdown-menu" id="notification-dropdown">
+                            <li class="header">You have <span id="notification-count-header">0</span> notifications</li>
+                            <li>
+                                <!-- inner menu: contains the actual data -->
+                                <ul class="menu" id="notification-list">
+                                    <!-- JS sẽ render các thông báo ở đây -->
+                                    <li><a href="#"><i class="fa fa-info-circle text-aqua"></i> No notifications</a></li>
+                                </ul>
+                            </li>
+                            <li class="footer"><a href="${ctx}/NotificationServlet?service=list">View All</a></li>
+                        </ul>
                     </li>
                 </c:if>
                 <!-- Tasks: style can be found in dropdown.less -->

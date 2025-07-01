@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.ArrayList;
 import models.Notification;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -40,9 +41,17 @@ public class NotificationServlet extends HttpServlet {
         
         switch (service) {
             case "list":
-                // Hiển thị danh sách tất cả thông báo
-                List<Notification> allNotifications = dao.getAllNotifications();
-                request.setAttribute("notifications", allNotifications);
+                // Hiển thị danh sách thông báo của user hiện tại
+                HttpSession session = request.getSession(false);
+                User user = (session != null) ? (User) session.getAttribute("user") : null;
+                int userID = (user != null) ? user.getUserId() : -1;
+                
+                if (userID > 0) {
+                    List<Notification> userNotifications = dao.getNotificationsByUserID(userID);
+                    request.setAttribute("notifications", userNotifications);
+                } else {
+                    request.setAttribute("notifications", new ArrayList<>());
+                }
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/notifications.jsp").forward(request, response);
                 break;
                 
@@ -56,9 +65,9 @@ public class NotificationServlet extends HttpServlet {
                 break;
                 
             case "markAllAsRead":
-                HttpSession session = request.getSession(false);
-                User user = (session != null) ? (User) session.getAttribute("user") : null;
-                int userID = (user != null) ? user.getUserId() : -1;
+                session = request.getSession(false);
+                user = (session != null) ? (User) session.getAttribute("user") : null;
+                userID = (user != null) ? user.getUserId() : -1;
                 if (userID > 0) {
                     dao.markAllAsRead(userID);
                 }
