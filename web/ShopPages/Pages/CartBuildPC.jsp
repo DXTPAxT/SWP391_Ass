@@ -98,75 +98,105 @@
                 </div>
             </div>
         </section>
-  <script>
-    function updateTotal() {
-        let total = 0;
-        const selectedCheckboxes = document.querySelectorAll(".select-item:checked");
+        <script>
+          
+            function updateTotal() {
+                let total = 0;
+                const selectedCheckboxes = document.querySelectorAll(".select-item:checked");
 
-        selectedCheckboxes.forEach(cb => {
-            const row = cb.closest("tr");
-            const priceText = row.querySelector("td:nth-child(9)").innerText.replace(/[^0-9]/g, '');
-            total += parseInt(priceText) || 0;
-        });
+                selectedCheckboxes.forEach(cb => {
+                    const row = cb.closest("tr");
+                    const priceText = row.querySelector("td:nth-child(9)").innerText.replace(/[^0-9]/g, '');
+                    total += parseInt(priceText) || 0;
+                });
 
-        document.getElementById("selected-total").innerText = total.toLocaleString() + " VND";
-        const deposit = Math.floor(total * 0.2); // 20% tiền cọc
-        document.getElementById("deposit-amount").innerText = deposit.toLocaleString() + " VND";
-    }
+                document.getElementById("selected-total").innerText = total.toLocaleString() + " VND";
+                const deposit = Math.floor(total * 0.2); // 20% tiền cọc
+                document.getElementById("deposit-amount").innerText = deposit.toLocaleString() + " VND";
+            }
 
-    function toggleAll(master) {
-        const allCheckboxes = document.querySelectorAll(".select-item");
-        allCheckboxes.forEach(cb => cb.checked = master.checked);
-        updateTotal();
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const itemCheckboxes = document.querySelectorAll(".select-item");
-        const checkAllBox = document.getElementById("checkAll");
-
-        itemCheckboxes.forEach(cb => {
-            cb.addEventListener("change", () => {
-                const allChecked = [...itemCheckboxes].every(c => c.checked);
-                checkAllBox.checked = allChecked;
+            function toggleAll(master) {
+                const allCheckboxes = document.querySelectorAll(".select-item");
+                allCheckboxes.forEach(cb => cb.checked = master.checked);
                 updateTotal();
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const itemCheckboxes = document.querySelectorAll(".select-item");
+                const checkAllBox = document.getElementById("checkAll");
+
+                itemCheckboxes.forEach(cb => {
+                    cb.addEventListener("change", () => {
+                        const allChecked = [...itemCheckboxes].every(c => c.checked);
+                        checkAllBox.checked = allChecked;
+                        updateTotal();
+                    });
+                });
+
+                checkAllBox.addEventListener("change", () => toggleAll(checkAllBox));
             });
-        });
 
-        checkAllBox.addEventListener("change", () => toggleAll(checkAllBox));
-    });
-
-    function submitOrder() {
-        const selected = document.querySelectorAll(".select-item:checked");
-        if (selected.length === 0) {
-            alert("Vui lòng chọn ít nhất một Build PC để đặt cọc.");
-            return;
-        }
-
-        const ids = Array.from(selected).map(cb => cb.value);
-        const depositText = document.getElementById("deposit-amount").innerText;
-
-        if (!confirm(`Bạn sẽ đặt cọc ${depositText} cho ${ids.length} Build PC. Tiếp tục?`)) return;
-
-        fetch("CardBuildPc", {
-            method: "POST",
-            headers: {"Content-Type": "application/x-www-form-urlencoded"},
-            body: new URLSearchParams({
-                service: "depositBuildPC",
-                ids: ids.join(",")
-            })
-        })
-            .then(res => res.text())
-            .then(msg => {
-                if (msg === "SUCCESS") {
-                    alert("Đặt cọc thành công. Tiền còn lại sẽ thanh toán sau.");
-                    location.reload();
-                } else {
-                    alert("Có lỗi xảy ra khi đặt cọc.");
+            function submitOrder() {
+                const selected = document.querySelectorAll(".select-item:checked");
+                if (selected.length === 0) {
+                    alert("Vui lòng chọn ít nhất một Build PC để đặt cọc.");
+                    return;
                 }
-            })
-            .catch(() => alert("Lỗi kết nối tới server!"));
-    }
-</script>
+
+                const ids = Array.from(selected).map(cb => cb.value);
+                const depositText = document.getElementById("deposit-amount").innerText;
+
+                if (!confirm(`Bạn sẽ đặt cọc ${depositText} cho ${ids.length} Build PC. Tiếp tục?`))
+                    return;
+
+                fetch("CardBuildPc", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                    body: new URLSearchParams({
+                        service: "depositBuildPC",
+                        ids: ids.join(",")
+                    })
+                })
+                        .then(res => res.text())
+                        .then(msg => {
+                            if (msg === "SUCCESS") {
+                                alert("Đặt cọc thành công. Tiền còn lại sẽ thanh toán sau.");
+                                location.reload();
+                            } else {
+                                alert("Có lỗi xảy ra khi đặt cọc.");
+                            }
+                        })
+                        .catch(() => alert("Lỗi kết nối tới server!"));
+            }
+            function confirmDelete(btn, cartID) {
+                if (!confirm("Bạn có chắc chắn muốn xóa Build PC này khỏi giỏ?"))
+                    return;
+
+                console.log("Gửi yêu cầu xóa giỏ hàng ID:", cartID);
+
+                fetch(`CardBuildPc`, {
+                    method: "POST",
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                    body: new URLSearchParams({
+                        service: "deleteCartBuildPC",
+                        id: cartID
+                    })
+                })
+                        .then(res => res.text())
+                        .then(msg => {
+                            console.log("Phản hồi từ server:", msg);
+                            if (msg === "SUCCESS") {
+                                alert("Đã xóa Build PC khỏi giỏ.");
+                                btn.closest("tr").remove();
+                                updateTotal();
+                            } else {
+                                alert("Có lỗi khi xóa Build PC.");
+                            }
+                        })
+                        .catch(() => alert("Lỗi kết nối tới server!"));
+            }
+
+        </script>
 
 
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.js"></script>

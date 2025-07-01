@@ -33,12 +33,10 @@
     </head>
     <body class="hold-transition skin-blue sidebar-mini">
         <div class="wrapper">
-
             <jsp:include page="../../components/header.jsp" />
             <jsp:include page="../../components/sidebar.jsp">
                 <jsp:param name="ctx" value="${ctx}" />
             </jsp:include>
-
             <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
@@ -144,11 +142,10 @@
                 <!-- /.content -->
             </div>
             <!-- /.content-wrapper -->
-
-            <!-- /.content-wrapper -->
+            
             <jsp:include page="../../components/footer.jsp" />
             <jsp:include page="../../components/control-sidebar.jsp" />
-
+            <div class="control-sidebar-bg"></div>
         </div>
         <!-- ./wrapper -->
 
@@ -161,6 +158,12 @@
         <script src="${ctx}/AdminLTE/AdminPages/plugins/datatables/dataTables.bootstrap.min.js"></script>
         <!-- AdminLTE App -->
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/app.min.js"></script>
+        <!-- SlimScroll -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+        <!-- FastClick -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/fastclick/fastclick.js"></script>
+        <!-- AdminLTE for demo purposes -->
+        <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
 
         <style>
             .unread-notification {
@@ -173,18 +176,21 @@
         </style>
 
         <script>
-                                                                       $(function () {
-                                                                           $('#notificationTable').DataTable({
-                                                                               "paging": true,
-                                                                               "lengthChange": true,
-                                                                               "searching": true,
-                                                                               "ordering": true,
-                                                                               "info": true,
-                                                                               "autoWidth": false,
-                                                                               "order": [[4, "desc"]], // Sort by Created At column descending
-                                                                               "pageLength": 25
-                                                                           });
-                                                                       });
+            $(function () {
+                $('#notificationTable').DataTable({
+                    "paging": true,
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": false,
+                    "order": [[4, "desc"]], // Sort by Created At column descending
+                    "pageLength": 25
+                });
+            });
+            $(function () {
+                $('.sidebar-menu').tree();
+            });
         </script>
     </body>
 </html> 
