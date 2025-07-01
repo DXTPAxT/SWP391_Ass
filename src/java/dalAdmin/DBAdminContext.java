@@ -33,7 +33,7 @@ public class DBAdminContext {
             String pass = "123";
 
 
-            String url = "jdbc:sqlserver://laptop-dxt\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
+            String url = "jdbc:sqlserver://LAPTOP-63C2NPU0\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
 
 
 

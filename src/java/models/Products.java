@@ -6,47 +6,71 @@ public class Products {
 
     private int productID;
     private int ImportID;
-    private int categoryID;
-    private String categoryName;
+    private String ImportCode;
     private String ProductCode;
     private int status;
+    private int CategoryID;
+    private String CategoryName;
 
     public Products() {
     }
 
-    public Products(int productID, int ImportID, int categoryID, String categoryName, String ProductCode, int status) {
+    public Products(int productID, int ImportID, String ProductCode, int status) {
         this.productID = productID;
         this.ImportID = ImportID;
-        this.categoryID = categoryID;
-        this.categoryName = categoryName;
-        this.ProductCode = ProductCode;
-        this.status = status;
-    }
-    
-    public Products(int productID, int ImportID, int categoryID, String ProductCode, int status) {
-        this.productID = productID;
-        this.ImportID = ImportID;
-        this.categoryID = categoryID;
         this.ProductCode = ProductCode;
         this.status = status;
     }
 
-    public Products(int ImportID, int categoryID, String ProductCode, int status) {
+    public Products(int ImportID, String ProductCode, int status) {
         this.ImportID = ImportID;
-        this.categoryID = categoryID;
         this.ProductCode = ProductCode;
         this.status = status;
+    }
+
+    public Products(int productID, int ImportID, String ImportCode, String ProductCode, int status) {
+        this.productID = productID;
+        this.ImportID = ImportID;
+        this.ImportCode = ImportCode;
+        this.ProductCode = ProductCode;
+        this.status = status;
+    }
+
+    public Products(int productID, int ImportID, String ImportCode, String ProductCode, int status, int CategoryID, String CategoryName) {
+        this.productID = productID;
+        this.ImportID = ImportID;
+        this.ImportCode = ImportCode;
+        this.ProductCode = ProductCode;
+        this.status = status;
+        this.CategoryID = CategoryID;
+        this.CategoryName = CategoryName;
+    }
+
+    public int getCategoryID() {
+        return CategoryID;
+    }
+
+    public void setCategoryID(int CategoryID) {
+        this.CategoryID = CategoryID;
     }
 
     public String getCategoryName() {
-        return categoryName;
+        return CategoryName;
     }
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
+    public void setCategoryName(String CategoryName) {
+        this.CategoryName = CategoryName;
     }
     
-    
+
+    public String getImportCode() {
+        return ImportCode;
+    }
+
+    public void setImportCode(String ImportCode) {
+        this.ImportCode = ImportCode;
+    }
+
     public int getProductID() {
         return productID;
     }
@@ -61,14 +85,6 @@ public class Products {
 
     public void setImportID(int ImportID) {
         this.ImportID = ImportID;
-    }
-
-    public int getCategoryID() {
-        return categoryID;
-    }
-
-    public void setCategoryID(int categoryID) {
-        this.categoryID = categoryID;
     }
 
     public String getProductCode() {
@@ -87,5 +103,4 @@ public class Products {
         this.status = status;
     }
 
-   
 }
