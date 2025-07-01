@@ -46,75 +46,12 @@
         <section>
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-3">
-                        <div class="left-sidebar">
-                            <h2 class="title text-center">CATEGORY</h2>
-                            <div class="panel-group category-products" id="accordian">
-                                <c:forEach var="comp" items="${Components}">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <h4 class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
-                                                <!-- Link: lọc theo Component -->
-                                                <a href="${ctx}/CategoriesController?service=filter&component=${fn:escapeXml(comp.componentName)}" style="flex-grow: 1;">
-                                                    ${comp.componentName}
-                                                </a>
 
-                                                <!-- Dấu + để mở brand list -->
-                                                <a data-toggle="collapse" href="#comp${comp.componentID}" style="margin-left: 10px;">
-                                                    <i class="fa fa-plus"></i> <!-- luôn là dấu + -->
-                                                </a>
-                                            </h4>
-                                        </div>
-
-                                        <!-- Brand list bên trong component -->
-                                        <div id="comp${comp.componentID}" class="panel-collapse collapse">
-                                            <div class="panel-body">
-                                                <ul>
-                                                    <c:forEach var="item" items="${BrandWithComponent}">
-                                                        <c:if test="${item.componentID == comp.componentID}">
-                                                            <li>
-                                                                <a href="${ctx}/CategoriesController?service=filter&component=${fn:escapeXml(comp.componentName)}&brand=${fn:escapeXml(item.brandName)}">
-                                                                    ${item.brandName}
-                                                                </a>
-                                                            </li>
-                                                        </c:if>
-                                                    </c:forEach>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </c:forEach>
-                            </div>
-
-
-
-                            <div class="brands_products"><!--brands_products-->
-                                <h2>Brands</h2>
-                                <div class="brands-name">
-                                    <ul class="nav nav-pills nav-stacked">
-                                        <c:forEach var="brand" items="${listBrand}">
-                                            <li>
-                                                <a href="${ctx}/CategoriesController?service=filter&brand=${fn:escapeXml(brand.brandName)}">
-                                                    ${brand.brandName}
-                                                </a>
-                                            </li>
-                                        </c:forEach>
-                                    </ul>
-                                </div>
-                            </div><!--/brands_products-->
-                            
-
-
-
-
-                        </div>
-                    </div>
-
-                    <div class="col-sm-9 padding-right">
+                    <div class="col-sm-12 padding-right">
 
                         <!-- PC Section -->
                         <div class="features_items" id="pc">
-                            <h2 class="title text-center" style="margin-top: 30px">PC Products</h2>
+                            <h2 class="title text-center" style="margin-top: 30px">Sale events</h2>
                             <div class="row">
                                 <c:forEach var="product" items="${pcProducts}">
                                     <div class="col-sm-4">
@@ -158,7 +95,7 @@
 
                         <!-- Laptop Section -->
                         <div class="features_items" id="laptop">
-                            <h2 class="title text-center" style="margin-top: 30px">Laptop Products</h2>
+                            <h2 class="title text-center" style="margin-top: 30px">Build PC</h2>
                             <div class="row">
                                 <c:forEach var="product" items="${laptopProducts}">
                                     <div class="col-sm-4">

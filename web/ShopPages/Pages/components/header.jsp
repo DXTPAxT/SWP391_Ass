@@ -48,13 +48,13 @@
                                 <c:when test="${not empty sessionScope.user}">
                                     <c:if test="${not empty sessionScope.user and sessionScope.user.role.roleID == 3}">
                                         <li class="cart-dropdown">
-                                        <a href="#"><i class="fa fa-shopping-cart"></i> Cart</a>
-                                        <div class="dropdown-content">
-                                            <div class="arrow-up"></div>
-                                            <a href="${pageContext.request.contextPath}/Cart">CartItem</a>
-                                            <a href="CardBuildPc">CartPC</a>
-                                        </div>
-                                    </li>
+                                            <a href="#"><i class="fa fa-shopping-cart"></i> Cart</a>
+                                            <div class="dropdown-content">
+                                                <div class="arrow-up"></div>
+                                                <a href="${pageContext.request.contextPath}/Cart">CartItem</a>
+                                                <a href="CardBuildPc">CartPC</a>
+                                            </div>
+                                        </li>
                                         <li><a href="${pageContext.request.contextPath}/User?service=myAccount"><i class="fa fa-user"></i> Account</a></li>
                                         <li><a href="checkout.html"><i class="fa fa-check-square-o"></i> Checklist</a></li>
                                         </c:if>
@@ -90,8 +90,9 @@
                             <li><a href="${pageContext.request.contextPath}/HomePages" class="${activePage == 'home' ? 'active' : ''}">Home</a></li>
                             <li><a href="${pageContext.request.contextPath}/CategoriesController?service=list" class="${activePage == 'products' ? 'active' : ''}">Products</a></li>
                             <li><a href="${ctx}/blogc" class="${activePage == 'blog' ? 'active' : ''}">Blog</a></li>
-                            <li><a href="404.html" class="${activePage == '404' ? 'active' : ''}">404</a></li>
-                            <li><a href="contact-us.html" class="${activePage == 'contact' ? 'active' : ''}">Contact</a></li>
+                            <li><a href="${ctx}/ShopPages/Pages/BuildPC/BuildPC.html" class="${activePage == 'buildPC' ? 'active' : ''}">Build your PC</a></li>
+<!--                            <li><a href="404.html" class="${activePage == '404' ? 'active' : ''}">404</a></li>
+                            <li><a href="contact-us.html" class="${activePage == 'contact' ? 'active' : ''}">Contact</a></li>-->
 
                         </ul>
 
