@@ -43,7 +43,8 @@ public class NotificationAdminDAO extends DBAdminContext {
     
     public List<Notification> getNotificationsByUserID(int userID) {
         List<Notification> list = new ArrayList<>();
-        String sql = "SELECT * FROM Notifications WHERE UserID = ? ORDER BY CreatedAt DESC";
+        String sql = "SELECT n.NotificationID, n.UserID, n.SenderID, u.FullName as SenderName, n.Title, n.Message, n.IsRead, n.CreatedAt " +
+                     "FROM Notifications n LEFT JOIN Users u ON n.SenderID = u.UserID WHERE n.UserID = ? ORDER BY n.CreatedAt DESC";
         
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -54,6 +55,8 @@ public class NotificationAdminDAO extends DBAdminContext {
                 Notification notification = new Notification();
                 notification.setNotificationID(rs.getInt("NotificationID"));
                 notification.setUserID(rs.getInt("UserID"));
+                notification.setSenderID(rs.getInt("SenderID"));
+                notification.setSenderName(rs.getString("SenderName"));
                 notification.setTitle(rs.getString("Title"));
                 notification.setMessage(rs.getString("Message"));
                 notification.setIsRead(rs.getBoolean("IsRead"));
@@ -68,7 +71,8 @@ public class NotificationAdminDAO extends DBAdminContext {
     
     public List<Notification> getUnreadNotifications(int userID) {
         List<Notification> list = new ArrayList<>();
-        String sql = "SELECT * FROM Notifications WHERE UserID = ? AND IsRead = 0 ORDER BY CreatedAt DESC";
+        String sql = "SELECT n.NotificationID, n.UserID, n.SenderID, u.FullName as SenderName, n.Title, n.Message, n.IsRead, n.CreatedAt " +
+                     "FROM Notifications n LEFT JOIN Users u ON n.SenderID = u.UserID WHERE n.UserID = ? AND n.IsRead = 0 ORDER BY n.CreatedAt DESC";
         
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -79,6 +83,8 @@ public class NotificationAdminDAO extends DBAdminContext {
                 Notification notification = new Notification();
                 notification.setNotificationID(rs.getInt("NotificationID"));
                 notification.setUserID(rs.getInt("UserID"));
+                notification.setSenderID(rs.getInt("SenderID"));
+                notification.setSenderName(rs.getString("SenderName"));
                 notification.setTitle(rs.getString("Title"));
                 notification.setMessage(rs.getString("Message"));
                 notification.setIsRead(rs.getBoolean("IsRead"));
@@ -202,7 +208,7 @@ public class NotificationAdminDAO extends DBAdminContext {
             e.printStackTrace();
         }
     }
-
+    
     public boolean getReadStatus(int notificationID) {
         String sql = "SELECT IsRead FROM Notifications WHERE NotificationID = ?";
         try {
