@@ -268,8 +268,11 @@
                             html += '<li><a href="${ctx}/NotificationServlet?service=detail&id=' + noti.id + '"><i class="fa fa-info-circle text-aqua"></i> <b>' + noti.title + '</b><br><small>' + noti.createdAt + '</small></a></li>';
                         });
                     }
+                    // Hiển thị tổng số chưa đọc
                     $('.dropdown-menu .header').html('You have <span id="notification-count-header">' + data.totalUnread + '</span> notifications');
                     $('#notification-list').html(html);
+                    // Đồng bộ lại số trên icon chuông nếu cần
+                    $('#notification-count').text(data.totalUnread);
                 }
             });
         });

@@ -34,42 +34,25 @@ public class NotificationServlet extends HttpServlet {
         
         String service = request.getParameter("service");
         NotificationAdminDAO dao = new NotificationAdminDAO();
+        HttpSession session = request.getSession(false);
+        User user = (session != null) ? (User) session.getAttribute("user") : null;
+        int userID = (user != null) ? user.getUserId() : -1;
         
         if (service == null) {
             service = "list";
         }
         
         switch (service) {
-            case "list":
+            case "list": {
                 // Hiển thị danh sách thông báo của user hiện tại
-<<<<<<<<< Temporary merge branch 1
-                HttpSession session = request.getSession(false);
-                User user = (session != null) ? (User) session.getAttribute("user") : null;
-                int userID = (user != null) ? user.getUserId() : -1;
-                
-=========
-                jakarta.servlet.http.HttpSession session = request.getSession(false);
-                models.User user = (session != null) ? (models.User) session.getAttribute("user") : null;
-                int userID = (user != null) ? user.getUserId() : -1;
->>>>>>>>> Temporary merge branch 2
-                if (userID > 0) {
-                    List<Notification> userNotifications = dao.getNotificationsByUserID(userID);
-                    request.setAttribute("notifications", userNotifications);
-                } else {
-<<<<<<<<< Temporary merge branch 1
-                    request.setAttribute("notifications", new ArrayList<>());
-=========
-                    request.setAttribute("notifications", new java.util.ArrayList<>());
->>>>>>>>> Temporary merge branch 2
-                }
+                List<Notification> userNotifications = (userID > 0) ? dao.getNotificationsByUserID(userID) : new ArrayList<>();
+                request.setAttribute("notifications", userNotifications);
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/notifications.jsp").forward(request, response);
                 break;
+            }
                 
             case "markAsRead": {
                 // Đánh dấu thông báo đã đọc
-                HttpSession session = request.getSession(false);
-                User user = (session != null) ? (models.User) session.getAttribute("user") : null;
-                int userID = (user != null) ? user.getUserId() : -1;
                 if (userID > 0) {
                     String notificationID = request.getParameter("notificationID");
                     if (notificationID != null) {
@@ -80,16 +63,8 @@ public class NotificationServlet extends HttpServlet {
                 break;
             }
                 
-            case "markAllAsRead":
-<<<<<<<<< Temporary merge branch 1
-                session = request.getSession(false);
-                user = (session != null) ? (User) session.getAttribute("user") : null;
-=========
+            case "markAllAsRead": {
                 // Đánh dấu tất cả thông báo đã đọc
-                session = request.getSession(false);
-                user = (session != null) ? (models.User) session.getAttribute("user") : null;
->>>>>>>>> Temporary merge branch 2
-                userID = (user != null) ? user.getUserId() : -1;
                 if (userID > 0) {
                     dao.markAllAsRead(userID);
                 }
@@ -99,9 +74,6 @@ public class NotificationServlet extends HttpServlet {
                 
             case "delete": {
                 // Xóa thông báo
-                HttpSession session = request.getSession(false);
-                User user = (session != null) ? (models.User) session.getAttribute("user") : null;
-                int userID = (user != null) ? user.getUserId() : -1;
                 if (userID > 0) {
                     String deleteID = request.getParameter("notificationID");
                     if (deleteID != null) {
@@ -112,16 +84,8 @@ public class NotificationServlet extends HttpServlet {
                 break;
             }
                 
-            case "getUnreadCount":
-<<<<<<<<< Temporary merge branch 1
-                session = request.getSession(false);
-                user = (session != null) ? (User) session.getAttribute("user") : null;
-=========
+            case "getUnreadCount": {
                 // Lấy số lượng thông báo chưa đọc (cho AJAX)
-                session = request.getSession(false);
-                user = (session != null) ? (models.User) session.getAttribute("user") : null;
->>>>>>>>> Temporary merge branch 2
-                userID = (user != null) ? user.getUserId() : -1;
                 int unreadCount = (userID > 0) ? dao.getUnreadCount(userID) : 0;
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
@@ -131,16 +95,8 @@ public class NotificationServlet extends HttpServlet {
                 break;
             }
                 
-            case "getUnreadNotifications":
-<<<<<<<<< Temporary merge branch 1
-                session = request.getSession(false);
-                user = (session != null) ? (User) session.getAttribute("user") : null;
-=========
+            case "getUnreadNotifications": {
                 // Lấy danh sách thông báo chưa đọc (cho dropdown)
-                session = request.getSession(false);
-                user = (session != null) ? (models.User) session.getAttribute("user") : null;
->>>>>>>>> Temporary merge branch 2
-                userID = (user != null) ? user.getUserId() : -1;
                 if (userID > 0) {
                     List<Notification> unreadNotifications = dao.getUnreadNotifications(userID);
                     request.setAttribute("unreadNotifications", unreadNotifications);
@@ -154,12 +110,12 @@ public class NotificationServlet extends HttpServlet {
             case "send": {
                 // Gửi thông báo mới
                 try {
-                    int userId = Integer.parseInt(request.getParameter("userID"));
+                    int toUserId = Integer.parseInt(request.getParameter("userID"));
                     int senderId = Integer.parseInt(request.getParameter("senderID"));
                     String title = request.getParameter("title");
                     String message = request.getParameter("message");
                     Notification notification = new Notification();
-                    notification.setUserID(userId);
+                    notification.setUserID(toUserId);
                     notification.setSenderID(senderId);
                     notification.setTitle(title);
                     notification.setMessage(message);
@@ -199,10 +155,9 @@ public class NotificationServlet extends HttpServlet {
             }
                 
             case "ajaxList": {
-                // Trả về JSON danh sách thông báo chưa đọc cho user (hoặc tất cả)
-                int adminID = 1; // hoặc lấy từ session
-                List<Notification> notifications = dao.getUnreadNotifications(adminID);
-                int totalUnread = notifications.size();
+                // Trả về JSON danh sách thông báo chưa đọc cho user hiện tại
+                int totalUnread = (userID > 0) ? dao.getUnreadCount(userID) : 0;
+                List<Notification> notifications = (userID > 0) ? dao.getUnreadNotifications(userID) : new ArrayList<>();
                 if (notifications.size() > 5) {
                     notifications = notifications.subList(0, 5);
                 }
