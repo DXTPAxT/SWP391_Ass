@@ -174,6 +174,11 @@
                     <li><a href="${param.ctx}/AdminLTE/AdminPages/pages/forms/BuildPCAdmin.html"><i class="fa fa-circle-o"></i>Creative new PC    </a></li>
                 </ul>
             </li>
+            <li>
+                <a href="${param.ctx}/NotificationServlet?service=showSendForm">
+                    <i class="fa fa-bell"></i> <span>Send Notification</span>
+                </a>
+            </li>
         </ul>
     </section>
     <!-- /.sidebar -->

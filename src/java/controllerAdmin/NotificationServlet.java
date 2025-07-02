@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import dalAdmin.DBAdminContext;
 import models.User;
 import jakarta.servlet.http.HttpSession;
+import dal.UserDAO;
 
 /**
  *
@@ -34,32 +35,25 @@ public class NotificationServlet extends HttpServlet {
         
         String service = request.getParameter("service");
         NotificationAdminDAO dao = new NotificationAdminDAO();
+        HttpSession session = request.getSession(false);
+        User user = (session != null) ? (User) session.getAttribute("user") : null;
+        int userID = (user != null) ? user.getUserId() : -1;
         
         if (service == null) {
             service = "list";
         }
         
         switch (service) {
-            case "list":
+            case "list": {
                 // Hiển thị danh sách thông báo của user hiện tại
-                HttpSession session = request.getSession(false);
-                User user = (session != null) ? (User) session.getAttribute("user") : null;
-                int userID = (user != null) ? user.getUserId() : -1;
-                
-                if (userID > 0) {
-                    List<Notification> userNotifications = dao.getNotificationsByUserID(userID);
-                    request.setAttribute("notifications", userNotifications);
-                } else {
-                    request.setAttribute("notifications", new ArrayList<>());
-                }
+                List<Notification> userNotifications = (userID > 0) ? dao.getNotificationsByUserID(userID) : new ArrayList<>();
+                request.setAttribute("notifications", userNotifications);
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/notifications.jsp").forward(request, response);
                 break;
+            }
                 
-            case "markAsRead":
+            case "markAsRead": {
                 // Đánh dấu thông báo đã đọc
-                session = request.getSession(false);
-                user = (session != null) ? (models.User) session.getAttribute("user") : null;
-                userID = (user != null) ? user.getUserId() : -1;
                 if (userID > 0) {
                     String notificationID = request.getParameter("notificationID");
                     if (notificationID != null) {
@@ -68,22 +62,19 @@ public class NotificationServlet extends HttpServlet {
                 }
                 response.sendRedirect("NotificationServlet?service=list");
                 break;
+            }
                 
-            case "markAllAsRead":
-                session = request.getSession(false);
-                user = (session != null) ? (User) session.getAttribute("user") : null;
-                userID = (user != null) ? user.getUserId() : -1;
+            case "markAllAsRead": {
+                // Đánh dấu tất cả thông báo đã đọc
                 if (userID > 0) {
                     dao.markAllAsRead(userID);
                 }
                 response.sendRedirect("NotificationServlet?service=list");
                 break;
+            }
                 
-            case "delete":
+            case "delete": {
                 // Xóa thông báo
-                session = request.getSession(false);
-                user = (session != null) ? (models.User) session.getAttribute("user") : null;
-                userID = (user != null) ? user.getUserId() : -1;
                 if (userID > 0) {
                     String deleteID = request.getParameter("notificationID");
                     if (deleteID != null) {
@@ -92,11 +83,10 @@ public class NotificationServlet extends HttpServlet {
                 }
                 response.sendRedirect("NotificationServlet?service=list");
                 break;
+            }
                 
-            case "getUnreadCount":
-                session = request.getSession(false);
-                user = (session != null) ? (User) session.getAttribute("user") : null;
-                userID = (user != null) ? user.getUserId() : -1;
+            case "getUnreadCount": {
+                // Lấy số lượng thông báo chưa đọc (cho AJAX)
                 int unreadCount = (userID > 0) ? dao.getUnreadCount(userID) : 0;
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
@@ -104,11 +94,10 @@ public class NotificationServlet extends HttpServlet {
                 out.print("{\"count\": " + unreadCount + "}");
                 out.flush();
                 break;
+            }
                 
-            case "getUnreadNotifications":
-                session = request.getSession(false);
-                user = (session != null) ? (User) session.getAttribute("user") : null;
-                userID = (user != null) ? user.getUserId() : -1;
+            case "getUnreadNotifications": {
+                // Lấy danh sách thông báo chưa đọc (cho dropdown)
                 if (userID > 0) {
                     List<Notification> unreadNotifications = dao.getUnreadNotifications(userID);
                     request.setAttribute("unreadNotifications", unreadNotifications);
@@ -117,29 +106,65 @@ public class NotificationServlet extends HttpServlet {
                     response.sendRedirect("NotificationServlet?service=list");
                 }
                 break;
+            }
                 
-            case "send":
-                // Gửi thông báo mới
+            case "showSendForm": {
+                UserDAO userDao = new UserDAO();
+                List<User> userList = new ArrayList<>();
+                userList.addAll(userDao.getAllAdmins());
+                userList.addAll(userDao.getAllSales());
+                userList.addAll(userDao.getAllCustomers());
+                userList.addAll(userDao.getAllShippers());
+                request.setAttribute("userList", userList);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/NotificationSend.jsp").forward(request, response);
+                break;
+            }
+                
+            case "send": {
                 try {
-                    int userId = Integer.parseInt(request.getParameter("userID"));
+                    String[] userIds = request.getParameterValues("userID");
+                    boolean sendAll = "true".equals(request.getParameter("sendAll"));
                     int senderId = Integer.parseInt(request.getParameter("senderID"));
                     String title = request.getParameter("title");
                     String message = request.getParameter("message");
-                    Notification notification = new Notification();
-                    notification.setUserID(userId);
-                    notification.setSenderID(senderId);
-                    notification.setTitle(title);
-                    notification.setMessage(message);
-                    notification.setIsRead(false);
-                    notification.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-                    dao.addNotification(notification);
-                    response.sendRedirect("NotificationServlet?service=list");
+                    List<Integer> targetUserIds = new ArrayList<>();
+                    UserDAO userDao = new UserDAO();
+                    if (sendAll) {
+                        List<User> allUsers = new ArrayList<>();
+                        allUsers.addAll(userDao.getAllAdmins());
+                        allUsers.addAll(userDao.getAllSales());
+                        allUsers.addAll(userDao.getAllCustomers());
+                        allUsers.addAll(userDao.getAllShippers());
+                        for (User u : allUsers) targetUserIds.add(u.getUserId());
+                    } else if (userIds != null) {
+                        for (String userIdStr : userIds) targetUserIds.add(Integer.parseInt(userIdStr));
+                    }
+                    for (int userId : targetUserIds) {
+                        Notification notification = new Notification();
+                        notification.setUserID(userId);
+                        notification.setSenderID(senderId);
+                        notification.setTitle(title);
+                        notification.setMessage(message);
+                        notification.setIsRead(false);
+                        notification.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+                        dao.addNotification(notification);
+                    }
+                    // Sau khi gửi, forward lại về form và truyền thông báo thành công
+                    request.setAttribute("successMessage", "Đã gửi thông báo thành công!");
+                    List<User> userList = new ArrayList<>();
+                    userList.addAll(userDao.getAllAdmins());
+                    userList.addAll(userDao.getAllSales());
+                    userList.addAll(userDao.getAllCustomers());
+                    userList.addAll(userDao.getAllShippers());
+                    request.setAttribute("userList", userList);
+                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/NotificationSend.jsp").forward(request, response);
                 } catch (Exception e) {
-                    response.sendRedirect("NotificationServlet?service=list");
+                    response.sendRedirect("NotificationServlet?service=showSendForm");
                 }
                 break;
+            }
                 
-            case "detail":
+            case "detail": {
                 // Xem chi tiết thông báo
                 String id = request.getParameter("id");
                 if (id != null) {
@@ -150,8 +175,9 @@ public class NotificationServlet extends HttpServlet {
                     response.sendRedirect("NotificationServlet?service=list");
                 }
                 break;
+            }
                 
-            case "toggleRead":
+            case "toggleRead": {
                 // Chuyển đổi trạng thái đã đọc/chưa đọc
                 String toggleId = request.getParameter("id");
                 if (toggleId != null) {
@@ -161,6 +187,37 @@ public class NotificationServlet extends HttpServlet {
                 }
                 response.sendRedirect("NotificationServlet?service=list");
                 break;
+            }
+                
+            case "ajaxList": {
+                // Trả về JSON danh sách thông báo chưa đọc cho user hiện tại
+                int totalUnread = (userID > 0) ? dao.getUnreadCount(userID) : 0;
+                List<Notification> notifications = (userID > 0) ? dao.getUnreadNotifications(userID) : new ArrayList<>();
+                if (notifications.size() > 5) {
+                    notifications = notifications.subList(0, 5);
+                }
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                PrintWriter out = response.getWriter();
+                StringBuilder json = new StringBuilder();
+                json.append("{");
+                json.append("\"totalUnread\":").append(totalUnread).append(",");
+                json.append("\"notifications\": [");
+                for (int i = 0; i < notifications.size(); i++) {
+                    Notification n = notifications.get(i);
+                    json.append("{")
+                        .append("\"id\":").append(n.getNotificationID()).append(",")
+                        .append("\"title\":\"").append(n.getTitle().replace("\"", "\\\"")).append("\",")
+                        .append("\"message\":\"").append(n.getMessage().replace("\"", "\\\"")).append("\",")
+                        .append("\"createdAt\":\"").append(n.getCreatedAt()).append("\"")
+                        .append("}");
+                    if (i < notifications.size() - 1) json.append(",");
+                }
+                json.append("]}");
+                out.print(json.toString());
+                out.flush();
+                break;
+            }
                 
             default:
                 response.sendRedirect("NotificationServlet?service=list");
