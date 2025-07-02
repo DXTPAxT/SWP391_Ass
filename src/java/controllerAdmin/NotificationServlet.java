@@ -41,9 +41,27 @@ public class NotificationServlet extends HttpServlet {
         
         switch (service) {
             case "list":
-                // Hiển thị danh sách tất cả thông báo
-                List<Notification> allNotifications = dao.getAllNotifications();
-                request.setAttribute("notifications", allNotifications);
+                // Hiển thị danh sách thông báo của user hiện tại
+<<<<<<<<< Temporary merge branch 1
+                HttpSession session = request.getSession(false);
+                User user = (session != null) ? (User) session.getAttribute("user") : null;
+                int userID = (user != null) ? user.getUserId() : -1;
+                
+=========
+                jakarta.servlet.http.HttpSession session = request.getSession(false);
+                models.User user = (session != null) ? (models.User) session.getAttribute("user") : null;
+                int userID = (user != null) ? user.getUserId() : -1;
+>>>>>>>>> Temporary merge branch 2
+                if (userID > 0) {
+                    List<Notification> userNotifications = dao.getNotificationsByUserID(userID);
+                    request.setAttribute("notifications", userNotifications);
+                } else {
+<<<<<<<<< Temporary merge branch 1
+                    request.setAttribute("notifications", new ArrayList<>());
+=========
+                    request.setAttribute("notifications", new java.util.ArrayList<>());
+>>>>>>>>> Temporary merge branch 2
+                }
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/notifications.jsp").forward(request, response);
                 break;
                 
@@ -62,11 +80,17 @@ public class NotificationServlet extends HttpServlet {
                 break;
             }
                 
-            case "markAllAsRead": {
+            case "markAllAsRead":
+<<<<<<<<< Temporary merge branch 1
+                session = request.getSession(false);
+                user = (session != null) ? (User) session.getAttribute("user") : null;
+=========
                 // Đánh dấu tất cả thông báo đã đọc
-                String userIDStr = request.getParameter("userID");
-                if (userIDStr != null) {
-                    int userID = Integer.parseInt(userIDStr);
+                session = request.getSession(false);
+                user = (session != null) ? (models.User) session.getAttribute("user") : null;
+>>>>>>>>> Temporary merge branch 2
+                userID = (user != null) ? user.getUserId() : -1;
+                if (userID > 0) {
                     dao.markAllAsRead(userID);
                 }
                 response.sendRedirect("NotificationServlet?service=list");
@@ -88,10 +112,17 @@ public class NotificationServlet extends HttpServlet {
                 break;
             }
                 
-            case "getUnreadCount": {
+            case "getUnreadCount":
+<<<<<<<<< Temporary merge branch 1
+                session = request.getSession(false);
+                user = (session != null) ? (User) session.getAttribute("user") : null;
+=========
                 // Lấy số lượng thông báo chưa đọc (cho AJAX)
-                int adminUserID = 1; // Giả sử admin có UserID = 1
-                int unreadCount = dao.getUnreadCount(adminUserID);
+                session = request.getSession(false);
+                user = (session != null) ? (models.User) session.getAttribute("user") : null;
+>>>>>>>>> Temporary merge branch 2
+                userID = (user != null) ? user.getUserId() : -1;
+                int unreadCount = (userID > 0) ? dao.getUnreadCount(userID) : 0;
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 PrintWriter out = response.getWriter();
@@ -100,12 +131,23 @@ public class NotificationServlet extends HttpServlet {
                 break;
             }
                 
-            case "getUnreadNotifications": {
+            case "getUnreadNotifications":
+<<<<<<<<< Temporary merge branch 1
+                session = request.getSession(false);
+                user = (session != null) ? (User) session.getAttribute("user") : null;
+=========
                 // Lấy danh sách thông báo chưa đọc (cho dropdown)
-                int adminID = 1; // Giả sử admin có UserID = 1
-                List<Notification> unreadNotifications = dao.getUnreadNotifications(adminID);
-                request.setAttribute("unreadNotifications", unreadNotifications);
-                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/notifications.jsp").forward(request, response);
+                session = request.getSession(false);
+                user = (session != null) ? (models.User) session.getAttribute("user") : null;
+>>>>>>>>> Temporary merge branch 2
+                userID = (user != null) ? user.getUserId() : -1;
+                if (userID > 0) {
+                    List<Notification> unreadNotifications = dao.getUnreadNotifications(userID);
+                    request.setAttribute("unreadNotifications", unreadNotifications);
+                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/notifications.jsp").forward(request, response);
+                } else {
+                    response.sendRedirect("NotificationServlet?service=list");
+                }
                 break;
             }
                 

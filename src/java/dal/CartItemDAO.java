@@ -105,29 +105,47 @@ public class CartItemDAO extends DBContext {
         return true;
     }
 
-    public static void main(String[] args) {
-        CartItemDAO dao = new CartItemDAO();
-        int testUserId = 3; // Thay bằng ID người dùng phù hợp trong CSDL
+    public ArrayList<CartItem> getCartItemsByUserIdWithOffset(int userId, int offset, int limit) {
+        ArrayList<CartItem> itemList = new ArrayList<>();
+        String sql = """
+        SELECT CartItemID, UserID, CategoryID, WarrantyDetailID, Quantity, Status 
+        FROM CartItems 
+        WHERE UserID = ?
+        ORDER BY CartItemID ASC
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
 
-        ArrayList<CartItem> cartItems = dao.getCartItemsByUserId(testUserId);
+        WarrantyDetailDAO warrantyDetailDAO = new WarrantyDetailDAO();
+        CategoriesDAO categoriesDAO = new CategoriesDAO();
 
-        if (cartItems.isEmpty()) {
-            System.out.println("❌ Không tìm thấy sản phẩm nào trong giỏ hàng của userID = " + testUserId);
-        } else {
-            System.out.println("🛒 Danh sách sản phẩm trong giỏ hàng của userID = " + testUserId);
-            for (CartItem item : cartItems) {
-                System.out.println("CartItem ID: " + item.getCartItemID());
-                System.out.println("User ID: " + item.getUserID());
-                System.out.println("Category: " + item.getCategory().getCategoryName());
-                System.out.println("Category Price: " + item.getCategory().getPrice());
-                System.out.println("Warranty Period: " + item.getWarranty().getWarranty().getWarrantyPeriod() + " months");
-                System.out.println("Warranty Description: " + item.getWarranty().getWarranty().getDescription());
-                System.out.println("Warranty Price: " + item.getWarranty().getPrice());
-                System.out.println("Quantity: " + item.getQuantity());
-                System.out.println("Status: " + item.getStatus());
-                System.out.println("--------------------------------------------------");
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, offset);
+            ps.setInt(3, limit);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int cartItemID = rs.getInt("CartItemID");
+                int categoryID = rs.getInt("CategoryID");
+                int warrantyDetailID = rs.getInt("WarrantyDetailID");
+
+                CartItem item = new CartItem();
+                item.setCartItemID(cartItemID);
+                item.setUserID(userId);
+                item.setQuantity(rs.getInt("Quantity"));
+                item.setStatus(rs.getInt("Status"));
+
+                item.setCategory(categoriesDAO.getCategoryByID(categoryID).get(0));
+                item.setWarranty(warrantyDetailDAO.getWarrantyDetailById(warrantyDetailID));
+
+                itemList.add(item);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
+        return itemList;
     }
 
 }

@@ -90,7 +90,7 @@
                             <li><a href="${pageContext.request.contextPath}/HomePages" class="${activePage == 'home' ? 'active' : ''}">Home</a></li>
                             <li><a href="${pageContext.request.contextPath}/CategoriesController?service=list" class="${activePage == 'products' ? 'active' : ''}">Products</a></li>
                             <li><a href="${ctx}/blogc" class="${activePage == 'blog' ? 'active' : ''}">Blog</a></li>
-                            <li><a href="${ctx}/ShopPages/Pages/BuildPC/BuildPC.html" class="${activePage == 'buildPC' ? 'active' : ''}">Build your PC</a></li>
+                            <li><a href="${ctx}/ShopPages/Pages/BuildPC/BuildPC.html">Build your PC</a></li>
 <!--                            <li><a href="404.html" class="${activePage == '404' ? 'active' : ''}">404</a></li>
                             <li><a href="contact-us.html" class="${activePage == 'contact' ? 'active' : ''}">Contact</a></li>-->
 
