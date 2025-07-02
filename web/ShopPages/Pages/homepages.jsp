@@ -42,166 +42,16 @@
         <jsp:include page="components/header.jsp">
             <jsp:param name="activePage" value="home"/>
         </jsp:include>
-        <!--/header-->
-
-        <section id="slider"><!--slider-->
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div id="slider-carousel" class="carousel slide" data-ride="carousel">
-                            <!-- Indicators -->
-                            <ol class="carousel-indicators">
-                                <li data-target="#slider-carousel" data-slide-to="0" class="active"></li>
-                                <li data-target="#slider-carousel" data-slide-to="1"></li>
-                                <li data-target="#slider-carousel" data-slide-to="2"></li>
-                            </ol>
-
-                            <!-- Slides -->
-                            <div class="carousel-inner">
-                                <!-- Slide 1 -->
-                                <div class="item active">
-                                    <div class="col-sm-6">
-                                        <h1>
-                                            <span style="color: red">Cyber</span><span style="color: #111111;">Beast</span>
-                                        </h1>
-                                        <h3>Best Seller</h3>
-                                        <p>Efficient Performance: Intel® Core™ i5/i7 (12th Gen) processor with Intel® Iris® Xe Graphics.</p>
-                                        <p>Stunning Display: 14” Full HD (1920x1080) NanoEdge IPS display with ultra-slim bezels.</p>
-                                        <p>Premium Portability: Lightweight aluminum chassis, only ~1.3kg and 15.9mm thin—ideal for mobility.</p>
-
-                                        <button type="button" class="btn btn-default get">Get it now</button>
-                                    </div>
-                                    <div class="col-sm-6 text-center">
-                                        <img src="${ctx}/ShopPages/Pages/images/home/nitrov15.png"
-                                             style="height: 450px; width: auto; padding-top: 30px;"
-                                             class="girl img-responsive" alt="CyberBeast" />
-                                    </div>
-                                </div>
-
-                                <!-- Slide 2 -->
-                                <div class="item">
-                                    <div class="col-sm-6">
-                                        <h1><span style="color: red">Cyber</span><span style="color: #111111;">Beast</span></h1>
-                                        <h3>Best Seller</h3>
-                                        <p>Powerful Performance: Intel® Core™ i7-12700F CPU with ASUS TUF Gaming B660 motherboard.</p>
-                                        <p>Graphics Excellence: NVIDIA® GeForce RTX™ 3060 12GB for smooth 1440p gaming and rendering.</p>
-                                        <p>Solid Setup: 16GB DDR4 RAM, 512GB NVMe SSD, 650W PSU, housed in ASUS Prime case with RGB fans.</p>
-
-                                        <button type="button" class="btn btn-default get">Get it now</button>
-                                    </div>
-                                    <div class="col-sm-6 text-center">
-                                        <img src="${ctx}/ShopPages/Pages/images/home/1.png"
-                                             style="height: 400px; width: auto; padding-top: 20px;"
-                                             class="girl img-responsive" alt="Responsive Design" />
-
-                                    </div>
-                                </div>
-
-                                <!-- Slide 3 -->
-                                <div class="item">
-                                    <div class="col-sm-6">
-                                        <h1><span style="color: red">Cyber</span><span style="color: #111111;">Beast</span></h1>
-                                        <h3>Recommend Main</h3>
-                                        <p>Extreme Compatibility: Supports Intel® 12th & 13th Gen processors with LGA1700 socket, built for gaming and productivity.</p>
-                                        <p>Next-Gen Memory: Ready for DDR5 RAM up to 6400MHz (OC), 4 DIMM slots for up to 128GB high-speed memory.</p>
-                                        <p>High-Speed Connectivity: PCIe 5.0 x16 slot for latest GPUs, 4x M.2 NVMe slots, and Wi-Fi 6E with Bluetooth 5.2 onboard.</p>
-                                        <button type="button" class="btn btn-default get">Get it now</button>
-                                    </div>
-                                    <div class="col-sm-6 text-center">
-                                        <img src="${ctx}/ShopPages/Pages/images/home/asus.png"
-                                             style="height: 450px; width: auto; padding-top: 20px;"
-                                             class="girl img-responsive" alt="Free Template" />
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Controls -->
-                            <a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
-                                <i class="fa fa-angle-left"></i>
-                            </a>
-                            <a href="#slider-carousel" class="right control-carousel hidden-xs" data-slide="next">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section><!--/slider-->
-
 
         <section>
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-3">
-                        <div class="left-sidebar">
-                            <h2 class="title text-center">CATEGORY</h2>
-                            <div class="panel-group category-products" id="accordian">
-                                <c:forEach var="comp" items="${Components}">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <h4 class="panel-title" style="display: flex; justify-content: space-between; align-items: center;">
-                                                <!-- Link: lọc theo Component -->
-                                                <a href="${ctx}/CategoriesController?service=filter&component=${fn:escapeXml(comp.componentName)}" style="flex-grow: 1;">
-                                                    ${comp.componentName}
-                                                </a>
 
-                                                <!-- Dấu + để mở brand list -->
-                                                <a data-toggle="collapse" href="#comp${comp.componentID}" style="margin-left: 10px;">
-                                                    <i class="fa fa-plus"></i> <!-- luôn là dấu + -->
-                                                </a>
-                                            </h4>
-                                        </div>
-
-                                        <!-- Brand list bên trong component -->
-                                        <div id="comp${comp.componentID}" class="panel-collapse collapse">
-                                            <div class="panel-body">
-                                                <ul>
-                                                    <c:forEach var="item" items="${BrandWithComponent}">
-                                                        <c:if test="${item.componentID == comp.componentID}">
-                                                            <li>
-                                                                <a href="${ctx}/CategoriesController?service=filter&component=${fn:escapeXml(comp.componentName)}&brand=${fn:escapeXml(item.brandName)}">
-                                                                    ${item.brandName}
-                                                                </a>
-                                                            </li>
-                                                        </c:if>
-                                                    </c:forEach>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </c:forEach>
-                            </div>
-
-
-
-                            <div class="brands_products"><!--brands_products-->
-                                <h2>Brands</h2>
-                                <div class="brands-name">
-                                    <ul class="nav nav-pills nav-stacked">
-                                        <c:forEach var="brand" items="${listBrand}">
-                                            <li>
-                                                <a href="${ctx}/CategoriesController?service=filter&brand=${fn:escapeXml(brand.brandName)}">
-                                                    ${brand.brandName}
-                                                </a>
-                                            </li>
-                                        </c:forEach>
-                                    </ul>
-                                </div>
-                            </div><!--/brands_products-->
-                            
-
-
-
-
-                        </div>
-                    </div>
-
-                    <div class="col-sm-9 padding-right">
+                    <div class="col-sm-12 padding-right">
 
                         <!-- PC Section -->
                         <div class="features_items" id="pc">
-                            <h2 class="title text-center" style="margin-top: 30px">PC Products</h2>
+                            <h2 class="title text-center" style="margin-top: 30px">Sale events</h2>
                             <div class="row">
                                 <c:forEach var="product" items="${pcProducts}">
                                     <div class="col-sm-4">
@@ -245,7 +95,7 @@
 
                         <!-- Laptop Section -->
                         <div class="features_items" id="laptop">
-                            <h2 class="title text-center" style="margin-top: 30px">Laptop Products</h2>
+                            <h2 class="title text-center" style="margin-top: 30px">Build PC</h2>
                             <div class="row">
                                 <c:forEach var="product" items="${laptopProducts}">
                                     <div class="col-sm-4">

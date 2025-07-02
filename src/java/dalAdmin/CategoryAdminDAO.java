@@ -249,8 +249,9 @@ public class CategoryAdminDAO extends DBAdminContext {
         SET Quantity = (
             SELECT COUNT(*)
             FROM Products p
-            WHERE p.CategoryID = Categories.CategoryID
-        )
+            JOIN Imports i ON p.ImportID = i.ImportID
+            WHERE i.CategoryID = Categories.CategoryID
+        );
     """;
 
         try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -263,12 +264,12 @@ public class CategoryAdminDAO extends DBAdminContext {
     public void updateCategoryInventory() {
         String sql = """
         UPDATE Categories
-        SET inventory = (
-            SELECT COUNT(*)
-            FROM Products p
-            WHERE p.CategoryID = Categories.CategoryID AND p.status = 1
-        )
-    """;
+            SET inventory = (
+                SELECT COUNT(*)
+                FROM Products p
+                JOIN Imports i ON p.ImportID = i.ImportID
+                WHERE i.CategoryID = Categories.CategoryID AND p.Status = 1
+            )""";
 
         try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.executeUpdate();

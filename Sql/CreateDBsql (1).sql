@@ -105,12 +105,10 @@ Create TABLE Imports(
 -- 10. Products
 CREATE TABLE Products (
     ProductID INT PRIMARY KEY IDENTITY(1,1),
-    CategoryID INT NOT NULL,
 	ProductCode Varchar(100) NOT null,
     Status int DEFAULT 1 NOT NULL,
 	ImportID INT NOT NULL,
 	Note text default null,
-    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
     FOREIGN KEY (ImportID) REFERENCES Imports(ImportID)
 );
 
@@ -136,6 +134,7 @@ Create table WarrantyDetails(
 -- 13. Orders
 CREATE TABLE Orders (
     OrderID INT PRIMARY KEY IDENTITY(1,1),
+	OrderCode int default null,
 	Product_Type int default null, -- 0 là cate, 1 là build PC
     CustomerID INT NOT NULL,
     OrderDate DATETIME DEFAULT GETDATE() NOT NULL,

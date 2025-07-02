@@ -9,27 +9,21 @@ public class ProductAdminDAO extends DBAdminContext {
     // Lấy danh sách tất cả sản phẩm
     public List<Products> getAllProducts() {
         List<Products> list = new ArrayList<>();
-        String sql = "SELECT \n"
-                + "    p.ProductID,\n"
-                + "    p.ProductCode,\n"
-                + "    p.ImportID,\n"
-                + "    c.CategoryID,\n"
-                + "    c.CategoryName,\n"
-                + "    p.Status\n"
-                + "FROM \n"
-                + "    Products p\n"
-                + "JOIN \n"
-                + "    Categories c ON p.CategoryID = c.CategoryID;";
+        String sql = "SELECT p.ProductID, p.ProductCode, p.ImportID, i.ImportCode, c.CategoryID, c.CategoryName, p.Status "
+                + "FROM Products p "
+                + "JOIN Imports i ON p.ImportID = i.ImportID "
+                + "JOIN Categories c ON i.CategoryID = c.CategoryID";
 
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Products p = new Products(
                         rs.getInt("ProductID"),
                         rs.getInt("ImportID"),
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"),
+                        rs.getString("ImportCode"),
                         rs.getString("ProductCode"),
-                        rs.getInt("Status")
+                        rs.getInt("Status"),
+                        rs.getInt("CategoryID"),
+                        rs.getString("CategoryName")
                 );
                 list.add(p);
             }
@@ -42,19 +36,11 @@ public class ProductAdminDAO extends DBAdminContext {
 
     public List<Products> getAllProductsByCategoryID(int categoryID) {
         List<Products> list = new ArrayList<>();
-        String sql = "SELECT \n"
-                + "    p.ProductID,\n"
-                + "    p.ProductCode,\n"
-                + "    p.ImportID,\n"
-                + "    c.CategoryID,\n"
-                + "    c.CategoryName,\n"
-                + "    p.Status\n"
-                + "FROM \n"
-                + "    Products p\n"
-                + "JOIN \n"
-                + "    Categories c ON p.CategoryID = c.CategoryID\n"
-                + "WHERE \n"
-                + "    c.CategoryID = ?";
+        String sql = "SELECT p.ProductID, p.ProductCode, p.ImportID, i.ImportCode, c.CategoryID, c.CategoryName, p.Status "
+                + "FROM Products p "
+                + "JOIN Imports i ON p.ImportID = i.ImportID "
+                + "JOIN Categories c ON i.CategoryID = c.CategoryID "
+                + "WHERE c.CategoryID = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, categoryID);
@@ -63,10 +49,11 @@ public class ProductAdminDAO extends DBAdminContext {
                     Products p = new Products(
                             rs.getInt("ProductID"),
                             rs.getInt("ImportID"),
-                            rs.getInt("CategoryID"),
-                            rs.getString("CategoryName"),
+                            rs.getString("ImportCode"),
                             rs.getString("ProductCode"),
-                            rs.getInt("Status")
+                            rs.getInt("Status"),
+                            rs.getInt("CategoryID"),
+                            rs.getString("CategoryName")
                     );
                     list.add(p);
                 }
@@ -80,19 +67,11 @@ public class ProductAdminDAO extends DBAdminContext {
 
     public List<Products> getAllProductsByImportID(int importID) {
         List<Products> list = new ArrayList<>();
-        String sql = "SELECT \n"
-                + "    p.ProductID,\n"
-                + "    p.ProductCode,\n"
-                + "    p.ImportID,\n"
-                + "    c.CategoryID,\n"
-                + "    c.CategoryName,\n"
-                + "    p.Status\n"
-                + "FROM \n"
-                + "    Products p\n"
-                + "JOIN \n"
-                + "    Categories c ON p.CategoryID = c.CategoryID\n"
-                + "WHERE \n"
-                + "    p.ImportID = ?";
+        String sql = "SELECT p.ProductID, p.ProductCode, p.ImportID, i.ImportCode, c.CategoryID, c.CategoryName, p.Status "
+                + "FROM Products p "
+                + "JOIN Imports i ON p.ImportID = i.ImportID "
+                + "JOIN Categories c ON i.CategoryID = c.CategoryID "
+                + "WHERE p.ImportID = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, importID);
@@ -101,10 +80,11 @@ public class ProductAdminDAO extends DBAdminContext {
                     Products p = new Products(
                             rs.getInt("ProductID"),
                             rs.getInt("ImportID"),
-                            rs.getInt("CategoryID"),
-                            rs.getString("CategoryName"),
+                            rs.getString("ImportCode"),
                             rs.getString("ProductCode"),
-                            rs.getInt("Status")
+                            rs.getInt("Status"),
+                            rs.getInt("CategoryID"),
+                            rs.getString("CategoryName")
                     );
                     list.add(p);
                 }
@@ -126,7 +106,6 @@ public class ProductAdminDAO extends DBAdminContext {
                 return new Products(
                         rs.getInt("ProductID"),
                         rs.getInt("ImportID"),
-                        rs.getInt("CategoryID"),
                         rs.getString("ProductCode"),
                         rs.getInt("Status")
                 );
@@ -226,6 +205,24 @@ public class ProductAdminDAO extends DBAdminContext {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertProductsFromExcel(List<String> productCodes, int importID) {
+        String sql = "INSERT INTO Products (ProductCode, ImportID, Status) VALUES (?, ?, 1)";
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            for (String code : productCodes) {
+                ps.setString(1, code);
+                ps.setInt(2, importID);
+                ps.addBatch();
+            }
+
+            ps.executeBatch();
+
+        } catch (SQLException e) {
+            System.err.println("insertProductsFromExcel Error: " + e.getMessage());
             e.printStackTrace();
         }
     }

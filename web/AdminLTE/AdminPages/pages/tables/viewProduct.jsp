@@ -70,6 +70,7 @@
                                             <tr>
                                                 <th>Product ID</th>
                                                 <th>Category Name</th>
+                                                <th>Import Code</th>
                                                 <th>Product Code</th>
                                                 <th>Status</th>
                                                 <th>Import</th>
@@ -82,6 +83,7 @@
                                                     <tr>
                                                         <td>${product.productID}</td>
                                                         <td>${product.categoryName}</td>
+                                                        <td>${product.importCode}</td>
                                                         <td>${product.productCode}</td>
                                                         <td>
                                                             <c:choose>

@@ -57,9 +57,14 @@ public class NotificationServlet extends HttpServlet {
                 
             case "markAsRead":
                 // Đánh dấu thông báo đã đọc
-                String notificationID = request.getParameter("notificationID");
-                if (notificationID != null) {
-                    dao.markAsRead(Integer.parseInt(notificationID));
+                session = request.getSession(false);
+                user = (session != null) ? (models.User) session.getAttribute("user") : null;
+                userID = (user != null) ? user.getUserId() : -1;
+                if (userID > 0) {
+                    String notificationID = request.getParameter("notificationID");
+                    if (notificationID != null) {
+                        dao.markAsRead(Integer.parseInt(notificationID));
+                    }
                 }
                 response.sendRedirect("NotificationServlet?service=list");
                 break;
@@ -76,9 +81,14 @@ public class NotificationServlet extends HttpServlet {
                 
             case "delete":
                 // Xóa thông báo
-                String deleteID = request.getParameter("notificationID");
-                if (deleteID != null) {
-                    dao.deleteNotification(Integer.parseInt(deleteID));
+                session = request.getSession(false);
+                user = (session != null) ? (models.User) session.getAttribute("user") : null;
+                userID = (user != null) ? user.getUserId() : -1;
+                if (userID > 0) {
+                    String deleteID = request.getParameter("notificationID");
+                    if (deleteID != null) {
+                        dao.deleteNotification(Integer.parseInt(deleteID));
+                    }
                 }
                 response.sendRedirect("NotificationServlet?service=list");
                 break;
