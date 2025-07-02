@@ -37,7 +37,6 @@
             <jsp:include page="../../components/sidebar.jsp">
                 <jsp:param name="ctx" value="${ctx}" />
             </jsp:include>
-            
             <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->

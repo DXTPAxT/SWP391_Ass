@@ -3,50 +3,7 @@
 <c:set var="activePage" value="${param.activePage}" />
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!-- Header Section Extracted from homepages.jsp -->
-<style>
-    .cart-dropdown {
-        position: relative;
-        list-style: none;
-    }
-
-    .cart-dropdown .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: #fff;
-        min-width: 150px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        z-index: 100;
-        right: 0;
-        padding: 10px;
-        border-radius: 4px;
-        flex-direction: column;
-    }
-
-    .cart-dropdown .dropdown-content a {
-        display: block;
-        padding: 8px;
-        text-decoration: none;
-        color: #333;
-    }
-
-    .cart-dropdown .dropdown-content a:hover {
-        background-color: #f0f0f0;
-    }
-
-    .cart-dropdown:hover .dropdown-content {
-        display: flex;
-    }
-    .arrow-up {
-        width: 0;
-        height: 0;
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        border-bottom: 8px solid #fff;
-        position: absolute;
-        top: -8px;
-        right: 10px;
-    }
-</style>
+<link href="${pageContext.request.contextPath}/ShopPages/Pages/css/CartCss.css" rel="stylesheet">
 <header id="header"><!--header-->
     <div class="header_top"><!--header_top-->
         <div class="container">
@@ -91,13 +48,13 @@
                                 <c:when test="${not empty sessionScope.user}">
                                     <c:if test="${not empty sessionScope.user and sessionScope.user.role.roleID == 3}">
                                         <li class="cart-dropdown">
-                                        <a href="#"><i class="fa fa-shopping-cart"></i> Cart</a>
-                                        <div class="dropdown-content">
-                                            <div class="arrow-up"></div>
-                                            <a href="${pageContext.request.contextPath}/Cart">CartItem</a>
-                                            <a href="CardBuildPc">CartPC</a>
-                                        </div>
-                                    </li>
+                                            <a href="#"><i class="fa fa-shopping-cart"></i> Cart</a>
+                                            <div class="dropdown-content">
+                                                <div class="arrow-up"></div>
+                                                <a href="${pageContext.request.contextPath}/Cart">CartItem</a>
+                                                <a href="CardBuildPc">CartPC</a>
+                                            </div>
+                                        </li>
                                         <li><a href="${pageContext.request.contextPath}/User?service=myAccount"><i class="fa fa-user"></i> Account</a></li>
                                         <li><a href="checkout.html"><i class="fa fa-check-square-o"></i> Checklist</a></li>
                                         </c:if>
@@ -133,8 +90,9 @@
                             <li><a href="${pageContext.request.contextPath}/HomePages" class="${activePage == 'home' ? 'active' : ''}">Home</a></li>
                             <li><a href="${pageContext.request.contextPath}/CategoriesController?service=list" class="${activePage == 'products' ? 'active' : ''}">Products</a></li>
                             <li><a href="${ctx}/blogc" class="${activePage == 'blog' ? 'active' : ''}">Blog</a></li>
-                            <li><a href="404.html" class="${activePage == '404' ? 'active' : ''}">404</a></li>
-                            <li><a href="contact-us.html" class="${activePage == 'contact' ? 'active' : ''}">Contact</a></li>
+                            <li><a href="${ctx}/ShopPages/Pages/BuildPC/BuildPC.html" class="${activePage == 'buildPC' ? 'active' : ''}">Build your PC</a></li>
+<!--                            <li><a href="404.html" class="${activePage == '404' ? 'active' : ''}">404</a></li>
+                            <li><a href="contact-us.html" class="${activePage == 'contact' ? 'active' : ''}">Contact</a></li>-->
 
                         </ul>
 

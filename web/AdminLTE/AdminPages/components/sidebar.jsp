@@ -73,19 +73,7 @@
                     <li><a href="${param.ctx}/CateAdmin"><i class="fa fa-circle-o"></i>View Category</a></li>
                     <li><a href="${param.ctx}/CateAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Category</a></li>
                 </ul>
-            </li>
-            <li class="treeview">
-                <a href="#">
-                    <i class="fa fa-laptop"></i> <span>Import</span>
-                    <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu">                               
-                    <li><a href="${param.ctx}/Import"><i class="fa fa-circle-o"></i>View Import</a></li>   
-                    <li><a href="${param.ctx}/Import?service=insert"><i class="fa fa-circle-o"></i>Insert new Import</a></li>   
-                </ul>
-            </li>
+            </li>           
             <li class="treeview">
                 <a href="#">
                     <i class="fa fa-laptop"></i> <span>Product</span>
@@ -164,8 +152,7 @@
                         <i class="fa fa-angle-left pull-right"></i>
                     </span>
                 </a>
-                <ul class="treeview-menu">                           
-                    <li><a href="${param.ctx}/Admin/user?type=admin"><i class="fa fa-circle-o"></i>View Admins</a></li>       
+                <ul class="treeview-menu">                          
                     <li><a href="${param.ctx}/Admin/user?type=customer"><i class="fa fa-circle-o"></i>View Customers</a></li>   
                     <li><a href="${param.ctx}/Admin/user?type=sale"><i class="fa fa-circle-o"></i>View Sales</a></li>   
                     <li><a href="${param.ctx}/Admin/user?type=shipper"><i class="fa fa-circle-o"></i>View Shippers</a></li>   
