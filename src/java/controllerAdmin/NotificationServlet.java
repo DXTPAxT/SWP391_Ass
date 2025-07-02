@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import dalAdmin.DBAdminContext;
 import models.User;
 import jakarta.servlet.http.HttpSession;
+import dal.UserDAO;
 
 /**
  *
@@ -107,24 +108,58 @@ public class NotificationServlet extends HttpServlet {
                 break;
             }
                 
+            case "showSendForm": {
+                UserDAO userDao = new UserDAO();
+                List<User> userList = new ArrayList<>();
+                userList.addAll(userDao.getAllAdmins());
+                userList.addAll(userDao.getAllSales());
+                userList.addAll(userDao.getAllCustomers());
+                userList.addAll(userDao.getAllShippers());
+                request.setAttribute("userList", userList);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/NotificationSend.jsp").forward(request, response);
+                break;
+            }
+                
             case "send": {
-                // Gửi thông báo mới
                 try {
-                    int toUserId = Integer.parseInt(request.getParameter("userID"));
+                    String[] userIds = request.getParameterValues("userID");
+                    boolean sendAll = "true".equals(request.getParameter("sendAll"));
                     int senderId = Integer.parseInt(request.getParameter("senderID"));
                     String title = request.getParameter("title");
                     String message = request.getParameter("message");
-                    Notification notification = new Notification();
-                    notification.setUserID(toUserId);
-                    notification.setSenderID(senderId);
-                    notification.setTitle(title);
-                    notification.setMessage(message);
-                    notification.setIsRead(false);
-                    notification.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-                    dao.addNotification(notification);
-                    response.sendRedirect("NotificationServlet?service=list");
+                    List<Integer> targetUserIds = new ArrayList<>();
+                    UserDAO userDao = new UserDAO();
+                    if (sendAll) {
+                        List<User> allUsers = new ArrayList<>();
+                        allUsers.addAll(userDao.getAllAdmins());
+                        allUsers.addAll(userDao.getAllSales());
+                        allUsers.addAll(userDao.getAllCustomers());
+                        allUsers.addAll(userDao.getAllShippers());
+                        for (User u : allUsers) targetUserIds.add(u.getUserId());
+                    } else if (userIds != null) {
+                        for (String userIdStr : userIds) targetUserIds.add(Integer.parseInt(userIdStr));
+                    }
+                    for (int userId : targetUserIds) {
+                        Notification notification = new Notification();
+                        notification.setUserID(userId);
+                        notification.setSenderID(senderId);
+                        notification.setTitle(title);
+                        notification.setMessage(message);
+                        notification.setIsRead(false);
+                        notification.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+                        dao.addNotification(notification);
+                    }
+                    // Sau khi gửi, forward lại về form và truyền thông báo thành công
+                    request.setAttribute("successMessage", "Đã gửi thông báo thành công!");
+                    List<User> userList = new ArrayList<>();
+                    userList.addAll(userDao.getAllAdmins());
+                    userList.addAll(userDao.getAllSales());
+                    userList.addAll(userDao.getAllCustomers());
+                    userList.addAll(userDao.getAllShippers());
+                    request.setAttribute("userList", userList);
+                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/NotificationSend.jsp").forward(request, response);
                 } catch (Exception e) {
-                    response.sendRedirect("NotificationServlet?service=list");
+                    response.sendRedirect("NotificationServlet?service=showSendForm");
                 }
                 break;
             }
