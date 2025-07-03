@@ -79,140 +79,140 @@ public class ImportServlet extends HttpServlet {
             request.setAttribute("imp", imp);
             request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewImportProductCode.jsp").forward(request, response);
         } else if (service.equals("insert")) {
-    String submit = request.getParameter("submit");
+            String submit = request.getParameter("submit");
 
-    if (submit == null) {
-        int categoryID = Integer.parseInt(request.getParameter("categoryID"));
-        CategoryAdminDAO cateDAO = new CategoryAdminDAO();
-        Categories selectedCategory = cateDAO.getCategoryByID(categoryID);
-        request.setAttribute("selectedCategory", selectedCategory);
+            if (submit == null) {
+                int categoryID = Integer.parseInt(request.getParameter("categoryID"));
+                CategoryAdminDAO cateDAO = new CategoryAdminDAO();
+                Categories selectedCategory = cateDAO.getCategoryByID(categoryID);
+                request.setAttribute("selectedCategory", selectedCategory);
 
-        List<Categories> categories = cateDAO.getAllCategories();
-        request.setAttribute("categories", categories);
-        request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertImport.jsp").forward(request, response);
-    } else {
-        String importCode = request.getParameter("importCode");
-        String categoryRaw = request.getParameter("categoryID");
-        String priceRaw = request.getParameter("price");
-        String error = null;
-
-        try {
-            int categoryID = Integer.parseInt(categoryRaw);
-            int price = 0;
-            ImportDAO imdao = new ImportDAO();
-
-            if (importCode == null || importCode.trim().isEmpty()) {
-                error = "Import code cannot be empty.";
-            } else if (imdao.isImportCodeExists(importCode)) {
-                error = "Import code already exists.";
-            }
-
-            if (priceRaw == null || !priceRaw.matches("^\\d+$")) {
-                error = "Price must be a positive number.";
+                List<Categories> categories = cateDAO.getAllCategories();
+                request.setAttribute("categories", categories);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertImport.jsp").forward(request, response);
             } else {
-                price = Integer.parseInt(priceRaw);
-            }
+                String importCode = request.getParameter("importCode");
+                String categoryRaw = request.getParameter("categoryID");
+                String priceRaw = request.getParameter("price");
+                String error = null;
 
-            if (error != null) {
-                CategoryAdminDAO cateDAO = new CategoryAdminDAO();
-                List<Categories> categories = cateDAO.getAllCategories();
-                request.setAttribute("categories", categories);
-                request.setAttribute("error", error);
-                request.setAttribute("importCode", importCode);
-                request.setAttribute("categoryID", categoryID);
-                request.setAttribute("price", price);
-                request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertImport.jsp").forward(request, response);
-                return;
-            }
+                try {
+                    int categoryID = Integer.parseInt(categoryRaw);
+                    int price = 0;
+                    ImportDAO imdao = new ImportDAO();
 
-            int importID = imdao.insertImportAndGetID(importCode, categoryID, price);
-            if (importID == -1) {
-                CategoryAdminDAO cateDAO = new CategoryAdminDAO();
-                List<Categories> categories = cateDAO.getAllCategories();
-                request.setAttribute("categories", categories);
-                request.setAttribute("error", "Failed to insert import (check import code or DB)." );
-                request.setAttribute("importCode", importCode);
-                request.setAttribute("categoryID", categoryID);
-                request.setAttribute("price", price);
-                request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertImport.jsp").forward(request, response);
-                return;
-            }
+                    if (importCode == null || importCode.trim().isEmpty()) {
+                        error = "Import code cannot be empty.";
+                    } else if (imdao.isImportCodeExists(importCode)) {
+                        error = "Import code already exists.";
+                    }
 
-            Part filePart = request.getPart("productExcel");
-            if (filePart != null && filePart.getSize() > 0) {
-                List<String> productCodes = new ArrayList<>();
-                ProductAdminDAO pdao = new ProductAdminDAO();
+                    if (priceRaw == null || !priceRaw.matches("^\\d+$")) {
+                        error = "Price must be a positive number.";
+                    } else {
+                        price = Integer.parseInt(priceRaw);
+                    }
 
-                try (InputStream is = filePart.getInputStream(); Workbook workbook = new XSSFWorkbook(is)) {
-                    Sheet sheet = workbook.getSheetAt(0);
-                    for (Row row : sheet) {
-                        int rowNum = row.getRowNum() + 1;
-                        Cell cell = row.getCell(0);
-                        if (cell != null && cell.getCellType() == CellType.STRING) {
-                            String code = cell.getStringCellValue().trim();
-                            if (code.isEmpty()) {
-                                continue;
+                    if (error != null) {
+                        CategoryAdminDAO cateDAO = new CategoryAdminDAO();
+                        List<Categories> categories = cateDAO.getAllCategories();
+                        request.setAttribute("categories", categories);
+                        request.setAttribute("error", error);
+                        request.setAttribute("importCode", importCode);
+                        request.setAttribute("categoryID", categoryID);
+                        request.setAttribute("price", price);
+                        request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertImport.jsp").forward(request, response);
+                        return;
+                    }
+
+                    int importID = imdao.insertImportAndGetID(importCode, categoryID, price);
+                    if (importID == -1) {
+                        CategoryAdminDAO cateDAO = new CategoryAdminDAO();
+                        List<Categories> categories = cateDAO.getAllCategories();
+                        request.setAttribute("categories", categories);
+                        request.setAttribute("error", "Failed to insert import (check import code or DB).");
+                        request.setAttribute("importCode", importCode);
+                        request.setAttribute("categoryID", categoryID);
+                        request.setAttribute("price", price);
+                        request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertImport.jsp").forward(request, response);
+                        return;
+                    }
+
+                    Part filePart = request.getPart("productExcel");
+                    if (filePart != null && filePart.getSize() > 0) {
+                        List<String> productCodes = new ArrayList<>();
+                        ProductAdminDAO pdao = new ProductAdminDAO();
+
+                        try (InputStream is = filePart.getInputStream(); Workbook workbook = new XSSFWorkbook(is)) {
+                            Sheet sheet = workbook.getSheetAt(0);
+                            for (Row row : sheet) {
+                                int rowNum = row.getRowNum() + 1;
+                                Cell cell = row.getCell(0);
+                                if (cell != null && cell.getCellType() == CellType.STRING) {
+                                    String code = cell.getStringCellValue().trim();
+                                    if (code.isEmpty()) {
+                                        continue;
+                                    }
+                                    if (code.length() > 30 || !code.matches("^[a-zA-Z0-9_-]+$")) {
+                                        imdao.deleteImportByID(importID);
+                                        error = "Invalid ProductCode '" + code + "' at row " + rowNum + ". Must be < 30 characters, no special characters.";
+                                        CategoryAdminDAO cateDAO = new CategoryAdminDAO();
+                                        List<Categories> categories = cateDAO.getAllCategories();
+                                        request.setAttribute("categories", categories);
+                                        request.setAttribute("error", error);
+                                        request.setAttribute("importCode", importCode);
+                                        request.setAttribute("categoryID", categoryID);
+                                        request.setAttribute("price", price);
+                                        request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertImport.jsp").forward(request, response);
+                                        return;
+                                    }
+                                    if (pdao.isProductCodeExists(code)) {
+                                        imdao.deleteImportByID(importID);
+                                        error = "Duplicate ProductCode '" + code + "' at row " + rowNum;
+                                        CategoryAdminDAO cateDAO = new CategoryAdminDAO();
+                                        List<Categories> categories = cateDAO.getAllCategories();
+                                        request.setAttribute("categories", categories);
+                                        request.setAttribute("error", error);
+                                        request.setAttribute("importCode", importCode);
+                                        request.setAttribute("categoryID", categoryID);
+                                        request.setAttribute("price", price);
+                                        request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertImport.jsp").forward(request, response);
+                                        return;
+                                    }
+                                    productCodes.add(code);
+                                }
                             }
-                            if (code.length() > 30 || !code.matches("^[a-zA-Z0-9_-]+$")) {
-                                imdao.deleteImportByID(importID);
-                                error = "Invalid ProductCode '" + code + "' at row " + rowNum + ". Must be < 30 characters, no special characters.";
-                                CategoryAdminDAO cateDAO = new CategoryAdminDAO();
-                                List<Categories> categories = cateDAO.getAllCategories();
-                                request.setAttribute("categories", categories);
-                                request.setAttribute("error", error);
-                                request.setAttribute("importCode", importCode);
-                                request.setAttribute("categoryID", categoryID);
-                                request.setAttribute("price", price);
-                                request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertImport.jsp").forward(request, response);
-                                return;
-                            }
-                            if (pdao.isProductCodeExists(code)) {
-                                imdao.deleteImportByID(importID);
-                                error = "Duplicate ProductCode '" + code + "' at row " + rowNum;
-                                CategoryAdminDAO cateDAO = new CategoryAdminDAO();
-                                List<Categories> categories = cateDAO.getAllCategories();
-                                request.setAttribute("categories", categories);
-                                request.setAttribute("error", error);
-                                request.setAttribute("importCode", importCode);
-                                request.setAttribute("categoryID", categoryID);
-                                request.setAttribute("price", price);
-                                request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertImport.jsp").forward(request, response);
-                                return;
-                            }
-                            productCodes.add(code);
+                            pdao.insertProductsFromExcel(productCodes, importID);
+                        } catch (Exception e) {
+                            imdao.deleteImportByID(importID);
+                            e.printStackTrace();
+                            CategoryAdminDAO cateDAO = new CategoryAdminDAO();
+                            List<Categories> categories = cateDAO.getAllCategories();
+                            request.setAttribute("categories", categories);
+                            request.setAttribute("error", "Error reading Excel file: " + e.getMessage());
+                            request.setAttribute("importCode", importCode);
+                            request.setAttribute("categoryID", categoryID);
+                            request.setAttribute("price", price);
+                            request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertImport.jsp").forward(request, response);
+                            return;
                         }
                     }
-                    pdao.insertProductsFromExcel(productCodes, importID);
+
+                    response.sendRedirect("Import?service=list");
+
                 } catch (Exception e) {
-                    imdao.deleteImportByID(importID);
                     e.printStackTrace();
                     CategoryAdminDAO cateDAO = new CategoryAdminDAO();
                     List<Categories> categories = cateDAO.getAllCategories();
                     request.setAttribute("categories", categories);
-                    request.setAttribute("error", "Error reading Excel file: " + e.getMessage());
+                    request.setAttribute("error", "Unexpected Error: " + e.getMessage());
                     request.setAttribute("importCode", importCode);
-                    request.setAttribute("categoryID", categoryID);
-                    request.setAttribute("price", price);
+                    request.setAttribute("categoryID", categoryRaw);
+                    request.setAttribute("price", priceRaw);
                     request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertImport.jsp").forward(request, response);
-                    return;
                 }
             }
-
-            response.sendRedirect("Import?service=list");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            CategoryAdminDAO cateDAO = new CategoryAdminDAO();
-            List<Categories> categories = cateDAO.getAllCategories();
-            request.setAttribute("categories", categories);
-            request.setAttribute("error", "Unexpected Error: " + e.getMessage());
-            request.setAttribute("importCode", importCode);
-            request.setAttribute("categoryID", categoryRaw);
-            request.setAttribute("price", priceRaw);
-            request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertImport.jsp").forward(request, response);
         }
-    }
-}
 
     }
 
