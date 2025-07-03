@@ -30,7 +30,6 @@
     <button type="submit" class="btn btn-sm btn-primary">Lọc</button>
 </form>
 
-
 <!-- DANH SÁCH SẢN PHẨM -->
 <div class="container-fluid">
     <div class="row">
@@ -41,9 +40,31 @@
                     <div>
                         <div><strong>${p.categoryName}</strong> - ${p.brandName}</div>
                         <div>Giá: <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫</div>
-                        <button class="btn btn-sm btn-success mt-2"
-                                onclick="selectProduct(${p.componentID}, '${fn:escapeXml(p.categoryName)}', '${fn:escapeXml(p.brandName)}', ${p.price}, '${p.imgURL}', ${p.categoryID})">
+                        <c:if test="${not empty warrantyMap[p.categoryID]}">
+                            <div style="margin-top: 5px;">
+                                <strong>Chọn bảo hành:</strong>
+                                <c:forEach var="w" items="${warrantyMap[p.categoryID]}" varStatus="status">
+                                    <div style="margin-left: 10px;">
+                                        <input type="radio"
+                                               name="warranty-${p.categoryID}"
+                                               id="w-${p.categoryID}-${status.index}"
+                                               value="${w.warrantyDetailID}"
+                                               <c:if test="${w.status != 1}">disabled</c:if> />
+                                        <label for="w-${p.categoryID}-${status.index}">
+                                            <span class="warranty-desc">${w.description}</span> - 
+                                            ${w.warrantyPeriod} tháng - 
+                                            <span class="warranty-price"><fmt:formatNumber value="${w.price}" type="number" groupingUsed="true"/>₫</span>
+                                            <c:if test="${w.status != 1}">
+                                                <span style="color:red;">(Ngừng áp dụng)</span>
+                                            </c:if>
+                                        </label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </c:if>
 
+                        <button class="btn btn-sm btn-success mt-2"
+                                onclick="chooseProductWithWarranty(${componentID}, ${p.categoryID}, '${fn:escapeXml(p.categoryName)}', '${fn:escapeXml(p.brandName)}', ${p.price}, '${fn:escapeXml(p.imgURL)}', ${p.categoryID})">
                             Chọn
                         </button>
                     </div>
@@ -53,16 +74,13 @@
     </div>
 </div>
 
-
 <!-- PHÂN TRANG -->
 <c:if test="${totalPages > 1}">
     <nav>
         <ul class="pagination d-flex justify-content-center flex-wrap" style="gap: 5px;">
             <c:forEach begin="1" end="${totalPages}" var="i">
                 <li class="page-item ${i == currentPage ? 'active' : ''}">
-                    <a class="page-link" href="/ComputerOnlineShop/BuildPC_ListCate?service=filter&ajax=true&componentID=${param.componentID}&keyword=${param.keyword}&brand=${param.brand}&minPrice=${param.minPrice}&maxPrice=${param.maxPrice}&page=${i}">
-                        ${i}
-                    </a>
+                    <a class="page-link" href="javascript:void(0);" data-page="${i}">${i}</a>
                 </li>
             </c:forEach>
         </ul>

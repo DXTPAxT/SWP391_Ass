@@ -9,11 +9,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import models.Brands;
 import models.BuildPCAdmin;
 import models.BuildPCView;
 import models.Categories;
+import models.WarrantyDetails;
 
 public class BuildPC_ListCate extends HttpServlet {
 
@@ -21,6 +24,7 @@ public class BuildPC_ListCate extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         response.setContentType("text/html;charset=UTF-8");
         String service = request.getParameter("service");
         boolean ajax = "true".equalsIgnoreCase(request.getParameter("ajax"));
@@ -33,75 +37,12 @@ public class BuildPC_ListCate extends HttpServlet {
         }
 
         if ("filter".equals(service)) {
-            String componentID = request.getParameter("componentID");
-            String keyword = request.getParameter("keyword");
-            String brand_raw = request.getParameter("brand");
-            String minPrice = request.getParameter("minPrice");
-            String maxPrice = request.getParameter("maxPrice");
-            String page = request.getParameter("page");
-            int pageSize = 5;
-
-            try {
-                int comID = safeParseInt(componentID, -1);
-                String key = keyword != null ? keyword.trim() : "";
-                String brand = brand_raw != null ? brand_raw.trim() : "";
-                int min = safeParseInt(minPrice, -1);
-                int max = safeParseInt(maxPrice, Integer.MAX_VALUE);
-                int pages = safeParseInt(page, 1);
-                int start = (pages - 1) * pageSize;
-
-                if (comID == -1) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "componentID không hợp lệ");
-                    return;
-                }
-
-                int total = dao.countFilteredByComponent(comID, brand, min, max, key);
-                int totalPages = (int) Math.ceil((double) total / pageSize);
-                List<Categories> listFiltered = dao.getCategoriesFiltered2(comID, brand, key, min, max, start, pageSize);
-                List<Brands> brands = dao.getBrandsByComponent(comID);
-
-                request.setAttribute("products", listFiltered);
-                request.setAttribute("brands", brands);
-                request.setAttribute("componentID", componentID);
-                request.setAttribute("currentPage", pages);
-                request.setAttribute("totalPages", totalPages);
-
-                if (ajax) {
-                    request.getRequestDispatcher("/AdminLTE/AdminPages/pages/tables/BuildPC_Cate_List.jsp").forward(request, response);
-                } else {
-                    response.sendRedirect("BuildPC.html");
-                }
-                return;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi xử lý filter");
-            }
+            handleFilter(request, response, ajax);
+            return;
         }
 
         if ("loadBuildPC".equals(service)) {
-            int buildPCID = safeParseInt(request.getParameter("buildPCID"), -1);
-            if (buildPCID == -1) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid BuildPCID");
-                return;
-            }
-
-            try {
-                List<BuildPCAdmin> items = dao.getBuildPCItemsByBuildPCID(buildPCID);
-                response.setContentType("text/plain;charset=UTF-8");
-                PrintWriter out = response.getWriter();
-
-                for (BuildPCAdmin item : items) {
-                    String line = item.getComponentID() + "|" + item.getCateID() + "|" + escape(item.getCateName()) + "|"
-                            + escape(item.getBrandName()) + "|" + item.getPrice() + "|" + escape(item.getImgURL());
-                    out.println(line);
-                }
-                out.flush();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error loading BuildPC");
-            }
+            handleLoadBuildPC(request, response);
             return;
         }
     }
@@ -135,47 +76,52 @@ public class BuildPC_ListCate extends HttpServlet {
             return;
         }
 
-        if ("delete".equals(service)) {
-            handleDelete(request, response);
-            return;
-        }
-
         processRequest(request, response);
     }
 
     private void handleInsert(HttpServletRequest request, HttpServletResponse response, models.User user) throws IOException {
         try {
             String idsRaw = request.getParameter("categoryIDs");
+            String warrantiesRaw = request.getParameter("warrantyIDs");
 
-            if (idsRaw == null || idsRaw.isEmpty()) {
+            if (idsRaw == null || warrantiesRaw == null || idsRaw.isEmpty() || warrantiesRaw.isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Thiếu thông tin bắt buộc.");
                 return;
             }
 
             String[] parts = idsRaw.split(",");
-            if (parts.length != 6) {
+            String[] warranties = warrantiesRaw.split(",");
+
+            if (parts.length != 6 || warranties.length != 6) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Phải chọn đủ 6 linh kiện.");
                 return;
             }
 
             List<Integer> categoryIDs = new ArrayList<>();
-            for (String part : parts) {
-                categoryIDs.add(Integer.parseInt(part.trim()));
+            List<Integer> warrantyIDs = new ArrayList<>();
+
+            for (int i = 0; i < 6; i++) {
+                categoryIDs.add(Integer.parseInt(parts[i].trim()));
+                int wID = Integer.parseInt(warranties[i].trim());
+                warrantyIDs.add(Math.max(wID, 0));
             }
 
             String role = user.getRole() != null ? user.getRole().getRoleName() : "Customer";
             int userID = user.getUserId();
 
             if ("Admin".equalsIgnoreCase(role)) {
-    
                 if (dao.isDuplicateBuildPC(categoryIDs, -1)) {
                     response.sendError(HttpServletResponse.SC_CONFLICT, "Build PC với cấu hình này đã tồn tại.");
                     return;
                 }
             }
 
-            boolean success = dao.insertBuildPC(categoryIDs, userID);
-            response.getWriter().write(success ? "OK" : "Thêm Build PC thất bại.");
+            boolean success = dao.insertBuildPC(categoryIDs, warrantyIDs, userID);
+            if (success) {
+                response.getWriter().write("OK");
+            } else {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Thêm Build PC thất bại.");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -187,39 +133,45 @@ public class BuildPC_ListCate extends HttpServlet {
         try {
             int buildPCID = safeParseInt(request.getParameter("buildPCID"), -1);
             String idsRaw = request.getParameter("categoryIDs");
+            String warrantiesRaw = request.getParameter("warrantyIDs");
             int newStatus = safeParseInt(request.getParameter("status"), 0);
 
-            if (buildPCID == -1 || idsRaw == null || idsRaw.trim().isEmpty()) {
+            if (buildPCID == -1 || idsRaw == null || warrantiesRaw == null || idsRaw.isEmpty() || warrantiesRaw.isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Thiếu dữ liệu bắt buộc.");
                 return;
             }
 
             String[] parts = idsRaw.split(",");
-            if (parts.length != 6) {
+            String[] warranties = warrantiesRaw.split(",");
+
+            if (parts.length != 6 || warranties.length != 6) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Phải chọn đủ 6 linh kiện.");
                 return;
             }
 
             List<Integer> categoryIDs = new ArrayList<>();
-            for (String part : parts) {
-                categoryIDs.add(Integer.parseInt(part.trim()));
+            List<Integer> warrantyIDs = new ArrayList<>();
+
+            for (int i = 0; i < 6; i++) {
+                categoryIDs.add(Integer.parseInt(parts[i].trim()));
+                int wID = Integer.parseInt(warranties[i].trim());
+                warrantyIDs.add(Math.max(wID, 0));
             }
 
             String role = user.getRole() != null ? user.getRole().getRoleName() : "Customer";
 
             if ("Admin".equalsIgnoreCase(role)) {
-                // Admin không được trùng với bất kỳ cấu hình nào khác
                 if (dao.isDuplicateBuildPC(categoryIDs, buildPCID)) {
                     response.sendError(HttpServletResponse.SC_CONFLICT, "Build PC đã tồn tại.");
                     return;
                 }
             }
 
-            boolean success = dao.updateBuildPC(buildPCID, categoryIDs, newStatus, role);
+            boolean success = dao.updateBuildPC(buildPCID, categoryIDs, warrantyIDs, newStatus, role);
             if (success) {
                 response.getWriter().write("Cập nhật thành công.");
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Cập nhật thất bại hoặc dữ liệu không hợp lệ.");
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Cập nhật thất bại hoặc dữ liệu không hợp lệ.");
             }
 
         } catch (Exception e) {
@@ -228,20 +180,82 @@ public class BuildPC_ListCate extends HttpServlet {
         }
     }
 
-    private void handleDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void handleFilter(HttpServletRequest request, HttpServletResponse response, boolean ajax) throws IOException, ServletException {
         try {
-            int buildPCID = safeParseInt(request.getParameter("buildPCID"), -1);
-            if (buildPCID == -1) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid BuildPCID.");
+            int componentID = safeParseInt(request.getParameter("componentID"), -1);
+            String keyword = request.getParameter("keyword");
+            String brand = request.getParameter("brand");
+            int minPrice = safeParseInt(request.getParameter("minPrice"), -1);
+            int maxPrice = safeParseInt(request.getParameter("maxPrice"), Integer.MAX_VALUE);
+            int page = safeParseInt(request.getParameter("page"), 1);
+            int pageSize = 5;
+
+            if (componentID == -1) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "componentID không hợp lệ");
                 return;
             }
 
-            boolean success = dao.deleteBuildPC(buildPCID);
-            response.getWriter().write(success ? "Build PC deleted successfully." : "Deletion failed.");
+            int total = dao.countFilteredByComponent(componentID, brand, minPrice, maxPrice, keyword);
+            int totalPages = (int) Math.ceil((double) total / pageSize);
+            int start = (page - 1) * pageSize;
+
+            List<Categories> products = dao.getCategoriesFiltered2(componentID, brand, keyword, minPrice, maxPrice, start, pageSize);
+            List<Brands> brands = dao.getBrandsByComponent(componentID);
+            Map<Integer, List<WarrantyDetails>> warrantyMap = new HashMap<>();
+            for (Categories c : products) {
+                warrantyMap.put(c.getCategoryID(), dao.getWarrantyByCategory(c.getCategoryID()));
+            }
+
+            request.setAttribute("products", products);
+            request.setAttribute("brands", brands);
+            request.setAttribute("componentID", componentID);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("warrantyMap", warrantyMap);
+
+            if (ajax) {
+                request.getRequestDispatcher("/AdminLTE/AdminPages/pages/tables/BuildPC_Cate_List.jsp").forward(request, response);
+            } else {
+                response.sendRedirect("BuildPC.html");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error occurred while deleting.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi xử lý filter.");
+        }
+    }
+
+    private void handleLoadBuildPC(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int buildPCID = safeParseInt(request.getParameter("buildPCID"), -1);
+        if (buildPCID == -1) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid BuildPCID");
+            return;
+        }
+
+        try {
+            List<BuildPCAdmin> items = dao.getBuildPCItemsByBuildPCID(buildPCID);
+            response.setContentType("text/plain;charset=UTF-8");
+            PrintWriter out = response.getWriter();
+
+            for (BuildPCAdmin item : items) {
+                String line = item.getComponentID() + "|"
+                        + item.getCateID() + "|"
+                        + escape(item.getCateName()) + "|"
+                        + escape(item.getBrandName()) + "|"
+                        + item.getPrice() + "|"
+                        + escape(item.getImgURL()) + "|"
+                        + escape(item.getWarrantyDesc()) + "|"
+                        + item.getWarrantyPrice() + "|"
+                        + item.getWarrantyDetailID();
+
+                out.println(line);
+            }
+
+            out.flush();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error loading BuildPC");
         }
     }
 

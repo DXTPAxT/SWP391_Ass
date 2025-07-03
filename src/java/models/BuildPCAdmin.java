@@ -15,6 +15,8 @@ public class BuildPCAdmin {
     private int CateID;
     private String CateName;
     private int ComponentID;
+    private int WarrantyPrice;
+    private String WarrantyDesc;
     private int WarrantyDetailID;
     private int Price;
     private int Status;
@@ -67,6 +69,34 @@ public class BuildPCAdmin {
         this.WarrantyDetailID = WarrantyDetailID;
         this.Price = Price;
         this.Status = Status;
+    }
+
+    public BuildPCAdmin(int ComponentID, int CateID, String CateName, String brandName, int Price, String imgURL, int WarrantyDetailID, int WarrantyPrice, String WarrantyDesc) {
+        this.ComponentID = ComponentID;
+        this.CateID = CateID;
+        this.CateName = CateName;
+        this.brandName = brandName;
+        this.Price = Price;
+        this.imgURL = imgURL;
+        this.WarrantyDetailID = WarrantyDetailID;
+        this.WarrantyPrice = WarrantyPrice;
+        this.WarrantyDesc = WarrantyDesc;
+    }
+
+    public String getWarrantyDesc() {
+        return WarrantyDesc;
+    }
+
+    public void setWarrantyDesc(String WarrantyDesc) {
+        this.WarrantyDesc = WarrantyDesc;
+    }
+
+    public int getWarrantyPrice() {
+        return WarrantyPrice;
+    }
+
+    public void setWarrantyPrice(int WarrantyPrice) {
+        this.WarrantyPrice = WarrantyPrice;
     }
 
     public int getBuildPCID() {
