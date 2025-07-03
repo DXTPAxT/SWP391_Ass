@@ -17,6 +17,7 @@ import models.BuildPCAdmin;
 import models.BuildPCView;
 import models.Categories;
 import models.Components;
+import models.WarrantyDetails;
 
 /**
  *
@@ -45,19 +46,21 @@ public class BuildPCAdminDAO extends DBAdminContext {
         return list;
     }
 
-  public List<BuildPCView> getBuildPCSummaryView() {
+ public List<BuildPCView> getBuildPCSummaryView() {
     List<BuildPCView> list = new ArrayList<>();
     String sql = """
     SELECT 
         bp.BuildPCID,
+        
         MAX(CASE WHEN bc.ComponentID = 2 THEN c.CategoryName END) AS MainBoard,
         MAX(CASE WHEN bc.ComponentID = 3 THEN c.CategoryName END) AS CPU,
         MAX(CASE WHEN bc.ComponentID = 4 THEN c.CategoryName END) AS GPU,
         MAX(CASE WHEN bc.ComponentID = 5 THEN c.CategoryName END) AS RAM,
         MAX(CASE WHEN bc.ComponentID = 6 THEN c.CategoryName END) AS SSD,
         MAX(CASE WHEN bc.ComponentID = 7 THEN c.CategoryName END) AS PCCase,
-        bp.Price AS Price,
-        bp.Status AS Status,
+
+        SUM(bpi.Price) AS TotalPrice, 
+        MAX(bp.Status) AS Status,
         u.UserID,
         u.FullName,
         r.RoleName
@@ -68,7 +71,7 @@ public class BuildPCAdminDAO extends DBAdminContext {
     JOIN Users u ON bp.UserID = u.UserID
     JOIN Roles r ON u.RoleID = r.RoleID
     WHERE bc.ComponentID BETWEEN 2 AND 7
-    GROUP BY bp.BuildPCID, bp.Price, bp.Status, u.UserID, u.FullName, r.RoleName
+    GROUP BY bp.BuildPCID, u.UserID, u.FullName, r.RoleName
     ORDER BY bp.BuildPCID
     """;
 
@@ -83,7 +86,8 @@ public class BuildPCAdminDAO extends DBAdminContext {
             b.setRam(rs.getString("RAM"));
             b.setSsd(rs.getString("SSD"));
             b.setPcCase(rs.getString("PCCase"));
-            b.setPrice(rs.getInt("Price")); // Lấy giá từ Build_PC chuẩn đã trừ tiền cọc
+            
+            b.setPrice(rs.getInt("TotalPrice")); // Tổng tiền chính xác từ từng item
             b.setStatus(rs.getInt("Status"));
             b.setUserID(rs.getInt("UserID"));
             b.setFullName(rs.getString("FullName"));
@@ -95,6 +99,7 @@ public class BuildPCAdminDAO extends DBAdminContext {
     }
     return list;
 }
+
 
 
     private Categories extractCategory(ResultSet rs) throws SQLException {
@@ -303,105 +308,112 @@ public class BuildPCAdminDAO extends DBAdminContext {
 }
 
 
-public boolean insertBuildPC(List<Integer> categoryIDs, int userID) {
-    if (categoryIDs == null || categoryIDs.size() != 6) {
+public boolean insertBuildPC(List<Integer> categoryIDs, List<Integer> warrantyIDs, int userID) {
+    if (categoryIDs == null || warrantyIDs == null || categoryIDs.size() != 6 || warrantyIDs.size() != 6) {
         return false;
     }
 
-    String insertBuildPCSQL = "INSERT INTO Build_PC (Price, Status, UserID) VALUES (?, ?, ?)";
+    String insertBuildPCSQL = "INSERT INTO Build_PC (Price, Status, UserID) VALUES (?, 1, ?)";
     String insertItemSQL = """
         INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status)
         VALUES (?, ?, ?, ?, 1)
     """;
 
-  String getInfoSQL = """
-    SELECT TOP 1
-        c.Price AS ProductPrice,
-        wd.WarrantyDetailID,
-        wd.Status AS WarrantyStatus,
-        wd.Price AS WarrantyPrice
-    FROM Categories c
-    JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-    JOIN WarrantyDetails wd ON bc.BrandComID = wd.BrandComID
-    WHERE c.CategoryID = ?
-    ORDER BY wd.Price ASC
-""";
+    String getProductSQL = "SELECT Price FROM Categories WHERE CategoryID = ?";
+    String getWarrantySQL = """
+        SELECT Price, Status FROM WarrantyDetails 
+        WHERE WarrantyDetailID = ? AND BrandComID = (
+            SELECT BrandComID FROM Categories WHERE CategoryID = ?
+        )
+    """;
 
     try {
         connection.setAutoCommit(false);
 
         int totalPrice = 0;
-        List<int[]> itemData = new ArrayList<>(); // Mỗi phần tử [categoryID, tổng giá, warrantyID]
+        List<Object[]> itemData = new ArrayList<>();
 
-        PreparedStatement psInfo = connection.prepareStatement(getInfoSQL);
+        PreparedStatement psProduct = connection.prepareStatement(getProductSQL);
+        PreparedStatement psWarranty = connection.prepareStatement(getWarrantySQL);
 
-        for (int categoryID : categoryIDs) {
-            psInfo.setInt(1, categoryID);
-            try (ResultSet rs = psInfo.executeQuery()) {
+        for (int i = 0; i < 6; i++) {
+            int categoryID = categoryIDs.get(i);
+            int warrantyID = warrantyIDs.get(i);
+
+            int productPrice = 0;
+            int warrantyPrice = 0;
+            Integer finalWarrantyID = null;
+
+            psProduct.setInt(1, categoryID);
+            try (ResultSet rs = psProduct.executeQuery()) {
                 if (rs.next()) {
-                    int productPrice = rs.getInt("ProductPrice");
-                    int warrantyID = rs.getInt("WarrantyDetailID");
-                    int warrantyPrice = rs.getInt("WarrantyPrice");
-                    int warrantyStatus = rs.getInt("WarrantyStatus");
-
-                    // Nếu bảo hành status = 0 thì tính giá bảo hành = 0
-                    int actualWarrantyPrice = (warrantyStatus == 1) ? warrantyPrice : 0;
-
-                    int itemTotal = productPrice + actualWarrantyPrice;
-                    totalPrice += itemTotal;
-
-                    itemData.add(new int[]{categoryID, itemTotal, warrantyID});
+                    productPrice = rs.getInt("Price");
                 } else {
                     connection.rollback();
-                    return false; // Không tìm thấy dữ liệu hợp lệ
+                    return false;
                 }
             }
+
+            if (warrantyID > 0) {
+                psWarranty.setInt(1, warrantyID);
+                psWarranty.setInt(2, categoryID);
+                try (ResultSet rs = psWarranty.executeQuery()) {
+                    if (rs.next() && rs.getInt("Status") == 1) {
+                        warrantyPrice = rs.getInt("Price");
+                        finalWarrantyID = warrantyID;
+                    }
+                }
+            }
+
+            int itemTotal = productPrice + warrantyPrice;
+            totalPrice += itemTotal;
+            itemData.add(new Object[]{categoryID, itemTotal, finalWarrantyID});
         }
 
-        // Insert vào bảng Build_PC
-        PreparedStatement psBuildPC = connection.prepareStatement(insertBuildPCSQL, PreparedStatement.RETURN_GENERATED_KEYS);
-        psBuildPC.setInt(1, totalPrice);
-        psBuildPC.setInt(2, 1); // Trạng thái mặc định
-        psBuildPC.setInt(3, userID);
-        psBuildPC.executeUpdate();
+        PreparedStatement psInsertPC = connection.prepareStatement(insertBuildPCSQL, PreparedStatement.RETURN_GENERATED_KEYS);
+        psInsertPC.setInt(1, totalPrice);
+        psInsertPC.setInt(2, userID);
+        psInsertPC.executeUpdate();
 
-        ResultSet rsPC = psBuildPC.getGeneratedKeys();
+        ResultSet rsPC = psInsertPC.getGeneratedKeys();
         if (!rsPC.next()) {
             connection.rollback();
             return false;
         }
         int buildPCID = rsPC.getInt(1);
 
-        // Insert từng linh kiện
-        PreparedStatement psItem = connection.prepareStatement(insertItemSQL);
-        for (int[] item : itemData) {
-            psItem.setInt(1, buildPCID);
-            psItem.setInt(2, item[0]); // CategoryID
-            psItem.setInt(3, item[1]); // Tổng giá
-            psItem.setInt(4, item[2]); // WarrantyDetailID
-            psItem.addBatch();
-        }
+        PreparedStatement psInsertItem = connection.prepareStatement(insertItemSQL);
+        for (Object[] item : itemData) {
+            psInsertItem.setInt(1, buildPCID);
+            psInsertItem.setInt(2, (int) item[0]);
+            psInsertItem.setInt(3, (int) item[1]);
 
-        psItem.executeBatch();
+            if (item[2] != null) {
+                psInsertItem.setInt(4, (int) item[2]);
+            } else {
+                psInsertItem.setNull(4, java.sql.Types.INTEGER);
+            }
+            psInsertItem.addBatch();
+        }
+        psInsertItem.executeBatch();
+
         connection.commit();
         return true;
 
     } catch (Exception e) {
         try {
             connection.rollback();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        } catch (SQLException ex) { ex.printStackTrace(); }
         e.printStackTrace();
     } finally {
         try {
             connection.setAutoCommit(true);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        } catch (SQLException ex) { ex.printStackTrace(); }
     }
     return false;
 }
+
+
 
 
 
@@ -421,19 +433,22 @@ public boolean insertBuildPC(List<Integer> categoryIDs, int userID) {
         return 0;
     }
 
-   public boolean updateBuildPC(int buildPCID, List<Integer> newCategoryIDs, int newStatus, String role) {
-    if (newCategoryIDs == null || newCategoryIDs.size() != 6) {
+public boolean updateBuildPC(int buildPCID, List<Integer> categoryIDs, List<Integer> warrantyIDs, int status, String role) {
+    if (categoryIDs == null || warrantyIDs == null || categoryIDs.size() != 6 || warrantyIDs.size() != 6) {
+        System.out.println("Danh sách linh kiện hoặc bảo hành không hợp lệ.");
         return false;
     }
 
-    // Phân quyền theo role
+    // Kiểm tra status theo role
     if ("Admin".equalsIgnoreCase(role)) {
-        if (newStatus != 1 && newStatus != 2) {
-            return false; // Admin chỉ được phép chuyển trạng thái bán/ngừng bán
+        if (status < 1 || status > 2) {
+            System.out.println("Status không hợp lệ cho Admin: " + status);
+            return false;
         }
     } else {
-        if (newStatus < 0 || newStatus > 7) {
-            return false; // Khách chỉ được đổi trong khoảng hợp lệ
+        if (status < 0 || status > 7) {
+            System.out.println("Status không hợp lệ cho Customer: " + status);
+            return false;
         }
     }
 
@@ -444,75 +459,98 @@ public boolean insertBuildPC(List<Integer> categoryIDs, int userID) {
         VALUES (?, ?, ?, ?, 1)
     """;
 
-    String getInfoSQL = """
-        SELECT TOP 1
-            c.Price AS ProductPrice,
-            wd.WarrantyDetailID,
-            wd.Status AS WarrantyStatus,
-            wd.Price AS WarrantyPrice
-        FROM Categories c
-        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-        JOIN WarrantyDetails wd ON bc.BrandComID = wd.BrandComID
-        WHERE c.CategoryID = ?
-        ORDER BY wd.Price ASC
+    String getProductSQL = "SELECT Price FROM Categories WHERE CategoryID = ?";
+    String getWarrantySQL = """
+        SELECT Price, Status FROM WarrantyDetails 
+        WHERE WarrantyDetailID = ? AND BrandComID = (
+            SELECT BrandComID FROM Categories WHERE CategoryID = ?
+        )
     """;
 
     try {
         connection.setAutoCommit(false);
 
         int totalPrice = 0;
-        List<int[]> itemData = new ArrayList<>(); // [categoryID, tổng giá, warrantyID]
+        List<Object[]> itemData = new ArrayList<>();
 
-        PreparedStatement psInfo = connection.prepareStatement(getInfoSQL);
+        PreparedStatement psProduct = connection.prepareStatement(getProductSQL);
+        PreparedStatement psWarranty = connection.prepareStatement(getWarrantySQL);
 
-        for (int categoryID : newCategoryIDs) {
-            psInfo.setInt(1, categoryID);
-            try (ResultSet rs = psInfo.executeQuery()) {
+        for (int i = 0; i < 6; i++) {
+            int categoryID = categoryIDs.get(i);
+            int warrantyID = warrantyIDs.get(i);
+
+            int productPrice = 0;
+            int warrantyPrice = 0;
+            Integer finalWarrantyID = null;
+
+            // Lấy giá sản phẩm
+            psProduct.setInt(1, categoryID);
+            try (ResultSet rs = psProduct.executeQuery()) {
                 if (rs.next()) {
-                    int productPrice = rs.getInt("ProductPrice");
-                    int warrantyID = rs.getInt("WarrantyDetailID");
-                    int warrantyPrice = rs.getInt("WarrantyPrice");
-                    int warrantyStatus = rs.getInt("WarrantyStatus");
-
-                    int actualWarrantyPrice = (warrantyStatus == 1) ? warrantyPrice : 0;
-                    int itemTotal = productPrice + actualWarrantyPrice;
-                    totalPrice += itemTotal;
-
-                    itemData.add(new int[]{categoryID, itemTotal, warrantyID});
+                    productPrice = rs.getInt("Price");
                 } else {
+                    System.out.println("Không tìm thấy sản phẩm với CategoryID: " + categoryID);
                     connection.rollback();
-                    return false; // Không tìm thấy dữ liệu linh kiện hợp lệ
+                    return false;
                 }
             }
+
+            // Lấy thông tin bảo hành nếu có
+            if (warrantyID > 0) {
+                psWarranty.setInt(1, warrantyID);
+                psWarranty.setInt(2, categoryID);
+                try (ResultSet rs = psWarranty.executeQuery()) {
+                    if (rs.next()) {
+                        if (rs.getInt("Status") == 1) {
+                            warrantyPrice = rs.getInt("Price");
+                            finalWarrantyID = warrantyID;
+                        } else {
+                            System.out.println("Bảo hành không hoạt động. WarrantyID: " + warrantyID);
+                        }
+                    } else {
+                        System.out.println("Không tìm thấy bảo hành. WarrantyID: " + warrantyID);
+                    }
+                }
+            }
+
+            int itemTotal = productPrice + warrantyPrice;
+            totalPrice += itemTotal;
+            itemData.add(new Object[]{categoryID, itemTotal, finalWarrantyID});
         }
 
-        // Xóa linh kiện cũ
+        // Xóa hết item cũ
         try (PreparedStatement psDelete = connection.prepareStatement(deleteItemsSQL)) {
             psDelete.setInt(1, buildPCID);
             psDelete.executeUpdate();
         }
 
-        // Cập nhật Build_PC tổng giá và trạng thái
+        // Update giá và trạng thái BuildPC
         try (PreparedStatement psUpdate = connection.prepareStatement(updatePCSQL)) {
             psUpdate.setInt(1, totalPrice);
-            psUpdate.setInt(2, newStatus);
+            psUpdate.setInt(2, status);
             psUpdate.setInt(3, buildPCID);
             psUpdate.executeUpdate();
         }
 
-        // Insert item mới
-        try (PreparedStatement psInsert = connection.prepareStatement(insertItemSQL)) {
-            for (int[] item : itemData) {
-                psInsert.setInt(1, buildPCID);
-                psInsert.setInt(2, item[0]); // CategoryID
-                psInsert.setInt(3, item[1]); // Tổng giá
-                psInsert.setInt(4, item[2]); // WarrantyDetailID
-                psInsert.addBatch();
+        // Insert lại từng item
+        PreparedStatement psInsertItem = connection.prepareStatement(insertItemSQL);
+        for (Object[] item : itemData) {
+            psInsertItem.setInt(1, buildPCID);
+            psInsertItem.setInt(2, (int) item[0]);  // CategoryID
+            psInsertItem.setInt(3, (int) item[1]);  // Tổng tiền sản phẩm + bảo hành
+
+            if (item[2] != null) {
+                psInsertItem.setInt(4, (int) item[2]); // WarrantyDetailID
+            } else {
+                psInsertItem.setNull(4, java.sql.Types.INTEGER);
             }
-            psInsert.executeBatch();
+            psInsertItem.addBatch();
         }
+        psInsertItem.executeBatch();
 
         connection.commit();
+        System.out.println("Cập nhật Build PC thành công. Tổng tiền: " + totalPrice);
         return true;
 
     } catch (Exception e) {
@@ -529,10 +567,8 @@ public boolean insertBuildPC(List<Integer> categoryIDs, int userID) {
             ex.printStackTrace();
         }
     }
-
     return false;
 }
-
     public boolean deleteBuildPC(int buildPCID) {
         String deleteItemsSQL = "DELETE FROM Build_PC_Items WHERE BuildPCID = ?";
         String deletePCSQL = "DELETE FROM Build_PC WHERE BuildPCID = ?";
@@ -568,35 +604,70 @@ public boolean insertBuildPC(List<Integer> categoryIDs, int userID) {
         return false;
     }
 
-    public List<BuildPCAdmin> getBuildPCItemsByBuildPCID(int buildPCID) {
-        List<BuildPCAdmin> list = new ArrayList<>();
-        String sql = """
-        SELECT com.ComponentID, c.CategoryID, c.CategoryName, b.BrandName, i.Price, c.ImageURL
+public List<BuildPCAdmin> getBuildPCItemsByBuildPCID(int buildPCID) {
+    List<BuildPCAdmin> list = new ArrayList<>();
+    String sql = """
+        SELECT 
+            com.ComponentID, 
+            c.CategoryID, 
+            c.CategoryName, 
+            b.BrandName, 
+            i.Price AS ItemPrice, 
+            c.ImageURL,
+            i.WarrantyDetailID,
+            wd.Price AS WarrantyPrice,
+            w.Description AS WarrantyDesc
         FROM Build_PC_Items i
         JOIN Categories c ON i.CategoryID = c.CategoryID
         JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
         JOIN Brands b ON bc.BrandID = b.BrandID
         JOIN Components com ON bc.ComponentID = com.ComponentID
+        LEFT JOIN WarrantyDetails wd ON i.WarrantyDetailID = wd.WarrantyDetailID
+        LEFT JOIN Warranties w ON wd.WarrantyID = w.WarrantyID
         WHERE i.BuildPCID = ?
-        """;
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, buildPCID);
-            ResultSet rs = ps.executeQuery();
+    """;
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, buildPCID);
+        try (ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                BuildPCAdmin item = new BuildPCAdmin();
-                item.setComponentID(rs.getInt("ComponentID"));
-                item.setCateID(rs.getInt("CategoryID"));
-                item.setCateName(rs.getString("CategoryName"));
-                item.setBrandName(rs.getString("BrandName"));
-                item.setPrice(rs.getInt("Price"));
-                item.setImgURL(rs.getString("ImageURL"));
+
+                int warrantyDetailID = rs.getInt("WarrantyDetailID");
+                if (rs.wasNull()) {
+                    warrantyDetailID = 0;
+                }
+
+                int warrantyPrice = rs.getInt("WarrantyPrice");
+                if (rs.wasNull()) {
+                    warrantyPrice = 0;
+                }
+
+                String warrantyDesc = rs.getString("WarrantyDesc");
+                if (warrantyDesc == null) {
+                    warrantyDesc = "";
+                }
+
+                BuildPCAdmin item = new BuildPCAdmin(
+                        rs.getInt("ComponentID"),
+                        rs.getInt("CategoryID"),
+                        rs.getString("CategoryName"),
+                        rs.getString("BrandName"),
+                        rs.getInt("ItemPrice"),
+                        rs.getString("ImageURL"),
+                        warrantyDetailID,
+                        warrantyPrice,
+                        warrantyDesc
+                );
+
                 list.add(item);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        return list;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+    return list;
+}
+
 
     public boolean isDuplicateBuildPC(List<Integer> categoryIDs, int excludeBuildPCID) {
         if (categoryIDs == null || categoryIDs.size() != 6) {
@@ -636,5 +707,74 @@ public boolean insertBuildPC(List<Integer> categoryIDs, int userID) {
         }
         return false;
     }
+   public List<WarrantyDetails> getWarrantyByCategory(int categoryID) {
+        List<WarrantyDetails> list = new ArrayList<>();
+        String sql = """
+        SELECT 
+            wd.WarrantyDetailID,
+            wd.WarrantyID,
+            w.WarrantyPeriod,
+            w.Description,
+            wd.BrandComID,
+            b.BrandName,
+            bc.ComponentID,
+            comp.ComponentName,
+            wd.Price,
+            wd.Status
+        FROM WarrantyDetails wd
+        JOIN Warranties w ON wd.WarrantyID = w.WarrantyID
+        JOIN BrandComs bc ON wd.BrandComID = bc.BrandComID
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        JOIN Components comp ON bc.ComponentID = comp.ComponentID
+        JOIN Categories c ON c.BrandComID = bc.BrandComID
+        WHERE c.CategoryID = ?
+        ORDER BY wd.Price ASC
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, categoryID);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                WarrantyDetails w = new WarrantyDetails();
+                w.setWarrantyDetailID(rs.getInt("WarrantyDetailID"));
+                w.setWarrantyID(rs.getInt("WarrantyID"));
+                w.setWarrantyPeriod(rs.getInt("WarrantyPeriod"));
+                w.setDescription(rs.getString("Description"));
+                w.setBrandComID(rs.getInt("BrandComID"));
+                w.setBrandName(rs.getString("BrandName"));
+                w.setComponentName(rs.getString("ComponentName"));
+                w.setPrice(rs.getInt("Price"));
+                w.setStatus(rs.getInt("Status"));
+                list.add(w);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+public static void main(String[] args) {
+    try {
+        BuildPCAdminDAO dao = new BuildPCAdminDAO();
+
+        // Dữ liệu giả định để test update
+        int buildPCID = 1; // ID của Build PC cần update (phải tồn tại trong DB)
+        List<Integer> categoryIDs = Arrays.asList(3, 10, 5, 42, 1, 2); // Các CategoryID hợp lệ
+        List<Integer> warrantyIDs = Arrays.asList(5, 0, 29, 0, 23, 0); // Có thể để 0 nếu không chọn bảo hành
+        int status = 2; // Trạng thái cập nhật (1: Đang bán, 2: Ngừng bán, v.v)
+        String role = "Admin"; // Role của người thực hiện ("Admin" hoặc "Customer")
+
+        boolean result = dao.updateBuildPC(buildPCID, categoryIDs, warrantyIDs, status, role);
+
+        if (result) {
+            System.out.println("Cập nhật Build PC thành công!");
+        } else {
+            System.out.println("Cập nhật Build PC thất bại hoặc dữ liệu không hợp lệ!");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
 
 }

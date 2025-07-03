@@ -18,32 +18,29 @@ public class CartBuildPCDAO extends DBContext {
 public List<CartBuildPC> getCartPCView(int userID) {
     List<CartBuildPC> list = new ArrayList<>();
 
-    String sql = """
-        SELECT 
-            cb.CartBuildPCID,
-            
-            MAX(CASE WHEN bc.ComponentID = 2 THEN c.CategoryName END) AS MainBoard,
-            MAX(CASE WHEN bc.ComponentID = 3 THEN c.CategoryName END) AS CPU,
-            MAX(CASE WHEN bc.ComponentID = 4 THEN c.CategoryName END) AS GPU,
-            MAX(CASE WHEN bc.ComponentID = 5 THEN c.CategoryName END) AS RAM,
-            MAX(CASE WHEN bc.ComponentID = 6 THEN c.CategoryName END) AS SSD,
-            MAX(CASE WHEN bc.ComponentID = 7 THEN c.CategoryName END) AS PCCase,
-
-            SUM(c.Price) AS TotalPrice,
-            MAX(cb.Status) AS CartStatus
-        FROM Cart_Build_PC cb
-        JOIN Cart_Build_PC_Items cbi ON cb.CartBuildPCID = cbi.CartBuildPCID
-        JOIN Categories c ON cbi.CategoryID = c.CategoryID
-        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-        WHERE cb.UserID = ?
-          AND bc.ComponentID BETWEEN 2 AND 7
-        GROUP BY cb.CartBuildPCID
-        ORDER BY cb.CartBuildPCID
-    """;
+  String sql = """
+SELECT 
+    cb.CartBuildPCID,
+    MAX(CASE WHEN bc.ComponentID = 2 THEN c.CategoryName END) AS MainBoard,
+    MAX(CASE WHEN bc.ComponentID = 3 THEN c.CategoryName END) AS CPU,
+    MAX(CASE WHEN bc.ComponentID = 4 THEN c.CategoryName END) AS GPU,
+    MAX(CASE WHEN bc.ComponentID = 5 THEN c.CategoryName END) AS RAM,
+    MAX(CASE WHEN bc.ComponentID = 6 THEN c.CategoryName END) AS SSD,
+    MAX(CASE WHEN bc.ComponentID = 7 THEN c.CategoryName END) AS PCCase,
+    SUM(cbi.Price) AS TotalPrice,
+    MAX(cb.Status) AS CartStatus
+FROM Cart_Build_PC cb
+JOIN Cart_Build_PC_Items cbi ON cb.CartBuildPCID = cbi.CartBuildPCID
+JOIN Categories c ON cbi.CategoryID = c.CategoryID
+JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+WHERE cb.UserID = ?
+GROUP BY cb.CartBuildPCID
+ORDER BY cb.CartBuildPCID
+""";
 
     try (PreparedStatement ps = connection.prepareStatement(sql)) {
         ps.setInt(1, userID);
-        
+
         try (ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 CartBuildPC cart = new CartBuildPC();
@@ -55,8 +52,8 @@ public List<CartBuildPC> getCartPCView(int userID) {
                 cart.setRam(rs.getString("RAM"));
                 cart.setSsd(rs.getString("SSD"));
                 cart.setPcCase(rs.getString("PCCase"));
-                
-                cart.setPrice(rs.getInt("TotalPrice"));
+
+                cart.setPrice(rs.getInt("TotalPrice"));  // Tổng tiền = giá Cate + bảo hành (nếu có)
                 cart.setStatus(rs.getInt("CartStatus"));
 
                 list.add(cart);
@@ -69,6 +66,8 @@ public List<CartBuildPC> getCartPCView(int userID) {
 
     return list;
 }
+
+
 public List<Integer> getCategoryIDsInCartBuildPC(int cartBuildPCID) {
     List<Integer> list = new ArrayList<>();
     String sql = "SELECT CategoryID FROM Cart_Build_PC_Items WHERE CartBuildPCID = ?";
@@ -189,7 +188,7 @@ public boolean insertBuildPC2(List<Integer> categoryIDs, int userID) {
 
         PreparedStatement psBuildPC = connection.prepareStatement(insertBuildPCSQL, PreparedStatement.RETURN_GENERATED_KEYS);
         psBuildPC.setInt(1, totalPrice);
-        psBuildPC.setInt(2, 0); // Trạng thái mặc định
+        psBuildPC.setInt(2, 0); 
         psBuildPC.setInt(3, userID);
         psBuildPC.executeUpdate();
 

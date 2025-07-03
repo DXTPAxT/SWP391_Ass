@@ -42,6 +42,29 @@
                             <div><strong>${p.categoryName}</strong> - ${p.brandName}</div>
                             <div>Mô tả: <span style="font-size: 90%;">${p.description}</span></div>
                             <div>Giá: <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫</div>
+                            <c:if test="${not empty warrantyMap[p.categoryID]}">
+                                <div style="margin-top: 5px;">
+                                    <strong>Chọn bảo hành:</strong>
+                                    <c:forEach var="w" items="${warrantyMap[p.categoryID]}" varStatus="status">
+                                        <div style="margin-left: 10px;">
+                                            <input type="radio"
+                                                   name="warranty-${p.categoryID}"
+                                                   id="w-${p.categoryID}-${status.index}"
+                                                   value="${w.warrantyDetailID}"
+                                                   <c:if test="${w.status != 1}">disabled</c:if> />
+                                            <label for="w-${p.categoryID}-${status.index}">
+                                                ${w.description} - ${w.warrantyPeriod} tháng - <fmt:formatNumber value="${w.price}" type="number" groupingUsed="true"/>₫
+                                                <c:if test="${w.status != 1}">
+                                                    <span style="color:red;">(Ngừng áp dụng)</span>
+                                                </c:if>
+                                            </label>
+
+
+                                        </div>
+                                    </c:forEach>
+
+                                </div>
+                            </c:if>
 
                             <div style="margin-top: 5px;">
                                 <a href="${ctx}/CategoriesController?service=detail&categoryID=${p.categoryID}" class="btn btn-info btn-xs" target="_blank">
@@ -50,12 +73,10 @@
 
                             </div>
                         </div>
-
                         <button class="btn btn-sm btn-success mt-2"
-                                onclick="selectProduct(${componentID}, ${p.categoryID}, '${fn:escapeXml(p.categoryName)}', '${fn:escapeXml(p.brandName)}', ${p.price}, '${fn:escapeXml(p.imgURL)}')">
+                                onclick="chooseProductWithWarranty(${componentID}, ${p.categoryID}, '${fn:escapeXml(p.categoryName)}', '${fn:escapeXml(p.brandName)}', ${p.price}, '${fn:escapeXml(p.imgURL)}', ${p.categoryID})">
                             Chọn
                         </button>
-
 
                     </div>
                 </div>
