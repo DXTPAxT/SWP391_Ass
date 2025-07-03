@@ -53,11 +53,6 @@
                     <div class="box">
                         <div class="box-header with-border">
                             <h3 class="box-title">Send Notification</h3>
-                            <div class="box-tools pull-right">
-                                <a href="${ctx}/AdminDashbordServlet" class="btn btn-default btn-sm">
-                                    <i class="fa fa-reply"></i> Back to Menu
-                                </a>
-                            </div>
                         </div>
                         <div class="box-body">
                             <c:if test="${not empty successMessage}">
@@ -80,20 +75,16 @@
                                         <thead>
                                             <tr>
                                                 <th><input type="checkbox" id="checkAll" class="checkbox-custom"></th>
-                                                <th>User ID</th>
                                                 <th>Full Name</th>
                                                 <th>Email</th>
-                                                <th>Role</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <c:forEach var="u" items="${userList}">
                                                 <tr>
                                                     <td><input type="checkbox" name="userID" value="${u.userId}" class="user-checkbox checkbox-custom"></td>
-                                                    <td>${u.userId}</td>
                                                     <td>${u.fullname}</td>
                                                     <td>${u.email}</td>
-                                                    <td>${u.role.roleName}</td>
                                                 </tr>
                                             </c:forEach>
                                         </tbody>
