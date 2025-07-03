@@ -90,9 +90,11 @@ public class BuildPC extends HttpServlet {
                             .append(c.getCategoryName()).append("|")
                             .append(c.getBrandName()).append("|")
                             .append(c.getPrice()).append("|")
-                            .append(c.getImgURL() == null ? "" : c.getImgURL()).append("|") // xử lý null
-                            .append(c.getComponentID()).append(";");
-
+                            .append(c.getImgURL() == null ? "" : c.getImgURL()).append("|")
+                            .append(c.getComponentID()).append("|")
+                            .append(c.getWarrantyDesc() == null ? "" : c.getWarrantyDesc()).append("|")
+                            .append(c.getWarrantyPrice()).append("|")
+                            .append(c.getWarrantyDetailID()).append(";");
                 }
 
                 out.print(sb.toString());
@@ -164,4 +166,9 @@ public class BuildPC extends HttpServlet {
 
         processRequest(request, response);
     }
+
+    private String escape(String value) {
+        return value == null ? "" : value.replace("|", "/").replace("\n", " ").replace("\r", " ");
+    }
+
 }
