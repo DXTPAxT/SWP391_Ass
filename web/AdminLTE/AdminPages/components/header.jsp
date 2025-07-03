@@ -94,12 +94,25 @@
                     </ul>
                 </li>
                 <!-- Notifications: style can be found in dropdown.less -->
-                <li class="dropdown notifications-menu">
-                    <a href="${ctx}/NotificationServlet?service=list" class="dropdown-toggle">
-                        <i class="fa fa-bell-o"></i>
-                        <span class="label label-warning" id="notification-count">${not empty unreadCount ? unreadCount : 0}</span>
-                    </a>
-                </li>
+                <c:if test="${not empty sessionScope.user}">
+                    <li class="dropdown notifications-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-bell-o"></i>
+                            <span class="label label-warning" id="notification-count">0</span>
+                        </a>
+                        <ul class="dropdown-menu" id="notification-dropdown">
+                            <li class="header">You have <span id="notification-count-header">0</span> notifications</li>
+                            <li>
+                                <!-- inner menu: contains the actual data -->
+                                <ul class="menu" id="notification-list">
+                                    <!-- JS sẽ render các thông báo ở đây -->
+                                    <li><a href="#"><i class="fa fa-info-circle text-aqua"></i> No notifications</a></li>
+                                </ul>
+                            </li>
+                            <li class="footer"><a href="${ctx}/NotificationServlet?service=list">View All</a></li>
+                        </ul>
+                    </li>
+                </c:if>
                 <!-- Tasks: style can be found in dropdown.less -->
                 <li class="dropdown tasks-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -224,16 +237,49 @@
         </div>
     </nav>
 </header>
-<script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
-<script>
-$(document).ready(function() {
-    $.ajax({
-        url: "${ctx}/NotificationServlet?service=getUnreadCount",
-        type: "GET",
-        dataType: "json",
-        success: function(data) {
-            $("#notification-count").text(data.count);
-        }
+<c:choose>
+  <c:when test="${not empty sessionScope.user}">
+    <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        // Đếm số lượng thông báo chưa đọc
+        $.ajax({
+            url: "${ctx}/NotificationServlet?service=getUnreadCount",
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                $("#notification-count").text(data.count);
+                $("#notification-count-header").text(data.count);
+            }
+        });
+
+        // Khi click vào chuông, load danh sách thông báo
+        $('.notifications-menu > a').on('click', function(e) {
+            $.ajax({
+                url: "${ctx}/NotificationServlet?service=ajaxList",
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    var html = '';
+                    if (data.notifications.length === 0) {
+                        html = '<li><a href="#"><i class="fa fa-info-circle text-aqua"></i> No notifications</a></li>';
+                    } else {
+                        data.notifications.forEach(function(noti) {
+                            html += '<li><a href="${ctx}/NotificationServlet?service=detail&id=' + noti.id + '"><i class="fa fa-info-circle text-aqua"></i> <b>' + noti.title + '</b><br><small>' + noti.createdAt + '</small></a></li>';
+                        });
+                    }
+                    // Hiển thị tổng số chưa đọc
+                    $('.dropdown-menu .header').html('You have <span id="notification-count-header">' + data.totalUnread + '</span> notifications');
+                    $('#notification-list').html(html);
+                    // Đồng bộ lại số trên icon chuông nếu cần
+                    $('#notification-count').text(data.totalUnread);
+                }
+            });
+        });
     });
-});
-</script>
+    </script>
+  </c:when>
+  <c:otherwise>
+    <script>$(function() { $("#notification-count").text(0); });</script>
+  </c:otherwise>
+</c:choose>

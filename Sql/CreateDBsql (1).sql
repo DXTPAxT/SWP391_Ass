@@ -80,7 +80,7 @@ Create table BrandComs (
 --8. Category luu san pham cu the: Acer Nitro 5/ Des: RTX...
 CREATE TABLE Categories (
     CategoryID INT PRIMARY KEY IDENTITY(1,1),
-	CategoryName VARCHAR(100) UNIQUE NOT NULL,
+	CategoryName NVARCHAR(100) UNIQUE NOT NULL,
 	BrandComID INT NOT NULL,
     Quantity INT NOT NULL,
 	Price int not null,
@@ -97,7 +97,7 @@ Create TABLE Imports(
 	ImportCode Varchar(100) not null,
 	CategoryID INT NOT NULL ,
 	CreatedAt DATETIME DEFAULT GETDATE() NOT NULL,
-	Quantity INT NOT NULL,
+	Quantity INT ,
 	Price INT NOT NULL,
 	FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
 );
@@ -115,17 +115,17 @@ CREATE TABLE Products (
 --11. Bang nay luu thong tin cua bao hanh
 Create table Warranties(
 	WarrantyID INT PRIMARY KEY IDENTITY(1,1),
-	WarrantyPeriod INT NOT NULL,
-	Status int DEFAULT 1 NOT NULL,
-	Description TEXT NOT NULL
+	WarrantyPeriod INT ,
+	Status int DEFAULT 1 ,
+	Description TEXT 
 );
 
 --12. WarrantyDetails
 Create table WarrantyDetails(
 	WarrantyDetailID INT PRIMARY KEY IDENTITY(1,1),
-	WarrantyID INT NOT NULL,
-	BrandComID INT NOT NULL,
-	Price INT NOT NULL,
+	WarrantyID INT,
+	BrandComID INT,
+	Price INT,
 	Status int DEFAULT 1 NOT NULL,
     FOREIGN KEY (WarrantyID) REFERENCES Warranties(WarrantyID),
     FOREIGN KEY (BrandComID) REFERENCES BrandComs(BrandComID)

@@ -154,6 +154,10 @@
         <servlet-name>DeleteSelectedCartItemsServlet</servlet-name>
         <servlet-class>controller.cart.DeleteSelectedCartItems</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CartItemsLoaderServlet</servlet-name>
+        <servlet-class>controller.cart.CartItemsLoader</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
         <url-pattern>/Demo</url-pattern>
@@ -305,5 +309,9 @@
     <servlet-mapping>
         <servlet-name>DeleteSelectedCartItemsServlet</servlet-name>
         <url-pattern>/DeleteSelectedCartItems</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CartItemsLoaderServlet</servlet-name>
+        <url-pattern>/CartItemsLoader</url-pattern>
     </servlet-mapping>
 </web-app>

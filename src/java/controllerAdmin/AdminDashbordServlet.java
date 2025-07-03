@@ -25,6 +25,8 @@ import models.Categories;
 import models.Components;
 import models.Imports;
 import models.Products;
+import models.User;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -46,8 +48,11 @@ public class AdminDashbordServlet extends HttpServlet {
             List<Categories> list = dao.getAllCategoriesByInvenory();
             request.setAttribute("list", list);
             
-            // Load số lượng thông báo chưa đọc cho admin (UserID = 1)
-            int unreadCount = notificationDAO.getUnreadCount(1);
+            // Load số lượng thông báo chưa đọc cho user hiện tại
+            HttpSession session = request.getSession(false);
+            User user = (session != null) ? (User) session.getAttribute("user") : null;
+            int userID = (user != null) ? user.getUserId() : -1;
+            int unreadCount = (userID > 0) ? notificationDAO.getUnreadCount(userID) : 0;
             request.setAttribute("unreadCount", unreadCount);
             
             request.getRequestDispatcher("AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);

@@ -97,11 +97,9 @@ public class CateAdminServlet extends HttpServlet {
                     // Validate category name
                     if (categoryName == null || categoryName.trim().isEmpty()) {
                         errors.add("Category name cannot be empty.");
-                    } else if (categoryName.length() > 30) {
-                        errors.add("Category name must not exceed 30 characters.");
-                    } else if (!categoryName.matches("^[\\p{L}0-9 ]+$")) {
-                        errors.add("Category name contains invalid characters.");
-                    }
+                    } else if (categoryName.length() > 100) {
+                        errors.add("Category name must not exceed 100 characters.");
+                    } 
 
                     // Validate componentID
                     if (componentRaw == null || componentRaw.trim().isEmpty()) {
@@ -121,11 +119,9 @@ public class CateAdminServlet extends HttpServlet {
                     // Validate description
                     if (description == null || description.trim().isEmpty()) {
                         errors.add("Description cannot be empty.");
-                    } else if (description.length() > 50) {
-                        errors.add("Description must not exceed 50 characters.");
-                    } else if (!description.matches("^[\\p{L}\\d\\s.,-]+$")) {
-                        errors.add("Description contains invalid characters.");
-                    }
+                    } else if (description.length() > 150) {
+                        errors.add("Description must not exceed 150 characters.");
+                    } 
 
                  
 
@@ -228,20 +224,16 @@ public class CateAdminServlet extends HttpServlet {
                     // Validate category name
                     if (categoryName == null || categoryName.trim().isEmpty()) {
                         errors.add("Category name cannot be empty.");
-                    } else if (categoryName.length() > 30) {
-                        errors.add("Category name must not exceed 30 characters.");
-                    } else if (!categoryName.matches("^[\\p{L}0-9 ]+$")) {
-                        errors.add("Category name contains invalid characters.");
-                    }
+                    } else if (categoryName.length() > 100) {
+                        errors.add("Category name must not exceed 100 characters.");
+                    } 
 
                     // Validate description
                     if (description == null || description.trim().isEmpty()) {
                         errors.add("Description cannot be empty.");
                     } else if (description.length() > 150) {
                         errors.add("Description must not exceed 150 characters.");
-                    } else if (!description.matches("^[\\p{L}\\d\\s.,-]+$")) {
-                        errors.add("Description contains invalid characters.");
-                    }
+                    } 
 
 
                     try {

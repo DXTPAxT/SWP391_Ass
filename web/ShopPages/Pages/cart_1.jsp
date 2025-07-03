@@ -1,12 +1,6 @@
-<%-- 
-    Document   : cart
-    Created on : May 25, 2025, 9:22:52 PM
-    Author     : PC ASUS
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -22,7 +16,7 @@
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/animate.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/main.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/responsive.css" rel="stylesheet">
-        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/custom.css?v=1.0.9" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/custom.css?v=1.0.20" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -32,180 +26,95 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-    </head><!--/head-->
-
+    </head>
     <body>
         <jsp:include page="/ShopPages/Pages/components/header.jsp" />
 
-        <section id="cart_items">
-            <div class="container">
-                <h2 class="mb-4 cartTableTitle">Shopping cart</h2>
-                <div class="table-responsive cart_info scrollable-table">
-                    <table class="table table-condensed">
-                        <thead>
-                            <tr class="cart_menu">
-                                <td><input class="ml-3 mr-3" type="checkbox" id="checkAll" onchange="toggleAll(this)"/></td>
-                                <td class="image">Item</td>
-                                <td class="description">Product</td>
-                                <td class="price">Price</td>
-                                <td class="quantity">Quantity</td>
-                                <td class="total">Total</td>
-                                <td>Delete</td>
+        <section class="container my-5">
+            <h2 class="text-center mb-4">Your Shopping Cart</h2>
+            <div class="table-responsive cart-table">
+                <div class="table-responsive cart-table" style="max-height: 480px; overflow-y: auto;">
+                    <table class="table table-bordered">
+                        <thead class="thead-light">
+                            <tr>
+                                <th><input type="checkbox" id="checkAll" onchange="toggleAll(this)"></th>
+                                <th>Product</th>
+                                <th>Details</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Remove</th>
                             </tr>
                         </thead>
-                        <c:if test="${cart.size() != 0}">
-                            <tbody>
-                                <c:forEach var="cartItem" items="${cart}">
-                                    <tr>
-                                        <td><input type="checkbox" class="select-item ml-3 mr-3" value="${cartItem.cartItemID}"/></td>
-                                        <td class="cart_product">
-                                            <a href="#"><img src="${pageContext.request.contextPath}/ShopPages/Pages/images/cart/two.png" alt=""></a>
-                                        </td>
-                                        <td class="cart_description">
-                                            <div>
-                                                <h4><a href="#">${cartItem.category.categoryName}</a></h4>
-                                                <p>ID: ${cartItem.category.categoryID}</p>
-                                                <p>Bảo hành: ${cartItem.warranty.warranty.warrantyPeriod} tháng</p>
+                        <c:choose>
+                            <c:when test="${cart.size() > 0}">
+                                <tbody>
+                                    <c:forEach var="cartItem" items="${cart}">
+                                        <tr>
+                                            <td><input type="checkbox" class="select-item" value="${cartItem.cartItemID}"></td>
+                                            <td>
+                                                <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/cart/two.png" alt="Product">
+                                            </td>
+                                            <td class="text-left">
+                                                <strong>${cartItem.category.categoryName}</strong><br>
+                                                Warranty: ${cartItem.warranty.warranty.warrantyPeriod} months<br>
                                                 <small class="text-muted">(${cartItem.warranty.warranty.description})</small>
-                                            </div>
-                                        </td>
-                                        <td class="cart_price" data-label="Giá">
-                                            <p class="mb-0">SP: 
-                                                <fmt:formatNumber value="${cartItem.category.price}" type="number" groupingUsed="true"/> VND
-                                            </p>
-                                            <p class="mb-0 text-secondary">BH: 
-                                                <fmt:formatNumber value="${cartItem.warranty.price}" type="number" groupingUsed="true"/> VND
-                                            </p>
-                                        </td>
-                                        <td class="cart_quantity" data-label="Số lượng">
-                                            <div class="cart_quantity_button custom-center">
-                                                <button onclick="changeQty(this, -1)">−</button>
-                                                <input class="cart_quantity_input"
-                                                       type="number" 
-                                                       name="quantity" 
-                                                       value="${cartItem.quantity}" 
-                                                       autocomplete="off"
-                                                       data-itemid="${cartItem.cartItemID}"
-                                                       data-price="${cartItem.category.price + cartItem.warranty.price}"
-                                                       data-old-value="${cartItem.quantity}"
-                                                       oninput="changeQty(this, 0)"
-                                                       onchange="debounceTrigger(this)">    
-                                                <button onclick="changeQty(this, 1)">+</button>
-                                            </div>
-                                        </td>
-                                        <td class="cart_total" data-label="Tổng">
-                                            <p class="cart_total_price">
-                                                <fmt:formatNumber 
-                                                    value="${(cartItem.category.price + cartItem.warranty.price) * cartItem.quantity}" 
-                                                    type="number" groupingUsed="true"/> VND
-                                            </p>
-                                        </td>
-                                        <td class="cart_delete" data-label="Xoá">
-                                            <button onclick="confirmDelete(this, ${cartItem.cartItemID})"><i class="fa fa-times"></i></button>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </c:if>
-
-                    </table>
-                    <c:if test="${cart.size() == 0}">
-                        <center class="mb-4 fs-3">
-                            <p>No items. Please order new products at </p>
-                            <a href="Product" class="btn btn-success">Products</a>
-                        </center>
-                    </c:if>
-                </div>
-                <div class="mt-3 mb-3 text-right fs-4">
-                    Tổng giá các sản phẩm đã chọn: 
-                    <span id="selected-total" style="color: orange; font-weight: bold;">0 VND</span>
-                </div>
-                <div class="mt-3 mb-3 text-right">
-                    <button class="btn btn-success" onclick="submitOrder()" style="min-width: 200px;">Tiến hành đặt hàng</button>
+                                            </td>
+                                            <td class="cart-price">
+                                                <div>Product: <fmt:formatNumber value="${cartItem.category.price}" type="number" groupingUsed="true"/> VND</div>
+                                                <div>Warranty: <fmt:formatNumber value="${cartItem.warranty.price}" type="number" groupingUsed="true"/> VND</div>
+                                            </td>
+                                            <td>
+                                                <div class="cart-quantity-group">
+                                                    <button onclick="changeQty(this, -1)">−</button>
+                                                    <input type="number"
+                                                           value="${cartItem.quantity}"
+                                                           data-itemid="${cartItem.cartItemID}"
+                                                           data-price="${cartItem.category.price + cartItem.warranty.price}"
+                                                           oninput="changeQty(this, 0)"
+                                                           onchange="debounceTrigger(this)">
+                                                    <button onclick="changeQty(this, 1)">+</button>
+                                                </div>
+                                            </td>
+                                            <td class="cart_total">
+                                                <strong><fmt:formatNumber value="${(cartItem.category.price + cartItem.warranty.price) * cartItem.quantity}" type="number" groupingUsed="true"/> VND</strong>
+                                            </td>
+                                            <td>
+                                                <button class="cart-delete-btn" onclick="confirmDelete(this, ${cartItem.cartItemID})">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </c:when>
+                        <c:otherwise>
+                            </table>
+                            <center class="mb-4 fs-3">
+                                <p>No items. Please add new products at </p>
+                                <a href="CategoriesController?service=list" class="btn btn-success">Products</a>
+                            </center>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
-        </section> <!--/#cart_items-->
-
-        <section id="do_action">
-            <div class="container">
-                <div class="heading">
-                    <h3>What would you like to do next?</h3>
-                    <p>Choose if you have a discount code or reward points you want to use or would like to estimate your delivery cost.</p>
+            <div class="cart-actions mb-5">
+                <div class="cart-total">
+                    Selected Total: <span id="selected-total">0 VND</span>
                 </div>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="chose_area">
-                            <ul class="user_option">
-                                <li>
-                                    <input type="checkbox">
-                                    <label>Use Coupon Code</label>
-                                </li>
-                                <li>
-                                    <input type="checkbox">
-                                    <label>Use Gift Voucher</label>
-                                </li>
-                                <li>
-                                    <input type="checkbox">
-                                    <label>Estimate Shipping & Taxes</label>
-                                </li>
-                            </ul>
-                            <ul class="user_info">
-                                <li class="single_field">
-                                    <label>Country:</label>
-                                    <select>
-                                        <option>United States</option>
-                                        <option>Bangladesh</option>
-                                        <option>UK</option>
-                                        <option>India</option>
-                                        <option>Pakistan</option>
-                                        <option>Ucrane</option>
-                                        <option>Canada</option>
-                                        <option>Dubai</option>
-                                    </select>
-
-                                </li>
-                                <li class="single_field">
-                                    <label>Region / State:</label>
-                                    <select>
-                                        <option>Select</option>
-                                        <option>Dhaka</option>
-                                        <option>London</option>
-                                        <option>Dillih</option>
-                                        <option>Lahore</option>
-                                        <option>Alaska</option>
-                                        <option>Canada</option>
-                                        <option>Dubai</option>
-                                    </select>
-
-                                </li>
-                                <li class="single_field zip-field">
-                                    <label>Zip Code:</label>
-                                    <input type="text">
-                                </li>
-                            </ul>
-                            <a class="btn btn-default update" href="">Get Quotes</a>
-                            <a class="btn btn-default check_out" href="">Continue</a>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="total_area">
-                            <ul>
-                                <li>Cart Sub Total <span>$59</span></li>
-                                <li>Eco Tax <span>$2</span></li>
-                                <li>Shipping Cost <span>Free</span></li>
-                                <li>Total <span>$61</span></li>
-                            </ul>
-                            <a class="btn btn-default update" href="">Update</a>
-                            <a class="btn btn-default check_out" href="">Check Out</a>
-                        </div>
-                    </div>
+                <div>
+                    <button class="btn btn-danger mr-2" onclick="deleteSelected()">Delete Selected</button>
+                    <button class="btn btn-success btn-checkout" onclick="submitOrder()">Proceed to Checkout</button>
                 </div>
             </div>
-        </section><!--/#do_action-->
+        </section>
 
         <jsp:include page="/ShopPages/Pages/components/footer.jsp" />
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.js"></script>
+        <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/bootstrap.min.js"></script>
 
         <script>
                         if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
@@ -230,7 +139,7 @@
                             clearTimeout(debounceTimer);
                             debounceTimer = setTimeout(() => {
                                 validateAndUpdate(input);
-                            }, 200);
+                            }, 50);
                         }
 
                         function validateAndUpdate(input) {
@@ -262,7 +171,7 @@
                                         input.value = 1;
                                         const lineTotalElem = input.closest('tr').querySelector('.cart_total');
                                         const total = Number(price) * 1;
-                                        lineTotalElem.innerHTML = `<p class="cart_total_price">` + total.toLocaleString('vi-VN', {maximumFractionDigits: 0}).replace(/\./g, ',') + ' VND</p>';
+                                        lineTotalElem.innerHTML = `<strong>` + total.toLocaleString('vi-VN', {maximumFractionDigits: 0}).replace(/\./g, ',') + ` VND </strong>`;
                                         updateSelectedTotal();
 
                                         // Cập nhật lại DB với oldValue
@@ -286,8 +195,8 @@
                                 });
                             } else {
                                 const lineTotalElem = input.closest('tr').querySelector('.cart_total');
-                                const total = Number(price) * oldValue;
-                                lineTotalElem.innerHTML = `<p class="cart_total_price">` + total.toLocaleString('vi-VN', {maximumFractionDigits: 0}).replace(/\./g, ',') + ' VND</p>';
+                                const total = Number(price) * quantity;
+                                lineTotalElem.innerHTML = `<strong>` + total.toLocaleString('vi-VN', {maximumFractionDigits: 0}).replace(/\./g, ',') + ` VND </strong>`;
 
 
                                 // Cập nhật lại DB với oldValue
@@ -347,13 +256,13 @@
                                             row.parentNode.removeChild(row);
 
 // Sau khi xóa, kiểm tra còn sản phẩm nào không
-                                            const remainingItems = document.querySelectorAll('.cart_info tbody tr').length;
+                                            const remainingItems = document.querySelectorAll('.cart-table tbody tr').length;
                                             if (remainingItems === 0) {
-                                                const cartInfoDiv = document.querySelector('.cart_info');
+                                                const cartInfoDiv = document.querySelector('.cart-table');
                                                 cartInfoDiv.innerHTML = cartInfoDiv.innerHTML + `
         <center class="mb-4 fs-3">
-            <p>No items. Please order new products at </p>
-            <a href="Product" class="btn btn-success">Products</a>
+            <p>No items. Please add new products at </p>
+            <a href="CategoriesController?service=list" class="btn btn-success">Products</a>
         </center>
     `;
 
@@ -434,13 +343,66 @@
                 document.body.appendChild(form);
                 form.submit();
             }
+
+            function deleteSelected() {
+                const selectedCbs = [...document.querySelectorAll('.select-item:checked')];
+                const ids = selectedCbs.map(cb => cb.value);
+
+                if (ids.length === 0) {
+                    Swal.fire("Thông báo", "Vui lòng chọn ít nhất một sản phẩm để xoá!", "info");
+                    return;
+                }
+
+                Swal.fire({
+                    title: "Xoá các sản phẩm đã chọn?",
+                    text: `Bạn chắc chắn muốn xoá ${ids.length} sản phẩm?`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Có, xoá!",
+                    cancelButtonText: "Không"
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        const params = new URLSearchParams();
+                        params.append("selectedItems", ids.join(","));
+
+                        fetch('DeleteSelectedCartItems', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: params.toString()
+                        }).then(res => res.text())
+                                .then(data => {
+                                    if (data.trim() === 'success') {
+                                        // 🔥 Không querySelector lại! Xoá thẳng từ cb đã có
+                                        selectedCbs.forEach(cb => {
+                                            const row = cb.closest('tr');
+                                            if (row)
+                                                row.remove();
+                                        });
+
+                                        updateSelectedTotal();
+
+                                        const remainingItems = document.querySelectorAll('.select-item').length;
+                                        if (remainingItems === 0) {
+                                            const cartTableDiv = document.querySelector('.cart-table');
+                                            cartTableDiv.innerHTML = `
+                            <center class="mb-4 fs-3">
+                                <p>No items. Please add new products at </p>
+                                <a href="CategoriesController?service=list" class="btn btn-success">Products</a>
+                            </center>
+                        `;
+                                            document.getElementById("selected-total").textContent = "0 VND";
+                                        }
+
+                                    } else {
+                                        Swal.fire("Lỗi", "Xoá thất bại", "error");
+                                    }
+                                });
+                    }
+                });
+            }
+
         </script>
-
-
-        <script src="js/jquery.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/jquery.scrollUp.min.js"></script>
-        <script src="js/jquery.prettyPhoto.js"></script>
-        <script src="js/main.js"></script>
     </body>
 </html>
