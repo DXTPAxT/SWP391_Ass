@@ -450,12 +450,13 @@
             if (!confirm("Bạn có chắc chắn muốn reset tất cả các linh kiện đã chọn không?"))
                 return;
 
-            // delete localStorage
             localStorage.removeItem("selectedComponents");
 
             for (let id = 2; id <= 7; id++) {
                 const meta = document.getElementById(`meta-${id}`);
                 const price = document.getElementById(`price-${id}`);
+                const warranty = document.getElementById(`warranty-${id}`);
+                const total = document.getElementById(`total-${id}`);
                 const removeBtn = document.getElementById(`remove-${id}`);
                 const img = document.getElementById(`img-${id}`);
 
@@ -463,18 +464,20 @@
                     meta.innerText = "";
                 if (price)
                     price.innerText = "";
+                if (warranty)
+                    warranty.innerText = "";
+                if (total)
+                    total.innerText = "";
                 if (removeBtn)
                     removeBtn.style.display = "none";
                 if (img)
                     img.src = img.getAttribute("data-default");
             }
 
-            // Reset mỏny
-            totalDisplay.innerText = "0";
-
-            // Reset  JS
             for (let key in selectedComponents)
                 delete selectedComponents[key];
+
+            updateTotal();
         }
 
     </script>
@@ -508,7 +511,7 @@
                 imgURL,
                 warrantyDesc,
                 warrantyPrice,
-                warrantyDetailID 
+                warrantyDetailID
             };
 
             localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
@@ -533,24 +536,37 @@
 
 
 // Delete Component
+
         function removeComponent(componentID) {
-            const confirmDelete = confirm("Are you sure you want to remove this component?");
-            if (!confirmDelete)
+            if (!confirm("You Wanto delete this item?"))
                 return;
 
             delete selectedComponents[componentID];
             localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
 
-            document.getElementById(`meta-${componentID}`).innerText = "";
-            document.getElementById(`price-${componentID}`).innerText = "";
-            document.getElementById(`remove-${componentID}`).style.display = 'none';
-
-            // auto resert
+            const meta = document.getElementById(`meta-${componentID}`);
+            const price = document.getElementById(`price-${componentID}`);
+            const warranty = document.getElementById(`warranty-${componentID}`);
+            const total = document.getElementById(`total-${componentID}`);
+            const removeBtn = document.getElementById(`remove-${componentID}`);
             const img = document.getElementById(`img-${componentID}`);
-            img.src = img.getAttribute("data-default");
+
+            if (meta)
+                meta.innerText = "";
+            if (price)
+                price.innerText = "";
+            if (warranty)
+                warranty.innerText = "";
+            if (total)
+                total.innerText = "";
+            if (removeBtn)
+                removeBtn.style.display = "none";
+            if (img)
+                img.src = img.getAttribute("data-default");
 
             updateTotal();
         }
+
 
 
 
@@ -638,12 +654,15 @@
 
                         items.forEach(line => {
                             const parts = line.split('|');
-                            if (parts.length !== 6) {
+                            if (parts.length < 9) {
                                 console.error("Lỗi dữ liệu thiếu thông tin:", line);
                                 return;
                             }
 
-                            const [categoryID, categoryName, brandName, price, imageURL, componentID] = parts;
+                            const [
+                                categoryID, categoryName, brandName, price, imageURL, componentID,
+                                warrantyDesc, warrantyPrice, warrantyDetailID
+                            ] = parts;
 
                             let img = imageURL || "default.jpg";
                             if (componentID == 2 && imgMain)
@@ -664,8 +683,12 @@
                                 categoryName,
                                 brandName,
                                 price: parseInt(price),
-                                imgURL: img
+                                imgURL: img,
+                                warrantyDesc: warrantyDesc || "",
+                                warrantyPrice: parseInt(warrantyPrice) || 0,
+                                warrantyDetailID: parseInt(warrantyDetailID) || 0
                             };
+
                         });
 
                         // Lưu vào selectedComponents
@@ -673,18 +696,30 @@
                             const comp = components[id];
                             if (comp) {
                                 document.getElementById(`meta-${id}`).innerText = `${comp.categoryName} - ${comp.brandName}`;
-                                document.getElementById(`price-${id}`).innerText = `${comp.price.toLocaleString()}₫`;
+                                document.getElementById(`price-${id}`).innerText = `Sản phẩm: ${comp.price.toLocaleString()}₫`;
+
+                                const warrantyText = comp.warrantyDesc ? `Bảo hành: ${comp.warrantyDesc} - ${comp.warrantyPrice.toLocaleString()}₫` : "Bảo hành: Không chọn";
+                                document.getElementById(`warranty-${id}`).innerText = warrantyText;
+
+                                const totalItem = comp.price + (comp.warrantyPrice || 0);
+                                document.getElementById(`total-${id}`).innerText = `Tổng: ${totalItem.toLocaleString()}₫`;
+
                                 document.getElementById(`remove-${id}`).style.display = 'inline-block';
                                 const img = document.getElementById(`img-${id}`);
                                 img.src = `${ctx}/ShopPages/Pages/images/anhproduct/${comp.imgURL}`;
+
                                 selectedComponents[id] = {
                                     categoryID: comp.categoryID,
                                     categoryName: comp.categoryName,
                                     brandName: comp.brandName,
                                     price: comp.price,
-                                    imgURL: comp.imgURL
+                                    imgURL: comp.imgURL,
+                                    warrantyDesc: comp.warrantyDesc || "",
+                                    warrantyPrice: comp.warrantyPrice || 0,
+                                    warrantyDetailID: comp.warrantyDetailID || 0
                                 };
                             }
+
                         }
 
                         localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
@@ -743,32 +778,32 @@
     </script>
     <!-- Choose Warranty -->
     <script>
-function chooseProductWithWarranty(componentID, realCategoryID, categoryName, brandName, price, imgURL, radioCategoryID) {
-    const selectedRadio = document.querySelector(`input[name="warranty-${radioCategoryID}"]:checked`);
-    
-    let warrantyDetailID = 0;
-    let warrantyDesc = "Không chọn";
-    let warrantyPrice = 0;
+        function chooseProductWithWarranty(componentID, realCategoryID, categoryName, brandName, price, imgURL, radioCategoryID) {
+            const selectedRadio = document.querySelector(`input[name="warranty-${radioCategoryID}"]:checked`);
 
-    if (selectedRadio) {
-        warrantyDetailID = parseInt(selectedRadio.value);
+            let warrantyDetailID = 0;
+            let warrantyDesc = "Không chọn";
+            let warrantyPrice = 0;
 
-        const label = selectedRadio.nextElementSibling;
-        const labelText = label.innerText || "";
+            if (selectedRadio) {
+                warrantyDetailID = parseInt(selectedRadio.value);
 
-        // Lấy mô tả trước dấu '-'
-        const descParts = labelText.split("-");
-        warrantyDesc = descParts[0]?.trim() || "Không rõ";
+                const label = selectedRadio.nextElementSibling;
+                const labelText = label.innerText || "";
 
-        // Bóc phần giá
-        const priceMatch = labelText.match(/([\d.,]+)₫/);
-        if (priceMatch) {
-            warrantyPrice = parseInt(priceMatch[1].replace(/[,\.]/g, ""));
+                // Lấy mô tả trước dấu '-'
+                const descParts = labelText.split("-");
+                warrantyDesc = descParts[0]?.trim() || "Không rõ";
+
+                // Bóc phần giá
+                const priceMatch = labelText.match(/([\d.,]+)₫/);
+                if (priceMatch) {
+                    warrantyPrice = parseInt(priceMatch[1].replace(/[,\.]/g, ""));
+                }
+            }
+
+            selectProduct(componentID, realCategoryID, categoryName, brandName, price, imgURL, warrantyDesc, warrantyPrice, warrantyDetailID);
         }
-    }
-
-    selectProduct(componentID, realCategoryID, categoryName, brandName, price, imgURL, warrantyDesc, warrantyPrice, warrantyDetailID);
-}
 
     </script>
 </body>

@@ -508,36 +508,50 @@ public class CategoriesDAO extends DBContext {
         return list;
     }
 
-    public List<Categories> getCategoriesInBuildPC(int buildPCID) {
-        List<Categories> list = new ArrayList<>();
-        String sql = """
-            SELECT c.CategoryID, c.CategoryName, b.BrandName, c.Price, c.ImageURL, comp.ComponentID
-            FROM Build_PC_Items bi
-            JOIN Categories c ON bi.CategoryID = c.CategoryID
-            JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-            JOIN Brands b ON bc.BrandID = b.BrandID
-            JOIN Components comp ON bc.ComponentID = comp.ComponentID
-            WHERE bi.BuildPCID = ?
-        """;
+  public List<Categories> getCategoriesInBuildPC(int buildPCID) {
+    List<Categories> list = new ArrayList<>();
+    String sql = """
+        SELECT 
+            c.CategoryID, 
+            c.CategoryName, 
+            b.BrandName, 
+            c.Price, 
+            c.ImageURL, 
+            comp.ComponentID,
+            w.WarrantyDetailID,
+            w.Description AS WarrantyDesc,
+            w.Price AS WarrantyPrice
+        FROM Build_PC_Items bi
+        JOIN Categories c ON bi.CategoryID = c.CategoryID
+        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        JOIN Components comp ON bc.ComponentID = comp.ComponentID
+        LEFT JOIN WarrantyDetails w ON bi.WarrantyDetailID = w.WarrantyDetailID
+        WHERE bi.BuildPCID = ?
+    """;
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, buildPCID);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Categories c = new Categories();
-                c.setCategoryID(rs.getInt("CategoryID"));
-                c.setCategoryName(rs.getString("CategoryName"));
-                c.setBrandName(rs.getString("BrandName"));
-                c.setPrice(rs.getInt("Price"));
-                c.setImgURL(rs.getString("ImageURL"));
-                c.setComponentID(rs.getInt("ComponentID"));
-                list.add(c);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, buildPCID);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Categories c = new Categories();
+            c.setCategoryID(rs.getInt("CategoryID"));
+            c.setCategoryName(rs.getString("CategoryName"));
+            c.setBrandName(rs.getString("BrandName"));
+            c.setPrice(rs.getInt("Price"));
+            c.setImgURL(rs.getString("ImageURL"));
+            c.setComponentID(rs.getInt("ComponentID"));
+            c.setWarrantyDetailID(rs.getInt("WarrantyDetailID"));
+            c.setWarrantyDesc(rs.getString("WarrantyDesc"));
+            c.setWarrantyPrice(rs.getInt("WarrantyPrice"));
+
+            list.add(c);
         }
-        return list;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+    return list;
+}
 
 public boolean insertBuildPCToCart(List<Integer> categoryIDs, List<Integer> warrantyIDs, int userID) {
     if (categoryIDs == null || warrantyIDs == null || categoryIDs.size() != 6 || warrantyIDs.size() != 6) {
