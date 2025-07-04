@@ -9,31 +9,31 @@ public class CartItemDAO extends DBContext {
 
     public ArrayList<CartItem> getCartItemsByUserId(int userId) {
         ArrayList<CartItem> itemList = new ArrayList<>();
+        String sql = "SELECT CartItemID, UserID, CategoryID, WarrantyDetailID, Quantity, Status FROM CartItems WHERE UserID = ?";
 
-        String sql = "SELECT ci.CartItemID, ci.Quantity, "
-                + "p.ProductID, p.Name, p.Price "
-                + "FROM CartItems ci "
-                + "JOIN Products p ON ci.ProductID = p.ProductID "
-                + "WHERE ci.UserID = ?";
+        WarrantyDetailDAO warrantyDetailDAO = new WarrantyDetailDAO();  // Gọi lại DAO phụ nếu cần
+        CategoriesDAO categoriesDAO = new CategoriesDAO();              // Giả định bạn có DAO này
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Products p = new Products();
-                p.setProductID(rs.getInt("ProductID"));
-                p.setName(rs.getString("Name"));
-                p.setPrice(rs.getDouble("Price"));
+                int cartItemID = rs.getInt("CartItemID");
+                int categoryID = rs.getInt("CategoryID");
+                int warrantyDetailID = rs.getInt("WarrantyDetailID");
 
                 CartItem item = new CartItem();
-                item.setCartItemID(rs.getInt("CartItemID"));
+                item.setCartItemID(cartItemID);
+                item.setUserID(userId);
                 item.setQuantity(rs.getInt("Quantity"));
-                item.setProduct(p);
+                item.setStatus(rs.getInt("Status"));
+
+                item.setCategory(categoriesDAO.getCategoryByID(categoryID).get(0));
+                item.setWarranty(warrantyDetailDAO.getWarrantyDetailById(warrantyDetailID));
 
                 itemList.add(item);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -61,22 +61,23 @@ public class CartItemDAO extends DBContext {
         return true;
     }
 
-    public boolean addCartItem(int userID, int productID, int quantity) {
+    public boolean addCartItem(int userID, int CategoryID, int quantity, int WarrantyDetailID) {
         // Bước 1: Lấy cart của user
         String cartItemSql = """
                                MERGE CartItems AS target
-                               USING (SELECT ? AS UserID, ? AS ProductID, ? AS Quantity) AS source
-                               ON target.UserID = source.UserID AND target.ProductID = source.ProductID
+                               USING (SELECT ? AS UserID, ? AS CategoryID, ? AS Quantity, ? AS WarrantyDetailID) AS source
+                               ON target.UserID = source.UserID AND target.CategoryID = source.CategoryID AND target.WarrantyDetailID = source.WarrantyDetailID
                                WHEN MATCHED THEN
                                    UPDATE SET Quantity = target.Quantity + source.Quantity
                                WHEN NOT MATCHED THEN
-                                   INSERT (UserID, ProductID, Quantity)
-                                   VALUES (source.UserID, source.ProductID, source.Quantity);
+                                   INSERT (UserID, CategoryID, Quantity, WarrantyDetailID)
+                                   VALUES (source.UserID, source.CategoryID, source.Quantity, source.WarrantyDetailID);
                              """;
         try (PreparedStatement ps = connection.prepareStatement(cartItemSql)) {
             ps.setInt(1, userID);
-            ps.setInt(2, productID);
+            ps.setInt(2, CategoryID);
             ps.setInt(3, quantity);
+            ps.setInt(4, WarrantyDetailID);
             int n = ps.executeUpdate();
             if (n == 0) {
                 return false;
@@ -102,6 +103,49 @@ public class CartItemDAO extends DBContext {
             e.printStackTrace();
         }
         return true;
+    }
+
+    public ArrayList<CartItem> getCartItemsByUserIdWithOffset(int userId, int offset, int limit) {
+        ArrayList<CartItem> itemList = new ArrayList<>();
+        String sql = """
+        SELECT CartItemID, UserID, CategoryID, WarrantyDetailID, Quantity, Status 
+        FROM CartItems 
+        WHERE UserID = ?
+        ORDER BY CartItemID ASC
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
+
+        WarrantyDetailDAO warrantyDetailDAO = new WarrantyDetailDAO();
+        CategoriesDAO categoriesDAO = new CategoriesDAO();
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, offset);
+            ps.setInt(3, limit);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int cartItemID = rs.getInt("CartItemID");
+                int categoryID = rs.getInt("CategoryID");
+                int warrantyDetailID = rs.getInt("WarrantyDetailID");
+
+                CartItem item = new CartItem();
+                item.setCartItemID(cartItemID);
+                item.setUserID(userId);
+                item.setQuantity(rs.getInt("Quantity"));
+                item.setStatus(rs.getInt("Status"));
+
+                item.setCategory(categoriesDAO.getCategoryByID(categoryID).get(0));
+                item.setWarranty(warrantyDetailDAO.getWarrantyDetailById(warrantyDetailID));
+
+                itemList.add(item);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return itemList;
     }
 
 }

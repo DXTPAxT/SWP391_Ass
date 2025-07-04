@@ -86,6 +86,7 @@ public class AddUserServlet extends HttpServlet {
         String phoneNumber = request.getParameter("phoneNumber");
         String address = request.getParameter("address");
         String roleID = request.getParameter("roleID");
+        String startDate = request.getParameter("startDate");
         RoleDAO roleDao = new RoleDAO();
         UserDAO userDao = new UserDAO();
         ArrayList<Role> roles = roleDao.getRoles();
@@ -104,9 +105,9 @@ public class AddUserServlet extends HttpServlet {
             error = "Invalid phone number!";
         } else if (userDao.isPhoneNumberExisted(phoneNumber)) {
             error = "Phone number existed!";
-        } else if (utils.Validator.isNullOrEmpty(address)) {
+        } else if (utils.Validator.isNullOrEmpty(address) && roleID == "3") {
             error = "Address is required!";
-        } else if (!("admin".equalsIgnoreCase(roleID) || "staff".equalsIgnoreCase(roleID) || "1".equals(roleID) || "2".equals(roleID))) {
+        } else if (roleID == "3") {
             error = "Only Admin and Staff accounts can be added!";
         }
 
@@ -118,21 +119,34 @@ public class AddUserServlet extends HttpServlet {
             request.setAttribute("address", address);
             request.setAttribute("roleID", roleID);
             request.setAttribute("roles", roles);
-            // Thêm nhận lỗi cho toast
             request.setAttribute("toast", error);
             request.setAttribute("toastType", "error");
+            request.setAttribute("startDate", startDate);
             RequestDispatcher rs = request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/addNewUser.jsp");
             rs.forward(request, response);
             return;
         } else {
             try {
                 String newPassword = "123456"; // Mật khẩu mặc định, có thể thay đổi sau
-                boolean addUser = userDao.createNewUser(email, fullName, address, phoneNumber, newPassword, Integer.parseInt(roleID));
+                boolean addUser = userDao.createNewUser(email, fullName, phoneNumber, newPassword, Integer.parseInt(roleID), startDate);
                 if (addUser) {
                     HttpSession session = request.getSession();
                     session.setAttribute("toast", "Add user succesfully!");
                     session.setAttribute("toastType", "success");
-                    response.sendRedirect(request.getContextPath() + "/Admin/user");
+                    if (null != roleID) switch (roleID) {
+                        case "1":
+                            response.sendRedirect(request.getContextPath() + "/Admin/user?type=admin");
+                            break;
+                        case "2":
+                            response.sendRedirect(request.getContextPath() + "/Admin/user?type=sale");
+                            break;
+                        case "4":
+                            response.sendRedirect(request.getContextPath() + "/Admin/user?type=shipper");
+                            break;
+                        default:
+                            response.sendRedirect(request.getContextPath() + "/Admin/user?type=admin");
+                            break;
+                    }
                 } else {
                     request.setAttribute("toast", "Add user failed!");
                     request.setAttribute("toastType", "error");

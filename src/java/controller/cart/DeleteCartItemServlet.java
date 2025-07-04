@@ -75,11 +75,6 @@ public class DeleteCartItemServlet extends HttpServlet {
         try {
             String cartItemParam = request.getParameter("cartItemID");
 
-//            if (cartItemParam == null || quantityParam == null
-//                    || cartItemParam.isEmpty() || quantityParam.isEmpty()) {
-//                response.getWriter().write("missing_parameters");
-//                return;
-//            }
             int cartItemID = Integer.parseInt(cartItemParam);
 
             CartItemDAO dao = new CartItemDAO();

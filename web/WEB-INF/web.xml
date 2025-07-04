@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
-    <!-- Servlets -->
+    <!-- SERVLETS -->
     <servlet>
         <servlet-name>Demo</servlet-name>
         <servlet-class>controller.Demo</servlet-class>
@@ -102,16 +102,12 @@
         <servlet-class>controllerAdmin.UpdateUserServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>BlogDeleteServlet</servlet-name>
-        <servlet-class>controllerAdmin.BlogDeleteServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>BlogUpdateServlet</servlet-name>
         <servlet-class>controllerAdmin.BlogUpdateServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>BraComAdminServlet</servlet-name>
-        <servlet-class>controllerAdmin.BraComAdminServlet</servlet-class>
+        <servlet-name>BrandComAdminServlet</servlet-name>
+        <servlet-class>controllerAdmin.BrandComAdminServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ImportServlet</servlet-name>
@@ -222,8 +218,8 @@
         <url-pattern>/blogadd</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>BraComAdminServlet</servlet-name>
-        <url-pattern>/BraComAdmin</url-pattern>
+        <servlet-name>BrandComAdminServlet</servlet-name>
+        <url-pattern>/BrandComAdmin</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ImportServlet</servlet-name>
@@ -232,10 +228,6 @@
     <servlet-mapping>
         <servlet-name>UpdateUserServlet</servlet-name>
         <url-pattern>/Admin/user/update</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>BlogDeleteServlet</servlet-name>
-        <url-pattern>/blogdelete</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>BlogUpdateServlet</servlet-name>

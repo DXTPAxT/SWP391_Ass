@@ -29,99 +29,14 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="${ctx}/ShopPages/Pages/images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="${ctx}/ShopPages/Pages/images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="${ctx}/ShopPages/Pages/images/ico/apple-touch-icon-57-precomposed.png">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/custom.css?v=1.0.15" rel="stylesheet">
+        
     </head><!--/head-->
-
-
 
     <body>
         <jsp:include page="components/header.jsp">
             <jsp:param name="activePage" value="products"/>
         </jsp:include>
-
-        <section id="slider"><!--slider-->
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div id="slider-carousel" class="carousel slide" data-ride="carousel">
-                            <!-- Indicators -->
-                            <ol class="carousel-indicators">
-                                <li data-target="#slider-carousel" data-slide-to="0" class="active"></li>
-                                <li data-target="#slider-carousel" data-slide-to="1"></li>
-                                <li data-target="#slider-carousel" data-slide-to="2"></li>
-                            </ol>
-
-                            <!-- Slides -->
-                            <div class="carousel-inner">
-                                <!-- Slide 1 -->
-                                <div class="item active">
-                                    <div class="col-sm-6">
-                                        <h1>
-                                            <span style="color: red">Cyber</span><span style="color: #111111;">Beast</span>
-                                        </h1>
-                                        <h3>Best Seller</h3>
-                                        <p>Efficient Performance: Intel® Core™ i5/i7 (12th Gen) processor with Intel® Iris® Xe Graphics.</p>
-                                        <p>Stunning Display: 14” Full HD (1920x1080) NanoEdge IPS display with ultra-slim bezels.</p>
-                                        <p>Premium Portability: Lightweight aluminum chassis, only ~1.3kg and 15.9mm thin—ideal for mobility.</p>
-
-                                        <button type="button" class="btn btn-default get">Get it now</button>
-                                    </div>
-                                    <div class="col-sm-6 text-center">
-                                        <img src="${ctx}/ShopPages/Pages/images/home/nitrov15.png"
-                                             style="height: 450px; width: auto; padding-top: 30px;"
-                                             class="girl img-responsive" alt="CyberBeast" />
-                                    </div>
-                                </div>
-
-                                <!-- Slide 2 -->
-                                <div class="item">
-                                    <div class="col-sm-6">
-                                        <h1><span style="color: red">Cyber</span><span style="color: #111111;">Beast</span></h1>
-                                        <h3>Best Seller</h3>
-                                        <p>Powerful Performance: Intel® Core™ i7-12700F CPU with ASUS TUF Gaming B660 motherboard.</p>
-                                        <p>Graphics Excellence: NVIDIA® GeForce RTX™ 3060 12GB for smooth 1440p gaming and rendering.</p>
-                                        <p>Solid Setup: 16GB DDR4 RAM, 512GB NVMe SSD, 650W PSU, housed in ASUS Prime case with RGB fans.</p>
-
-                                        <button type="button" class="btn btn-default get">Get it now</button>
-                                    </div>
-                                    <div class="col-sm-6 text-center">
-                                        <img src="${ctx}/ShopPages/Pages/images/home/1.png"
-                                             style="height: 400px; width: auto; padding-top: 20px;"
-                                             class="girl img-responsive" alt="Responsive Design" />
-
-                                    </div>
-                                </div>
-
-                                <!-- Slide 3 -->
-                                <div class="item">
-                                    <div class="col-sm-6">
-                                        <h1><span style="color: red">Cyber</span><span style="color: #111111;">Beast</span></h1>
-                                        <h3>Recommend Main</h3>
-                                        <p>Extreme Compatibility: Supports Intel® 12th & 13th Gen processors with LGA1700 socket, built for gaming and productivity.</p>
-                                        <p>Next-Gen Memory: Ready for DDR5 RAM up to 6400MHz (OC), 4 DIMM slots for up to 128GB high-speed memory.</p>
-                                        <p>High-Speed Connectivity: PCIe 5.0 x16 slot for latest GPUs, 4x M.2 NVMe slots, and Wi-Fi 6E with Bluetooth 5.2 onboard.</p>
-                                        <button type="button" class="btn btn-default get">Get it now</button>
-                                    </div>
-                                    <div class="col-sm-6 text-center">
-                                        <img src="${ctx}/ShopPages/Pages/images/home/asus.png"
-                                             style="height: 450px; width: auto; padding-top: 20px;"
-                                             class="girl img-responsive" alt="Free Template" />
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Controls -->
-                            <a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
-                                <i class="fa fa-angle-left"></i>
-                            </a>
-                            <a href="#slider-carousel" class="right control-carousel hidden-xs" data-slide="next">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section><!--/slider-->
 
 
         <section>
@@ -215,6 +130,7 @@
                                 </div>
                             </div><!-- /price-range -->
 
+                            <!-- build pc -->
                             <div class="brands_products"><!-- build pc -->
                                 <h2 style="color: green; font-weight: bold; text-align: center; position: relative;">
                                     <span style="background: #fff; padding: 0 10px; z-index: 2; position: relative;">BUILD PC</span>
@@ -222,7 +138,7 @@
                                 <div class="brands-name" style="border: 1px solid #f0f0f0; padding: 20px;">
                                     <ul class="nav nav-pills nav-stacked">
                                         <li>
-                                            <a href="${ctx}/BuildPC?service=list">
+                                            <a href="${ctx}/ShopPages/Pages/BuildPC/BuildPC.html">
                                                 <i class="fa fa-cogs"></i> Customize Your PC
                                             </a>
                                         </li>
@@ -234,7 +150,6 @@
                                     </ul>
                                 </div>
                             </div><!-- /build pc -->
-
 
 
                         </div>
@@ -251,22 +166,11 @@
                                             <div class="productinfo text-center">
                                                 <a href="${ctx}/CategoriesController?service=detail&categoryID=${product.categoryID}">
                                                     <img src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
-                                                    <p>${product.brandName}</p>
                                                     <h2>
                                                         <fmt:formatNumber value="${product.price}" type="number" groupingUsed="true" /> VND
                                                     </h2>
                                                     <p>${product.categoryName}</p>
                                                 </a>
-                                                <button class="add-to-cart"
-                                                        data-userid="${user.userID}"
-                                                        data-productid="${product.categoryID}"
-                                                        data-name="${product.categoryName}"
-                                                        data-image="${ctx}/ShopPages/Pages/images/shop/product12.jpg"
-                                                        data-price="${product.price}"
-                                                        class="btn btn-default add-to-cart">
-                                                    <i class="fa fa-shopping-cart"></i>
-                                                    Add to cart
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -316,12 +220,12 @@
         </section>
 
         <jsp:include page="components/footer.jsp"/>
-      <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
-<script src="${ctx}/ShopPages/Pages/js/main.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
 
     </body>
 

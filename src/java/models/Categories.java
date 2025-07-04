@@ -5,7 +5,7 @@ public class Categories {
     private int categoryID;
     private String categoryName;
 
-    private int BraComID;
+    private int BrandComID;
     private String brandName;
     private String ComponentName;
 
@@ -19,11 +19,16 @@ public class Categories {
     private String description;
     private int status;
     private String imgURL;
+    private int warrantyDetailID;
+    private String warrantyDesc;
+    private int warrantyPrice;
 
-    public Categories(int categoryID, String categoryName, int BraComID, int quantity, int price, String description, int status, String imgURL) {
+ 
+
+    public Categories(int categoryID, String categoryName, int BrandComID, int quantity, int price, String description, int status, String imgURL) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
-        this.BraComID = BraComID;
+        this.BrandComID = BrandComID;
         this.quantity = quantity;
         this.price = price;
         this.description = description;
@@ -31,10 +36,10 @@ public class Categories {
         this.imgURL = imgURL;
     }
 
-    public Categories(int categoryID, String categoryName, int BraComID, String brandName, String ComponentName, int quantity, int inventory, int price, String description, int status, String imgURL) {
+    public Categories(int categoryID, String categoryName, int BrandComID, String brandName, String ComponentName, int quantity, int inventory, int price, String description, int status, String imgURL) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
-        this.BraComID = BraComID;
+        this.BrandComID = BrandComID;
         this.brandName = brandName;
         this.ComponentName = ComponentName;
         this.quantity = quantity;
@@ -53,10 +58,10 @@ public class Categories {
         this.inventory = inventory;
     }
 
-    public Categories(int categoryID, String categoryName, int BraComID, String brandName, String ComponentName, int quantity, int price, String description, int status, String imgURL) {
+    public Categories(int categoryID, String categoryName, int BrandComID, String brandName, String ComponentName, int quantity, int price, String description, int status, String imgURL) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
-        this.BraComID = BraComID;
+        this.BrandComID = BrandComID;
         this.brandName = brandName;
         this.ComponentName = ComponentName;
         this.quantity = quantity;
@@ -65,13 +70,35 @@ public class Categories {
         this.status = status;
         this.imgURL = imgURL;
     }
-
-    public int getBraComID() {
-        return BraComID;
+   public int getWarrantyDetailID() {
+        return warrantyDetailID;
     }
 
-    public void setBraComID(int BraComID) {
-        this.BraComID = BraComID;
+    public void setWarrantyDetailID(int warrantyDetailID) {
+        this.warrantyDetailID = warrantyDetailID;
+    }
+
+    public String getWarrantyDesc() {
+        return warrantyDesc;
+    }
+
+    public void setWarrantyDesc(String warrantyDesc) {
+        this.warrantyDesc = warrantyDesc;
+    }
+
+    public int getWarrantyPrice() {
+        return warrantyPrice;
+    }
+
+    public void setWarrantyPrice(int warrantyPrice) {
+        this.warrantyPrice = warrantyPrice;
+    }
+    public int getBrandComID() {
+        return BrandComID;
+    }
+
+    public void setBrandComID(int BrandComID) {
+        this.BrandComID = BrandComID;
     }
 
     public String getBrandName() {
@@ -129,15 +156,27 @@ public class Categories {
         this.imgURL = imgURL;
     }
 
-    public Categories(String categoryName, int BraComID, int quantity, int price, String description, int status, String imgURL) {
+    public Categories(String categoryName, int BrandComID, int quantity, int price, String description, int status, String imgURL) {
         this.categoryName = categoryName;
-        this.BraComID = BraComID;
+        this.BrandComID = BrandComID;
         this.quantity = quantity;
         this.price = price;
         this.description = description;
         this.status = status;
         this.imgURL = imgURL;
     }
+public Categories(int categoryID, String categoryName, String brandName, int price, String imgURL, int componentID, 
+                  int warrantyDetailID, String warrantyDesc, int warrantyPrice) {
+    this.categoryID = categoryID;
+    this.categoryName = categoryName;
+    this.brandName = brandName;
+    this.price = price;
+    this.imgURL = imgURL;
+    this.componentID = componentID;
+    this.warrantyDetailID = warrantyDetailID;
+    this.warrantyDesc = warrantyDesc;
+    this.warrantyPrice = warrantyPrice;
+}
 
     public int getCategoryID() {
         return categoryID;
@@ -153,14 +192,6 @@ public class Categories {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
-    }
-
-    public int getBrandComID() {
-        return brandComID;
-    }
-
-    public void setBrandComID(int brandComID) {
-        this.brandComID = brandComID;
     }
 
     public int getComponentID() {

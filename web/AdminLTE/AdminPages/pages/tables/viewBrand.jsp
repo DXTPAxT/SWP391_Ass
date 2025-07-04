@@ -40,9 +40,9 @@
         <div class="wrapper">
 
             <jsp:include page="../../components/header.jsp" />
-<jsp:include page="../../components/sidebar.jsp">
-    <jsp:param name="ctx" value="${ctx}" />
-</jsp:include>
+            <jsp:include page="../../components/sidebar.jsp">
+                <jsp:param name="ctx" value="${ctx}" />
+            </jsp:include>
 
             <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
@@ -63,7 +63,7 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="box">
-                                
+
                                 <!-- /.box-header -->
                                 <div class="box-body">
                                     <table id="example2" class="table table-bordered table-hover">
@@ -74,6 +74,7 @@
                                                 <th>Quantity</th>
                                                 <th>Status</th>
                                                 <th>View</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -85,21 +86,48 @@
                                                         <td>${brand.quantity}</td>
                                                         <td>
                                                             <c:choose>
-                                                                <c:when test="${brand.status == 0}">Disable</c:when>
-                                                                <c:when test="${brand.status == 1}">Active</c:when>
+                                                                <c:when  test="${brand.status == 0}">
+                                                                    <label class="label label-danger">Disable</label>
+                                                                </c:when>
+                                                                <c:when test="${brand.status == 1}">
+                                                                    <label class="label label-success">Active</label>
+                                                                </c:when>
                                                                 <c:otherwise>Unknown</c:otherwise>
                                                             </c:choose>
                                                         </td>
                                                         <td>
-                                                            <a href="BraComAdmin?service=listbybrand&brandID=${brand.brandID}" 
-                                                               class="btn btn-info btn-sm">View</a>
+                                                            <a href="BrandComAdmin?service=listbybrand&brandID=${brand.brandID}" 
+                                                               class="btn btn-warning btn-sm">View</a>
                                                         </td>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${brand.status == 1}">
+                                                                    <a href="BrandAdmin?service=toggleStatus&brandID=${brand.brandID}" 
+                                                                       class="btn btn-danger btn-sm"
+                                                                       onclick="return confirm('Are you sure you want to disable this brand?');">
+                                                                        Disable
+                                                                    </a>
+                                                                </c:when>
+                                                                <c:when test="${brand.status == 0}">
+                                                                    <a href="BrandAdmin?service=toggleStatus&brandID=${brand.brandID}" 
+                                                                       class="btn btn-success btn-sm"
+                                                                       onclick="return confirm('Are you sure you want to activate this brand?');">
+                                                                        Activate
+                                                                    </a>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <span class="text-muted">Unknown status</span>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
                                         </tbody>
                                     </table>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -132,17 +160,17 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- page script -->
         <script>
-            $(function () {
-                $("#example1").DataTable();
-                $('#example2').DataTable({
-                    "paging": true,
-                    "lengthChange": true,
-                    "searching": true,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": true
-                });
-            });
+                                                                           $(function () {
+                                                                               $("#example1").DataTable();
+                                                                               $('#example2').DataTable({
+                                                                                   "paging": true,
+                                                                                   "lengthChange": true,
+                                                                                   "searching": true,
+                                                                                   "ordering": true,
+                                                                                   "info": true,
+                                                                                   "autoWidth": true
+                                                                               });
+                                                                           });
         </script>
         <script>
             $(function () {

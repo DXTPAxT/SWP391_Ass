@@ -4,7 +4,7 @@
     Author     : Admin
 --%>
 
-<%@page contentType="text/html" pageEncoding="windows-1252"%>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
@@ -38,6 +38,17 @@
         <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/plugins/daterangepicker/daterangepicker.css">
         <!-- bootstrap wysihtml5 - text editor -->
         <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+        <!-- DataTables CSS -->
+        <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/plugins/datatables/dataTables.bootstrap.css">
+
+        <style>
+            #pagination button {
+                margin: 0 3px;
+                min-width: 80px;
+            }
+        </style>
+
+
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -53,7 +64,7 @@
             <jsp:include page="components/sidebar.jsp">
                 <jsp:param name="ctx" value="${ctx}" />
             </jsp:include>
-            
+
             <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
@@ -139,19 +150,40 @@
                         <!-- Left col -->
                         <section class="col-lg-7 connectedSortable">
                             <!-- Custom tabs (Charts with tabs)-->
-                            <div class="nav-tabs-custom">
-                                <!-- Tabs within a box -->
-                                <ul class="nav nav-tabs pull-right">
-                                    <li class="active"><a href="#revenue-chart" data-toggle="tab">Area</a></li>
-                                    <li><a href="#sales-chart" data-toggle="tab">Donut</a></li>
-                                    <li class="pull-left header"><i class="fa fa-inbox"></i> Sales</li>
-                                </ul>
-                                <div class="tab-content no-padding">
-                                    <!-- Morris chart - Sales -->
-                                    <div class="chart tab-pane active" id="revenue-chart" style="position: relative; height: 300px;"></div>
-                                    <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 300px;"></div>
+                            <div class="box box-primary">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title text-red"><i class="fa fa-exclamation-circle"></i> Categories Need to Import</h3>
+                                </div>
+                                <div class="box-body">
+                                    <table id="importTable" class="table table-bordered table-striped text-center">
+                                        <thead class="bg-light-blue">
+                                            <tr>
+                                                <th class="text-center">Category ID</th>
+                                                <th class="text-center">Category Name</th>
+                                                <th class="text-center">Import</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach var="category" items="${list}">
+                                                <tr>
+                                                    <td>${category.categoryID}</td>
+                                                    <td>${category.categoryName}</td>
+                                                    <td>
+                                                        <a href="${ctx}/Import?service=insert&categoryID=${category.categoryID}"
+                                                           class="btn btn-primary btn-sm">Import</a>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                        </tbody>
+                                    </table>
+                                    <div id="pagination" class="text-center" style="margin-top: 15px;"></div>
                                 </div>
                             </div>
+
+
+
+
+
                             <!-- /.nav-tabs-custom -->
 
                             <!-- Chat box -->
@@ -570,6 +602,13 @@
         </div>
         <!-- ./wrapper -->
 
+        <!-- jQuery -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
+
+        <!-- DataTables -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/datatables/jquery.dataTables.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/datatables/dataTables.bootstrap.min.js"></script>
+
         <!-- jQuery 2.2.3 -->
         <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
         <!-- jQuery UI 1.11.4 -->
@@ -607,6 +646,70 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/pages/dashboard.js"></script>
         <!-- AdminLTE for demo purposes -->
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
+        <!-- Notification Updater -->
+        <script src="${ctx}/AdminLTE/AdminPages/js/notification-updater.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const rowsPerPage = 5;
+                const table = document.getElementById("importTable");
+                const tbody = table.querySelector("tbody");
+                const rows = Array.from(tbody.querySelectorAll("tr"));
+                const totalPages = Math.ceil(rows.length / rowsPerPage);
+                const pagination = document.getElementById("pagination");
+
+                let currentPage = 1;
+
+                function renderTablePage(page) {
+                    tbody.innerHTML = "";
+                    const start = (page - 1) * rowsPerPage;
+                    const end = start + rowsPerPage;
+                    rows.slice(start, end).forEach(row => tbody.appendChild(row));
+                }
+
+                function renderPagination() {
+                    pagination.innerHTML = "";
+
+                    const prev = document.createElement("button");
+                    prev.innerText = "Previous";
+                    prev.className = "btn btn-default btn-sm";
+                    prev.disabled = currentPage === 1;
+                    prev.onclick = () => {
+                        if (currentPage > 1) {
+                            currentPage--;
+                            renderTablePage(currentPage);
+                            renderPagination();
+                        }
+                    };
+
+                    const next = document.createElement("button");
+                    next.innerText = "Next";
+                    next.className = "btn btn-default btn-sm";
+                    next.disabled = currentPage === totalPages;
+                    next.onclick = () => {
+                        if (currentPage < totalPages) {
+                            currentPage++;
+                            renderTablePage(currentPage);
+                            renderPagination();
+                        }
+                    };
+
+                    const pageInfo = document.createElement("span");
+                    pageInfo.innerHTML = ` Page ${currentPage} of ${totalPages} `;
+                    pageInfo.style.margin = "0 10px";
+
+                    pagination.appendChild(prev);
+                    pagination.appendChild(pageInfo);
+                    pagination.appendChild(next);
+                }
+
+                if (rows.length > 0) {
+                    renderTablePage(currentPage);
+                    renderPagination();
+                } else {
+                    pagination.innerHTML = "<p class='text-muted'>No data to display</p>";
+                }
+            });
+        </script>
 
     </body>
 </html>

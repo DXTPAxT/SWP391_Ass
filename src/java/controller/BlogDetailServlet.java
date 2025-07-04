@@ -46,7 +46,6 @@ public class BlogDetailServlet extends HttpServlet {
 
         request.setAttribute("post", postDetail);
         request.setAttribute("comments", comments);
-
         List<Blog_Cate> categories = dao.getAllBlogCategory();
         List<Post> top5Posts = dao.getTop5NewestPosts();
 

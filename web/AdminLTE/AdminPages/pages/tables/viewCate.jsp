@@ -85,6 +85,7 @@
                                                 <th>Update</th>
                                                 <th>View Product</th>
                                                 <th>View Import</th>
+                                                <th>Insert Product</th>
                                                 <th>View Feedback</th>
                                             </tr>
                                         </thead>
@@ -100,18 +101,27 @@
                                                             <td>${category.quantity}</td>
                                                             <td>${category.inventory}</td>
                                                             <td>${category.price}</td>
-                                                            <td>${category.description}</td>
+                                                            <td style="white-space: normal; word-break: break-word; max-width: 200px;">${category.description}</td>
                                                             <td>
                                                                 <c:choose>
-                                                                    <c:when test="${category.status == 0}">Disable</c:when>
-                                                                    <c:when test="${category.status == 1}">Active</c:when>
-                                                                    <c:when test="${category.status == 2}">On Sale</c:when>
+                                                                    <c:when test="${category.status == 0}"> 
+                                                                        <label class="label label-warning">Inactive</label>
+                                                                    </c:when>
+                                                                    <c:when test="${category.status == 1}">
+                                                                        <span class="label label-success">Active</span>
+                                                                    </c:when>
+                                                                    <c:when test="${category.status == 2}">
+                                                                        <span class="label label-success">On Sale</span>
+                                                                    </c:when>
+                                                                        <c:when test="${category.status == 3}">
+                                                                        <span class="label label-danger">Disable</span>
+                                                                    </c:when>
                                                                     <c:otherwise>Unknown</c:otherwise>
                                                                 </c:choose>
                                                             </td>
                                                             <td>
                                                                 <a href="CateAdmin?service=update&categoryID=${category.categoryID}" 
-                                                                   class="btn btn-warning btn-sm">Update</a>
+                                                                   class="btn btn-primary btn-sm">Update</a>
                                                             </td>
                                                             <td>
                                                                 <a href="ProductAdmin?service=listbycate&categoryID=${category.categoryID}" 
@@ -122,6 +132,10 @@
                                                                    class="btn btn-warning btn-sm">View</a>
                                                             </td>
                                                             <td>
+                                                                <a href="Import?service=insert&categoryID=${category.categoryID}" 
+                                                                   class="btn btn-success btn-sm">Insert</a>
+                                                            </td>
+                                                            <td>
                                                                 <a href="Import?service=listbycate&categoryID=${category.categoryID}" 
                                                                    class="btn btn-warning btn-sm">View</a>
                                                             </td>
@@ -130,7 +144,7 @@
                                                 </c:when>
                                                 <c:otherwise>
                                                     <tr>
-                                                        <td colspan="11" class="text-center text-muted">No categories found.</td>
+                                                        <td colspan="13" class="text-center text-muted">No categories found.</td>
                                                     </tr>
                                                 </c:otherwise>
                                             </c:choose>

@@ -4,11 +4,12 @@
  */
 package controllerAdmin;
 
-import dalAdmin.BraComAdminDAO;
+import dalAdmin.BrandComAdminDAO;
 import dalAdmin.BrandAdminDAO;
 import dalAdmin.CategoryAdminDAO;
 import dalAdmin.ComponentAdminDAO;
 import dalAdmin.ImportDAO;
+import dalAdmin.NotificationAdminDAO;
 import dalAdmin.ProductAdminDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,32 +19,41 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import models.BraComs;
+import models.BrandComs;
 import models.Brands;
 import models.Categories;
 import models.Components;
 import models.Imports;
 import models.Products;
+import models.User;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
  * @author Admin
  */
-
+@WebServlet(name="AdminDashbordServlet", urlPatterns={"/AdminDashbordServlet"})
 public class AdminDashbordServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-          
-            
-            
+            CategoryAdminDAO dao = new CategoryAdminDAO();
             ComponentAdminDAO Com = new ComponentAdminDAO();
+            NotificationAdminDAO notificationDAO = new NotificationAdminDAO();
+            
             List<Components> com = Com.getAllComponent();
             request.setAttribute("com", com);
+            List<Categories> list = dao.getAllCategoriesByInvenory();
+            request.setAttribute("list", list);
             
-           
+            // Load số lượng thông báo chưa đọc cho user hiện tại
+            HttpSession session = request.getSession(false);
+            User user = (session != null) ? (User) session.getAttribute("user") : null;
+            int userID = (user != null) ? user.getUserId() : -1;
+            int unreadCount = (userID > 0) ? notificationDAO.getUnreadCount(userID) : 0;
+            request.setAttribute("unreadCount", unreadCount);
             
             request.getRequestDispatcher("AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);
         }

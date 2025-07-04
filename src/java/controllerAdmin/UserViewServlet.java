@@ -15,15 +15,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import models.User;
 import models.Role;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author PC ASUS
  */
 public class UserViewServlet extends HttpServlet {
+
+    private static final Logger LOGGER = Logger.getLogger(UserViewServlet.class.getName());
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -65,22 +70,38 @@ public class UserViewServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             UserDAO dao = new UserDAO();
-            ArrayList<User> users = dao.getUsers();
-            request.setAttribute("users", users);
-            // Load all roles and map roleID to roleName
-            RoleDAO roleDAO = new RoleDAO();
-            ArrayList<Role> roles = roleDAO.getRoles();
-            Map<Integer, String> roleMap = new HashMap<>();
-            for (Role r : roles) {
-                roleMap.put(r.getRoleID(), r.getRoleName());
+            // Test database connection
+            if (!dao.isConnected()) {
+                LOGGER.severe("Database connection failed!");
+                response.sendRedirect(request.getContextPath() + "/error.jsp");
+                return;
             }
-            request.setAttribute("roleMap", roleMap);
+            LOGGER.info("Database connection successful");
+            // Get the type parameter (customer, staff, or null for all users)
+            String type = request.getParameter("type");
+            LOGGER.info("Processing request for user type: " + type);
+
+            List<User> users = new ArrayList<>();
+
+            if ("customer".equals(type)) {
+                users = dao.getAllCustomers();
+            } else if ("sale".equals(type)) {
+                users = dao.getAllSales();
+            } else if ("admin".equals(type)) {
+                users = dao.getAllAdmins();
+            } else if ("shipper".equals(type)) {
+                users = dao.getAllShippers();
+            }
+            
+            request.setAttribute("users", users);
+            request.setAttribute("role", type);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/AdminLTE/AdminPages/pages/tables/viewUsers.jsp");
+            dispatcher.forward(request, response);
+
         } catch (Exception e) {
-            e.printStackTrace(); // Ghi log ra console
-            request.setAttribute("error", "Lỗi khi truy xuất dữ liệu người dùng: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error in UserViewServlet", e);
+            response.sendRedirect(request.getContextPath() + "/error.jsp");
         }
-        RequestDispatcher rs = request.getRequestDispatcher("/AdminLTE/AdminPages/pages/tables/viewUser.jsp");
-        rs.forward(request, response);
     }
 
     /**

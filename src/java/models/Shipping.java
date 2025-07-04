@@ -2,60 +2,57 @@ package models;
 
 public class Shipping {
 
-    private int shippingID;
-    private int orderID;
-    private int shipperID;
-    private String shippingStatus;
-    private String feedback;
+    private int ShippingID;
+    private Order order;
+    private User Shipper;
+    private String ShippingStatus;
+    private String Shiptime;
 
-    public Shipping() {
-    }
-
-    public Shipping(int shippingID, int orderID, int shipperID, String shippingStatus, String feedback) {
-        this.shippingID = shippingID;
-        this.orderID = orderID;
-        this.shipperID = shipperID;
-        this.shippingStatus = shippingStatus;
-        this.feedback = feedback;
+    public Shipping(int ShippingID, Order order, User Shipper, String ShippingStatus, String Shiptime) {
+        this.ShippingID = ShippingID;
+        this.order = order;
+        this.Shipper = Shipper;
+        this.ShippingStatus = ShippingStatus;
+        this.Shiptime = Shiptime;
     }
 
     public int getShippingID() {
-        return shippingID;
+        return ShippingID;
     }
 
-    public void setShippingID(int shippingID) {
-        this.shippingID = shippingID;
+    public void setShippingID(int ShippingID) {
+        this.ShippingID = ShippingID;
     }
 
-    public int getOrderID() {
-        return orderID;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setOrderID(int orderID) {
-        this.orderID = orderID;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
-    public int getShipperID() {
-        return shipperID;
+    public User getShipper() {
+        return Shipper;
     }
 
-    public void setShipperID(int shipperID) {
-        this.shipperID = shipperID;
+    public void setShipper(User Shipper) {
+        this.Shipper = Shipper;
     }
 
     public String getShippingStatus() {
-        return shippingStatus;
+        return ShippingStatus;
     }
 
-    public void setShippingStatus(String shippingStatus) {
-        this.shippingStatus = shippingStatus;
+    public void setShippingStatus(String ShippingStatus) {
+        this.ShippingStatus = ShippingStatus;
     }
 
-    public String getFeedback() {
-        return feedback;
+    public String getShiptime() {
+        return Shiptime;
     }
 
-    public void setFeedback(String feedback) {
-        this.feedback = feedback;
+    public void setShiptime(String Shiptime) {
+        this.Shiptime = Shiptime;
     }
 }

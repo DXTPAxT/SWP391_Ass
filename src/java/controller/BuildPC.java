@@ -1,132 +1,174 @@
 package controller;
 
 import dal.CategoriesDAO;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import models.Brands;
+import models.BuildPCView;
 import models.Categories;
-import models.Components;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import models.User;
+import models.WarrantyDetails;
 
-@WebServlet(name = "BuildPC", urlPatterns = {"/BuildPC"})
 public class BuildPC extends HttpServlet {
 
-    private final CategoriesDAO dao = new CategoriesDAO();
+    private int parseIntOrDefault(String raw, int def) {
+        try {
+            return Integer.parseInt(raw);
+        } catch (Exception e) {
+            return def;
+        }
+    }
+
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.println("<h1>No service handled</h1>");
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        String service = request.getParameter("service");
+        boolean ajax = "true".equalsIgnoreCase(request.getParameter("ajax"));
+        CategoriesDAO dao = new CategoriesDAO();
+
+        if ("filter".equals(service)) {
+            int componentID = parseIntOrDefault(request.getParameter("componentID"), -1);
+            String keyword = request.getParameter("keyword");
+            String brand = request.getParameter("brand");
+            int minPrice = parseIntOrDefault(request.getParameter("minPrice"), -1);
+            int maxPrice = parseIntOrDefault(request.getParameter("maxPrice"), Integer.MAX_VALUE);
+            int page = parseIntOrDefault(request.getParameter("page"), 1);
+            int pageSize = 4;
+            int start = (page - 1) * pageSize;
+
+            int total = dao.countFilteredByComponent(componentID, brand, minPrice, maxPrice, keyword);
+            int totalPages = (int) Math.ceil((double) total / pageSize);
+
+            List<Categories> filtered = dao.getCategoriesFiltered2(componentID, brand, keyword, minPrice, maxPrice, start, pageSize);
+            List<Brands> brands = dao.getBrandsByComponent(componentID);
+            Map<Integer, List<WarrantyDetails>> warrantyMap = new HashMap<>();
+            for (Categories c : filtered) {
+                List<WarrantyDetails> warranties = dao.getWarrantyByCategory(c.getCategoryID());
+                warrantyMap.put(c.getCategoryID(), warranties);
+            }
+            request.setAttribute("products", filtered);
+            request.setAttribute("brands", brands);
+            request.setAttribute("componentID", componentID);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("warrantyMap", warrantyMap);
+            if (ajax) {
+                request.getRequestDispatcher("/ShopPages/Pages/BuildPC/BuildPCList.jsp").forward(request, response);
+            } else {
+                response.sendRedirect("BuildPC.html");
+            }
+
+            return;
+        }
+        if ("loadBuildPC".equals(service)) {
+            int buildPCID = parseIntOrDefault(request.getParameter("buildPCID"), -1);
+
+            response.setContentType("text/plain;charset=UTF-8");
+
+            try (PrintWriter out = response.getWriter()) {
+                List<Categories> items = dao.getCategoriesInBuildPC(buildPCID);
+                StringBuilder sb = new StringBuilder();
+
+                for (Categories c : items) {
+                    sb.append(c.getCategoryID()).append("|")
+                            .append(c.getCategoryName()).append("|")
+                            .append(c.getBrandName()).append("|")
+                            .append(c.getPrice()).append("|")
+                            .append(c.getImgURL() == null ? "" : c.getImgURL()).append("|")
+                            .append(c.getComponentID()).append("|")
+                            .append(c.getWarrantyDesc() == null ? "" : c.getWarrantyDesc()).append("|")
+                            .append(c.getWarrantyPrice()).append("|")
+                            .append(c.getWarrantyDetailID()).append(";");
+                }
+
+                out.print(sb.toString());
+            }
+            return;
+        }
+
         processRequest(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession();
-
-        @SuppressWarnings("unchecked")
-        List<Categories> selectedList = (List<Categories>) session.getAttribute("selectedComponents");
-        if (selectedList == null) {
-            selectedList = new ArrayList<>();
-        }
 
         String service = request.getParameter("service");
-        if (service == null) service = "view";
+        CategoriesDAO dao = new CategoriesDAO();
 
-        if (service.equals("add")) {
-            int categoryId = parseIntOrDefault(request.getParameter("categoryID"), -1);
-            Categories selected = dao.getCategoryByID(categoryId).stream().findFirst().orElse(null);
-            if (selected != null) {
-                int compId = selected.getComponentID();
-                selectedList.removeIf(c -> c.getComponentID() == compId);
-                selectedList.add(selected);
-                session.setAttribute("selectedComponents", selectedList);
-            }
-            response.sendRedirect(request.getContextPath() + "/BuildPC");
+        if ("pc".equalsIgnoreCase(service)) {
+            List<BuildPCView> pcList = dao.getBuiltPCsForCustomer();
+            request.setAttribute("pcList", pcList);
+            request.getRequestDispatcher("/ShopPages/Pages/BuildPC/ViewPC.jsp").forward(request, response);
             return;
         }
 
-        if (service.equals("remove")) {
-            int compId = parseIntOrDefault(request.getParameter("componentID"), -1);
-            selectedList.removeIf(c -> c.getComponentID() == compId);
-            session.setAttribute("selectedComponents", selectedList);
+        if ("addBuildPCToCart".equals(service)) {
+            HttpSession session = request.getSession();
+            Object userObj = session.getAttribute("user");
 
-            // Kiểm tra nếu là request fetch/ajax thì trả về 200 OK, không redirect
-            String xRequestedWith = request.getHeader("X-Requested-With");
-            if ("XMLHttpRequest".equals(xRequestedWith)) {
-                response.setStatus(HttpServletResponse.SC_OK);
-            } else {
-                response.sendRedirect(request.getContextPath() + "/BuildPC");
-            }
-            return;
-        }
-
-        if (service.equals("reset")) {
-            session.removeAttribute("selectedComponents");
-            response.sendRedirect(request.getContextPath() + "/BuildPC.jsp");
-            return;
-        }
-
-        if (service.equals("download")) {
-            if (selectedList.isEmpty()) {
-                response.sendRedirect(request.getContextPath() + "/BuildPC.jsp");
+            if (userObj == null || !(userObj instanceof User)) {
+                response.getWriter().print("NOT_LOGGED_IN");
                 return;
             }
 
-            response.setContentType("text/csv");
-            response.setHeader("Content-Disposition", "attachment;filename=buildpc.csv");
-            var out = response.getWriter();
-            out.println("CategoryID,Name,Price");
-            for (Categories c : selectedList) {
-                out.printf("%d,%s,%d\n", c.getCategoryID(), c.getCategoryName(), c.getPrice());
+            User user = (User) userObj;
+
+            String[] cateIDs = request.getParameterValues("categories[]");
+            String[] warrantyDetailIDsRaw = request.getParameterValues("warrantyDetailIDs[]");
+
+            if (cateIDs == null || cateIDs.length != 6 || warrantyDetailIDsRaw == null || warrantyDetailIDsRaw.length != 6) {
+                response.getWriter().print("INVALID");
+                return;
             }
+
+            List<Integer> categoryIDs = new ArrayList<>();
+            List<Integer> warrantyDetailIDs = new ArrayList<>();
+
+            try {
+                for (int i = 0; i < cateIDs.length; i++) {
+                    categoryIDs.add(Integer.parseInt(cateIDs[i]));
+
+                    String rawWarrantyDetailID = warrantyDetailIDsRaw[i];
+                    int warrantyDetailID = 0;
+
+                    if (rawWarrantyDetailID != null && !rawWarrantyDetailID.trim().isEmpty()) {
+                        warrantyDetailID = Integer.parseInt(rawWarrantyDetailID.trim());
+                    }
+
+                    warrantyDetailIDs.add(warrantyDetailID);
+                }
+            } catch (Exception e) {
+                response.getWriter().print("INVALID");
+                return;
+            }
+
+            boolean success = dao.insertBuildPCToCart(categoryIDs, warrantyDetailIDs, user.getUserId());
+            response.getWriter().print(success ? "SUCCESS" : "ERROR");
             return;
         }
 
-        if (service.equals("filter")) {
-            boolean ajax = "true".equals(request.getParameter("ajax"));
-            int componentID = parseIntOrDefault(request.getParameter("componentID"), -1);
-            List<Categories> list = new ArrayList<>();
-            if (componentID != 1 && componentID != -1) {
-                list = dao.getCategoriesByComponentID(componentID);
-            }
-            request.setAttribute("products", list);
-            if (ajax) {
-                request.getRequestDispatcher("/ShopPages/Pages/buildpc-product-list.jsp").forward(request, response);
-            } else {
-                request.setAttribute("data", list);
-                request.getRequestDispatcher("/ShopPages/Pages/BuildPC.jsp").forward(request, response);
-            }
-            return;
-        }
-
-        // Default view
-        List<Components> components = dao.getAllComponents();
-        request.setAttribute("components", components);
-        request.setAttribute("selectedComponents", selectedList);
-        request.getRequestDispatcher("ShopPages/Pages/BuildPC.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
-    private int parseIntOrDefault(String value, int defaultValue) {
-        try {
-            return (value != null) ? Integer.parseInt(value) : defaultValue;
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
+    private String escape(String value) {
+        return value == null ? "" : value.replace("|", "/").replace("\n", " ").replace("\r", " ");
     }
 
-    @Override
-    public String getServletInfo() {
-        return "Xử lý chọn/xoá linh kiện và hiển thị trang BuildPC";
-    }
 }

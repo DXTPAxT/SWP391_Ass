@@ -3,6 +3,7 @@
 <c:set var="activePage" value="${param.activePage}" />
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!-- Header Section Extracted from homepages.jsp -->
+<link href="${pageContext.request.contextPath}/ShopPages/Pages/css/CartCss.css" rel="stylesheet">
 <header id="header"><!--header-->
     <div class="header_top"><!--header_top-->
         <div class="container">
@@ -45,16 +46,26 @@
                         <ul class="nav navbar-nav"  style=" padding-top: 50px ">
                             <c:choose>
                                 <c:when test="${not empty sessionScope.user}">
-                                    <li><a href="Cart"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="checkout.html"><i class="fa fa-check-square-o"></i> Checklist</a></li>
+                                    <c:if test="${not empty sessionScope.user and sessionScope.user.role.roleID == 3}">
+                                        <li class="cart-dropdown">
+                                            <a href="#"><i class="fa fa-shopping-cart"></i> Cart</a>
+                                            <div class="dropdown-content">
+                                                <div class="arrow-up"></div>
+                                                <a href="${pageContext.request.contextPath}/Cart">CartItem</a>
+                                                <a href="CardBuildPc">CartPC</a>
+                                            </div>
+                                        </li>
+                                        <li><a href="${pageContext.request.contextPath}/User?service=myAccount"><i class="fa fa-user"></i> Account</a></li>
+                                        <li><a href="checkout.html"><i class="fa fa-check-square-o"></i> Checklist</a></li>
+                                        </c:if>
+
                                     <li><a href="Logout"><i class="fa fa-sign-out"></i> Logout</a></li>
-                                </c:when>
-                                <c:otherwise>
+                                    </c:when>
+                                    <c:otherwise>
                                     <li><a href="Login"><i class="fa fa-lock"></i> Login</a></li>
                                     <li><a href="SignUp"><i class="fa fa-user-plus"></i> Sign Up</a></li>
-                                </c:otherwise>
-                            </c:choose>
+                                    </c:otherwise>
+                                </c:choose>
                         </ul>
                     </div>
                 </div>
@@ -78,12 +89,13 @@
                         <ul class="nav navbar-nav collapse navbar-collapse">
                             <li><a href="${pageContext.request.contextPath}/HomePages" class="${activePage == 'home' ? 'active' : ''}">Home</a></li>
                             <li><a href="${pageContext.request.contextPath}/CategoriesController?service=list" class="${activePage == 'products' ? 'active' : ''}">Products</a></li>
-                            <li><a href="#" class="${activePage == 'blog' ? 'active' : ''}">Blog<i class=""></i></a></li>
-                            <li><a href="404.html" class="${activePage == '404' ? 'active' : ''}">404</a></li>
-                            <li><a href="contact-us.html" class="${activePage == 'contact' ? 'active' : ''}">Contact</a></li>
+                            <li><a href="${ctx}/blogc" class="${activePage == 'blog' ? 'active' : ''}">Blog</a></li>
+                            <li><a href="${ctx}/ShopPages/Pages/BuildPC/BuildPC.html">Build your PC</a></li>
+<!--                            <li><a href="404.html" class="${activePage == '404' ? 'active' : ''}">404</a></li>
+                            <li><a href="contact-us.html" class="${activePage == 'contact' ? 'active' : ''}">Contact</a></li>-->
 
                         </ul>
-   
+
                     </div>
                 </div>
                 <div class="search_box pull-right">

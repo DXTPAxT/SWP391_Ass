@@ -184,27 +184,27 @@
                 document.getElementById('thumbnail-error').textContent = '';
 
                 if (title.length < 5) {
-                    document.getElementById('title-error').textContent = 'Tiêu ?? ph?i có ít nh?t 5 ký t?.';
+                    document.getElementById('title-error').textContent = 'Tiï¿½u ?? ph?i cï¿½ ï¿½t nh?t 5 kï¿½ t?.';
                     isValid = false;
                 }
                 if (author.length < 2) {
-                    document.getElementById('author-error').textContent = 'Tác gi? ph?i có ít nh?t 2 ký t?.';
+                    document.getElementById('author-error').textContent = 'Tï¿½c gi? ph?i cï¿½ ï¿½t nh?t 2 kï¿½ t?.';
                     isValid = false;
                 }
                 if (brief.length < 10) {
-                    document.getElementById('brief-error').textContent = 'Tóm t?t ph?i có ít nh?t 10 ký t?.';
+                    document.getElementById('brief-error').textContent = 'Tï¿½m t?t ph?i cï¿½ ï¿½t nh?t 10 kï¿½ t?.';
                     isValid = false;
                 }
                 if (content.length < 20) {
-                    document.getElementById('content-error').textContent = 'N?i dung ph?i có ít nh?t 20 ký t?.';
+                    document.getElementById('content-error').textContent = 'N?i dung ph?i cï¿½ ï¿½t nh?t 20 kï¿½ t?.';
                     isValid = false;
                 }
                 if (!bc_id) {
-                    document.getElementById('bc_id-error').textContent = 'Vui lòng ch?n danh m?c.';
+                    document.getElementById('bc_id-error').textContent = 'Vui lï¿½ng ch?n danh m?c.';
                     isValid = false;
                 }
                 if (thumbnail && !thumbnail.match(/\.(jpg|jpeg|png|gif)$/i)) {
-                    document.getElementById('thumbnail-error').textContent = 'File ?nh ph?i có ??nh d?ng jpg, jpeg, png ho?c gif.';
+                    document.getElementById('thumbnail-error').textContent = 'File ?nh ph?i cï¿½ ??nh d?ng jpg, jpeg, png ho?c gif.';
                     isValid = false;
                 }
 

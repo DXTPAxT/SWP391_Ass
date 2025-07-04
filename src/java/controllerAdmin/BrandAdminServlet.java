@@ -38,23 +38,68 @@ public class BrandAdminServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             String service = request.getParameter("service");
-            BrandAdminDAO ban = new BrandAdminDAO();
-            ban.updateBrandQuantitiesFromBrandComs();
-            
             if (service == null) {
                 service = "listall";
             }
-            
+
+            BrandAdminDAO ban = new BrandAdminDAO();
+            ban.updateBrandQuantitiesFromBrandComs();
+
             if (service.equals("listall")) {
                 List<Brands> bra = ban.getAllBrands();
                 request.setAttribute("bra", bra);
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewBrand.jsp").forward(request, response);
+
+            } else if (service.equals("insert")) {
+                String submit = request.getParameter("submit");
+
+                if (submit == null) {
+                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertBrand.jsp").forward(request, response);
+                } else {
+                    String brandName = request.getParameter("brandName");
+                    String statusRaw = request.getParameter("status");
+
+                    String error = null;
+                    if (brandName == null || brandName.trim().isEmpty()) {
+                        error = "Brand name cannot be empty or whitespace only.";
+                    } else if (ban.isBrandNameExists(brandName.trim())) {
+                        error = "Brand name already exists.";
+                    } else if (brandName.length() > 50) {
+                        error = "Brand name is too long (maximum 50 characters).";
+                    } else if (!brandName.matches("^[A-Za-z0-9 ]+$")) {
+                        error = "Brand name must contain only letters, digits and spaces.";
+                    }
+
+                    if (error != null) {
+                        request.setAttribute("error", error);
+                        request.setAttribute("brandName", brandName);
+                        request.setAttribute("status", statusRaw);
+                        request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertBrand.jsp").forward(request, response);
+                        return;
+                    }
+
+                    try {
+                        int quantity = 0;
+                        int status = Integer.parseInt(statusRaw);
+                        Brands brand = new Brands(brandName.trim(), quantity, status);
+                        ban.insertBrand(brand);
+                        response.sendRedirect("BrandAdmin?service=listall");
+                    } catch (NumberFormatException e) {
+                        request.setAttribute("error", "Quantity and status must be valid numbers.");
+                        request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertBrand.jsp").forward(request, response);
+                    }
+                }
+            } else if (service.equals("toggleStatus")) {
+                int brandID = Integer.parseInt(request.getParameter("brandID"));
+                BrandAdminDAO dao = new BrandAdminDAO();
+                dao.toggleStatus(brandID);
+                response.sendRedirect("BrandAdmin"); // quay lại danh sách sau khi cập nhật
             }
 
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
