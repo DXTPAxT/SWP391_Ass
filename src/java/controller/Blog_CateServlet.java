@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import dal.Blog_CateDAO;
@@ -12,53 +8,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import models.Blog_Cate;
 import models.Post;
 
-/**
- *
- * @author User
- */
 @WebServlet(name = "Blog_CateServlet", urlPatterns = {"/blogc"})
-
 public class Blog_CateServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Blog_CateServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Blog_CateServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -68,6 +27,17 @@ public class Blog_CateServlet extends HttpServlet {
         String Bc_id_raw = request.getParameter("Bc_id");
         String searchKeyword = request.getParameter("search");
         String sort = request.getParameter("sort");
+        String page_raw = request.getParameter("page");
+
+        int currentPage = 1;
+        if (page_raw != null) {
+            try {
+                currentPage = Integer.parseInt(page_raw);
+            } catch (NumberFormatException e) {
+                currentPage = 1;
+            }
+        }
+
         List<Post> postList = null;
         int count = 0;
 
@@ -76,17 +46,19 @@ public class Blog_CateServlet extends HttpServlet {
                 postList = dao.searchPostsByTitle(searchKeyword);
                 count = postList.size();
             } else if (Bc_id_raw != null) {
-                int Bc_id = Integer.parseInt(Bc_id_raw );
+                int Bc_id = Integer.parseInt(Bc_id_raw);
                 postList = dao.getPostsByCategorySorted(Bc_id, sort);
                 count = postList.size();
             } else {
-                postList = dao.getAllPost();
+                postList = dao.getPostsByPage(currentPage);
                 count = dao.countAllPosts();
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            postList = dao.getAllPost();
+            postList = dao.getPostsByPage(currentPage);
             count = dao.countAllPosts();
+        } catch (SQLException ex) {
+            Logger.getLogger(Blog_CateServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         int endPage = count / 4;
@@ -94,36 +66,27 @@ public class Blog_CateServlet extends HttpServlet {
             endPage++;
         }
 
+        List<Post> top5Posts = dao.getTop5NewestPosts();
+
         request.setAttribute("blog_categories", categories);
         request.setAttribute("postList", postList);
         request.setAttribute("endP", endPage);
+        request.setAttribute("currentPage", currentPage);
         request.setAttribute("searchKeyword", searchKeyword);
-        request.setAttribute("selectedSort", sort);// Gửi lại keyword để hiển thị lại trên form
+        request.setAttribute("selectedSort", sort);
+        request.setAttribute("top5Posts", top5Posts);
+
         request.getRequestDispatcher("ShopPages/Pages/blog.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        // Tạm thời chưa xử lý POST
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Blog Category Servlet with pagination";
+    }
 }

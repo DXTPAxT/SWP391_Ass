@@ -1,7 +1,14 @@
+<%-- 
+    Document   : HomePage
+    Created on : May 22, 2025, 1:25:48 PM
+    Author     : Admin
+--%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <%@ page isErrorPage="true" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -28,8 +35,6 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="${ctx}/ShopPages/Pages/images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="${ctx}/ShopPages/Pages/images/ico/apple-touch-icon-57-precomposed.png">
     </head><!--/head-->
-
-
 
     <body>
         <header id="header"><!--header-->
@@ -98,35 +103,26 @@
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="${pageContext.request.contextPath}/HomePages" class="active">Home</a></li>
-                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="${pageContext.request.contextPath}/Product?service=listProduct" class="active">Products</a></li>                                            <li><a href="product-details.html">Product Details</a></li> 
-                                            <li><a href="checkout.html">Checkout</a></li> 
-                                            <li><a href="cart.html">Cart</a></li> 
-                                            <li><a href="login.html">Login</a></li> 
-                                        </ul>
+
+                                    <li><a href="${pageContext.request.contextPath}/CategoriesController?service=list" class="active">Products</a></li>
                                     </li> 
-                                   
-                                            <li><a href="${pageContext.request.contextPath}/blogc">Blog List</a></li>
-                                            
-                                   
+                                    <li class="dropdown"><a href="#">Blog<i class=""></i></a>
+
+                                    </li> 
                                     <li><a href="404.html">404</a></li>
                                     <li><a href="contact-us.html">Contact</a></li>
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <form action="blogc" method="get" class="col-sm-3">
                             <div class="search_box pull-right">
-                                <form action="blogc" method="get">
-                                    <input type="text" name="search" value="${searchKeyword}" placeholder="Search" />
-                                </form>
+                                <input type="text" name="search" placeholder="Search by title" class="form-control" />
                             </div>
-                        </div>
+                        </form>
 
                     </div>
                 </div>
             </div><!--/header-bottom-->
-
         </header><!--/header-->
 
 
@@ -134,7 +130,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-sm-3">
-                        <div class="left-sidebar">
+                        <div class="left-sidebar" style="margin-bottom: 30px;">
                             <h2>Blog Categories</h2>
                             <div>
                                 <ul>
@@ -148,35 +144,71 @@
                                 </ul>
                             </div>
 
-
-                            <div class="shipping text-center"><!--shipping-->
-                                <img src="images/home/Top-5-Cau-Hinh-May-Tinh-Ban-Van-Phong-Dang-Mua-Nhat.jpg" alt="" />
-                            </div><!--/shipping-->
+                            <h2 style="padding-top: 20px">Top 5 New Blogs</h2>
+                            <ul>
+                                <div class="blog-list">
+                                    <c:forEach items="${top5Posts}" var="p">
+                                        <li>
+                                            <div class="blog-card">
+                                                <a href="blogdetail?Post_id=${p.post_id}" style="color: black">
+                                                    ${p.title} - <fmt:formatDate value="${p.updated_date}" pattern="dd/MM/yyyy"/>
+                                                </a>
+                                            </div>
+                                        </li>
+                                    </c:forEach>
+                                </div>
+                            </ul>
                         </div>
+
                     </div>
                     <div class="col-sm-9">
+
                         <div class="blog-post-area">
-                            <div>
-                                <h2 class="title text-center">Latest From our Blog</h2>
 
-                                <style>
-                                    .brief-text {
-                                        display: -webkit-box;
-                                        -webkit-line-clamp: 2;
-                                        -webkit-box-orient: vertical;
-                                        overflow: hidden;
-                                        min-height: 3em; /* đảm bảo chiếm 2 dòng */
-                                    }
-                                </style>
 
-                                <c:forEach var="post" items="${postList}" varStatus="status">
-                                    <c:if test="${status.index % 2 == 0}">
-                                        <div class="row gx-4 gy-4">
-                                        </c:if>
+                            <h2 class="title text-center">Latest From our Blog</h2>
 
-                                        <div class="col-sm-6 d-flex" style="padding-bottom: 20px">
-                                            <div class="w-100 d-flex flex-column mb-4" style="border:1px solid #ccc; padding:15px; height:100%;">
-                                                <a href="${ctx}/blogdetail?Post_id=${post.post_id}" style="color: black;">
+                            <style>
+                                .brief-text {
+                                    display: -webkit-box;
+                                    -webkit-line-clamp: 2;
+                                    -webkit-box-orient: vertical;
+                                    overflow: hidden;
+                                    min-height: 3em; /* đảm bảo chiếm 2 dòng */
+                                }
+
+                                .blog-list {
+                                    display: grid;
+                                    grid-template-rows: repeat(5, auto);
+                                    row-gap: 12px;
+                                    margin-top: 10px;
+                                }
+
+                                .blog-card {
+                                    padding: 14px;
+                                    background-color: #f0f0f0;
+                                    border: 1px solid #ddd;
+                                    border-radius: 6px;
+                                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                                }
+                                .blog-card a {
+                                    font-family: 'Arial', sans-serif;
+                                    font-size: 13px;
+                                    font-weight: normal;
+                                    text-decoration: none;
+                                    color: #000;
+                                    display: block;
+                                }
+                            </style>
+
+                            <c:forEach var="post" items="${postList}" varStatus="status">
+                                <c:if test="${status.index % 2 == 0}">
+                                    <div class="row gx-4 gy-4">
+                                    </c:if>
+
+                                    <div class="col-sm-6 d-flex" style="padding-bottom: 20px">
+                                        <div class="w-100 d-flex flex-column mb-4" style="border:1px solid #ccc; padding:15px; height:100%;">
+                                            <a href="${ctx}/blogdetail?Post_id=${post.post_id}" style="color: black;">
                                                 <h3>${post.title}</h3>
                                                 <p>${post.author}</p>
                                                 <p>${post.updated_date}</p>
@@ -188,198 +220,41 @@
                                                         alt="Thumbnail" 
                                                         style="width:100%; height:200px; object-fit:cover; margin-top:auto;" />
                                                 </c:if>
-                                                    </a>
-
-                                            </div>
-                                        </div>
-
-                                        <c:if test="${status.index % 2 == 1 || status.last}">
-                                        </div>
-                                    </c:if>
-                               
-
-                                </c:forEach>
-
-                                <div class="pagination-area">
-                                    <ul class="pagination">
-                                        <c:forEach begin="1" end="${endP}" var="i">
-                                            <li>
-                                                <a href="blogc=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
-                                            </li>
-                                        </c:forEach>
-                                        <li>
-                                            <a href="blogc=${endP + 1}">
-                                                <i class="fa fa-angle-double-right"></i>
                                             </a>
-                                        </li>
-                                    </ul>
-                                </div>
 
+                                        </div>
+                                    </div>
+
+                                    <c:if test="${status.index % 2 == 1 || status.last}">
+                                    </div>
+                                </c:if>
+
+
+                            </c:forEach>
+
+                            <div class="pagination-area">
+                                <ul class="pagination">
+                                    <c:forEach begin="1" end="${endP}" var="i">
+                                        <li class="${i == currentPage ? 'active' : ''}">
+                                            <a href="blogc?page=${i}">${i}</a>
+                                        </li>
+                                    </c:forEach>
+                                    <li>
+                                        <a href="blogc?page=${currentPage + 1 > endP ? endP : currentPage + 1}">
+                                            <i class="fa fa-angle-double-right"></i>
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
+
+
                         </div>
                     </div>
                 </div>
+            </div>
         </section>
 
-        <footer id="footer"><!--Footer-->
-            <div class="footer-top">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-2">
-                            <div class="companyinfo">
-                                <h2><span>e</span>-shopper</h2>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,sed do eiusmod tempor</p>
-                            </div>
-                        </div>
-                        <div class="col-sm-7">
-                            <div class="col-sm-3">
-                                <div class="video-gallery text-center">
-                                    <a href="#">
-                                        <div class="iframe-img">
-                                            <img src="images/home/iframe1.png" alt="" />
-                                        </div>
-                                        <div class="overlay-icon">
-                                            <i class="fa fa-play-circle-o"></i>
-                                        </div>
-                                    </a>
-                                    <p>Circle of Hands</p>
-                                    <h2>24 DEC 2014</h2>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-3">
-                                <div class="video-gallery text-center">
-                                    <a href="#">
-                                        <div class="iframe-img">
-                                            <img src="images/home/iframe2.png" alt="" />
-                                        </div>
-                                        <div class="overlay-icon">
-                                            <i class="fa fa-play-circle-o"></i>
-                                        </div>
-                                    </a>
-                                    <p>Circle of Hands</p>
-                                    <h2>24 DEC 2014</h2>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-3">
-                                <div class="video-gallery text-center">
-                                    <a href="#">
-                                        <div class="iframe-img">
-                                            <img src="images/home/iframe3.png" alt="" />
-                                        </div>
-                                        <div class="overlay-icon">
-                                            <i class="fa fa-play-circle-o"></i>
-                                        </div>
-                                    </a>
-                                    <p>Circle of Hands</p>
-                                    <h2>24 DEC 2014</h2>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-3">
-                                <div class="video-gallery text-center">
-                                    <a href="#">
-                                        <div class="iframe-img">
-                                            <img src="images/home/iframe4.png" alt="" />
-                                        </div>
-                                        <div class="overlay-icon">
-                                            <i class="fa fa-play-circle-o"></i>
-                                        </div>
-                                    </a>
-                                    <p>Circle of Hands</p>
-                                    <h2>24 DEC 2014</h2>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="address">
-                                <img src="images/home/map.png" alt="" />
-                                <p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="footer-widget">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-2">
-                            <div class="single-widget">
-                                <h2>Service</h2>
-                                <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">Online Help</a></li>
-                                    <li><a href="">Contact Us</a></li>
-                                    <li><a href="">Order Status</a></li>
-                                    <li><a href="">Change Location</a></li>
-                                    <li><a href="">FAQ’s</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="single-widget">
-                                <h2>Quock Shop</h2>
-                                <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">T-Shirt</a></li>
-                                    <li><a href="">Mens</a></li>
-                                    <li><a href="">Womens</a></li>
-                                    <li><a href="">Gift Cards</a></li>
-                                    <li><a href="">Shoes</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="single-widget">
-                                <h2>Policies</h2>
-                                <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">Terms of Use</a></li>
-                                    <li><a href="">Privecy Policy</a></li>
-                                    <li><a href="">Refund Policy</a></li>
-                                    <li><a href="">Billing System</a></li>
-                                    <li><a href="">Ticket System</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="single-widget">
-                                <h2>About Shopper</h2>
-                                <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">Company Information</a></li>
-                                    <li><a href="">Careers</a></li>
-                                    <li><a href="">Store Location</a></li>
-                                    <li><a href="">Affillate Program</a></li>
-                                    <li><a href="">Copyright</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-3 col-sm-offset-1">
-                            <div class="single-widget">
-                                <h2>About Shopper</h2>
-                                <form action="#" class="searchform">
-                                    <input type="text" placeholder="Your email address" />
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
-                                    <p>Get the most recent updates from <br />our site and be updated your self...</p>
-                                </form>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <div class="container">
-                    <div class="row">
-                        <p class="pull-left">Copyright © 2013 E-SHOPPER Inc. All rights reserved.</p>
-                        <p class="pull-right">Designed by <span><a target="_blank" href="http://www.themeum.com">Themeum</a></span></p>
-                    </div>
-                </div>
-            </div>
-
-        </footer><!--/Footer-->
-
-
+        <jsp:include page="/ShopPages/Pages/components/footer.jsp" />
 
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>

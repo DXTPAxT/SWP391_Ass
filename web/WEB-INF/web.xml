@@ -117,6 +117,14 @@
         <servlet-name>ImportServlet</servlet-name>
         <servlet-class>controllerAdmin.ImportServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SaleEventsServlet</servlet-name>
+        <servlet-class>controllerAdmin.SaleEventsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddSaleEvents</servlet-name>
+        <servlet-class>controllerAdmin.AddSaleEvents</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
         <url-pattern>/Demo</url-pattern>
@@ -232,5 +240,13 @@
     <servlet-mapping>
         <servlet-name>BlogUpdateServlet</servlet-name>
         <url-pattern>/blogupdate</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SaleEventsServlet</servlet-name>
+        <url-pattern>/saleevents</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddSaleEvents</servlet-name>
+        <url-pattern>/addsale</url-pattern>
     </servlet-mapping>
 </web-app>

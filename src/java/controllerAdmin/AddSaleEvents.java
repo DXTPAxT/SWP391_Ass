@@ -8,22 +8,18 @@ import dal.Blog_CateDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import models.Post;
-import java.sql.Timestamp;
-import java.util.List;
-import models.Blog_Cate;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import models.SaleEvents;
 
 /**
  *
  * @author User
  */
-@WebServlet(name = "BlogAddServlet", urlPatterns = {"/blogadd"})
-
-public class BlogAddServlet extends HttpServlet {
+public class AddSaleEvents extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,10 +38,10 @@ public class BlogAddServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet BlogAddServlet</title>");
+            out.println("<title>Servlet AddSaleEvents</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet BlogAddServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AddSaleEvents at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -63,16 +59,7 @@ public class BlogAddServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        
-            
-                // Lấy danh sách danh mục để đổ vào form
-        Blog_CateDAO dao = new Blog_CateDAO();
-        List<Blog_Cate> blog_categories = dao.getAllBlogCategory();
-        request.setAttribute("blog_categories", blog_categories);
-
-        // Hiển thị form thêm blog
-        request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/insertBlog.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     /**
@@ -86,47 +73,48 @@ public class BlogAddServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-try {
-            
+//        processRequest(request, response);
+        try {
+            // Lấy và ép kiểu dữ liệu từ form
+            int categoryID = Integer.parseInt(request.getParameter("categoryID"));
+            int postID = Integer.parseInt(request.getParameter("postID"));
 
-            String Post_id_raw = request.getParameter("Post_id");
-            String Title = request.getParameter("Title");
-            String Author = request.getParameter("Author");
-            String Updated_date = request.getParameter("Updated_date");
-            String Content = request.getParameter("Content");
-            String Thumbnail = request.getParameter("Thumbnail");
-            String Bc_id_raw = request.getParameter("Bc_id");
-            String Brief = request.getParameter("Brief");
-            String Add_id_raw = request.getParameter("Add_id");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date startDate = sdf.parse(request.getParameter("startDate"));
+            Date endDate = sdf.parse(request.getParameter("endDate"));
 
-            int Post_id = Integer.parseInt(Post_id_raw);
-            int Bc_id = Integer.parseInt(Bc_id_raw);
-            int Add_id = Integer.parseInt(Add_id_raw);
+            double discountPercent = Double.parseDouble(request.getParameter("discountPercent"));
 
-            Timestamp updateTime = Timestamp.valueOf(Updated_date + " 00:00:00");
-
-            Post newPost = new Post(Post_id, Title, Author, updateTime, Content, Bc_id, Thumbnail, Brief, Add_id);
+            // Tạo đối tượng SaleEvents
+            SaleEvents event = new SaleEvents();
+            event.setCategoryID(categoryID);
+            event.setPost_id(postID);
+            event.setStartDate(startDate);
+            event.setEndDate(endDate);
+            event.setDiscountPercent(discountPercent);
+            event.setStatus(2); // Mặc định theo DAO
 
             Blog_CateDAO dao = new Blog_CateDAO();
-            dao.insertPost(newPost);
+            dao.addSaleEvent(event);
 
             // Chuyển hướng sau khi thêm thành công
-            response.sendRedirect(request.getContextPath() + "/bloglist"); 
+            response.sendRedirect(request.getContextPath() + "/admin/saleevents-list");
 
         } catch (Exception e) {
-            // Xử lý lỗi
-            request.setAttribute("error", "Lỗi thêm blog: " + e.getMessage());
-            request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/insertBlog.jsp").forward(request, response);
+            e.printStackTrace();
+            request.setAttribute("error", "Có lỗi xảy ra khi thêm sự kiện khuyến mãi.");
+            request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/insertSaleEvents.jsp").forward(request, response);
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
+
+/**
+ * Returns a short description of the servlet.
+ *
+ * @return a String containing servlet description
+ */
+@Override
+public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 

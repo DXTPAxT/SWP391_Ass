@@ -22,8 +22,23 @@ public class Post {
     private String Thumbnail;
     private String Brief;
     private int Add_id;
+    private int status;
 
     public Post() {
+    }
+
+    public Post(int Post_id, String Title, String Author, Timestamp Updated_date, String Content, String bc_name, int Bc_id, String Thumbnail, String Brief, int Add_id, int status) {
+        this.Post_id = Post_id;
+        this.Title = Title;
+        this.Author = Author;
+        this.Updated_date = Updated_date;
+        this.Content = Content;
+        this.bc_name = bc_name;
+        this.Bc_id = Bc_id;
+        this.Thumbnail = Thumbnail;
+        this.Brief = Brief;
+        this.Add_id = Add_id;
+        this.status = status;
     }
 
     public Post(int Post_id, String Title, String Author, Timestamp Updated_date, String Content, String bc_name, int Bc_id, String Thumbnail, String Brief, int Add_id) {
@@ -49,6 +64,14 @@ public class Post {
         this.Thumbnail = Thumbnail;
         this.Brief = Brief;
         this.Add_id = Add_id;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getBc_name() {
@@ -133,8 +156,10 @@ public class Post {
 
     @Override
     public String toString() {
-        return "Post{" + "Post_id=" + Post_id + ", Title=" + Title + ", Author=" + Author + ", Updated_date=" + Updated_date + ", Content=" + Content + ", bc_name=" + bc_name + ", Bc_id=" + Bc_id + ", Thumbnail=" + Thumbnail + ", Brief=" + Brief + ", Add_id=" + Add_id + '}';
+        return "Post{" + "Post_id=" + Post_id + ", Title=" + Title + ", Author=" + Author + ", Updated_date=" + Updated_date + ", Content=" + Content + ", bc_name=" + bc_name + ", Bc_id=" + Bc_id + ", Thumbnail=" + Thumbnail + ", Brief=" + Brief + ", Add_id=" + Add_id + ", status=" + status + '}';
     }
+
+   
 
     
 
