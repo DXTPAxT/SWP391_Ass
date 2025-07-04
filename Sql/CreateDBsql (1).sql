@@ -94,11 +94,11 @@ CREATE TABLE Categories (
 -- 9. Imports
 Create TABLE Imports(
 	ImportID INT PRIMARY KEY IDENTITY(1,1),
-	ImportCode Varchar(100) not null,
+	ImportCode Varchar(100),
 	CategoryID INT NOT NULL ,
 	CreatedAt DATETIME DEFAULT GETDATE() NOT NULL,
-	Quantity INT ,
-	Price INT NOT NULL,
+	Quantity INT,
+	Price INT,
 	FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
 );
 
