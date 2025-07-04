@@ -29,9 +29,9 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="${ctx}/ShopPages/Pages/images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="${ctx}/ShopPages/Pages/images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="${ctx}/ShopPages/Pages/images/ico/apple-touch-icon-57-precomposed.png">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/custom.css?v=1.0.15" rel="stylesheet">
+        
     </head><!--/head-->
-
-
 
     <body>
         <jsp:include page="components/header.jsp">
@@ -166,7 +166,6 @@
                                             <div class="productinfo text-center">
                                                 <a href="${ctx}/CategoriesController?service=detail&categoryID=${product.categoryID}">
                                                     <img src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
-                                                    <p>${product.brandName}</p>
                                                     <h2>
                                                         <fmt:formatNumber value="${product.price}" type="number" groupingUsed="true" /> VND
                                                     </h2>
