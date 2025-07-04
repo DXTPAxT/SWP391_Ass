@@ -36,8 +36,8 @@
                     <table class="table table-condensed">
                         <thead>
                             <tr class="cart_menu">
-                                <td><input class="ml-3 mr-3" type="checkbox" id="checkAll" onchange="toggleAll(this)"/></td>
-                                <td>cartBuildPCID</td>
+                                <td><input type="checkbox" id="checkAll" onchange="toggleAll(this)" class="ml-3 mr-3"/></td>
+                                <td>Cart ID</td>
                                 <td>MainBoard</td>
                                 <td>CPU</td>
                                 <td>GPU</td>
@@ -61,9 +61,7 @@
                                         <td>${pc.ram}</td>
                                         <td>${pc.ssd}</td>
                                         <td>${pc.pcCase}</td>
-                                        <td>
-                                            <fmt:formatNumber value="${pc.price}" type="number" groupingUsed="true"/> VND
-                                        </td>
+                                        <td><fmt:formatNumber value="${pc.price}" type="number" groupingUsed="true"/> VND</td>
                                         <td>
                                             <button onclick="confirmDelete(this, ${pc.cartBuildPCID})">
                                                 <i class="fa fa-times"></i>
@@ -82,6 +80,7 @@
                         </center>
                     </c:if>
                 </div>
+
                 <div class="mt-3 mb-3 text-right fs-4">
                     Total price of selected builds:
                     <span id="selected-total" style="color: orange; font-weight: bold;">0 VND</span>
@@ -92,118 +91,108 @@
                     <span id="deposit-amount" style="color: green; font-weight: bold;">0 VND</span>
                 </div>
 
-
                 <div class="mt-3 mb-3 text-right">
                     <button class="btn btn-success" onclick="submitOrder()" style="min-width: 200px;">DEPOSIT</button>
                 </div>
             </div>
         </section>
+
         <script>
-          
             function updateTotal() {
                 let total = 0;
-                const selectedCheckboxes = document.querySelectorAll(".select-item:checked");
-
-                selectedCheckboxes.forEach(cb => {
+                document.querySelectorAll(".select-item:checked").forEach(cb => {
                     const row = cb.closest("tr");
-                    const priceText = row.querySelector("td:nth-child(9)").innerText.replace(/[^0-9]/g, '');
-                    total += parseInt(priceText) || 0;
+                    const priceText = row?.querySelector("td:nth-child(9)")?.innerText.replace(/[^0-9]/g, '');
+                    if (priceText)
+                        total += parseInt(priceText);
                 });
-
                 document.getElementById("selected-total").innerText = total.toLocaleString() + " VND";
-                const deposit = Math.floor(total * 0.2); // 20% tiền cọc
-                document.getElementById("deposit-amount").innerText = deposit.toLocaleString() + " VND";
+                document.getElementById("deposit-amount").innerText = Math.floor(total * 0.2).toLocaleString() + " VND";
             }
 
             function toggleAll(master) {
-                const allCheckboxes = document.querySelectorAll(".select-item");
-                allCheckboxes.forEach(cb => cb.checked = master.checked);
+                document.querySelectorAll(".select-item").forEach(cb => cb.checked = master.checked);
                 updateTotal();
             }
 
-            document.addEventListener("DOMContentLoaded", function () {
-                const itemCheckboxes = document.querySelectorAll(".select-item");
-                const checkAllBox = document.getElementById("checkAll");
+            document.addEventListener("DOMContentLoaded", () => {
+                const items = document.querySelectorAll(".select-item");
+                const checkAll = document.getElementById("checkAll");
 
-                itemCheckboxes.forEach(cb => {
-                    cb.addEventListener("change", () => {
-                        const allChecked = [...itemCheckboxes].every(c => c.checked);
-                        checkAllBox.checked = allChecked;
+                items.forEach(cb => cb.addEventListener("change", () => {
+                        checkAll.checked = [...items].every(c => c.checked);
                         updateTotal();
-                    });
-                });
-
-                checkAllBox.addEventListener("change", () => toggleAll(checkAllBox));
+                    }));
             });
 
             function submitOrder() {
                 const selected = document.querySelectorAll(".select-item:checked");
                 if (selected.length === 0) {
-                    alert("Vui lòng chọn ít nhất một Build PC để đặt cọc.");
+                    alert("Please select at least one Build PC to place a deposit.");
                     return;
                 }
 
-                const ids = Array.from(selected).map(cb => cb.value);
-                const depositText = document.getElementById("deposit-amount").innerText;
+                let total = 0;
+                selected.forEach(cb => {
+                    const row = cb.closest("tr");
+                    const priceText = row?.querySelector("td:nth-child(9)")?.innerText.replace(/[^0-9]/g, '');
+                    if (priceText)
+                        total += parseInt(priceText);
+                });
 
-                if (!confirm(`Bạn sẽ đặt cọc ${depositText} cho ${ids.length} Build PC. Tiếp tục?`))
+                const deposit = Math.floor(total * 0.2);
+                if (!confirm(`You will place a deposit of ${deposit.toLocaleString()} VND for ${selected.length} Build PC(s). Continue?`))
+                    return;
+
+                const ids = Array.from(selected).map(cb => cb.value);
+                fetch("CardBuildPc", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                    body: new URLSearchParams({service: "depositBuildPC", ids: ids.join(",")})
+                })
+                        .then(res => res.text())
+                        .then(msg => {
+                            if (msg === "SUCCESS") {
+                                alert("Deposit successful. The remaining amount will be paid later.");
+                                location.reload();
+                            } else if (msg === "NOT_LOGGED_IN") {
+                                alert("You need to log in to perform this action.");
+                                window.location.href = "Login";
+                            } else {
+                                alert("An error occurred while placing the deposit.");
+                            }
+                        })
+                        .catch(() => alert("Server connection error!"));
+            }
+
+            function confirmDelete(btn, cartID) {
+                if (!confirm("Are you sure you want to remove this Build PC from your cart?"))
                     return;
 
                 fetch("CardBuildPc", {
                     method: "POST",
                     headers: {"Content-Type": "application/x-www-form-urlencoded"},
-                    body: new URLSearchParams({
-                        service: "depositBuildPC",
-                        ids: ids.join(",")
-                    })
+                    body: new URLSearchParams({service: "deleteCartBuildPC", id: cartID})
                 })
                         .then(res => res.text())
                         .then(msg => {
                             if (msg === "SUCCESS") {
-                                alert("Đặt cọc thành công. Tiền còn lại sẽ thanh toán sau.");
-                                location.reload();
-                            } else {
-                                alert("Có lỗi xảy ra khi đặt cọc.");
-                            }
-                        })
-                        .catch(() => alert("Lỗi kết nối tới server!"));
-            }
-            function confirmDelete(btn, cartID) {
-                if (!confirm("Bạn có chắc chắn muốn xóa Build PC này khỏi giỏ?"))
-                    return;
-
-                console.log("Gửi yêu cầu xóa giỏ hàng ID:", cartID);
-
-                fetch(`CardBuildPc`, {
-                    method: "POST",
-                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
-                    body: new URLSearchParams({
-                        service: "deleteCartBuildPC",
-                        id: cartID
-                    })
-                })
-                        .then(res => res.text())
-                        .then(msg => {
-                            console.log("Phản hồi từ server:", msg);
-                            if (msg === "SUCCESS") {
-                                alert("Đã xóa Build PC khỏi giỏ.");
+                                alert("Build PC removed from cart.");
                                 btn.closest("tr").remove();
                                 updateTotal();
                             } else {
-                                alert("Có lỗi khi xóa Build PC.");
+                                alert("Failed to remove Build PC.");
                             }
                         })
-                        .catch(() => alert("Lỗi kết nối tới server!"));
+                        .catch(() => alert("Server connection error!"));
             }
-
         </script>
-
 
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.js"></script>
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/bootstrap.min.js"></script>
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/main.js"></script>
-    </body>
 
+    </body>
 </html>

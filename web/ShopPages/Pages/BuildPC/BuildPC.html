@@ -14,7 +14,7 @@
         <link href="/ComputerOnlineShop/ShopPages/Pages/css/animate.css" rel="stylesheet">
         <link href="/ComputerOnlineShop/ShopPages/Pages/css/main.css" rel="stylesheet">
         <link href="/ComputerOnlineShop/ShopPages/Pages/css/responsive.css" rel="stylesheet">
-         <link href="/ComputerOnlineShop/ShopPages/Pages/css/CartCss.css" rel="stylesheet">
+        <link href="/ComputerOnlineShop/ShopPages/Pages/css/CartCss.css" rel="stylesheet">
 
         <!--[if lt IE 9]>
         <script src="/ComputerOnlineShop/ShopPages/Pages/js/html5shiv.js"></script>
@@ -53,6 +53,7 @@
                 z-index: 9999;
                 justify-content: center;
                 align-items: center;
+                overflow: hidden;
             }
             .modal-content {
                 background: white;
@@ -87,94 +88,106 @@
                 transform: scale(1.03);
             }
 
+            .modal-content {
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                width: 90%;
+                max-width: 900px;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+
+
+
         </style>
     </head>
     <body><!-- comment -->
-       <header id="header">
-    <div class="header_top">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="contactinfo">
-                        <ul class="nav nav-pills">
-                            <li><a href="#"><i class="fa fa-phone"></i> 0337593524</a></li>
-                            <li><a href="#"><i class="fa fa-envelope"></i> CyberBeast@gmail.com</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="social-icons pull-right">
-                        <ul class="nav navbar-nav">
-                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                            <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                            <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="header-middle">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-4">
-                    <div class="logo pull-left">
-                        <a href="/ComputerOnlineShop/HomePages"><img src="/ComputerOnlineShop/ShopPages/Pages/images/home/CyberBeast2.png" style="height: 150px; width: 200px;" /></a>
-                    </div>
-                </div>
-                <div class="col-sm-8">
-                    <div class="shop-menu pull-right">
-                        <ul class="nav navbar-nav" style="padding-top: 50px;">
-                            
-                            <!-- Khi đã đăng nhập với role = 3 -->
-                            <li class="cart-dropdown">
-                                <a href="#"><i class="fa fa-shopping-cart"></i> Cart</a>
-                                <div class="dropdown-content">
-                                    <div class="arrow-up"></div>
-                                    <a href="/ComputerOnlineShop/Cart">CartItem</a>
-                                    <a href="/ComputerOnlineShop/CardBuildPc">CartPC</a>
-                                </div>
-                            </li>
-                            <li><a href="/ComputerOnlineShop/User?service=myAccount"><i class="fa fa-user"></i> Account</a></li>
-                            <li><a href="/ComputerOnlineShop/checkout.html"><i class="fa fa-check-square-o"></i> Checklist</a></li>
-                            <li><a href="Logout"><i class="fa fa-sign-out"></i> Logout</a></li>
-
-                        </ul>
+        <header id="header">
+            <div class="header_top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="contactinfo">
+                                <ul class="nav nav-pills">
+                                    <li><a href="#"><i class="fa fa-phone"></i> 0337593524</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> CyberBeast@gmail.com</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="social-icons pull-right">
+                                <ul class="nav navbar-nav">
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="header-bottom">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-9">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                    </div>
-                    <div class="mainmenu pull-left">
-                        <ul class="nav navbar-nav collapse navbar-collapse">
-                            <li><a href="/ComputerOnlineShop/HomePages">Home</a></li>
-                            <li><a href="/ComputerOnlineShop/CategoriesController?service=list">Products</a></li>
-                            <li><a href="/ComputerOnlineShop/blogc">Blog</a></li>
-                            <li><a href="#" class="active">Build your PC</a></li>
-                        </ul>
+            <div class="header-middle">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="logo pull-left">
+                                <a href="/ComputerOnlineShop/HomePages"><img src="/ComputerOnlineShop/ShopPages/Pages/images/home/CyberBeast2.png" style="height: 150px; width: 200px;" /></a>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="shop-menu pull-right">
+                                <ul class="nav navbar-nav" style="padding-top: 50px;">
+
+                                    <!-- Khi đã đăng nhập với role = 3 -->
+                                    <li class="cart-dropdown">
+                                        <a href="#"><i class="fa fa-shopping-cart"></i> Cart</a>
+                                        <div class="dropdown-content">
+                                            <div class="arrow-up"></div>
+                                            <a href="/ComputerOnlineShop/Cart">CartItem</a>
+                                            <a href="/ComputerOnlineShop/CardBuildPc">CartPC</a>
+                                        </div>
+                                    </li>
+                                    <li><a href="/ComputerOnlineShop/User?service=myAccount"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="/ComputerOnlineShop/checkout.html"><i class="fa fa-check-square-o"></i> Checklist</a></li>
+                                    <li><a href="Logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
             </div>
-        </div>
-    </div>
-</header>
+
+            <div class="header-bottom">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            <div class="mainmenu pull-left">
+                                <ul class="nav navbar-nav collapse navbar-collapse">
+                                    <li><a href="/ComputerOnlineShop/HomePages">Home</a></li>
+                                    <li><a href="/ComputerOnlineShop/CategoriesController?service=list">Products</a></li>
+                                    <li><a href="/ComputerOnlineShop/blogc">Blog</a></li>
+                                    <li><a href="#" class="active">Build your PC</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </header>
 
 
         <div class="build-pc-banner">
@@ -211,6 +224,8 @@
                                 <strong>MainBoard</strong>
                                 <div id="meta-2" class="component-meta"></div>
                                 <div id="price-2" class="component-price"></div>
+                                <div id="warranty-2" class="component-warranty"></div>
+                                <div id="total-2" class="component-total text-success"></div>
                                 <button id="remove-2" class="btn btn-sm btn-danger mt-2" style="display:none;" onclick="removeComponent(2)">Remove</button>
                             </div>
                         </div>
@@ -226,6 +241,8 @@
                                 <strong>CPU</strong>
                                 <div id="meta-3" class="component-meta"></div>
                                 <div id="price-3" class="component-price"></div>
+                                <div id="warranty-3" class="component-warranty"></div>
+                                <div id="total-3" class="component-total text-success"></div>
                                 <button id="remove-3" class="btn btn-sm btn-danger mt-3" style="display:none;" onclick="removeComponent(3)">Remove</button>
                             </div>
                         </div>
@@ -241,6 +258,8 @@
                                 <strong>GPU</strong>
                                 <div id="meta-4" class="component-meta"></div>
                                 <div id="price-4" class="component-price"></div>
+                                <div id="warranty-4" class="component-warranty"></div>
+                                <div id="total-4" class="component-total text-success"></div>
                                 <button id="remove-4" class="btn btn-sm btn-danger mt-4" style="display:none;" onclick="removeComponent(4)">Remove</button>
                             </div>
                         </div>
@@ -256,6 +275,8 @@
                                 <strong>RAM</strong>
                                 <div id="meta-5" class="component-meta"></div>
                                 <div id="price-5" class="component-price"></div>
+                                <div id="warranty-5" class="component-warranty"></div>
+                                <div id="total-5" class="component-total text-success"></div>
                                 <button id="remove-5" class="btn btn-sm btn-danger mt-5" style="display:none;" onclick="removeComponent(5)">Remove</button>
                             </div>
                         </div>
@@ -271,6 +292,8 @@
                                 <strong>SSD</strong>
                                 <div id="meta-6" class="component-meta"></div>
                                 <div id="price-6" class="component-price"></div>
+                                <div id="warranty-6" class="component-warranty"></div>
+                                <div id="total-6" class="component-total text-success"></div>
                                 <button id="remove-6" class="btn btn-sm btn-danger mt-6" style="display:none;" onclick="removeComponent(6)">Remove</button>
                             </div>
                         </div>
@@ -286,6 +309,8 @@
                                 <strong>Case</strong>
                                 <div id="meta-7" class="component-meta"></div>
                                 <div id="price-7" class="component-price"></div>
+                                <div id="warranty-7" class="component-warranty"></div>
+                                <div id="total-7" class="component-total text-success"></div>
                                 <button id="remove-7" class="btn btn-sm btn-danger mt-7" style="display:none;" onclick="removeComponent(7)">Remove</button>
                             </div>
                         </div>
@@ -328,7 +353,7 @@
             modal.style.display = 'flex';
             modalTitle.innerText = `Select ${componentName}`;
             modalBody.innerHTML = "<p>Loading...</p>";
-
+            document.body.style.overflow = "hidden";
             fetch(`${ctx}/BuildPC?service=filter&componentID=${componentID}&ajax=true`)
                     .then(res => res.text())
                     .then(html => {
@@ -344,7 +369,7 @@
         function attachFilterFormHandler(componentID, componentName) {
             const filterForm = modalBody.querySelector('#filterForm');
             if (filterForm) {
-                attachPriceValidation(); // ✅ Gắn validate cho form vừa được load
+                attachPriceValidation(); //  Gắn validate cho form vừa được load
 
                 filterForm.addEventListener('submit', function (e) {
                     e.preventDefault();
@@ -363,6 +388,7 @@
 
         document.getElementById('closeModal').addEventListener('click', () => {
             modal.style.display = 'none';
+            document.body.style.overflow = "";
         });
 
         window.addEventListener('click', function (e) {
@@ -374,6 +400,7 @@
             // Nếu modal đang mở và click trực tiếp vào phần overlay (không phải modal-content)
             if (isModalOpen && e.target === modalOverlay) {
                 modalOverlay.style.display = 'none';
+                document.body.style.overflow = "";
             }
         });
 
@@ -392,10 +419,18 @@
 
                     if (meta && price && removeBtn && img) {
                         meta.innerText = `${data.categoryName} - ${data.brandName}`;
-                        price.innerText = `${data.price.toLocaleString()}₫`;
+                        price.innerText = `Sản phẩm: ${data.price.toLocaleString()}₫`;
+
+                        const warrantyText = data.warrantyDesc ? `Bảo hành: ${data.warrantyDesc} - ${data.warrantyPrice.toLocaleString()}₫` : "Bảo hành: Không chọn";
+                        document.getElementById(`warranty-${key}`).innerText = warrantyText;
+
+                        const totalItem = data.price + (data.warrantyPrice || 0);
+                        document.getElementById(`total-${key}`).innerText = `Tổng: ${totalItem.toLocaleString()}₫`;
+
                         removeBtn.style.display = 'inline-block';
                         img.src = `${ctx}/ShopPages/Pages/images/anhproduct/${data.imgURL}`;
                     }
+
                 }
                 updateTotal();
             }
@@ -415,12 +450,13 @@
             if (!confirm("Bạn có chắc chắn muốn reset tất cả các linh kiện đã chọn không?"))
                 return;
 
-            // delete localStorage
             localStorage.removeItem("selectedComponents");
 
             for (let id = 2; id <= 7; id++) {
                 const meta = document.getElementById(`meta-${id}`);
                 const price = document.getElementById(`price-${id}`);
+                const warranty = document.getElementById(`warranty-${id}`);
+                const total = document.getElementById(`total-${id}`);
                 const removeBtn = document.getElementById(`remove-${id}`);
                 const img = document.getElementById(`img-${id}`);
 
@@ -428,75 +464,109 @@
                     meta.innerText = "";
                 if (price)
                     price.innerText = "";
+                if (warranty)
+                    warranty.innerText = "";
+                if (total)
+                    total.innerText = "";
                 if (removeBtn)
                     removeBtn.style.display = "none";
                 if (img)
                     img.src = img.getAttribute("data-default");
             }
 
-            // Reset mỏny
-            totalDisplay.innerText = "0";
-
-            // Reset  JS
             for (let key in selectedComponents)
                 delete selectedComponents[key];
+
+            updateTotal();
         }
 
     </script>
     <script>
-     function selectProduct(componentID, realCategoryID, categoryName, brandName, price, imgURL) {
-    price = parseInt(price); // Đảm bảo giá là số nguyên
+        function selectProduct(componentID, realCategoryID, categoryName, brandName, price, imgURL, warrantyDesc = "", warrantyPrice = 0, warrantyDetailID = 0) {
+            price = parseInt(price);
+            warrantyPrice = parseInt(warrantyPrice) || 0;
+            warrantyDetailID = parseInt(warrantyDetailID) || 0;
 
-    document.getElementById(`meta-${componentID}`).innerText = `${categoryName} - ${brandName}`;
-    document.getElementById(`price-${componentID}`).innerText = `${price.toLocaleString()}₫`;
-    document.getElementById(`remove-${componentID}`).style.display = 'inline-block';
+            document.getElementById(`meta-${componentID}`).innerText = `${categoryName} - ${brandName}`;
+            document.getElementById(`price-${componentID}`).innerText = `Sản phẩm: ${price.toLocaleString()}₫`;
 
-    const image = document.getElementById(`img-${componentID}`);
-    if (image) {
-        image.src = `${ctx}/ShopPages/Pages/images/anhproduct/${imgURL}`;
-    }
+            const warrantyText = warrantyDesc ? `Bảo hành: ${warrantyDesc} - ${warrantyPrice.toLocaleString()}₫` : "Bảo hành: Không chọn";
+            document.getElementById(`warranty-${componentID}`).innerText = warrantyText;
 
-    selectedComponents[componentID] = {
-        categoryID: realCategoryID, // Gán đúng ID thực tế của sản phẩm
-        categoryName,
-        brandName,
-        price,
-        imgURL
-    };
+            const totalItem = price + warrantyPrice;
+            document.getElementById(`total-${componentID}`).innerText = `Tổng: ${totalItem.toLocaleString()}₫`;
 
-    localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
-    updateTotal();
-    document.getElementById("customModal").style.display = "none";
-}
+            document.getElementById(`remove-${componentID}`).style.display = 'inline-block';
+
+            const image = document.getElementById(`img-${componentID}`);
+            if (image) {
+                image.src = `${ctx}/ShopPages/Pages/images/anhproduct/${imgURL}`;
+            }
+
+            selectedComponents[componentID] = {
+                categoryID: realCategoryID,
+                categoryName,
+                brandName,
+                price,
+                imgURL,
+                warrantyDesc,
+                warrantyPrice,
+                warrantyDetailID
+            };
+
+            localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
+            updateTotal();
+            document.getElementById("customModal").style.display = "none";
+            document.body.style.overflow = "";
+        }
+
 
 
         function updateTotal() {
             let total = 0;
             for (let key in selectedComponents) {
                 total += selectedComponents[key].price;
+                if (selectedComponents[key].warrantyPrice) {
+                    total += selectedComponents[key].warrantyPrice;
+                }
             }
             totalDisplay.innerText = total.toLocaleString();
         }
 
+
+
 // Delete Component
+
         function removeComponent(componentID) {
-            const confirmDelete = confirm("Are you sure you want to remove this component?");
-            if (!confirmDelete)
+            if (!confirm("You Wanto delete this item?"))
                 return;
 
             delete selectedComponents[componentID];
             localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
 
-            document.getElementById(`meta-${componentID}`).innerText = "";
-            document.getElementById(`price-${componentID}`).innerText = "";
-            document.getElementById(`remove-${componentID}`).style.display = 'none';
-
-            // auto resert
+            const meta = document.getElementById(`meta-${componentID}`);
+            const price = document.getElementById(`price-${componentID}`);
+            const warranty = document.getElementById(`warranty-${componentID}`);
+            const total = document.getElementById(`total-${componentID}`);
+            const removeBtn = document.getElementById(`remove-${componentID}`);
             const img = document.getElementById(`img-${componentID}`);
-            img.src = img.getAttribute("data-default");
+
+            if (meta)
+                meta.innerText = "";
+            if (price)
+                price.innerText = "";
+            if (warranty)
+                warranty.innerText = "";
+            if (total)
+                total.innerText = "";
+            if (removeBtn)
+                removeBtn.style.display = "none";
+            if (img)
+                img.src = img.getAttribute("data-default");
 
             updateTotal();
         }
+
 
 
 
@@ -584,12 +654,15 @@
 
                         items.forEach(line => {
                             const parts = line.split('|');
-                            if (parts.length !== 6) {
+                            if (parts.length < 9) {
                                 console.error("Lỗi dữ liệu thiếu thông tin:", line);
                                 return;
                             }
 
-                            const [categoryID, categoryName, brandName, price, imageURL, componentID] = parts;
+                            const [
+                                categoryID, categoryName, brandName, price, imageURL, componentID,
+                                warrantyDesc, warrantyPrice, warrantyDetailID
+                            ] = parts;
 
                             let img = imageURL || "default.jpg";
                             if (componentID == 2 && imgMain)
@@ -610,8 +683,12 @@
                                 categoryName,
                                 brandName,
                                 price: parseInt(price),
-                                imgURL: img
+                                imgURL: img,
+                                warrantyDesc: warrantyDesc || "",
+                                warrantyPrice: parseInt(warrantyPrice) || 0,
+                                warrantyDetailID: parseInt(warrantyDetailID) || 0
                             };
+
                         });
 
                         // Lưu vào selectedComponents
@@ -619,18 +696,30 @@
                             const comp = components[id];
                             if (comp) {
                                 document.getElementById(`meta-${id}`).innerText = `${comp.categoryName} - ${comp.brandName}`;
-                                document.getElementById(`price-${id}`).innerText = `${comp.price.toLocaleString()}₫`;
+                                document.getElementById(`price-${id}`).innerText = `Sản phẩm: ${comp.price.toLocaleString()}₫`;
+
+                                const warrantyText = comp.warrantyDesc ? `Bảo hành: ${comp.warrantyDesc} - ${comp.warrantyPrice.toLocaleString()}₫` : "Bảo hành: Không chọn";
+                                document.getElementById(`warranty-${id}`).innerText = warrantyText;
+
+                                const totalItem = comp.price + (comp.warrantyPrice || 0);
+                                document.getElementById(`total-${id}`).innerText = `Tổng: ${totalItem.toLocaleString()}₫`;
+
                                 document.getElementById(`remove-${id}`).style.display = 'inline-block';
                                 const img = document.getElementById(`img-${id}`);
                                 img.src = `${ctx}/ShopPages/Pages/images/anhproduct/${comp.imgURL}`;
+
                                 selectedComponents[id] = {
                                     categoryID: comp.categoryID,
                                     categoryName: comp.categoryName,
                                     brandName: comp.brandName,
                                     price: comp.price,
-                                    imgURL: comp.imgURL
+                                    imgURL: comp.imgURL,
+                                    warrantyDesc: comp.warrantyDesc || "",
+                                    warrantyPrice: comp.warrantyPrice || 0,
+                                    warrantyDetailID: comp.warrantyDetailID || 0
                                 };
                             }
+
                         }
 
                         localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
@@ -639,17 +728,32 @@
                     })
                     .catch(() => alert("❌ Lỗi khi tải cấu hình"));
         }
-
+    </script>
+    <!-- Add to cart -->
+    <script>
         document.querySelector(".add-to-cart-btn").addEventListener("click", function () {
-            if (Object.keys(selectedComponents).length !== 6) {
+            const requiredIDs = [2, 3, 4, 5, 6, 7];
+
+            const isComplete = requiredIDs.every(id => selectedComponents.hasOwnProperty(id));
+            if (!isComplete) {
                 alert("Bạn cần chọn đầy đủ 6 linh kiện để thêm vào giỏ hàng.");
                 return;
             }
 
-            const categoryIDs = Object.values(selectedComponents).map(comp => comp.categoryID);
             const params = new URLSearchParams();
             params.append("service", "addBuildPCToCart");
-            categoryIDs.forEach(id => params.append("categories[]", id));
+
+            requiredIDs.forEach(id => {
+                const comp = selectedComponents[id];
+                params.append("categories[]", comp.categoryID);
+
+                // Sửa đúng tên là warrantyDetailIDs[]
+                if (comp.warrantyDetailID && comp.warrantyDetailID > 0) {
+                    params.append("warrantyDetailIDs[]", comp.warrantyDetailID);
+                } else {
+                    params.append("warrantyDetailIDs[]", "0");
+                }
+            });
 
             fetch(`${ctx}/BuildPC`, {
                 method: "POST",
@@ -671,9 +775,37 @@
                     .catch(() => alert("Lỗi kết nối tới server!"));
         });
 
+    </script>
+    <!-- Choose Warranty -->
+    <script>
+        function chooseProductWithWarranty(componentID, realCategoryID, categoryName, brandName, price, imgURL, radioCategoryID) {
+            const selectedRadio = document.querySelector(`input[name="warranty-${radioCategoryID}"]:checked`);
+
+            let warrantyDetailID = 0;
+            let warrantyDesc = "Không chọn";
+            let warrantyPrice = 0;
+
+            if (selectedRadio) {
+                warrantyDetailID = parseInt(selectedRadio.value);
+
+                const label = selectedRadio.nextElementSibling;
+                const labelText = label.innerText || "";
+
+                // Lấy mô tả trước dấu '-'
+                const descParts = labelText.split("-");
+                warrantyDesc = descParts[0]?.trim() || "Không rõ";
+
+                // Bóc phần giá
+                const priceMatch = labelText.match(/([\d.,]+)₫/);
+                if (priceMatch) {
+                    warrantyPrice = parseInt(priceMatch[1].replace(/[,\.]/g, ""));
+                }
+            }
+
+            selectProduct(componentID, realCategoryID, categoryName, brandName, price, imgURL, warrantyDesc, warrantyPrice, warrantyDetailID);
+        }
 
     </script>
-
 </body>
 
 </html>
