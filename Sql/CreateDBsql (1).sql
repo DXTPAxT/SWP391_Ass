@@ -139,6 +139,7 @@ CREATE TABLE Orders (
     CustomerID INT NOT NULL,
     OrderDate DATETIME DEFAULT GETDATE() NOT NULL,
     Address TEXT NOT NULL,
+	PhoneNumber VARchar(11) NUll, 
     TotalAmount INT NOT NULL,
     Status int DEFAULT 1 NOT NULL,
     FOREIGN KEY (CustomerID) REFERENCES Users(UserID)
