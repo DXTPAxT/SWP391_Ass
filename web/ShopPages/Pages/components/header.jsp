@@ -56,7 +56,6 @@
                                             </div>
                                         </li>
                                         <li><a href="${pageContext.request.contextPath}/User?service=myAccount"><i class="fa fa-user"></i> Account</a></li>
-                                        <li><a href="checkout.html"><i class="fa fa-check-square-o"></i> Checklist</a></li>
                                         </c:if>
 
                                     <li><a href="Logout"><i class="fa fa-sign-out"></i> Logout</a></li>

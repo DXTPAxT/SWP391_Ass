@@ -148,4 +148,39 @@ public class CartItemDAO extends DBContext {
         return itemList;
     }
 
+    public CartItem getCartItemById(int cartItemID) {
+        String sql = "SELECT CartItemID, UserID, CategoryID, WarrantyDetailID, Quantity, Status "
+                + "FROM CartItems WHERE CartItemID = ?";
+
+        WarrantyDetailDAO warrantyDetailDAO = new WarrantyDetailDAO();
+        CategoriesDAO categoriesDAO = new CategoriesDAO();
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, cartItemID);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int userID = rs.getInt("UserID");
+                int categoryID = rs.getInt("CategoryID");
+                int warrantyDetailID = rs.getInt("WarrantyDetailID");
+
+                CartItem item = new CartItem();
+                item.setCartItemID(cartItemID);
+                item.setUserID(userID);
+                item.setQuantity(rs.getInt("Quantity"));
+                item.setStatus(rs.getInt("Status"));
+
+                item.setCategory(categoriesDAO.getCategoryByID(categoryID).get(0));
+                item.setWarranty(warrantyDetailDAO.getWarrantyDetailById(warrantyDetailID));
+
+                return item;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 }

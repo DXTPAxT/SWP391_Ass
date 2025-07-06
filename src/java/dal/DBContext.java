@@ -17,9 +17,6 @@ public class DBContext {
 
             String url = "jdbc:sqlserver://LAPTOP-dxt\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
 
-
-
-            String url = "jdbc:sqlserver://localhost\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");      
 
             connection = DriverManager.getConnection(url, user, pass);
