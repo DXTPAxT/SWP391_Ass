@@ -5,17 +5,35 @@ import java.util.Date;
 public class Order {
 
     private int OrderID;
+    private String OrderCode;
+    
     private int Product_Type;
     private int CustomerID;
     private String FullName;
     private Date OrderDate;
     private String Address;
+    private String phoneNumber;
     private int TotalAmount;
     private int Status;
+    private int PaymentStatus;
 
     public Order() {
     }
 
+    public Order(int OrderID, String OrderCode, int Product_Type, int CustomerID, String FullName, Date OrderDate, String Address, String phoneNumber, int TotalAmount, int Status, int PaymentStatus) {
+        this.OrderID = OrderID;
+        this.OrderCode = OrderCode;
+        this.Product_Type = Product_Type;
+        this.CustomerID = CustomerID;
+        this.FullName = FullName;
+        this.OrderDate = OrderDate;
+        this.Address = Address;
+        this.phoneNumber = phoneNumber;
+        this.TotalAmount = TotalAmount;
+        this.Status = Status;
+        this.PaymentStatus = PaymentStatus;
+    }
+    
     public Order(int OrderID, int Product_Type, int CustomerID, Date OrderDate, String Address, int TotalAmount, int Status) {
         this.OrderID = OrderID;
         this.Product_Type = Product_Type;
@@ -118,6 +136,30 @@ public class Order {
 
     public void setStatus(int Status) {
         this.Status = Status;
+    }
+
+    public int getPaymentStatus() {
+        return PaymentStatus;
+    }
+
+    public void setPaymentStatus(int PaymentStatus) {
+        this.PaymentStatus = PaymentStatus;
+    }
+
+    public String getOrderCode() {
+        return OrderCode;
+    }
+
+    public void setOrderCode(String OrderCode) {
+        this.OrderCode = OrderCode;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
 }

@@ -6,6 +6,13 @@ INSERT INTO Roles (RoleName) VALUES
 ('Customer'),
 ('Shipper');
 
+-- Insert data into Roles
+INSERT INTO PaymentStatus (Status) VALUES 
+('COD'),
+('WAITING_FOR_PAYMENT'),
+('PAID'),
+('CANCEL');
+
 -- Insert data into Users
 INSERT INTO Users (RoleID, FullName, Email, PhoneNumber, PasswordHash, CreatedAt, Status) VALUES
 (1, 'Alice Nguyen', 'alice@domain.com', '0912345678', 'hashedpassword123', GETDATE(), 1),

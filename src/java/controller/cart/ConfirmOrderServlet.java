@@ -5,6 +5,7 @@
 package controller.cart;
 
 import dal.CartItemDAO;
+import dal.OrderDAO;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,12 +16,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import models.CartItem;
+import models.Order;
+import models.User;
+import utils.Validator;
 
 /**
  *
  * @author PC ASUS
  */
-public class CheckoutServlet extends HttpServlet {
+public class ConfirmOrderServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +43,10 @@ public class CheckoutServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CheckoutServlet</title>");
+            out.println("<title>Servlet ConfirmOrderServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CheckoutServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ConfirmOrderServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -75,32 +79,78 @@ public class CheckoutServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        CartItemDAO dao = new CartItemDAO();
-        int subTotal = 0;
+        User user = (User) session.getAttribute("user");
+        OrderDAO dao = new OrderDAO();
+        CartItemDAO cartDao = new CartItemDAO();
+        ArrayList<CartItem> cartItems = new ArrayList<>();
 
-        // Lấy toàn bộ danh sách ID đã chọn
-        String[] selectedItems = request.getParameterValues("selectedItems");
+        int orderId = -1;
+        String error = null;
 
-        if (selectedItems == null || selectedItems.length == 0) {
+//     Get parameters
+        String[] cartItemIds = request.getParameterValues("cartItemIds");
+        String receiverName = request.getParameter("receiverName");
+        String phoneNumber = request.getParameter("phoneNumber");
+        String address = request.getParameter("address");
+        String paymentMethod = request.getParameter("paymentMethod");
+        String subTotal = request.getParameter("subTotal");
+        String message = request.getParameter("message");
+
+//     Validate cart item ids   
+        if (cartItemIds == null || cartItemIds.length == 0) {
             session.setAttribute("toastType", "error");
             session.setAttribute("toast", "Proceed to checkout fail!");
             response.sendRedirect("Cart");
             return;
         }
 
-        ArrayList<CartItem> cartItems = new ArrayList<>();
-
-        for (String idStr : selectedItems) {
+//     Get Cart Item from ids
+        for (String idStr : cartItemIds) {
             int id = Integer.parseInt(idStr);
-            CartItem cartItem = dao.getCartItemById(id);
+            CartItem cartItem = cartDao.getCartItemById(id);
             cartItems.add(cartItem);
-            subTotal += (cartItem.getCategory().getPrice() + cartItem.getWarranty().getPrice()) * cartItem.getQuantity() ;
         }
-        
-        request.setAttribute("cartItems", cartItems);
-        request.setAttribute("subTotal", subTotal);
-        RequestDispatcher rd = request.getRequestDispatcher("ShopPages/Pages/checkout.jsp");
-        rd.forward(request, response);
+
+//     Validate parameters
+        if (receiverName.trim().isEmpty()) {
+            error = "Full name is required!";
+        } else if (phoneNumber.trim().isEmpty()) {
+            error = "Phone number is required!";
+        } else if (!Validator.isValidPhoneNumber(phoneNumber)) {
+            error = "Phone number is invalid!";
+        } else if (address.trim().isEmpty()) {
+            error = "Address is required!";
+        }
+
+//      Handle error
+        if (error.isEmpty()) {
+            try {
+//             COD
+                if (paymentMethod == "COD") {
+                    Order order = new Order(0, address, 0, user.getUserId(), receiverName, null, address, phoneNumber, Integer.parseInt(subTotal), 1, 1);
+                    orderId = dao.createOrderAndReturnId(order);
+//             Online Banking
+                } else {
+                    Order order = new Order(0, address, 0, user.getUserId(), receiverName, null, address, phoneNumber, Integer.parseInt(subTotal), 1, 2);
+                    orderId = dao.createOrderAndReturnId(order);
+                }
+//          Handle create Order error
+            } catch (Exception e) {
+                session.setAttribute("toastType", "error");
+                session.setAttribute("toast",  e);
+            }
+//         Parameter Error
+        } else {
+            request.setAttribute("error", error);
+            request.setAttribute("receiverName", receiverName);
+            request.setAttribute("phoneNumber", phoneNumber);
+            request.setAttribute("address", address);
+            request.setAttribute("message", message);
+            request.setAttribute("cartItems", cartItems);
+            request.setAttribute("subTotal", subTotal);
+            RequestDispatcher rd = request.getRequestDispatcher("ShopPages/Pages/checkout.jsp");
+            rd.forward(request, response);
+        }
     }
 
     /**
