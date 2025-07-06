@@ -76,34 +76,45 @@ public class BuildPC extends HttpServlet {
 
             return;
         }
-        if ("loadBuildPC".equals(service)) {
-            int buildPCID = parseIntOrDefault(request.getParameter("buildPCID"), -1);
+      if ("loadBuildPC".equals(service)) {
+    int buildPCID = parseIntOrDefault(request.getParameter("buildPCID"), -1);
 
-            response.setContentType("text/plain;charset=UTF-8");
+    response.setContentType("text/plain;charset=UTF-8");
 
-            try (PrintWriter out = response.getWriter()) {
-                List<Categories> items = dao.getCategoriesInBuildPC(buildPCID);
-                StringBuilder sb = new StringBuilder();
+    try (PrintWriter out = response.getWriter()) {
+        List<Categories> items = dao.getCategoriesInBuildPC(buildPCID);
+        StringBuilder sb = new StringBuilder();
 
-                for (Categories c : items) {
-                    sb.append(c.getCategoryID()).append("|")
-                            .append(c.getCategoryName()).append("|")
-                            .append(c.getBrandName()).append("|")
-                            .append(c.getPrice()).append("|")
-                            .append(c.getImgURL() == null ? "" : c.getImgURL()).append("|")
-                            .append(c.getComponentID()).append("|")
-                            .append(c.getWarrantyDesc() == null ? "" : c.getWarrantyDesc()).append("|")
-                            .append(c.getWarrantyPrice()).append("|")
-                            .append(c.getWarrantyDetailID()).append(";");
-                }
-
-                out.print(sb.toString());
-            }
-            return;
+        for (Categories c : items) {
+            sb.append(c.getCategoryID()).append("|")
+              .append(escape(c.getCategoryName())).append("|")
+              .append(escape(c.getBrandName())).append("|")
+              .append(c.getPrice()).append("|")
+              .append(escape(c.getImgURL())).append("|")
+              .append(c.getComponentID()).append("|")
+              .append(escapeOrDefault(c.getWarrantyDesc(), "Không chọn")).append("|")
+              .append(warrantyPrice).append("|")
+              .append(warrantyDetailID).append(";");
         }
-
+        out.print(sb.toString());
+    }
+    return;
+}
+                                                                                          
+                                                    
         processRequest(request, response);
     }
+private String escape(String s) {
+    if (s == null) return "";
+    return s.replace("|", "").replace(";", "").replace("\n", "").replace("\r", "");
+}
+
+private String escapeOrDefault(String s, String defaultValue) {
+    if (s == null || s.trim().isEmpty()) return defaultValue;
+    return escape(s);
+}
+
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -114,7 +125,15 @@ public class BuildPC extends HttpServlet {
 
         if ("pc".equalsIgnoreCase(service)) {
             List<BuildPCView> pcList = dao.getBuiltPCsForCustomer();
+            Map<Integer, Map<Integer, List<WarrantyDetails>>> allWarrantyMap = new HashMap<>();
+
+            for (BuildPCView pc : pcList) {
+                Map<Integer, List<WarrantyDetails>> warrantyMap = dao.getWarrantyMapForBuildPC(pc.getBuildPCID());
+                allWarrantyMap.put(pc.getBuildPCID(), warrantyMap);
+            }
+
             request.setAttribute("pcList", pcList);
+            request.setAttribute("allWarrantyMap", allWarrantyMap);
             request.getRequestDispatcher("/ShopPages/Pages/BuildPC/ViewPC.jsp").forward(request, response);
             return;
         }
@@ -167,8 +186,5 @@ public class BuildPC extends HttpServlet {
         processRequest(request, response);
     }
 
-    private String escape(String value) {
-        return value == null ? "" : value.replace("|", "/").replace("\n", " ").replace("\r", " ");
-    }
-
+   
 }
