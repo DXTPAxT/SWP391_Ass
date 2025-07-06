@@ -26,13 +26,14 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+
     </head>
     <body>
         <jsp:include page="/ShopPages/Pages/components/header.jsp" />
 
         <section class="container my-5">
             <h2 class="text-center mb-4">Your Shopping Cart</h2>
-            <div class="table-responsive cart-table" style="max-height: 480px; overflow-y: auto;">
+            <div class="table-responsive cart-table d-none d-md-block" style="max-height: 480px; overflow-y: auto;">
                 <table class="table table-bordered">
                     <thead class="thead-light">
                         <tr>
@@ -71,7 +72,7 @@
                 </div>
             </div>
         </section>
-
+        
         <!-- TOAST NOTIFICATION -->
         <c:if test="${not empty sessionScope.toast}">
             <div class="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">

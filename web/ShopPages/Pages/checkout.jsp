@@ -16,7 +16,7 @@
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/animate.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/main.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/responsive.css" rel="stylesheet">
-        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/custom.css?v=1.0.20" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/custom.css?v=1.0.22" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -26,204 +26,159 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-
-        <style>
-            .shopper-informations {
-                background: #f9f9f9;
-                padding: 30px;
-                margin-top: 30px;
-                border-radius: 6px;
-            }
-
-            .bill-to {
-                width: 100%;
-            }
-
-            .bill-to p {
-                font-weight: bold;
-                margin-bottom: 15px;
-                font-size: 18px;
-            }
-
-            .bill-to input {
-                margin-bottom: 15px;
-                height: 42px;
-                padding: 10px 15px;
-                width: 100%;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-            }
-
-            .order-message {
-                width: 100%;
-            }
-
-            .order-message p {
-                font-weight: bold;
-                margin-bottom: 15px;
-                font-size: 18px;
-            }
-
-            .order-message textarea {
-                width: 100%;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                padding: 15px;
-                resize: none; /* Không cho resize */
-                min-height: 100px;
-                height: 200px;
-            }
-
-            .payment-options {
-                background: #fff;
-                padding: 20px;
-                margin-top: 30px;
-                margin-bottom: 30px;
-                border: 1px solid #eee;
-                border-radius: 6px;
-            }
-
-            .payment-options label {
-                display: inline-block;
-                margin-right: 30px;
-                font-weight: normal;
-                cursor: pointer;
-            }
-
-            .total-result {
-                margin-top: 30px;
-                border-top: 2px solid #f05d23;
-            }
-
-            .total-result td {
-                padding: 10px 0;
-            }
-
-            .btn-confirm-order {
-                margin-top: 30px;
-                margin-bottom: 30px;
-                padding: 12px 40px;
-                background-color: #f05d23;
-                color: #fff;
-                border: none;
-                border-radius: 50px;
-                font-size: 16px;
-                transition: background 0.3s ease;
-            }
-
-            .btn-confirm-order:hover {
-                background-color: #d84e1f;
-            }
-        </style>
-
     </head>
+
     <body>
         <jsp:include page="/ShopPages/Pages/components/header.jsp" />
 
         <section id="cart_items">
             <div class="container">
+
+                <!-- Breadcrumb -->
                 <div class="breadcrumbs">
-                    <ol class="breadcrumb">
+                    <ol class="breadcrumb  mb-1">
                         <li><a href="${pageContext.request.contextPath}/Cart">Cart</a></li>
                         <li class="active">Check out</li>
                     </ol>
-                </div><!--/breadcrums-->
-
-                <div class="review-payment">
-                    <h2>Review & Payment</h2>
                 </div>
 
-                <div class="table-responsive cart-table">
-                    <table class="table table-bordered">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Product</th>
-                                <th>Details</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cart-items-body" >
-                            <c:forEach var="cartItem" items="${cartItems}">
-                                <tr>
-                                    <td>
-                                        <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/cart/two.png" alt="Product">
-                                    </td>
-                                    <td class="text-left">
+                <!-- Review & Payment Title -->
+                <div class="review-payment">
+                    <h2 class="mt-3">Review & Payment</h2>
+                </div>
+
+                <form action="ConfirmOrder" method="post">
+
+                    <div class="cart-cards">
+                        <c:forEach var="cartItem" items="${cartItems}">
+                            <div class="cart-card clearfix">
+                                <input type="hidden" name="cartItemIds" value="${cartItem.cartItemID}" />
+                                <!-- Ảnh -->
+                                <div class="cart-card-image pull-left">
+                                    <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/cart/two.png"
+                                         alt="Product">
+                                </div>
+
+                                <!-- Nội dung -->
+                                <div class="cart-card-content">
+                                    <div class="cart-info">
                                         <strong>${cartItem.category.categoryName}</strong><br>
                                         Warranty: ${cartItem.warranty.warranty.warrantyPeriod} months<br>
-                                        <small class="text-muted">(${cartItem.warranty.warranty.description})</small>
-                                    </td>
-                                    <td class="cart-price">
-                                        <div>Product: <fmt:formatNumber value="${cartItem.category.price}" type="number" groupingUsed="true"/> VND</div>
-                                        <div>Warranty: <fmt:formatNumber value="${cartItem.warranty.price}" type="number" groupingUsed="true"/> VND</div>
-                                    </td>
-                                    <td>
-                                        <div class="cart-quantity-group">
-                                            <input type="number" value="${cartItem.quantity}" readonly>
-                                        </div>
-                                    </td>
-                                    <td class="cart_total">
-                                        <strong><fmt:formatNumber value="${(cartItem.category.price + cartItem.warranty.price) * cartItem.quantity}" type="number" groupingUsed="true"/> VND</strong>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
-                </div>
+                                        <small class="text-muted">(${cartItem.warranty.warranty.description})</small><br>
 
-                <!-- === Existing content === -->
-                <div class="shopper-informations">
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12">
-                            <div class="bill-to">
-                                <p>Receiver's Information</p>
-                                <div class="form-one">
-                                    <input type="text" placeholder="Name" name="receiverName" value="${sessionScope.user.fullname}" readonly>
-                                    <input type="text" placeholder="Email" name="receiverEmail" value="${sessionScope.user.email}" readonly>
-                                    <input type="text" placeholder="Phone number" name="phoneNumber" required>
-                                    <input type="text" placeholder="Address" name="address" required>
+                                        <div class="cart-price">
+                                            Product: <fmt:formatNumber value="${cartItem.category.price}" type="number" groupingUsed="true"/> VND<br>
+                                            Warranty: <fmt:formatNumber value="${cartItem.warranty.price}" type="number" groupingUsed="true"/> VND
+                                        </div>
+                                    </div>
+
+                                    <!-- Quantity & Total -->
+                                    <div class="cart-qty-total">
+                                        <div class="cart-quantity-group">
+                                            Quantity
+                                            <input type="number"
+                                                   value="${cartItem.quantity}"
+                                                   readonly>
+                                        </div>
+                                        <div class="cart_total">
+                                            <strong>
+                                                <fmt:formatNumber value="${(cartItem.category.price + cartItem.warranty.price) * cartItem.quantity}" type="number" groupingUsed="true"/> VND
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
+
+                    <!-- Total Result -->
+                    <table class="table table-condensed total-result">
+                        <tr>
+                            <td>Cart Sub Total</td>
+                            <td><fmt:formatNumber value="${subTotal}" type="number" groupingUsed="true"/> VND</td>
+                        </tr>
+                        <tr class="shipping-cost">
+                            <td>Shipping Cost</td>
+                            <td>Free</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td><span><fmt:formatNumber value="${subTotal}" type="number" groupingUsed="true"/> VND</span></td>
+                        <input type="hidden" name="subTotal" value="${subTotal}" />
+                        </tr>
+                    </table>
+
+                    <!-- Receiver Info + Note -->
+                    <div class="shopper-informations">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12">
+                                <div class="bill-to">
+                                    <p>Receiver's Information</p>   
+                                    <input 
+                                        type="text" 
+                                        class ="${error == 'Full name is required!' ? 'is-invalid' : ''}"
+                                        placeholder="Name" 
+                                        name="receiverName" 
+                                        value="${not empty error ? receiverName : sessionScope.user.fullname}" 
+                                        required>
+                                    <input 
+                                        type="text" 
+                                        class ="${error == 'Phone number is required!' || error == 'Phone number is invalid!' ? 'is-invalid' : ''}"
+                                        placeholder="Phone number" 
+                                        name="phoneNumber" 
+                                        value="${not empty error ? phoneNumber : sessionScope.user.phoneNumber}" 
+                                        required>
+                                    <input
+                                        type="text" 
+                                        class ="${error == 'Address is required!' ? 'is-invalid' : ''}"
+                                        placeholder="Address"
+                                        name="address" 
+                                        value="${not empty error ? address : sessionScope.user.customerInfo.address}" 
+                                        required>
+                                </div>
+                                <c:if test="${not empty error}">
+                                    <span class="error-message">${error}</span>
+                                </c:if>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="order-message">
+                                    <p>Note</p>
+                                    <textarea name="message" placeholder="Notes about your order, special instructions for delivery">${message}</textarea>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-5 col-sm-12">
-                            <div class="order-message">
-                                <p>Shipping Order</p>
-                                <textarea name="message" placeholder="Notes about your order, special instructions for delivery"></textarea>
-                            </div>
-                        </div>					
                     </div>
-                </div>
 
-                <div class="payment-options">
-                    <p><strong>Payment Options</strong></p>
-                    <label><input type="radio" name="paymentMethod" value="COD" checked> Pay when receive</label>
-                    <label><input type="radio" name="paymentMethod" value="Bank"> Direct bank transfer</label>
-                </div>
+                    <!-- Payment Options -->
+                    <div class="payment-options">
+                        <p>Payment Options</p>
+                        <label><input type="radio" name="paymentMethod" value="COD" checked> Pay when receive</label>
+                        <label><input type="radio" name="paymentMethod" value="Bank"> Online Banking</label>
+                    </div>
 
-                <table class="table table-condensed total-result">
-                    <tr>
-                        <td>Cart Sub Total</td>
-                        <td><fmt:formatNumber value="${subTotal}" type="number" groupingUsed="true"/> VND</td>
-                    </tr>
-                    <tr class="shipping-cost">
-                        <td>Shipping Cost</td>
-                        <td>Free</td>										
-                    </tr>
-                    <tr>
-                        <td><strong>Total</strong></td>
-                        <td><span><fmt:formatNumber value="${subTotal}" type="number" groupingUsed="true"/> VND</span></td>
-                    </tr>
-                </table>
-
-                <button type="submit" class="btn btn-confirm-order">Confirm Order</button>
+                    <!-- Confirm Button -->
+                    <button type="submit" class="btn btn-confirm-order">Confirm Order</button>
+                </form>
             </div>
-        </section> <!--/#cart_items-->
+        </section>
 
         <jsp:include page="/ShopPages/Pages/components/footer.jsp" />
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            // Đợi DOM load xong
+            document.addEventListener("DOMContentLoaded", function () {
+                // Lấy tất cả các input có class is-invalid hoặc in-valid
+                var invalidInputs = document.querySelectorAll("input.is-invalid");
+
+                // Lặp qua từng input
+                invalidInputs.forEach(function (input) {
+                    input.addEventListener("input", function () {
+                        input.classList.remove("is-invalid");
+                    });
+                });
+            });
+        </script>
+
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.js"></script>
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/bootstrap.min.js"></script>
     </body>
