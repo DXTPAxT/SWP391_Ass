@@ -9,13 +9,13 @@ public class Categories {
     private String brandName;
     private String ComponentName;
 
-    private int brandComID;
     private int componentID;
     private int brandID;
-
+    
     private int quantity;
     private int inventory;
     private int price;
+    private int queue;
     private String description;
     private int status;
     private String imgURL;
@@ -70,6 +70,36 @@ public class Categories {
         this.status = status;
         this.imgURL = imgURL;
     }
+
+    public Categories(int categoryID, String categoryName, int BrandComID, String brandName, String ComponentName, int componentID, int brandID, int quantity, int inventory, int price, int queue, String description, int status, String imgURL, int warrantyDetailID, String warrantyDesc, int warrantyPrice) {
+        this.categoryID = categoryID;
+        this.categoryName = categoryName;
+        this.BrandComID = BrandComID;
+        this.brandName = brandName;
+        this.ComponentName = ComponentName;
+        this.componentID = componentID;
+        this.brandID = brandID;
+        this.quantity = quantity;
+        this.inventory = inventory;
+        this.price = price;
+        this.queue = queue;
+        this.description = description;
+        this.status = status;
+        this.imgURL = imgURL;
+        this.warrantyDetailID = warrantyDetailID;
+        this.warrantyDesc = warrantyDesc;
+        this.warrantyPrice = warrantyPrice;
+    }
+
+    public int getQueue() {
+        return queue;
+    }
+
+    public void setQueue(int queue) {
+        this.queue = queue;
+    }
+    
+    
    public int getWarrantyDetailID() {
         return warrantyDetailID;
     }
@@ -145,7 +175,7 @@ public class Categories {
     public Categories(int categoryID, String categoryName, int brandComID, int componentID, int brandID, String brandName, int quantity, int price, String description, int status, String imgURL) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
-        this.brandComID = brandComID;
+        this.BrandComID = brandComID;
         this.componentID = componentID;
         this.brandID = brandID;
         this.brandName = brandName;
