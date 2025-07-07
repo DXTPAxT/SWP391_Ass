@@ -36,7 +36,9 @@
     </head><!--/head-->
 
     <body>
-        <%@ include file="components/header.jsp" %>
+        <jsp:include page="components/header.jsp">
+            <jsp:param name="activeHeader" value="no"/>
+        </jsp:include>
 
         <section id="login-section" class="position-container"><!--form-->
             <div class="container form-wrapper">
@@ -56,7 +58,7 @@
                                     <p class="text-danger error-message">${error}</p>
                                 </c:if>
                                 <div class="d-flex justify-content-between align-items-end">
-                                    <a href="${ctx}/User?service=forgotPassword" class="forgot-password-link">Forgot Password?</a>
+                                    <a href="${pageContext.request.contextPath}/User?service=forgotPassword" class="forgot-password-link">Forgot Password?</a>
                                 </div>
                                 <div class="custom-between mt-3">
                                     <button type="submit" id="loginButton" class="btn-modern">Login</button>
@@ -109,6 +111,5 @@
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
-        <%@ include file="components/footer.jsp" %>
     </body>
 </html>
