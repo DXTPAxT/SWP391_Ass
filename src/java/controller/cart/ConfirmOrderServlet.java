@@ -134,10 +134,19 @@ public class ConfirmOrderServlet extends HttpServlet {
                     Order order = new Order(0, address, 0, user.getUserId(), receiverName, null, address, phoneNumber, Integer.parseInt(subTotal), 1, 2);
                     orderId = dao.createOrderAndReturnId(order);
                 }
+                
+//             Create OrderItems
+                if (orderId != -1) {
+                    
+                } else {
+                    session.setAttribute("toastType", "error");
+                    session.setAttribute("toast", "Create order fail!");
+                }
+                
 //          Handle create Order error
             } catch (Exception e) {
                 session.setAttribute("toastType", "error");
-                session.setAttribute("toast",  e);
+                session.setAttribute("toast", e);
             }
 //         Parameter Error
         } else {

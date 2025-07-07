@@ -61,7 +61,9 @@
         </style>
     </head>
     <body>
-        <%@ include file="components/header.jsp" %>
+        <jsp:include page="components/header.jsp">
+            <jsp:param name="activeHeader" value="no"/>
+        </jsp:include>
         <div class="change-container">
             <div class="change-form-box">
                 <h2>Change Password</h2>
@@ -88,6 +90,5 @@
         </div>
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.js"></script>
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/bootstrap.min.js"></script>
-        <%@ include file="components/footer.jsp" %>
     </body>
 </html>
