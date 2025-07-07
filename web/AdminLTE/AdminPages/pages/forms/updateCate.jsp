@@ -54,7 +54,6 @@
                                 <label for="categoryName">Category Name</label>
                                 <input type="text" id="categoryName" name="categoryName"
                                        class="form-control"
-                                       required
                                        value="${param.categoryName != null ? param.categoryName : category.categoryName}">
                             </div>
 

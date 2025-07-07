@@ -63,12 +63,13 @@ public class BrandAdminDAO extends DBAdminContext {
 
     public void updateBrandQuantitiesFromBrandComs() {
         String sql = """
-        UPDATE Brands
-        SET Quantity = ISNULL((
-            SELECT SUM(bc.Quantity)
-            FROM BrandComs bc
-            WHERE bc.BrandID = Brands.BrandID
-        ), 0);
+        UPDATE Brands b
+        LEFT JOIN (
+            SELECT BrandID, SUM(Quantity) AS TotalQuantity
+            FROM BrandComs
+            GROUP BY BrandID
+        ) AS bc_sum ON b.BrandID = bc_sum.BrandID
+        SET b.Quantity = IFNULL(bc_sum.TotalQuantity, 0);
     """;
 
         try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -79,7 +80,9 @@ public class BrandAdminDAO extends DBAdminContext {
     }
 
     public boolean isBrandNameExists(String brandName) {
-        String sql = "SELECT COUNT(*) FROM Brands WHERE LOWER(LTRIM(RTRIM(BrandName))) = LOWER(LTRIM(RTRIM(?)))";
+        String sql = """
+                     SELECT COUNT(*) FROM Brands
+                     WHERE LOWER(TRIM(BrandName)) = LOWER(TRIM(?));""";
         try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, brandName);
             ResultSet rs = ps.executeQuery();
