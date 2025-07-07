@@ -6,6 +6,7 @@ package controllerAdmin;
 
 import dal.Blog_CateDAO;
 import dal.CategoriesDAO;
+import dal.RoleDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import models.Categories;
 import models.Post;
+import models.Role;
 import models.SaleEvents;
 
 /**
@@ -68,16 +70,20 @@ public class SaleEventsServlet extends HttpServlet {
 
         Blog_CateDAO dao = new Blog_CateDAO();
         CategoriesDAO daoc = new CategoriesDAO();
+        RoleDAO rdao = new RoleDAO(); 
+
         List<SaleEvents> saleEvents = dao.getSaleEventsByCategory(categoryID);
 
         List<Post> activePosts = dao.getPostsByStatus(1);
 
         List<Categories> categories = daoc.getAllCategoriesPaginated(1, Integer.MAX_VALUE);
+        List<Role> rolee = rdao.getRoles();
 
         request.setAttribute("saleEvents", saleEvents);
         request.setAttribute("activePosts", activePosts);
         request.setAttribute("categories", categories);
         request.setAttribute("selectedCategoryID", categoryID);
+        request.setAttribute("rolee", rolee);
 
         // Forward to JSP
         request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/saleEvents.jsp").forward(request, response);

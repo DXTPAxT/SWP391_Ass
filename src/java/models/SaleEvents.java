@@ -19,6 +19,9 @@ public class SaleEvents {
     private Date endDate;
     private double discountPercent;
     private int status;
+    private int stock;
+    private int CreatedBy;
+    private Integer ApprovedBy;
 
     public SaleEvents() {
     }
@@ -31,6 +34,15 @@ public class SaleEvents {
         this.endDate = endDate;
         this.discountPercent = discountPercent;
         this.status = status;
+    }
+
+    public SaleEvents(int stock) {
+        this.stock = stock;
+    }
+
+    public SaleEvents(int CreatedBy, Integer ApprovedBy) {
+        this.CreatedBy = CreatedBy;
+        this.ApprovedBy = ApprovedBy;
     }
 
     public int getEventID() {
@@ -89,9 +101,35 @@ public class SaleEvents {
         this.status = status;
     }
 
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public int getCreatedBy() {
+        return CreatedBy;
+    }
+
+    public void setCreatedBy(int CreatedBy) {
+        this.CreatedBy = CreatedBy;
+    }
+
+    public Integer getApprovedBy() {
+        return ApprovedBy;
+    }
+
+    public void setApprovedBy(Integer ApprovedBy) {
+        this.ApprovedBy = ApprovedBy;
+    }
+
     @Override
     public String toString() {
-        return "SaleEvents{" + "eventID=" + eventID + ", categoryID=" + categoryID + ", postID=" + Post_id + ", startDate=" + startDate + ", endDate=" + endDate + ", discountPercent=" + discountPercent + ", status=" + status + '}';
+        return "SaleEvents{" + "eventID=" + eventID + ", categoryID=" + categoryID + ", Post_id=" + Post_id + ", startDate=" + startDate + ", endDate=" + endDate + ", discountPercent=" + discountPercent + ", status=" + status + ", stock=" + stock + ", CreatedBy=" + CreatedBy + ", ApprovedBy=" + ApprovedBy + '}';
     }
-    
+
+   
+
 }

@@ -5,20 +5,26 @@
 package controllerAdmin;
 
 import dal.Blog_CateDAO;
+import dal.CategoriesDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import models.Categories;
+import models.Post;
 import models.SaleEvents;
 
 /**
  *
  * @author User
  */
+@WebServlet(name = "AddSaleEvents", urlPatterns = {"/addsale"})
 public class AddSaleEvents extends HttpServlet {
 
     /**
@@ -59,7 +65,24 @@ public class AddSaleEvents extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            Blog_CateDAO dao = new Blog_CateDAO();
+            CategoriesDAO daoca = new CategoriesDAO();
+// Lấy danh sách category (có thể dùng từ Inventory hoặc CategoriesDAO nếu cần)
+            List<Categories> categories = daoca.getAllCategoriesPaginated(1, Integer.MAX_VALUE);
+            // Lấy danh sách bài viết đang hoạt động
+            List<Post> activePosts = dao.getPostsByStatus(1);
+
+            // Gửi dữ liệu sang trang thêm sale
+            request.setAttribute("categories", categories);
+            request.setAttribute("activePosts", activePosts);
+            // Chuyển sang trang form thêm sự kiện
+            request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/insertSaleEvents.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Có lỗi khi tải dữ liệu cho form thêm sự kiện.");
+            request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/insertSaleEvents.jsp").forward(request, response);
+        }
     }
 
     /**
@@ -78,7 +101,9 @@ public class AddSaleEvents extends HttpServlet {
             // Lấy và ép kiểu dữ liệu từ form
             int categoryID = Integer.parseInt(request.getParameter("categoryID"));
             int postID = Integer.parseInt(request.getParameter("postID"));
-
+            int createdBy = Integer.parseInt(request.getParameter("createdBy"));
+            String approvedByStr = request.getParameter("approvedBy");
+            Integer approvedBy = (approvedByStr != null && !approvedByStr.isEmpty()) ? Integer.parseInt(approvedByStr) : null;
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = sdf.parse(request.getParameter("startDate"));
             Date endDate = sdf.parse(request.getParameter("endDate"));
@@ -92,13 +117,15 @@ public class AddSaleEvents extends HttpServlet {
             event.setStartDate(startDate);
             event.setEndDate(endDate);
             event.setDiscountPercent(discountPercent);
-            event.setStatus(2); // Mặc định theo DAO
+            event.setStatus(2);
+            event.setCreatedBy(createdBy);
+            event.setApprovedBy(approvedBy);
 
             Blog_CateDAO dao = new Blog_CateDAO();
             dao.addSaleEvent(event);
 
             // Chuyển hướng sau khi thêm thành công
-            response.sendRedirect(request.getContextPath() + "/admin/saleevents-list");
+            response.sendRedirect(request.getContextPath() + "/saleevents?categoryID=" + categoryID);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,14 +134,13 @@ public class AddSaleEvents extends HttpServlet {
         }
     }
 
-
-/**
- * Returns a short description of the servlet.
- *
- * @return a String containing servlet description
- */
-@Override
-public String getServletInfo() {
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 

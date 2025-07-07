@@ -13,11 +13,7 @@ public class DBContext {
     public DBContext() {
         try {         
             String user = "sa";
-            String pass = "123";
-
-            String url = "jdbc:sqlserver://LAPTOP-dxt\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
-
-
+            String pass = "1234";
 
             String url = "jdbc:sqlserver://localhost\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");      
