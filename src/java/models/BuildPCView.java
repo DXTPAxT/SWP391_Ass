@@ -15,13 +15,26 @@ public class BuildPCView {
     private String fullName;
     private String role;
 
-    // use for Customer - image URLs
     private String imgMain;
     private String imgCPU;
     private String imgGPU;
     private String imgRAM;
     private String imgSSD;
     private String imgCase;
+  
+    private int mainBoardID;
+    private int cpuID;
+    private int gpuID;
+    private int ramID;
+    private int ssdID;
+    private int caseID;
+
+    private int mainWarrantyID;
+    private int cpuWarrantyID;
+    private int gpuWarrantyID;
+    private int ramWarrantyID;
+    private int ssdWarrantyID;
+    private int caseWarrantyID;
 
     public BuildPCView() {
     }
@@ -69,6 +82,142 @@ public class BuildPCView {
         this.pcCase = pcCase;
         this.price = price;
         this.status = status;
+    }
+public BuildPCView(int buildPCID, String mainBoard, String cpu, String gpu, String ram, String ssd, String pcCase,
+                   int price, int status, int userID, String fullName, String role,
+                   int mainBoardID, int cpuID, int gpuID, int ramID, int ssdID, int caseID,
+                   String imgMain, String imgCPU, String imgGPU, String imgRAM, String imgSSD, String imgCase,
+                   int mainWarrantyID, int cpuWarrantyID, int gpuWarrantyID, int ramWarrantyID, int ssdWarrantyID, int caseWarrantyID) {
+
+    this.buildPCID = buildPCID;
+    this.mainBoard = mainBoard;
+    this.cpu = cpu;
+    this.gpu = gpu;
+    this.ram = ram;
+    this.ssd = ssd;
+    this.pcCase = pcCase;
+    this.price = price;
+    this.status = status;
+    this.userID = userID;
+    this.fullName = fullName;
+    this.role = role;
+
+    this.mainBoardID = mainBoardID;
+    this.cpuID = cpuID;
+    this.gpuID = gpuID;
+    this.ramID = ramID;
+    this.ssdID = ssdID;
+    this.caseID = caseID;
+
+    this.imgMain = imgMain;
+    this.imgCPU = imgCPU;
+    this.imgGPU = imgGPU;
+    this.imgRAM = imgRAM;
+    this.imgSSD = imgSSD;
+    this.imgCase = imgCase;
+
+    this.mainWarrantyID = mainWarrantyID;
+    this.cpuWarrantyID = cpuWarrantyID;
+    this.gpuWarrantyID = gpuWarrantyID;
+    this.ramWarrantyID = ramWarrantyID;
+    this.ssdWarrantyID = ssdWarrantyID;
+    this.caseWarrantyID = caseWarrantyID;
+}
+
+    public int getMainWarrantyID() {
+        return mainWarrantyID;
+    }
+
+    public void setMainWarrantyID(int mainWarrantyID) {
+        this.mainWarrantyID = mainWarrantyID;
+    }
+
+    public int getCpuWarrantyID() {
+        return cpuWarrantyID;
+    }
+
+    public void setCpuWarrantyID(int cpuWarrantyID) {
+        this.cpuWarrantyID = cpuWarrantyID;
+    }
+
+    public int getGpuWarrantyID() {
+        return gpuWarrantyID;
+    }
+
+    public void setGpuWarrantyID(int gpuWarrantyID) {
+        this.gpuWarrantyID = gpuWarrantyID;
+    }
+
+    public int getRamWarrantyID() {
+        return ramWarrantyID;
+    }
+
+    public void setRamWarrantyID(int ramWarrantyID) {
+        this.ramWarrantyID = ramWarrantyID;
+    }
+
+    public int getSsdWarrantyID() {
+        return ssdWarrantyID;
+    }
+
+    public void setSsdWarrantyID(int ssdWarrantyID) {
+        this.ssdWarrantyID = ssdWarrantyID;
+    }
+
+    public int getCaseWarrantyID() {
+        return caseWarrantyID;
+    }
+
+    public void setCaseWarrantyID(int caseWarrantyID) {
+        this.caseWarrantyID = caseWarrantyID;
+    }
+
+    public int getMainBoardID() {
+        return mainBoardID;
+    }
+
+    public void setMainBoardID(int mainBoardID) {
+        this.mainBoardID = mainBoardID;
+    }
+
+    public int getCpuID() {
+        return cpuID;
+    }
+
+    public void setCpuID(int cpuID) {
+        this.cpuID = cpuID;
+    }
+
+    public int getGpuID() {
+        return gpuID;
+    }
+
+    public void setGpuID(int gpuID) {
+        this.gpuID = gpuID;
+    }
+
+    public int getRamID() {
+        return ramID;
+    }
+
+    public void setRamID(int ramID) {
+        this.ramID = ramID;
+    }
+
+    public int getSsdID() {
+        return ssdID;
+    }
+
+    public void setSsdID(int ssdID) {
+        this.ssdID = ssdID;
+    }
+
+    public int getCaseID() {
+        return caseID;
+    }
+
+    public void setCaseID(int caseID) {
+        this.caseID = caseID;
     }
 
     public int getBuildPCID() {

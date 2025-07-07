@@ -31,7 +31,10 @@ public class DBAdminContext {
             String user = "sa";
             String pass = "123";
 
+
             String url = "jdbc:sqlserver://LAPTOP-dxt\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
+
+
 
  
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");

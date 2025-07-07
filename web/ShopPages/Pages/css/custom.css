@@ -680,7 +680,7 @@ input[type="number"]:focus {
     }
 }
 
-/*Cart section*/
+/*------------------------------------------------------Cart section-------------------------------------------------------------------*/
 
 .cart-table {
     background: #fff;
@@ -764,6 +764,222 @@ input[type="number"]:focus {
     overflow: hidden;
 }
 
+/*-----------------------------------------------------------------Checkout*--------------------------------------------------------------------/
+
+/* Tổng quan: Table total-result */
+.total-result {
+    font-size: 18px;
+    margin-top: 30px;
+    border-top: 2px solid #f05d23;
+}
+
+.total-result td:first-child {
+    font-weight: 600;
+    color: #333;
+}
+
+.total-result tr:last-child td {
+    font-size: 22px;
+    font-weight: 700;
+    color: #f05d23;
+}
+
+.total-result tr:last-child td span {
+    font-size: 26px;
+    font-weight: 800;
+    color: #d84e1f;
+}
+
+.total-result tr td {
+    padding: 12px 0;
+    vertical-align: middle;
+}
+
+.shopper-informations {
+    background: #f9f9f9;
+    padding: 30px;
+    margin-top: 30px;
+    border-radius: 6px;
+}
+
+.bill-to p,
+.order-message p,
+.payment-options p {
+    font-weight: bold;
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+.bill-to input {
+    margin-bottom: 15px;
+    height: 42px;
+    padding: 10px 15px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.order-message textarea {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    resize: none;
+    min-height: 100px;
+    height: 200px;
+}
+
+.payment-options {
+    background: #fff;
+    padding: 20px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+}
+
+.payment-options label {
+    display: inline-block;
+    margin-right: 30px;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.btn-confirm-order {
+    display: block;
+    width: 100%;
+    margin: 30px 0;
+    padding: 15px 40px;
+    background-color: #f05d23;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    font-size: 18px;
+    transition: background 0.3s ease;
+}
+
+.btn-confirm-order:hover {
+    background-color: #d84e1f;
+}
+
+/* --- RESPONSIVE CART ITEMS --- */
+@media (max-width: 768px) {
+    .cart-table {
+        overflow-x: auto;
+    }
+
+    .cart-table table {
+        min-width: 600px;
+    }
+
+    .total-result {
+        font-size: 16px;
+    }
+
+    .total-result tr:last-child td {
+        font-size: 20px;
+    }
+
+    .total-result tr:last-child td span {
+        font-size: 24px;
+    }
+}
+
+/* --- RESPONSIVE RECEIVER INFO + ORDER MESSAGE --- */
+@media (max-width: 768px) {
+    .shopper-informations .row {
+        display: block;
+    }
+
+    .bill-to, .order-message {
+        margin-bottom: 20px;
+    }
+}
+
+/* --- RESPONSIVE CONFIRM BUTTON --- */
+@media (max-width: 768px) {
+    .btn-confirm-order {
+        width: 100%;
+        display: block;
+        font-size: 18px;
+    }
+}
+
+/* --- RESPONSIVE PAYMENT OPTIONS --- */
+@media (max-width: 768px) {
+    .payment-options label {
+        display: block;
+        margin-bottom: 10px;
+    }
+}
+
+.cart-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+}
+
+.cart-card-image {
+    width: 100px;
+    flex-shrink: 0;
+}
+
+.cart-card-image img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+}
+
+.cart-card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+    padding-left: 20px;
+}
+
+.cart-info {
+    flex: 1;
+}
+
+.cart-qty-total {
+    text-align: right;
+    min-width: 120px;
+}
+
+.cart-quantity-group input {
+    width: 60px;
+    text-align: center;
+}
+
+.cart_total {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .cart-card {
+        display: block;
+        text-align: center;
+    }
+
+    .cart-card-content {
+        display: block;
+        padding-left: 0;
+    }
+
+    .cart-qty-total {
+        text-align: center;
+        margin-top: 10px;
+    }
+}
 
 
 

@@ -21,6 +21,11 @@ CREATE TABLE Roles (
     RoleName VARCHAR(50) UNIQUE NOT NULL
 );
 
+CREATE TABLE PaymentStatus (
+	StatusID INT Primary key identity(1,1),
+	Status VARCHAR(20) NOT NULL
+)
+
 -- 2. Users
 CREATE TABLE Users (
     UserID INT PRIMARY KEY IDENTITY(1,1),
@@ -139,10 +144,13 @@ CREATE TABLE Orders (
     CustomerID INT NOT NULL,
     OrderDate DATETIME DEFAULT GETDATE() NOT NULL,
     Address TEXT NOT NULL,
-	PhoneNumber VARchar(11) NUll, 
+	Fullname Varchar(50) NUll, 
+	PhoneNumber Varchar(11) NUll, 
     TotalAmount INT NOT NULL,
-    Status int DEFAULT 1 NOT NULL,
-    FOREIGN KEY (CustomerID) REFERENCES Users(UserID)
+	PaymentStatusID INT DEFAULT 1 NOT NULL, -- 1: COD, 2: WAITING_FOR_PAYMENT, 3: PAID, 4: : CANCEL
+    Status int DEFAULT 1 NOT NULL, --  1: PENDING, 2: PROCESSING, 3: SHIPPING, 4: DELIVERED, 5: CANCEL,
+    FOREIGN KEY (CustomerID) REFERENCES Users(UserID),
+    FOREIGN KEY (PaymentStatusID) REFERENCES PaymentStatus(StatusID)
 );
 
 -- 14. OrderItems
@@ -187,7 +195,7 @@ CREATE TABLE CartItems (
 CREATE TABLE Shipping (
     ShippingID INT PRIMARY KEY IDENTITY(1,1),
     OrderID INT NOT NULL,
-    ShipperID INT NOT NULL,
+    ShipperID INT default 0 NOT NULL,
     ShippingStatus VARCHAR(50) NOT NULL,
     ShipTime DATE NOT NULL,
 	Note text default null,
