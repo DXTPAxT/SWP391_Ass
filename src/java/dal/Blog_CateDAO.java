@@ -406,19 +406,14 @@ public class Blog_CateDAO extends DBContext {
 
                 result.add(post);
             }
-        }
-    
-    catch (SQLException e
-
-    
-        ) {
+        } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        return result;
     }
 
-    return result ;
-}
-
-public List<Post> getPostsByCategorySorted(int bc_id, String sortOrder) {
+    public List<Post> getPostsByCategorySorted(int bc_id, String sortOrder) {
         List<Post> list = new ArrayList<>();
         String sql = "SELECT * FROM Post WHERE Bc_id = ?";
 
@@ -453,25 +448,68 @@ public List<Post> getPostsByCategorySorted(int bc_id, String sortOrder) {
         return list;
     }
 
+    public String getStockStatusByCategoryID(int categoryID) {
+        String sql = "SELECT Quantity, RestockExpected FROM Inventory WHERE CategoryID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, categoryID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int qty = rs.getInt("Quantity");
+                boolean restock = rs.getBoolean("RestockExpected");
+                if (qty > 0) {
+                    return "in_stock";
+                }
+                if (qty == 0 && restock) {
+                    return "restocking";
+                }
+                if (qty == 0 && !restock) {
+                    return "discontinued";
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "unknown";
+    }
+
     public List<SaleEvents> getSaleEventsByCategory(int categoryID) {
         List<SaleEvents> saleEvents = new ArrayList<>();
         String query = "SELECT * FROM SaleEvents WHERE CategoryID = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        String stockQuery = "SELECT Quantity, RestockExpected FROM Inventory WHERE CategoryID = ?";
+        try (
+                PreparedStatement stmt = connection.prepareStatement(query); PreparedStatement stockStmt = connection.prepareStatement(stockQuery)) {
             stmt.setInt(1, categoryID);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    SaleEvents event = new SaleEvents();
-                    event.setEventID(rs.getInt("EventID"));
-                    event.setCategoryID(rs.getInt("CategoryID"));
-                    event.setPost_id(rs.getInt("Post_id"));
-                    event.setStartDate(rs.getDate("StartDate"));
-                    event.setEndDate(rs.getDate("EndDate"));
-                    event.setDiscountPercent(rs.getDouble("DiscountPercent"));
-                    int status = checkEventStatus(event);     // tính trạng thái
-                    event.setStatus(status);                  // gán vào đối tượng
-                    updatePostStatus(event.getPost_id(), status == 1 ? 1 : 0); // cập nhật DB
-                    saleEvents.add(event);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                SaleEvents event = new SaleEvents();
+                event.setEventID(rs.getInt("EventID"));
+                event.setCategoryID(rs.getInt("CategoryID"));
+                event.setPost_id(rs.getInt("Post_id"));
+                event.setStartDate(rs.getDate("StartDate"));
+                event.setEndDate(rs.getDate("EndDate"));
+                event.setDiscountPercent(rs.getDouble("DiscountPercent"));
+                event.setStatus(rs.getInt("Status"));
+                event.setCreatedBy(rs.getInt("CreatedBy"));
+                event.setApprovedBy(rs.getObject("ApprovedBy") != null ? rs.getInt("ApprovedBy") : null);
+
+                // Check tồn kho
+                stockStmt.setInt(1, event.getCategoryID());
+                ResultSet stockRs = stockStmt.executeQuery();
+                int stock = -99;
+                if (stockRs.next()) {
+                    int quantity = stockRs.getInt("Quantity");
+                    boolean restock = stockRs.getBoolean("RestockExpected");
+                    if (quantity > 0) {
+                        stock = 1;
+                    } else if (quantity == 0 && restock) {
+                        stock = 0;
+                    } else if (quantity == 0 && !restock) {
+                        stock = -1;
+                    }
                 }
+                event.setStock(stock);
+
+                saleEvents.add(event);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -481,13 +519,14 @@ public List<Post> getPostsByCategorySorted(int bc_id, String sortOrder) {
 
     // Add a sale event
     public void addSaleEvent(SaleEvents event) {
-        String query = "INSERT INTO SaleEvents (CategoryID, Post_id, StartDate, EndDate, DiscountPercent, Status) VALUES (?, ?, ?, ?, ?, 2)";
+        String query = "INSERT INTO SaleEvents (CategoryID, Post_id, StartDate, EndDate, DiscountPercent, Status, CreatedBy, ApprovedBy) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, event.getCategoryID());
             stmt.setInt(2, event.getPost_id());
             stmt.setDate(3, new java.sql.Date(event.getStartDate().getTime()));
             stmt.setDate(4, new java.sql.Date(event.getEndDate().getTime()));
             stmt.setDouble(5, event.getDiscountPercent());
+            stmt.setInt(6, event.getCreatedBy());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -43,7 +43,7 @@ public class Blog_CateServlet extends HttpServlet {
 
         try {
             if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-                postList = dao.searchPosts(searchKeyword);
+                postList = dao.searchPostsByTitle(searchKeyword);
                 count = postList.size();
             } else if (Bc_id_raw != null) {
                 int Bc_id = Integer.parseInt(Bc_id_raw);
@@ -57,8 +57,8 @@ public class Blog_CateServlet extends HttpServlet {
             e.printStackTrace();
             postList = dao.getPostsByPage(currentPage);
             count = dao.countAllPosts();
-        } catch (SQLException ex) {
-            Logger.getLogger(Blog_CateServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            Logger.getLogger(Blog_CateServlet.class.getName()).log(Level.SEVERE, null, e);
         }
 
         int endPage = count / 4;

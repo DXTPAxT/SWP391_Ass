@@ -12,10 +12,13 @@ public class DBContext {
 
     public DBContext() {
         try {         
+
             String user = "root";       // Tài khoản MySQL
             String pass = "123456";     // Mật khẩu MySQL, điều chỉnh theo máy bạn
 
             String url = "jdbc:mysql://localhost:3306/ComputerOnlineShop?useSSL=false&serverTimezone=UTC";
+
+      
 
             Class.forName("com.mysql.cj.jdbc.Driver"); // Driver chuẩn MySQL
 
