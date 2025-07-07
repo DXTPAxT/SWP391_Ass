@@ -108,6 +108,17 @@
                                                                 <input type="hidden" name="productID" value="${product.productID}"/>
 
                                                                 <c:choose>
+                                                                    <c:when test="${not empty param.ImportID}">
+                                                                        <input type="hidden" name="redirectFrom" value="listbyim"/>
+                                                                        <input type="hidden" name="ImportID" value="${param.ImportID}"/>
+                                                                    </c:when>
+                                                                    <c:when test="${not empty param.categoryID}">
+                                                                        <input type="hidden" name="redirectFrom" value="listbycate"/>
+                                                                        <input type="hidden" name="categoryID" value="${param.categoryID}"/>
+                                                                    </c:when>
+                                                                </c:choose>
+
+                                                                <c:choose>
                                                                     <c:when test="${product.status == 1 || product.status == 2}">
                                                                         <button type="submit" class="btn btn-danger btn-sm"
                                                                                 onclick="return confirm('This will disable the product. Continue?');">
@@ -120,13 +131,9 @@
                                                                             Mark Under Repair
                                                                         </button>
                                                                     </c:when>
-                                                                    <c:otherwise>
-                                                                        <button type="button" class="btn btn-secondary btn-sm" disabled>
-                                                                            Unknown Status
-                                                                        </button>
-                                                                    </c:otherwise>
                                                                 </c:choose>
                                                             </form>
+
                                                         </td>
                                                     </tr>
                                                 </c:forEach>
@@ -170,17 +177,17 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- page script -->
         <script>
-                            $(function () {
-                                $("#example1").DataTable();
-                                $('#example2').DataTable({
-                                    "paging": true,
-                                    "lengthChange": true,
-                                    "searching": true,
-                                    "ordering": true,
-                                    "info": true,
-                                    "autoWidth": true
-                                });
+                        $(function () {
+                            $("#example1").DataTable();
+                            $('#example2').DataTable({
+                                "paging": true,
+                                "lengthChange": true,
+                                "searching": true,
+                                "ordering": true,
+                                "info": true,
+                                "autoWidth": true
                             });
+                        });
         </script>
         <script>
             $(function () {
