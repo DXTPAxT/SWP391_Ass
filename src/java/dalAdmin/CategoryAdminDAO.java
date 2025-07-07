@@ -19,6 +19,7 @@ public class CategoryAdminDAO extends DBAdminContext {
             c.Quantity,
             c.inventory,
             c.Price,
+            c.Queue,         
             c.Description,
             c.Status,
             c.ImageURL,
@@ -67,6 +68,7 @@ public class CategoryAdminDAO extends DBAdminContext {
         c.Quantity,
         c.inventory,
         c.Price,
+        c.Queue,             
         c.Description,
         c.Status,
         c.ImageURL,
@@ -116,6 +118,7 @@ public class CategoryAdminDAO extends DBAdminContext {
             c.Quantity,
             c.inventory,
             c.Price,
+            c.Queue,         
             c.Description,
             c.Status,
             c.ImageURL,
@@ -280,6 +283,20 @@ public class CategoryAdminDAO extends DBAdminContext {
 
     public void updateCategoryStatusIfInventoryZero() {
         String sql = "UPDATE Categories SET Status = 0 WHERE inventory = 0 AND Status IN (1, 2)";
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateCategoryQueue() {
+        String sql = """
+       UPDATE Categories
+        SET Queue = 0
+        WHERE Inventory > Queue;
+    """;
 
         try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.executeUpdate();

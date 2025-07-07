@@ -160,6 +160,7 @@
                                             <tr>
                                                 <th class="text-center">Category ID</th>
                                                 <th class="text-center">Category Name</th>
+                                                <th class="text-center">Queue</th>
                                                 <th class="text-center">Import</th>
                                             </tr>
                                         </thead>
@@ -168,6 +169,7 @@
                                                 <tr>
                                                     <td>${category.categoryID}</td>
                                                     <td>${category.categoryName}</td>
+                                                    <td>${category.queue}</td>
                                                     <td>
                                                         <a href="${ctx}/Import?service=insert&categoryID=${category.categoryID}"
                                                            class="btn btn-primary btn-sm">Import</a>
