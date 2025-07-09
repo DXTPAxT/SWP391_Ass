@@ -111,15 +111,32 @@
             </li>
             <li class="treeview">
                 <a href="#">
-                    <i class="fa fa-laptop"></i> <span>Order</span>
+                    <i class="fa fa-laptop"></i> <span>Order Category</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">    
+                    <li><a href="${param.ctx}/OrderAdmin?service=listCate"><i class="fa fa-circle-o"></i>View All Order</a></li>
+                    <li><a href="${param.ctx}/OrderAdmin"><i class="fa fa-circle-o"></i>Pending Order</a></li>
+                    <li><a href="${param.ctx}/OrderBuildPCAdmin"><i class="fa fa-circle-o"></i>Order Category Items</a></li>
+                    <!-- don thay the neu phai doi hang cho khach -->
+                    <li><a href="${param.ctx}/OrderAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert Replacement Order </a></li> 
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-laptop"></i> <span>Order Build PC</span>
                     <span class="pull-right-container">
                         <i class="fa fa-angle-left pull-right"></i>
                     </span>
                 </a>
                 <ul class="treeview-menu">                               
-                    <li><a href="${param.ctx}/OrderAdmin"><i class="fa fa-circle-o"></i>View Order Category</a></li>
-                    <li><a href="${param.ctx}/OrderBuildPCAdmin"><i class="fa fa-circle-o"></i>View Order Build PC</a></li>
-                    <li><a href="${param.ctx}/OrderAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert new Order</a></li> 
+                    <li><a href="${param.ctx}/OrderAdmin?service=listBuildPC"><i class="fa fa-circle-o"></i>View All Order</a></li>
+                    <li><a href="${param.ctx}/OrderAdmin"><i class="fa fa-circle-o"></i>Pending Order</a></li>
+                    <li><a href="${param.ctx}/OrderBuildPCAdmin"><i class="fa fa-circle-o"></i>Order Build PC Items</a></li>
+                    <!-- don thay the neu phai doi hang cho khach -->
+                    <li><a href="${param.ctx}/OrderAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert Replacement Order </a></li> 
                 </ul>
             </li>
             <li class="treeview">

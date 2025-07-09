@@ -877,17 +877,17 @@ INSERT INTO WarrantyDetails (WarrantyID, BrandComID, Price, Status) VALUES
 (4, 15, 229079, 1);
 
 
-INSERT INTO Orders (CustomerID, OrderDate, Address, TotalAmount, Status)
-VALUES (5, '2025-04-27 05:34:02', 'Customer 2 Address #49', 7632869, 1);
+INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, TotalAmount, Status)
+VALUES ('OR001', 0, 5, '2025-04-27 05:34:02', 'Customer 2 Address #49', 7632869, 1);
 
-INSERT INTO Orders (CustomerID, OrderDate, Address, TotalAmount, Status)
-VALUES (5, '2025-04-27 05:34:02', 'Customer 2 Address #49', 7632869, 1);
+INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, TotalAmount, Status)
+VALUES ('OR002', 0, 5, '2025-04-27 05:34:02', 'Customer 2 Address #49', 7632869, 1);
 
-INSERT INTO Orders (CustomerID, OrderDate, Address, TotalAmount, Status)
-VALUES (5, '2024-12-11 05:34:02', 'Customer 2 Address #50', 9077684, 1);
+INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, TotalAmount, Status)
+VALUES ('OR003', 1, 5, '2024-12-11 05:34:02', 'Customer 2 Address #50', 9077684, 1);
 
-INSERT INTO Orders (CustomerID, OrderDate, Address, TotalAmount, Status)
-VALUES (6, '2024-12-11 05:34:02', 'Customer 2 Address #50', 9077684, 1);
+INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, TotalAmount, Status)
+VALUES ('OR004', 0, 6, '2024-12-11 05:34:02', 'Customer 2 Address #50', 9077684, 1);
 
 
 
@@ -1026,7 +1026,8 @@ Ideal temps: CPU < 85°C, GPU < 80°C.',
 INSERT INTO OrderPreparements (UserID, OrderID, PrepareTime) VALUES 
 (2, 1, CURDATE()), 
 (2, 2, CURDATE()), 
-(2, 3, CURDATE());
+(2, 3, CURDATE()),
+(2, 4, CURDATE());
 
 
 INSERT INTO Shipping (OrderID, ShipperID, ShippingStatus, ShipTime) VALUES 
@@ -1052,5 +1053,7 @@ INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) 
 (1, 1, 'Khuyến mãi mới', 'Chương trình khuyến mãi mới đã bắt đầu.', 0, '2025-06-03 15:00:00'),
 (1, 1, 'Phản hồi đã trả lời', 'Bạn vừa trả lời một feedback của khách.', 0, '2025-06-03 16:00:00'),
 (1, 1, 'Đơn hàng giao thành công', 'Một đơn hàng đã giao thành công.', 0, '2025-06-03 17:00:00');
+
+
 
 

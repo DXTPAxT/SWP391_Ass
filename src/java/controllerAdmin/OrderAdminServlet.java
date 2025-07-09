@@ -27,16 +27,22 @@ public class OrderAdminServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             String service = request.getParameter("service");
             if (service == null) {
-                service = "list";
+                service = "listCate";
             }
 
             OrderAdminDAO dao = new OrderAdminDAO();
-            if (service.equals("list")) {
-                List<Order> orders = dao.getAllOrders();
+            if (service.equals("listCate")) {
+                List<Order> orders = dao.getAllOrderItems();
                 request.setAttribute("orders", orders);
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewOrder.jsp").forward(request, response);
 
-            } else if (service.equals("update")) {
+            }else if (service.equals("listBuildPC")) {
+                List<Order> orders = dao.getAllOrderBuildPC();
+                request.setAttribute("orders", orders);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewOrder.jsp").forward(request, response);
+
+            }
+            /*else if (service.equals("update")) {
                 String submit = request.getParameter("submit");
 
                 if (submit == null) {
@@ -66,7 +72,7 @@ public class OrderAdminServlet extends HttpServlet {
                         request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateOrder.jsp").forward(request, response);
                     }
                 }
-            }
+            }*/
 
         }
     }
