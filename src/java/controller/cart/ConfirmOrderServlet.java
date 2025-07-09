@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import models.CartItem;
-import models.Order;
+import models.OrderCate;
 import models.OrderItems;
 import models.User;
 import utils.Validator;
@@ -72,13 +72,13 @@ public class ConfirmOrderServlet extends HttpServlet {
         }
 
         try {
-            // Tạo Order
+            // Tạo OrderCate
             String newCode = dao.generateRandomOrderCode();
-            Order order = new Order();
+            OrderCate order = new OrderCate();
             if ("COD".equals(paymentMethod)) {
-                order = new Order(0, newCode, 0, user.getUserId(), receiverName, null, address, phoneNumber, Integer.parseInt(subTotal), 1, 1);
+                order = new OrderCate(0, newCode, 0, user.getUserId(), receiverName, null, address, phoneNumber, Integer.parseInt(subTotal), 1, 1);
             } else {
-                order = new Order(0, newCode, 0, user.getUserId(), receiverName, null, address, phoneNumber, Integer.parseInt(subTotal), 1, 2);
+                order = new OrderCate(0, newCode, 0, user.getUserId(), receiverName, null, address, phoneNumber, Integer.parseInt(subTotal), 1, 2);
             }
 
             int orderId = dao.createOrderAndReturnId(order);

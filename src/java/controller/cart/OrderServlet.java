@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import models.Order;
+import models.OrderCate;
 import models.OrderItems;
 
 /**
@@ -66,7 +66,7 @@ public class OrderServlet extends HttpServlet {
         String orderIDPara = request.getParameter("orderID");
         try {
             int orderID = Integer.parseInt(orderIDPara);
-            Order order = dao.getOrderByID(orderID);
+            OrderCate order = dao.getOrderByID(orderID);
             ArrayList<OrderItems> orderItems = orderItemDAO.getOrderItemsByOrderID(orderID);
             request.setAttribute("order", order);
             request.setAttribute("orderItems", orderItems);

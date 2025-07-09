@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import models.Order;
+import models.OrderCate;
 
 /**
  *
@@ -32,12 +32,12 @@ public class OrderAdminServlet extends HttpServlet {
 
             OrderAdminDAO dao = new OrderAdminDAO();
             if (service.equals("listCate")) {
-                List<Order> orders = dao.getAllOrderItems();
+                List<OrderCate> orders = dao.getAllOrderItems();
                 request.setAttribute("orders", orders);
-                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewOrder.jsp").forward(request, response);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewAllOrderCate.jsp").forward(request, response);
 
             }else if (service.equals("listBuildPC")) {
-                List<Order> orders = dao.getAllOrderBuildPC();
+                List<OrderCate> orders = dao.getAllOrderBuildPC();
                 request.setAttribute("orders", orders);
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewOrder.jsp").forward(request, response);
 
@@ -48,7 +48,7 @@ public class OrderAdminServlet extends HttpServlet {
                 if (submit == null) {
                     // Hiển thị form cập nhật
                     int id = Integer.parseInt(request.getParameter("orderID"));
-                    Order order = dao.getOrderById(id);
+                    OrderCate order = dao.getOrderById(id);
                     request.setAttribute("order", order);
                     request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateOrder.jsp").forward(request, response);
 
@@ -66,7 +66,7 @@ public class OrderAdminServlet extends HttpServlet {
 
                         // Nếu có lỗi, forward lại trang cập nhật
                         int id = Integer.parseInt(request.getParameter("orderID"));
-                        Order order = dao.getOrderById(id);
+                        OrderCate order = dao.getOrderById(id);
                         request.setAttribute("error", "Update failed: " + e.getMessage());
                         request.setAttribute("order", order);
                         request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateOrder.jsp").forward(request, response);
