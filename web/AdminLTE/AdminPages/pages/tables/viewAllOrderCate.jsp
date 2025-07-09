@@ -73,6 +73,7 @@
                                             <tr>
                                                 <th>Order ID</th>
                                                 <th>Customer Name</th>
+                                                <th>Consignee</th>
                                                 <th>Staff Name</th>
                                                 <th>Order Date</th>
                                                 <th>Product Type</th>
@@ -87,6 +88,7 @@
                                                 <c:forEach var="order" items="${orders}">
                                                     <tr>
                                                         <td>${order.orderID}</td>
+                                                        <td>${order.customerName}</td>
                                                         <td>${order.fullName}</td>
                                                         <td>${order.staffName}</td>
                                                         <td><fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd HH:mm" /></td>

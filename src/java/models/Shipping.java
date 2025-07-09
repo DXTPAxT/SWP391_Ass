@@ -3,12 +3,12 @@ package models;
 public class Shipping {
 
     private int ShippingID;
-    private Order order;
+    private OrderCate order;
     private User Shipper;
     private String ShippingStatus;
     private String Shiptime;
 
-    public Shipping(int ShippingID, Order order, User Shipper, String ShippingStatus, String Shiptime) {
+    public Shipping(int ShippingID, OrderCate order, User Shipper, String ShippingStatus, String Shiptime) {
         this.ShippingID = ShippingID;
         this.order = order;
         this.Shipper = Shipper;
@@ -24,11 +24,11 @@ public class Shipping {
         this.ShippingID = ShippingID;
     }
 
-    public Order getOrder() {
+    public OrderCate getOrder() {
         return order;
     }
 
-    public void setOrder(Order order) {
+    public void setOrder(OrderCate order) {
         this.order = order;
     }
 

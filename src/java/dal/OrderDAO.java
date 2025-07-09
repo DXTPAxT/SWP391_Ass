@@ -5,12 +5,12 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
-import models.Order; // Đảm bảo đã có class Order
+import models.OrderCate; // Đảm bảo đã có class OrderCate
 
 public class OrderDAO extends DBContext {
 
     // Hàm tạo order và trả về OrderID vừa tạo, trả về -1 nếu lỗi
-    public int createOrderAndReturnId(Order order) {
+    public int createOrderAndReturnId(OrderCate order) {
         String sql = "INSERT INTO Orders (OrderCode, Product_Type, CustomerID, Address, FullName, PhoneNumber, TotalAmount, PaymentStatusID, Status) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -62,7 +62,7 @@ public class OrderDAO extends DBContext {
         return false;
     }
 
-    public Order getOrderByID(int orderID) {
+    public OrderCate getOrderByID(int orderID) {
         String sql = """
         SELECT 
           OrderID,
@@ -84,7 +84,7 @@ public class OrderDAO extends DBContext {
             ps.setInt(1, orderID);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    Order order = new Order();
+                    OrderCate order = new OrderCate();
                     order.setOrderID(rs.getInt("OrderID"));
                     order.setOrderCode(rs.getString("OrderCode"));
                     order.setProduct_Type(rs.getInt("Product_Type"));
@@ -109,8 +109,8 @@ public class OrderDAO extends DBContext {
         // 2. Tạo DAO
         OrderDAO dao = new OrderDAO();
 
-        // 3. Tạo Order mẫu
-        Order order = new Order();
+        // 3. Tạo OrderCate mẫu
+        OrderCate order = new OrderCate();
         order.setOrderCode("1");
         order.setProduct_Type(0);
         order.setCustomerID(1);
