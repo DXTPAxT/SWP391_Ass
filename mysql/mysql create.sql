@@ -130,6 +130,10 @@ CREATE TABLE Orders (
     CustomerID INT NOT NULL,
     OrderDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     Address TEXT NOT NULL,
+    PhoneNumber TEXT NOT NULL,
+    Fullname TEXT NOT NULL,
+    Note TEXT NULL,
+	PaymentStatusID INT NOT NULL DEFAULT 1,
     TotalAmount INT NOT NULL,
     Status INT DEFAULT 1 NOT NULL,
     FOREIGN KEY (CustomerID) REFERENCES Users(UserID)
