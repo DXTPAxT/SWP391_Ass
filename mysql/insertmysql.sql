@@ -877,19 +877,18 @@ INSERT INTO WarrantyDetails (WarrantyID, BrandComID, Price, Status) VALUES
 (4, 15, 229079, 1);
 
 
-INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, TotalAmount, Status)
-VALUES ('OR001', 0, 5, '2025-04-27 05:34:02', 'Customer 2 Address #49', 7632869, 1);
 
-INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, TotalAmount, Status)
-VALUES ('OR002', 0, 5, '2025-04-27 05:34:02', 'Customer 2 Address #49', 7632869, 1);
+INSERT INTO Orders (CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
+VALUES (5, '2025-04-27 05:34:02', N'Customer 2 Address #49', N'Nguyen Van A', '0123456789', 7632869, 1, 1);
 
-INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, TotalAmount, Status)
-VALUES ('OR003', 1, 5, '2024-12-11 05:34:02', 'Customer 2 Address #50', 9077684, 1);
+INSERT INTO Orders (CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
+VALUES (5, '2025-04-27 05:34:02', N'Customer 2 Address #49', N'Nguyen Van A', '0123456789', 7632869, 1, 1);
 
-INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, TotalAmount, Status)
-VALUES ('OR004', 0, 6, '2024-12-11 05:34:02', 'Customer 2 Address #50', 9077684, 1);
+INSERT INTO Orders (CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
+VALUES (5, '2024-12-11 05:34:02', N'Customer 2 Address #50', N'Le Thi B', '0987654321', 9077684, 1, 2);
 
-
+INSERT INTO Orders (CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
+VALUES (6, '2024-12-11 05:34:02', N'Customer 2 Address #50', N'Pham Van C', '0367890123', 9077684, 1, 2);
 
 -- Insert data into CartItems
 INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (5, 16, 6, 1, 1);

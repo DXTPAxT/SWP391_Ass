@@ -17,10 +17,10 @@ public class ShippingDAO extends DBContext {
     public int countShips1MonthByID(int UserID) {
         int count = 0;
         String sql = """
-                         SELECT COUNT (ShippingID) as numberOfShips
+                         SELECT COUNT(ShippingID) as numberOfShips
                          FROM Shipping 
                          WHERE ShipperID = ?
-                         and ShipTime >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1);
+                         AND ShipTime >= DATE_FORMAT(NOW(), '%Y-%m-01');
                      """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, UserID);

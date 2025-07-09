@@ -18,7 +18,6 @@ public class DBContext {
 
             String url = "jdbc:mysql://localhost:3306/ComputerOnlineShop?useSSL=false&serverTimezone=UTC";
 
-      
 
             Class.forName("com.mysql.cj.jdbc.Driver"); // Driver chuẩn MySQL
 
