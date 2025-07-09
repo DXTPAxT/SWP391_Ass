@@ -125,8 +125,8 @@ CREATE TABLE WarrantyDetails (
 -- 13. Orders
 CREATE TABLE Orders (
     OrderID INT PRIMARY KEY AUTO_INCREMENT,
-    OrderCode INT DEFAULT NULL,
-    Product_Type INT DEFAULT NULL,
+    OrderCode VARCHAR(100) DEFAULT NULL,
+    Product_Type INT DEFAULT NULL, -- 0 là Items, 1 là Build PC
     CustomerID INT NOT NULL,
     OrderDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     Address TEXT NOT NULL,

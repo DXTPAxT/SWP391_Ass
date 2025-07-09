@@ -16,8 +16,26 @@ public class Order {
     private int TotalAmount;
     private int Status;
     private int PaymentStatus;
+    private int StaffID;
+    private String StaffName;
 
     public Order() {
+    }
+
+    public Order(int OrderID, String OrderCode, int Product_Type, int CustomerID, String FullName, Date OrderDate, String Address, String phoneNumber, int TotalAmount, int Status, int PaymentStatus, int StaffID, String StaffName) {
+        this.OrderID = OrderID;
+        this.OrderCode = OrderCode;
+        this.Product_Type = Product_Type;
+        this.CustomerID = CustomerID;
+        this.FullName = FullName;
+        this.OrderDate = OrderDate;
+        this.Address = Address;
+        this.phoneNumber = phoneNumber;
+        this.TotalAmount = TotalAmount;
+        this.Status = Status;
+        this.PaymentStatus = PaymentStatus;
+        this.StaffID = StaffID;
+        this.StaffName = StaffName;
     }
 
     public Order(int OrderID, String OrderCode, int Product_Type, int CustomerID, String FullName, Date OrderDate, String Address, String phoneNumber, int TotalAmount, int Status, int PaymentStatus) {
@@ -72,6 +90,23 @@ public class Order {
         this.Address = Address;
         this.TotalAmount = TotalAmount;
         this.Status = Status;
+    }
+
+
+    public int getStaffID() {
+        return StaffID;
+    }
+
+    public void setStaffID(int StaffID) {
+        this.StaffID = StaffID;
+    }
+
+    public String getStaffName() {
+        return StaffName;
+    }
+
+    public void setStaffName(String StaffName) {
+        this.StaffName = StaffName;
     }
 
     public int getProduct_Type() {
