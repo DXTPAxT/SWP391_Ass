@@ -57,17 +57,26 @@ public class ProductAdminServlet extends HttpServlet {
                 product = pro.getAllProductsByImportID(id);
                 request.setAttribute("product", product);
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewProduct.jsp").forward(request, response);
-            } else if (service.equals("toggleStatus")) {
+            } else if ("toggleStatus".equals(service)) {
                 int productID = Integer.parseInt(request.getParameter("productID"));
-                ProductAdminDAO dao = new ProductAdminDAO();
-                dao.toggleStatus(productID);
-                response.sendRedirect("ProductAdmin");
-            }
+                String redirectFrom = request.getParameter("redirectFrom");
 
+                pro.toggleStatus(productID);
+
+                if ("listbyim".equals(redirectFrom)) {
+                    String importID = request.getParameter("ImportID");
+                    response.sendRedirect("ProductAdmin?service=listbyim&ImportID=" + importID);
+                } else if ("listbycate".equals(redirectFrom)) {
+                    String categoryID = request.getParameter("categoryID");
+                    response.sendRedirect("ProductAdmin?service=listbycate&categoryID=" + categoryID);
+                } else {
+                    response.sendRedirect("ProductAdmin");
+                }
+            }
         }
     }
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *

@@ -84,7 +84,7 @@
                                                             || error eq 'Component name is too long (maximum 50 characters).'
                                                             || error eq 'Component name must contain only letters, digits and spaces.'
                                                             || error eq 'Component name already exists.' ? ' is-invalid' : ''}"
-                                       placeholder="Enter component name" required value="${component_name}">
+                                       placeholder="Enter component name"  value="${component_name}">
                                
                             </div>
 
