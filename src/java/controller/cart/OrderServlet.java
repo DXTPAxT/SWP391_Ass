@@ -62,14 +62,11 @@ public class OrderServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         OrderDAO dao = new OrderDAO();
-        OrderItemDAO orderItemDAO = new OrderItemDAO();
         String orderIDPara = request.getParameter("orderID");
         try {
             int orderID = Integer.parseInt(orderIDPara);
-            OrderCate order = dao.getOrderByID(orderID);
-            ArrayList<OrderItems> orderItems = orderItemDAO.getOrderItemsByOrderID(orderID);
+            OrderCate order = dao.getOrderCateByID(orderID);
             request.setAttribute("order", order);
-            request.setAttribute("orderItems", orderItems);
             RequestDispatcher rd = request.getRequestDispatcher("ShopPages/Pages/OrderInfo.jsp");
             rd.forward(request, response);
         } catch (Exception e) {

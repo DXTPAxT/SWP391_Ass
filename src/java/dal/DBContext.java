@@ -2,37 +2,43 @@ package dal;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DBContext {
 
+    private static Connection sharedConnection;
+
     protected Connection connection;
 
     public DBContext() {
-        try {         
+        try {
+            if (sharedConnection == null || sharedConnection.isClosed()) {
+                String user = "root";
+                String pass = "123456";
+                String url = "jdbc:mysql://localhost:3306/ComputerOnlineShop?useSSL=false&serverTimezone=UTC";
 
-            String user = "root";       // Tài khoản MySQL
-            String pass = "123456";     // Mật khẩu MySQL, điều chỉnh theo máy bạn
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                sharedConnection = DriverManager.getConnection(url, user, pass);
+                System.out.println("✅ Kết nối MySQL được mở mới!");
+            } else {
+                System.out.println("✅ Dùng lại kết nối MySQL!");
+            }
 
-            String url = "jdbc:mysql://localhost:3306/ComputerOnlineShop?useSSL=false&serverTimezone=UTC";
+            this.connection = sharedConnection;
 
-
-            Class.forName("com.mysql.cj.jdbc.Driver"); // Driver chuẩn MySQL
-
-            connection = DriverManager.getConnection(url, user, pass);
-            System.out.println("✅ Kết nối MySQL thành công!");
         } catch (ClassNotFoundException | SQLException ex) {
             System.err.println("❌ Lỗi kết nối MySQL: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
 
-    
     public ResultSet getData(String sql) {
         ResultSet rs = null;
-        try (Statement state = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+        try (Statement state = connection.createStatement(
+                ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE)) {
             rs = state.executeQuery(sql);
         } catch (SQLException ex) {
             System.err.println("❌ Lỗi khi thực thi truy vấn: " + ex.getMessage());
@@ -41,17 +47,15 @@ public class DBContext {
         return rs;
     }
 
-    
     public boolean isConnected() {
         try {
-            return connection != null && !connection.isClosed();
+            return sharedConnection != null && !sharedConnection.isClosed();
         } catch (SQLException ex) {
             ex.printStackTrace();
             return false;
         }
     }
 
-    
     public static void main(String[] args) {
         DBContext dbContext = new DBContext();
         if (dbContext.isConnected()) {

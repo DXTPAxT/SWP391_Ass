@@ -1,12 +1,12 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class OrderCate {
 
     private int OrderID;
     private String OrderCode;
-
     private int Product_Type;
     private int CustomerID;
     private String CustomerName;
@@ -16,12 +16,33 @@ public class OrderCate {
     private String phoneNumber;
     private int TotalAmount;
     private int Status;
-    private int PaymentStatus;
+    private int PaymentStatusID;
     private int StaffID;
     private String StaffName;
+    private String Note;
     private Date PrepareTime;
+    private ArrayList<OrderItems> orderItems; 
 
     public OrderCate() {
+    }
+
+    public OrderCate(int OrderID, String OrderCode, int Product_Type, int CustomerID, String CustomerName, String FullName, Date OrderDate, String Address, String phoneNumber, int TotalAmount, int Status, int PaymentStatus, int StaffID, String StaffName, Date PrepareTime, ArrayList<OrderItems> orderItems) {
+        this.OrderID = OrderID;
+        this.OrderCode = OrderCode;
+        this.Product_Type = Product_Type;
+        this.CustomerID = CustomerID;
+        this.CustomerName = CustomerName;
+        this.FullName = FullName;
+        this.OrderDate = OrderDate;
+        this.Address = Address;
+        this.phoneNumber = phoneNumber;
+        this.TotalAmount = TotalAmount;
+        this.Status = Status;
+        this.PaymentStatusID = PaymentStatus;
+        this.StaffID = StaffID;
+        this.StaffName = StaffName;
+        this.PrepareTime = PrepareTime;
+        this.orderItems = orderItems;
     }
 
     public OrderCate(int OrderID, String OrderCode, int Product_Type, int CustomerID, String CustomerName, String FullName, Date OrderDate, String Address, String phoneNumber, int TotalAmount, int Status, int PaymentStatus, int StaffID, String StaffName, Date PrepareTime) {
@@ -36,7 +57,7 @@ public class OrderCate {
         this.phoneNumber = phoneNumber;
         this.TotalAmount = TotalAmount;
         this.Status = Status;
-        this.PaymentStatus = PaymentStatus;
+        this.PaymentStatusID = PaymentStatus;
         this.StaffID = StaffID;
         this.StaffName = StaffName;
         this.PrepareTime = PrepareTime;
@@ -53,7 +74,7 @@ public class OrderCate {
         this.phoneNumber = phoneNumber;
         this.TotalAmount = TotalAmount;
         this.Status = Status;
-        this.PaymentStatus = PaymentStatus;
+        this.PaymentStatusID = PaymentStatus;
         this.StaffID = StaffID;
         this.StaffName = StaffName;
     }
@@ -69,7 +90,7 @@ public class OrderCate {
         this.phoneNumber = phoneNumber;
         this.TotalAmount = TotalAmount;
         this.Status = Status;
-        this.PaymentStatus = PaymentStatus;
+        this.PaymentStatusID = PaymentStatus;
     }
 
     public OrderCate(int OrderID, int Product_Type, int CustomerID, Date OrderDate, String Address, int TotalAmount, int Status) {
@@ -208,14 +229,6 @@ public class OrderCate {
         this.Status = Status;
     }
 
-    public int getPaymentStatus() {
-        return PaymentStatus;
-    }
-
-    public void setPaymentStatus(int PaymentStatus) {
-        this.PaymentStatus = PaymentStatus;
-    }
-
     public String getOrderCode() {
         return OrderCode;
     }
@@ -230,6 +243,30 @@ public class OrderCate {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public ArrayList<OrderItems> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(ArrayList<OrderItems> orderItems) {
+        this.orderItems = orderItems;
+    }
+
+    public int getPaymentStatusID() {
+        return PaymentStatusID;
+    }
+
+    public void setPaymentStatusID(int PaymentStatusID) {
+        this.PaymentStatusID = PaymentStatusID;
+    }
+
+    public String getNote() {
+        return Note;
+    }
+
+    public void setNote(String Note) {
+        this.Note = Note;
     }
 
 }
