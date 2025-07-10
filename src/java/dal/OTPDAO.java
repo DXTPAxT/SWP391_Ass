@@ -8,9 +8,11 @@ import java.util.Date;
 import models.OTP;
 
 public class OTPDAO extends DBContext {
+
     // Thêm OTP mới
     public void insertOTP(String email, String otpCode, Date expirationTime) {
-        String sql = "INSERT INTO OTP (Email, OTP_Code, ExpirationTime, CreatedAt, IsUsed) VALUES (?, ?, ?, GETDATE(), 0)";
+        String sql = "INSERT INTO OTP (Email, OTP_Code, ExpirationTime, CreatedAt, IsUsed)\n"
+                + "VALUES (?, ?, ?, NOW(), 0)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
             ps.setString(2, otpCode);
@@ -23,7 +25,11 @@ public class OTPDAO extends DBContext {
 
     // Lấy OTP hợp lệ theo email và mã OTP
     public OTP getValidOTP(String email, String otpCode) {
-        String sql = "SELECT TOP 1 OTP_ID, Email, OTP_Code, ExpirationTime, CreatedAt, IsUsed FROM OTP WHERE Email = ? AND OTP_Code = ? AND IsUsed = 0 AND ExpirationTime > GETDATE() ORDER BY CreatedAt DESC";
+        String sql = "SELECT OTP_ID, Email, OTP_Code, ExpirationTime, CreatedAt, IsUsed\n"
+                + "FROM OTP\n"
+                + "WHERE Email = ? AND OTP_Code = ? AND IsUsed = 0 AND ExpirationTime > NOW()\n"
+                + "ORDER BY CreatedAt DESC\n"
+                + "LIMIT 1";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
             ps.setString(2, otpCode);
@@ -47,7 +53,11 @@ public class OTPDAO extends DBContext {
 
     // Lấy OTP mới nhất theo email và mã OTP
     public OTP getLatestOTP(String email, String otpCode) {
-        String sql = "SELECT TOP 1 OTP_ID, Email, OTP_Code, ExpirationTime, CreatedAt, IsUsed FROM OTP WHERE Email = ? AND OTP_Code = ? ORDER BY CreatedAt DESC";
+        String sql = "SELECT OTP_ID, Email, OTP_Code, ExpirationTime, CreatedAt, IsUsed\n"
+                + "FROM OTP\n"
+                + "WHERE Email = ? AND OTP_Code = ?\n"
+                + "ORDER BY CreatedAt DESC\n"
+                + "LIMIT 1";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
             ps.setString(2, otpCode);
@@ -71,7 +81,11 @@ public class OTPDAO extends DBContext {
 
     // Lấy OTP mới nhất theo email (không cần đúng mã OTP)
     public OTP getLatestOTPByEmail(String email) {
-        String sql = "SELECT TOP 1 OTP_ID, Email, OTP_Code, ExpirationTime, CreatedAt, IsUsed FROM OTP WHERE Email = ? ORDER BY CreatedAt DESC";
+        String sql = "SELECT OTP_ID, Email, OTP_Code, ExpirationTime, CreatedAt, IsUsed\n"
+                + "FROM OTP\n"
+                + "WHERE Email = ?\n"
+                + "ORDER BY CreatedAt DESC\n"
+                + "LIMIT 1";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
@@ -105,7 +119,7 @@ public class OTPDAO extends DBContext {
 
     // Xóa các OTP đã hết hạn hoặc đã dùng (tuỳ chọn)
     public void deleteExpiredOrUsedOTP() {
-        String sql = "DELETE FROM OTP WHERE IsUsed = 1 OR ExpirationTime < GETDATE()";
+        String sql = "DELETE FROM OTP WHERE IsUsed = 1 OR ExpirationTime < NOW()";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.executeUpdate();
         } catch (SQLException e) {

@@ -2,13 +2,14 @@ package models;
 
 import java.util.Date;
 
-public class Order {
+public class OrderCate {
 
     private int OrderID;
     private String OrderCode;
-    
+
     private int Product_Type;
     private int CustomerID;
+    private String CustomerName;
     private String FullName;
     private Date OrderDate;
     private String Address;
@@ -16,11 +17,48 @@ public class Order {
     private int TotalAmount;
     private int Status;
     private int PaymentStatus;
+    private int StaffID;
+    private String StaffName;
+    private Date PrepareTime;
 
-    public Order() {
+    public OrderCate() {
     }
 
-    public Order(int OrderID, String OrderCode, int Product_Type, int CustomerID, String FullName, Date OrderDate, String Address, String phoneNumber, int TotalAmount, int Status, int PaymentStatus) {
+    public OrderCate(int OrderID, String OrderCode, int Product_Type, int CustomerID, String CustomerName, String FullName, Date OrderDate, String Address, String phoneNumber, int TotalAmount, int Status, int PaymentStatus, int StaffID, String StaffName, Date PrepareTime) {
+        this.OrderID = OrderID;
+        this.OrderCode = OrderCode;
+        this.Product_Type = Product_Type;
+        this.CustomerID = CustomerID;
+        this.CustomerName = CustomerName;
+        this.FullName = FullName;
+        this.OrderDate = OrderDate;
+        this.Address = Address;
+        this.phoneNumber = phoneNumber;
+        this.TotalAmount = TotalAmount;
+        this.Status = Status;
+        this.PaymentStatus = PaymentStatus;
+        this.StaffID = StaffID;
+        this.StaffName = StaffName;
+        this.PrepareTime = PrepareTime;
+    }
+
+    public OrderCate(int OrderID, String OrderCode, int Product_Type, int CustomerID, String FullName, Date OrderDate, String Address, String phoneNumber, int TotalAmount, int Status, int PaymentStatus, int StaffID, String StaffName) {
+        this.OrderID = OrderID;
+        this.OrderCode = OrderCode;
+        this.Product_Type = Product_Type;
+        this.CustomerID = CustomerID;
+        this.FullName = FullName;
+        this.OrderDate = OrderDate;
+        this.Address = Address;
+        this.phoneNumber = phoneNumber;
+        this.TotalAmount = TotalAmount;
+        this.Status = Status;
+        this.PaymentStatus = PaymentStatus;
+        this.StaffID = StaffID;
+        this.StaffName = StaffName;
+    }
+
+    public OrderCate(int OrderID, String OrderCode, int Product_Type, int CustomerID, String FullName, Date OrderDate, String Address, String phoneNumber, int TotalAmount, int Status, int PaymentStatus) {
         this.OrderID = OrderID;
         this.OrderCode = OrderCode;
         this.Product_Type = Product_Type;
@@ -33,8 +71,8 @@ public class Order {
         this.Status = Status;
         this.PaymentStatus = PaymentStatus;
     }
-    
-    public Order(int OrderID, int Product_Type, int CustomerID, Date OrderDate, String Address, int TotalAmount, int Status) {
+
+    public OrderCate(int OrderID, int Product_Type, int CustomerID, Date OrderDate, String Address, int TotalAmount, int Status) {
         this.OrderID = OrderID;
         this.Product_Type = Product_Type;
         this.CustomerID = CustomerID;
@@ -44,7 +82,7 @@ public class Order {
         this.Status = Status;
     }
 
-    public Order(int Product_Type, int CustomerID, Date OrderDate, String Address, int TotalAmount, int Status) {
+    public OrderCate(int Product_Type, int CustomerID, Date OrderDate, String Address, int TotalAmount, int Status) {
         this.Product_Type = Product_Type;
         this.CustomerID = CustomerID;
         this.OrderDate = OrderDate;
@@ -53,7 +91,7 @@ public class Order {
         this.Status = Status;
     }
 
-    public Order(int OrderID, int Product_Type, int CustomerID, String FullName, Date OrderDate, String Address, int TotalAmount, int Status) {
+    public OrderCate(int OrderID, int Product_Type, int CustomerID, String FullName, Date OrderDate, String Address, int TotalAmount, int Status) {
         this.OrderID = OrderID;
         this.Product_Type = Product_Type;
         this.CustomerID = CustomerID;
@@ -64,7 +102,7 @@ public class Order {
         this.Status = Status;
     }
 
-    public Order(int Product_Type, int CustomerID, String FullName, Date OrderDate, String Address, int TotalAmount, int Status) {
+    public OrderCate(int Product_Type, int CustomerID, String FullName, Date OrderDate, String Address, int TotalAmount, int Status) {
         this.Product_Type = Product_Type;
         this.CustomerID = CustomerID;
         this.FullName = FullName;
@@ -72,6 +110,38 @@ public class Order {
         this.Address = Address;
         this.TotalAmount = TotalAmount;
         this.Status = Status;
+    }
+
+    public Date getPrepareTime() {
+        return PrepareTime;
+    }
+
+    public void setPrepareTime(Date PrepareTime) {
+        this.PrepareTime = PrepareTime;
+    }
+
+    public String getCustomerName() {
+        return CustomerName;
+    }
+
+    public void setCustomerName(String CustomerName) {
+        this.CustomerName = CustomerName;
+    }
+
+    public int getStaffID() {
+        return StaffID;
+    }
+
+    public void setStaffID(int StaffID) {
+        this.StaffID = StaffID;
+    }
+
+    public String getStaffName() {
+        return StaffName;
+    }
+
+    public void setStaffName(String StaffName) {
+        this.StaffName = StaffName;
     }
 
     public int getProduct_Type() {

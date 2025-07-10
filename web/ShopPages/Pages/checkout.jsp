@@ -162,6 +162,20 @@
             </div>
         </section>
 
+        <!-- TOAST NOTIFICATION -->
+        <c:if test="${not empty sessionScope.toast}">
+            <div class="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+                <div class="alert alert-${sessionScope.toastType == 'error' ? 'danger' : 'success'} alert-dismissible" role="alert" id="toastMessage">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    ${sessionScope.toast}
+                </div>
+            </div>
+            <c:remove var="toast" scope="session" />
+            <c:remove var="toastType" scope="session" />
+        </c:if>
+
         <jsp:include page="/ShopPages/Pages/components/footer.jsp" />
 
         <script>

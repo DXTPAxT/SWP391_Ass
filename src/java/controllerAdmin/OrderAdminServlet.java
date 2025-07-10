@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import models.Order;
+import models.OrderCate;
 
 /**
  *
@@ -27,22 +27,28 @@ public class OrderAdminServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             String service = request.getParameter("service");
             if (service == null) {
-                service = "list";
+                service = "listCate";
             }
 
             OrderAdminDAO dao = new OrderAdminDAO();
-            if (service.equals("list")) {
-                List<Order> orders = dao.getAllOrders();
+            if (service.equals("listCate")) {
+                List<OrderCate> orders = dao.getAllOrderItems();
+                request.setAttribute("orders", orders);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewAllOrderCate.jsp").forward(request, response);
+
+            }else if (service.equals("listBuildPC")) {
+                List<OrderCate> orders = dao.getAllOrderBuildPC();
                 request.setAttribute("orders", orders);
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewOrder.jsp").forward(request, response);
 
-            } else if (service.equals("update")) {
+            }
+            /*else if (service.equals("update")) {
                 String submit = request.getParameter("submit");
 
                 if (submit == null) {
                     // Hiển thị form cập nhật
                     int id = Integer.parseInt(request.getParameter("orderID"));
-                    Order order = dao.getOrderById(id);
+                    OrderCate order = dao.getOrderById(id);
                     request.setAttribute("order", order);
                     request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateOrder.jsp").forward(request, response);
 
@@ -60,13 +66,13 @@ public class OrderAdminServlet extends HttpServlet {
 
                         // Nếu có lỗi, forward lại trang cập nhật
                         int id = Integer.parseInt(request.getParameter("orderID"));
-                        Order order = dao.getOrderById(id);
+                        OrderCate order = dao.getOrderById(id);
                         request.setAttribute("error", "Update failed: " + e.getMessage());
                         request.setAttribute("order", order);
                         request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/updateOrder.jsp").forward(request, response);
                     }
                 }
-            }
+            }*/
 
         }
     }

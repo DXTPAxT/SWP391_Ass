@@ -137,14 +137,12 @@ public class BrandComAdminDAO extends DBAdminContext {
     public void updateBrandComQuantitiesFromCategories() {
         String sql = """
         UPDATE BrandComs
-        SET Quantity = ISNULL(InventorySum.TotalInventory, 0)
-        FROM BrandComs
         LEFT JOIN (
             SELECT BrandComID, SUM(inventory) AS TotalInventory
             FROM Categories
             GROUP BY BrandComID
-        ) AS InventorySum
-        ON BrandComs.BrandComID = InventorySum.BrandComID;
+        ) AS InventorySum ON BrandComs.BrandComID = InventorySum.BrandComID
+        SET BrandComs.Quantity = IFNULL(InventorySum.TotalInventory, 0);
     """;
 
         try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {

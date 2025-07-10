@@ -12,17 +12,19 @@ public class DBContext {
 
     public DBContext() {
         try {         
-            String user = "sa";
-            String pass = "1234";
 
-            String url = "jdbc:sqlserver://localhost\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
+            String user = "root";       // Tài khoản MySQL
+            String pass = "123456";     // Mật khẩu MySQL, điều chỉnh theo máy bạn
 
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");      
+            String url = "jdbc:mysql://localhost:3306/ComputerOnlineShop?useSSL=false&serverTimezone=UTC";
+
+
+            Class.forName("com.mysql.cj.jdbc.Driver"); // Driver chuẩn MySQL
 
             connection = DriverManager.getConnection(url, user, pass);
-            System.out.println("✅ Kết nối DB thành công!");
+            System.out.println("✅ Kết nối MySQL thành công!");
         } catch (ClassNotFoundException | SQLException ex) {
-            System.err.println("❌ Lỗi kết nối DB: " + ex.getMessage());
+            System.err.println("❌ Lỗi kết nối MySQL: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -30,12 +32,10 @@ public class DBContext {
     
     public ResultSet getData(String sql) {
         ResultSet rs = null;
-        Statement state;
-        try {
-            state = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        try (Statement state = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
             rs = state.executeQuery(sql);
         } catch (SQLException ex) {
-            System.err.println("❌ Lỗi khi thực thi câu truy vấn: " + ex.getMessage());
+            System.err.println("❌ Lỗi khi thực thi truy vấn: " + ex.getMessage());
             ex.printStackTrace();
         }
         return rs;
@@ -55,7 +55,7 @@ public class DBContext {
     public static void main(String[] args) {
         DBContext dbContext = new DBContext();
         if (dbContext.isConnected()) {
-            System.out.println("✅ Đã kết nối đến cơ sở dữ liệu.");
+            System.out.println("✅ Đã kết nối đến cơ sở dữ liệu MySQL.");
         } else {
             System.out.println("❌ Kết nối cơ sở dữ liệu thất bại.");
         }
