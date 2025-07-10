@@ -72,14 +72,14 @@ public class SaleEventsServlet extends HttpServlet {
         CategoriesDAO daoc = new CategoriesDAO();
         RoleDAO rdao = new RoleDAO(); 
 
-        List<SaleEvents> saleEvents = dao.getSaleEventsByCategory(categoryID);
+//        List<SaleEvents> saleEvents = dao.getSaleEventsByCategory(categoryID);
 
         List<Post> activePosts = dao.getPostsByStatus(1);
 
         List<Categories> categories = daoc.getAllCategoriesPaginated(1, Integer.MAX_VALUE);
         List<Role> rolee = rdao.getRoles();
 
-        request.setAttribute("saleEvents", saleEvents);
+//        request.setAttribute("saleEvents", saleEvents);
         request.setAttribute("activePosts", activePosts);
         request.setAttribute("categories", categories);
         request.setAttribute("selectedCategoryID", categoryID);

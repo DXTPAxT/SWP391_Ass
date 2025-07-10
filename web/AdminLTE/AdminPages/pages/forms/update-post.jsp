@@ -73,29 +73,29 @@
                         </c:if>
 
 
-                        <form action="${ctx}/blogupdate" method="post" enctype="multipart/form-data">
-                            <input type="hidden" name="service" value="update">
-                            <input type="hidden" name="submit" value="submit">
+                        <form action="${ctx}/blogupdate" method="post">
+                            <!-- Hidden for identifying the post -->
+                            <input type="hidden" name="Post_id" value="${post.post_id}" />
 
                             <div class="form-group">
                                 <label>Title</label>
-                                <input type="text" class="form-control" id="title" name="title" value="${post.title}" required maxlength="200" />
+                                <input type="text" class="form-control" name="Title" value="${post.title}" required maxlength="200" />
                             </div>
 
                             <div class="form-group">
                                 <label>Author</label>
-                                <input type="text" class="form-control" id="author" name="author" value="${post.author}" required maxlength="100" />
+                                <input type="text" class="form-control" name="Author" value="${post.author}" required maxlength="100" />
                             </div>
 
                             <div class="form-group">
                                 <label>Content</label>
-                                <textarea class="form-control" id="content" name="content" rows="10" required>${post.content}</textarea>
+                                <textarea class="form-control" name="Content" rows="10" required>${post.content}</textarea>
                             </div>
 
                             <div class="form-group">
                                 <label>Thumbnail</label>
-                                <input type="file" class="form-control-file" id="thumbnail" name="thumbnail" accept="image/*" />
-                                <small class="form-text text-muted">(jpg, png, gif).</small>
+                                <input type="text" class="form-control" name="Thumbnail" value="${post.thumbnail}" />
+                                <small class="form-text text-muted">Link ipg, ....</small>
                                 <c:if test="${not empty post.thumbnail}">
                                     <div class="mt-2">
                                         <img src="images/${post.thumbnail}" alt="Current Thumbnail" width="150" />
@@ -103,30 +103,38 @@
                                 </c:if>
                             </div>
 
-                            <!-- Category -->
                             <div class="form-group">
-                                <label for="bc_id">Category</label>
-                                <select id="bc_id" name="bc_id" class="form-control" required>
+                                <label for="Bc_id">Category</label>
+                                <select id="Bc_id" name="Bc_id" class="form-control" required>
                                     <option value="">Choose Category</option>
                                     <c:forEach var="cat" items="${blog_categories}">
-                                        <option value="${cat.bc_id}" ${cat.bc_id == bc_id ? 'selected' : ''}>${cat.bc_name}</option>
+                                        <option value="${cat.bc_id}" ${cat.bc_id == post.bc_id ? 'selected' : ''}>${cat.bc_name}</option>
                                     </c:forEach>
                                 </select>
                             </div>
 
                             <div class="form-group">
                                 <label>Brief</label>
-                                <input type="text" class="form-control" id="brief" name="brief" value="${post.brief}" required maxlength="500" />
+                                <input type="text" class="form-control" name="Brief" value="${post.brief}" required maxlength="500" />
                             </div>
 
                             <div class="form-group">
-                                <label>Author_Id</label>
-                                <input type="number" class="form-control" id="add_id" name="add_id" value="${sessionScope.userId}"/>
-                                <small class="form-text text-muted">ID</small>
+                                <label>Status</label>
+                                <select class="form-control" name="status" required>
+                                    <option value="1" ${post.status == 1 ? 'selected' : ''}>Active</option>
+                                    <option value="0" ${post.status == 0 ? 'selected' : ''}>Inactive</option>
+                                </select>
+                            </div>
+
+                            <!-- Optional: display author ID (readonly) -->
+                            <div class="form-group">
+                                <label>Author ID</label>
+                                <input type="number" class="form-control" name="Add_id" value="${post.add_id}" readonly />
                             </div>
 
                             <input type="submit" class="btn btn-primary" value="Update Blog" />
                         </form>
+
                     </div>
 
                 </div>

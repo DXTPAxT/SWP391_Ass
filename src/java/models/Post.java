@@ -54,7 +54,7 @@ public class Post {
         this.Add_id = Add_id;
     }
 
-    public Post(int Post_id, String Title, String Author, Timestamp Updated_date, String Content, int Bc_id, String Thumbnail, String Brief, int Add_id) {
+    public Post(int Post_id, String Title, String Author, Timestamp Updated_date, String Content, int Bc_id, String Thumbnail, String Brief) {
         this.Post_id = Post_id;
         this.Title = Title;
         this.Author = Author;
@@ -63,7 +63,19 @@ public class Post {
         this.Bc_id = Bc_id;
         this.Thumbnail = Thumbnail;
         this.Brief = Brief;
+//        this.Add_id = Add_id;
+    }
+
+    public Post(String Title, String Author, Timestamp Updated_date, String Content, int Bc_id, String Thumbnail, String Brief, int Add_id, int status) {
+        this.Title = Title;
+        this.Author = Author;
+        this.Updated_date = Updated_date;
+        this.Content = Content;
+        this.Bc_id = Bc_id;
+        this.Thumbnail = Thumbnail;
+        this.Brief = Brief;
         this.Add_id = Add_id;
+        this.status = status;
     }
 
     public int getStatus() {
