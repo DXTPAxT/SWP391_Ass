@@ -1,14 +1,38 @@
 
 package models;
 
+import java.util.ArrayList;
+
 public class OrderItems {
+    private Categories category;
     private int OrderItemID;
     private int OrderID;
     private int CategoryID;
     private int Quantity;
     private int Price;
+    
+    private ArrayList<OrderDetail> orderDetailList;
 
     public OrderItems() {
+    }
+
+    public OrderItems(Categories category, int OrderItemID, int OrderID, int CategoryID, int Quantity, int Price, ArrayList<OrderDetail> orderDetailList) {
+        this.category = category;
+        this.OrderItemID = OrderItemID;
+        this.OrderID = OrderID;
+        this.CategoryID = CategoryID;
+        this.Quantity = Quantity;
+        this.Price = Price;
+        this.orderDetailList = orderDetailList;
+    }
+
+    public OrderItems(Categories category, int OrderItemID, int OrderID, int CategoryID, int Quantity, int Price) {
+        this.category = category;
+        this.OrderItemID = OrderItemID;
+        this.OrderID = OrderID;
+        this.CategoryID = CategoryID;
+        this.Quantity = Quantity;
+        this.Price = Price;
     }
 
     public OrderItems(int OrderItemID, int OrderID, int CategoryID, int Quantity, int Price) {
@@ -65,6 +89,20 @@ public class OrderItems {
     public void setPrice(int Price) {
         this.Price = Price;
     }
-    
-    
+
+    public Categories getCategory() {
+        return category;
+    }
+
+    public void setCategory(Categories category) {
+        this.category = category;
+    }
+
+    public ArrayList<OrderDetail> getOrderDetailList() {
+        return orderDetailList;
+    }
+
+    public void setOrderDetailList(ArrayList<OrderDetail> orderDetailList) {
+        this.orderDetailList = orderDetailList;
+    }
 }
