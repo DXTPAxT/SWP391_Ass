@@ -139,14 +139,6 @@ public class Categories {
         this.brandName = brandName;
     }
 
-    public String getbrandName() {
-        return brandName;
-    }
-
-    public void setbrandName(String brandName) {
-        this.brandName = brandName;
-    }
-
     public String getComponentName() {
         return ComponentName;
     }
