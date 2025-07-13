@@ -4,30 +4,24 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class DBContext {
-
-    private static Connection sharedConnection;
 
     protected Connection connection;
 
     public DBContext() {
         try {
-            if (sharedConnection == null || sharedConnection.isClosed()) {
-                String user = "root";
-                String pass = "123456";
-                String url = "jdbc:mysql://localhost:3306/ComputerOnlineShop?useSSL=false&serverTimezone=UTC";
+            String user = "sa";
+            String pass = "123";
 
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                sharedConnection = DriverManager.getConnection(url, user, pass);
-                System.out.println("✅ Kết nối MySQL được mở mới!");
-            } else {
-                System.out.println("✅ Dùng lại kết nối MySQL!");
-            }
+            String url = "jdbc:sqlserver://HAIST0321\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
 
-            this.connection = sharedConnection;
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");      
 
+            connection = DriverManager.getConnection(url, user, pass);
+            System.out.println("✅ Kết nối DB thành công!");
         } catch (ClassNotFoundException | SQLException ex) {
             System.err.println("❌ Lỗi kết nối MySQL: " + ex.getMessage());
             ex.printStackTrace();

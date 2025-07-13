@@ -13,21 +13,24 @@ public class DBAdminContext {
     protected Connection connection;
 
     public DBAdminContext() {
+        //@Students: You are allowed to edit user, pass, url variables to fit 
+        //your system configuration
+        //You can also add more methods for Database Interaction tasks. 
+        //But we recommend you to do it in another class
+        // For example : StudentDBContext extends DBAdminContext , 
+        //where StudentDBContext is located in dal package, 
         try {
-            if (sharedConnection == null || sharedConnection.isClosed()) {
-                String user = "root";
-                String pass = "123456";
-                String url = "jdbc:mysql://localhost:3306/ComputerOnlineShop?useSSL=false&serverTimezone=UTC";
+            String user = "sa";
+            String pass = "123";
 
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                sharedConnection = DriverManager.getConnection(url, user, pass);
-                System.out.println("✅ Kết nối MySQL được mở mới!");
-            } else {
-                System.out.println("✅ Dùng lại kết nối MySQL!");
-            }
 
-            this.connection = sharedConnection;
+            String url = "jdbc:sqlserver://LAPTOP-dxt\\SQLEXPRESS:1433;databaseName=ComputerOnlineShop";
 
+
+
+ 
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException | SQLException ex) {
             System.err.println("❌ Lỗi kết nối MySQL: " + ex.getMessage());
             ex.printStackTrace();
