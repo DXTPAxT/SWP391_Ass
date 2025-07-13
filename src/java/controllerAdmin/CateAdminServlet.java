@@ -57,8 +57,9 @@ public class CateAdminServlet extends HttpServlet {
             if ("list".equals(service)) {
 
                 list = cate.getAllCategories();
-
+                int i = list.size();
                 request.setAttribute("list", list);
+                request.setAttribute("i", i);
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewCate.jsp").forward(request, response);
             } else if ("listbybcid".equals(service)) {
                 int id = Integer.parseInt(request.getParameter("brandComID"));

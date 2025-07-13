@@ -2,46 +2,35 @@ package dalAdmin;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class DBAdminContext {
 
-    private static Connection sharedConnection;
-
     protected Connection connection;
 
     public DBAdminContext() {
+        String user = "root"; // Thay đổi theo MySQL của bạn
+        String pass = "123456"; 
+        String url = "jdbc:mysql://localhost:3306/ComputerOnlineShop?useSSL=false&serverTimezone=UTC";
+
         try {
-            if (sharedConnection == null || sharedConnection.isClosed()) {
-                String user = "root";
-                String pass = "123456";
-                String url = "jdbc:mysql://localhost:3306/ComputerOnlineShop?useSSL=false&serverTimezone=UTC";
-
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                sharedConnection = DriverManager.getConnection(url, user, pass);
-                System.out.println("✅ Kết nối MySQL được mở mới!");
-            } else {
-                System.out.println("✅ Dùng lại kết nối MySQL!");
-            }
-
-            this.connection = sharedConnection;
-
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException | SQLException ex) {
-            System.err.println("❌ Lỗi kết nối MySQL: " + ex.getMessage());
-            ex.printStackTrace();
+            Logger.getLogger(DBAdminContext.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public ResultSet getData(String sql) {
         ResultSet rs = null;
-        try (Statement state = connection.createStatement(
-                ResultSet.TYPE_SCROLL_SENSITIVE,
-                ResultSet.CONCUR_UPDATABLE)) {
+        try {
+            Statement state = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             rs = state.executeQuery(sql);
         } catch (SQLException ex) {
-            System.err.println("❌ Lỗi khi thực thi truy vấn: " + ex.getMessage());
             ex.printStackTrace();
         }
         return rs;
@@ -49,19 +38,23 @@ public class DBAdminContext {
 
     public boolean isConnected() {
         try {
-            return sharedConnection != null && !sharedConnection.isClosed();
+            return connection != null && !connection.isClosed();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(DBAdminContext.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }
 
     public static void main(String[] args) {
-        DBAdminContext dbContext = new DBAdminContext();
-        if (dbContext.isConnected()) {
-            System.out.println("✅ Đã kết nối đến cơ sở dữ liệu MySQL.");
-        } else {
-            System.out.println("❌ Kết nối cơ sở dữ liệu thất bại.");
+        try {
+            DBAdminContext dbContext = new DBAdminContext();
+            if (dbContext.isConnected()) {
+                System.out.println("Kết nối cơ sở dữ liệu thành công!");
+            } else {
+                System.out.println("Kết nối cơ sở dữ liệu thất bại.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }

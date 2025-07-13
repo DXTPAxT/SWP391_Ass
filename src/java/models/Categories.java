@@ -57,6 +57,7 @@ public class Categories {
         this.warrantyPrice = warrantyPrice;
     }
 
+
     public Categories(int categoryID, String categoryName, int componentID, int brandID, String brandName, int quantity, int price, String description, int status) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
