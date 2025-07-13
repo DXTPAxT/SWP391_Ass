@@ -19,11 +19,6 @@ public class Categories {
     private String description;
     private int status;
     private String imgURL;
-    private int warrantyDetailID;
-    private String warrantyDesc;
-    private int warrantyPrice;
-
- 
 
     public Categories(int categoryID, String categoryName, int BrandComID, int quantity, int price, String description, int status, String imgURL) {
         this.categoryID = categoryID;
@@ -70,29 +65,7 @@ public class Categories {
         this.status = status;
         this.imgURL = imgURL;
     }
-   public int getWarrantyDetailID() {
-        return warrantyDetailID;
-    }
 
-    public void setWarrantyDetailID(int warrantyDetailID) {
-        this.warrantyDetailID = warrantyDetailID;
-    }
-
-    public String getWarrantyDesc() {
-        return warrantyDesc;
-    }
-
-    public void setWarrantyDesc(String warrantyDesc) {
-        this.warrantyDesc = warrantyDesc;
-    }
-
-    public int getWarrantyPrice() {
-        return warrantyPrice;
-    }
-
-    public void setWarrantyPrice(int warrantyPrice) {
-        this.warrantyPrice = warrantyPrice;
-    }
     public int getBrandComID() {
         return BrandComID;
     }
@@ -165,18 +138,6 @@ public class Categories {
         this.status = status;
         this.imgURL = imgURL;
     }
-public Categories(int categoryID, String categoryName, String brandName, int price, String imgURL, int componentID, 
-                  int warrantyDetailID, String warrantyDesc, int warrantyPrice) {
-    this.categoryID = categoryID;
-    this.categoryName = categoryName;
-    this.brandName = brandName;
-    this.price = price;
-    this.imgURL = imgURL;
-    this.componentID = componentID;
-    this.warrantyDetailID = warrantyDetailID;
-    this.warrantyDesc = warrantyDesc;
-    this.warrantyPrice = warrantyPrice;
-}
 
     public int getCategoryID() {
         return categoryID;
