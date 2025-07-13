@@ -80,6 +80,10 @@ public class AdminDashbordServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        User user = (session != null) ? (User) session.getAttribute("user") : null;
+        System.out.println("SessionID: " + (session != null ? session.getId() : "null"));
+        System.out.println("User in session: " + user);
         processRequest(request, response);
     }
 
