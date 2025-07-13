@@ -265,7 +265,11 @@
                         html = '<li><a href="#"><i class="fa fa-info-circle text-aqua"></i> No notifications</a></li>';
                     } else {
                         data.notifications.forEach(function(noti) {
-                            html += '<li><a href="${ctx}/NotificationServlet?service=detail&id=' + noti.id + '"><i class="fa fa-info-circle text-aqua"></i> <b>' + noti.title + '</b><br><small>' + noti.createdAt + '</small></a></li>';
+                            html += '<li><a href="${ctx}/NotificationServlet?service=detail&id=' + noti.id + '">'
+                                + '<i class="fa fa-info-circle text-aqua"></i> <b>' + noti.title + '</b>'
+                                + '<br><small>' + noti.message + '</small>'
+                                + '<br><small>' + noti.createdAt + '</small>'
+                                + '</a></li>';
                         });
                     }
                     // Hiển thị tổng số chưa đọc

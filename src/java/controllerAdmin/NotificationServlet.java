@@ -124,9 +124,10 @@ public class NotificationServlet extends HttpServlet {
                 try {
                     String[] userIds = request.getParameterValues("userID");
                     boolean sendAll = "true".equals(request.getParameter("sendAll"));
-                    int senderId = Integer.parseInt(request.getParameter("senderID"));
+                    String senderIdStr = request.getParameter("senderID");
                     String title = request.getParameter("title");
                     String message = request.getParameter("message");
+                    System.out.println("[DEBUG] sendAll=" + sendAll + ", senderIdStr=" + senderIdStr + ", title=" + title + ", message=" + message);
                     List<Integer> targetUserIds = new ArrayList<>();
                     UserDAO userDao = new UserDAO();
                     if (sendAll) {
@@ -139,6 +140,7 @@ public class NotificationServlet extends HttpServlet {
                     } else if (userIds != null) {
                         for (String userIdStr : userIds) targetUserIds.add(Integer.parseInt(userIdStr));
                     }
+                    int senderId = (senderIdStr != null && !senderIdStr.isEmpty()) ? Integer.parseInt(senderIdStr) : -1;
                     for (int userId : targetUserIds) {
                         Notification notification = new Notification();
                         notification.setUserID(userId);
@@ -147,7 +149,8 @@ public class NotificationServlet extends HttpServlet {
                         notification.setMessage(message);
                         notification.setIsRead(false);
                         notification.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-                        dao.addNotification(notification);
+                        boolean inserted = dao.addNotification(notification);
+                        System.out.println("[DEBUG] Insert notification for userID=" + userId + ", senderID=" + senderId + ", title=" + title + ", message=" + message + ", result=" + inserted);
                     }
                     // Sau khi gửi, forward lại về form và truyền thông báo thành công
                     request.setAttribute("successMessage", "Đã gửi thông báo thành công!");
@@ -159,6 +162,7 @@ public class NotificationServlet extends HttpServlet {
                     request.setAttribute("userList", userList);
                     request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/NotificationSend.jsp").forward(request, response);
                 } catch (Exception e) {
+                    System.err.println("[DEBUG] Exception in send: " + e.getMessage());
                     response.sendRedirect("NotificationServlet?service=showSendForm");
                 }
                 break;
