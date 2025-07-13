@@ -13,7 +13,9 @@ public class DBAdminContext {
     protected Connection connection;
 
     public DBAdminContext() {
-        String user = "root"; 
+
+        String user = "root"; // Thay đổi theo MySQL của bạn
+
         String pass = "123456"; 
         String url = "jdbc:mysql://localhost:3306/ComputerOnlineShop?useSSL=false&serverTimezone=UTC";
 

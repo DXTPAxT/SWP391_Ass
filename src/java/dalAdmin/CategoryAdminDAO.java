@@ -321,7 +321,7 @@ public class CategoryAdminDAO extends DBAdminContext {
     public static void main(String[] args) {
         CategoryAdminDAO dao = new CategoryAdminDAO();
         int id = 1;
-        List<Categories> c = dao.getAllCategoriesByInvenory();
+        List<Categories> c = dao.getAllCategories();
 
         System.out.printf("%-5s %-20s %-20s %-20s %-10s%n",
                 "ID", "Brand Name", "Component Name", "Category Name", "BrandComID", "inventory");
