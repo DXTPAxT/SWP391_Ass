@@ -45,7 +45,7 @@ public class NotificationServlet extends HttpServlet {
         
         switch (service) {
             case "list": {
-                // Hiển thị danh sách thông báo của user hiện tại
+                // Chỉ lấy danh sách, KHÔNG gọi dao.markAllAsRead(userID)
                 List<Notification> userNotifications = (userID > 0) ? dao.getNotificationsByUserID(userID) : new ArrayList<>();
                 request.setAttribute("notifications", userNotifications);
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/notifications.jsp").forward(request, response);
