@@ -10,10 +10,10 @@ package models;
  */
 public class OrderPreparement {
     private User user;
-    private Order order;
+    private OrderCate order;
     private String prepareTime;
 
-    public OrderPreparement(User user, Order order, String prepareTime) {
+    public OrderPreparement(User user, OrderCate order, String prepareTime) {
         this.user = user;
         this.order = order;
         this.prepareTime = prepareTime;
@@ -27,11 +27,11 @@ public class OrderPreparement {
         this.user = user;
     }
 
-    public Order getOrder() {
+    public OrderCate getOrder() {
         return order;
     }
 
-    public void setOrder(Order order) {
+    public void setOrder(OrderCate order) {
         this.order = order;
     }
 

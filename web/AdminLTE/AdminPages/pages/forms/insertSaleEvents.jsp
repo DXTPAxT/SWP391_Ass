@@ -72,18 +72,28 @@
                             <div class="alert alert-danger" style="font-weight:bold;">${error}</div>
                         </c:if>
 
+
                         <form action="${ctx}/addsale" method="post" class="form-horizontal">
+                            <!-- Category Dropdown -->
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">Category ID</label>
+                                <label class="col-sm-2 control-label">Category</label>
                                 <div class="col-sm-10">
-                                    <input type="number" name="categoryID" class="form-control" placeholder="Enter category ID" required />
+                                    <select name="categoryID" class="form-control" required>
+                                        <c:forEach var="cat" items="${categories}">
+                                            <option value="${cat.categoryID}">${cat.categoryName}</option>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                             </div>
-
+                            <!-- Post Dropdown -->
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">Post ID</label>
+                                <label class="col-sm-2 control-label">Post</label>
                                 <div class="col-sm-10">
-                                    <input type="number" name="Post_id" class="form-control" placeholder="Enter Post_id" required />
+                                    <select name="postID" class="form-control" required>
+                                        <c:forEach var="post" items="${activePosts}">
+                                            <option value="${post.post_id}">${post.title}</option>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                             </div>
 
@@ -107,9 +117,23 @@
                                     <input type="number" step="0.01" name="discountPercent" class="form-control" placeholder="Enter discount percent" required />
                                 </div>
                             </div>
+                            <!-- Created By -->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Created By (Staff)</label>
+                                <div class="col-sm-10">
+                                    <input type="number" name="createdBy" class="form-control" required />
+                                </div>
+                            </div>
 
+                            <!-- Approved By -->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Approved By (Admin)</label>
+                                <div class="col-sm-10">
+                                    <input type="number" name="approvedBy" class="form-control" />
+                                </div>
+                            </div>
                             <div class="box-footer">
-                                <button type="submit" class="btn btn-success pull-right">Add Sale Event</button>
+                                <button type="submit" class="btn btn-primary pull-right">Add Sale Event</button>
                             </div>
                         </form>
 

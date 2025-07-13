@@ -46,22 +46,17 @@
                 }
             }
         </script>
-<<<<<<< HEAD
-        
 
-        
-=======
->>>>>>> 71f394f28186d560ddb9462dffd6c06e467f07d6
     </head>
     <body class="hold-transition skin-blue sidebar-mini">
 
         <div class="wrapper">
 
-<<<<<<< HEAD
-             <jsp:include page="../../components/header.jsp" />
-=======
+
+          
+
             <jsp:include page="../../components/header.jsp" />
->>>>>>> 71f394f28186d560ddb9462dffd6c06e467f07d6
+
             <jsp:include page="../../components/sidebar.jsp">
                 <jsp:param name="ctx" value="${ctx}" />
             </jsp:include>
@@ -156,14 +151,12 @@
                                                         <td>
                                                             <c:choose>
                                                                 <c:when test="${po.status == 1}">
-<<<<<<< HEAD
+
                                                                     <span class="btn btn-sm btn-primary">Active</span>
-=======
-                                                                    <span class="badge bg-success">Active</span>
->>>>>>> 71f394f28186d560ddb9462dffd6c06e467f07d6
+
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    <span class="badge bg-danger">Disable</span>
+                                                                    <span class="btn btn-sm btn-primary">Disable</span>
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </td>
@@ -184,16 +177,15 @@
                     </div>
                 </section>
             </div>
-<<<<<<< HEAD
-           <jsp:include page="../../components/footer.jsp" />
-=======
+
+
             <jsp:include page="../../components/footer.jsp" />
->>>>>>> 71f394f28186d560ddb9462dffd6c06e467f07d6
+
             <jsp:include page="../../components/control-sidebar.jsp" />0
             <div class="control-sidebar-bg"></div>
         </div>
         <!-- jQuery 2.2.3 -->
-<<<<<<< HEAD
+
         <script src="${ctx}/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
         <!-- Bootstrap 3.3.6 -->
         <script src="${ctx}/AdminLTE/bootstrap/js/bootstrap.min.js"></script>
@@ -208,7 +200,6 @@
         <script src="${ctx}/AdminLTE/dist/js/app.min.js"></script>
         <!-- AdminLTE for demo purposes -->
         <script src="${ctx}/AdminLTE/dist/js/demo.js"></script>
-=======
         <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
         <!-- Bootstrap 3.3.6 -->
         <script src="${ctx}/AdminLTE/AdminPages/bootstrap/js/bootstrap.min.js"></script>
@@ -224,7 +215,7 @@
         <!-- AdminLTE for demo purposes -->
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- page script -->
->>>>>>> 71f394f28186d560ddb9462dffd6c06e467f07d6
+
         <script>
                                             $(function () {
                                                 $('#example2').DataTable({
@@ -237,13 +228,12 @@
                                                 });
                                             });
         </script>
-<<<<<<< HEAD
-=======
+
         <script>
             $(function () {
                 $('.sidebar-menu').tree();
             });
         </script>
->>>>>>> 71f394f28186d560ddb9462dffd6c06e467f07d6
+
     </body>
 </html>

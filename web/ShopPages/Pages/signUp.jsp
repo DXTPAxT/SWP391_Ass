@@ -72,7 +72,9 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
   </head>
 
   <body>
-    <%@ include file="components/header.jsp" %>
+            <jsp:include page="components/header.jsp">
+            <jsp:param name="activeHeader" value="no"/>
+        </jsp:include>
 
     <section id="form" class="mt-0">
       <div class="container">

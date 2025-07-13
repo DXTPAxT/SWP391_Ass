@@ -73,6 +73,8 @@
                                             <tr>
                                                 <th>Order ID</th>
                                                 <th>Customer Name</th>
+                                                <th>Consignee</th>
+                                                <th>Staff Name</th>
                                                 <th>Order Date</th>
                                                 <th>Product Type</th>
                                                 <th>Total Amount</th>
@@ -86,12 +88,13 @@
                                                 <c:forEach var="order" items="${orders}">
                                                     <tr>
                                                         <td>${order.orderID}</td>
+                                                        <td>${order.customerName}</td>
                                                         <td>${order.fullName}</td>
+                                                        <td>${order.staffName}</td>
                                                         <td><fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                         <td>
                                                             <c:choose>
                                                                 <c:when test="${order.product_Type == 0}">Category</c:when>
-                                                                <c:when test="${order.product_Type == 1}">Build PC</c:when>
                                                             </c:choose>
                                                         </td>
                                                         <td>${order.totalAmount}</td>

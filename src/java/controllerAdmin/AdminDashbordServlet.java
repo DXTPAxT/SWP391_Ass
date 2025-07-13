@@ -32,7 +32,7 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author Admin
  */
-@WebServlet(name="AdminDashbordServlet", urlPatterns={"/AdminDashbordServlet"})
+@WebServlet(name = "AdminDashbordServlet", urlPatterns = {"/AdminDashbordServlet"})
 public class AdminDashbordServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -41,20 +41,29 @@ public class AdminDashbordServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             CategoryAdminDAO dao = new CategoryAdminDAO();
             ComponentAdminDAO Com = new ComponentAdminDAO();
+            BrandAdminDAO bra = new BrandAdminDAO();
+            BrandComAdminDAO brc = new BrandComAdminDAO();
+            ImportDAO im = new ImportDAO();
             NotificationAdminDAO notificationDAO = new NotificationAdminDAO();
-            
-            List<Components> com = Com.getAllComponent();
-            request.setAttribute("com", com);
-            List<Categories> list = dao.getAllCategoriesByInvenory();
-            request.setAttribute("list", list);
-            
+
             // Load số lượng thông báo chưa đọc cho user hiện tại
             HttpSession session = request.getSession(false);
             User user = (session != null) ? (User) session.getAttribute("user") : null;
             int userID = (user != null) ? user.getUserId() : -1;
             int unreadCount = (userID > 0) ? notificationDAO.getUnreadCount(userID) : 0;
             request.setAttribute("unreadCount", unreadCount);
-            
+            im.updateImportQuantitiesFromProducts();
+            dao.updateCategoryQuantities();
+            dao.updateCategoryInventory();
+            dao.updateCategoryStatusIfInventoryZero();
+            brc.updateBrandComQuantitiesFromCategories();
+            bra.updateBrandQuantitiesFromBrandComs();
+            Com.updateComponentQuantitiesFromBrandComs();
+
+            List<Components> com = Com.getAllComponent();
+            request.setAttribute("com", com);
+            List<Categories> list = dao.getAllCategoriesByInvenory();
+            request.setAttribute("list", list);
             request.getRequestDispatcher("AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);
         }
     }

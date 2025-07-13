@@ -64,15 +64,10 @@ public class CartItemDAO extends DBContext {
     public boolean addCartItem(int userID, int CategoryID, int quantity, int WarrantyDetailID) {
         // Bước 1: Lấy cart của user
         String cartItemSql = """
-                               MERGE CartItems AS target
-                               USING (SELECT ? AS UserID, ? AS CategoryID, ? AS Quantity, ? AS WarrantyDetailID) AS source
-                               ON target.UserID = source.UserID AND target.CategoryID = source.CategoryID AND target.WarrantyDetailID = source.WarrantyDetailID
-                               WHEN MATCHED THEN
-                                   UPDATE SET Quantity = target.Quantity + source.Quantity
-                               WHEN NOT MATCHED THEN
-                                   INSERT (UserID, CategoryID, Quantity, WarrantyDetailID)
-                                   VALUES (source.UserID, source.CategoryID, source.Quantity, source.WarrantyDetailID);
-                             """;
+   INSERT INTO CartItems (UserID, CategoryID, Quantity, WarrantyDetailID)
+   VALUES (?, ?, ?, ?)
+   ON DUPLICATE KEY UPDATE Quantity = Quantity + VALUES(Quantity)
+""";
         try (PreparedStatement ps = connection.prepareStatement(cartItemSql)) {
             ps.setInt(1, userID);
             ps.setInt(2, CategoryID);
@@ -108,12 +103,12 @@ public class CartItemDAO extends DBContext {
     public ArrayList<CartItem> getCartItemsByUserIdWithOffset(int userId, int offset, int limit) {
         ArrayList<CartItem> itemList = new ArrayList<>();
         String sql = """
-        SELECT CartItemID, UserID, CategoryID, WarrantyDetailID, Quantity, Status 
-        FROM CartItems 
-        WHERE UserID = ?
-        ORDER BY CartItemID ASC
-        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-    """;
+  SELECT CartItemID, UserID, CategoryID, WarrantyDetailID, Quantity, Status 
+  FROM CartItems 
+  WHERE UserID = ?
+  ORDER BY CartItemID ASC
+  LIMIT ?, ?
+""";
 
         WarrantyDetailDAO warrantyDetailDAO = new WarrantyDetailDAO();
         CategoriesDAO categoriesDAO = new CategoriesDAO();

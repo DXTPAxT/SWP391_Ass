@@ -79,7 +79,9 @@
         </style>
     </head>
     <body>
-        <%@ include file="components/header.jsp" %>
+        <jsp:include page="components/header.jsp">
+            <jsp:param name="activeHeader" value="no"/>
+        </jsp:include>
         <div class="otp-container">
             <div class="otp-form-box">
                 <h2>Enter OTP</h2>
@@ -117,7 +119,6 @@
                 </div>
             </div>
         </div>
-        <%@ include file="components/footer.jsp" %>
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.js"></script>
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/bootstrap.min.js"></script>
         <script>
