@@ -70,11 +70,6 @@ public class Categories {
         this.status = status;
     }
 
-    public Categories(int categoryID, String categoryName, int brandComID, int componentID, int brandID, String brandName, int quantity, int price, String description, int status, String imgURL) {
-        this(categoryID, categoryName, brandComID, componentID, brandID, brandName, quantity, price, description, status);
-        this.imgURL = imgURL;
-    }
-
     public Categories(String categoryName, int brandComID, int quantity, int price, String description, int status, String imgURL) {
         this.categoryName = categoryName;
         this.brandComID = brandComID;
