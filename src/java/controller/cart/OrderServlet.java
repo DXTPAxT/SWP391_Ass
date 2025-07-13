@@ -2,30 +2,26 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controllerAdmin;
+package controller.cart;
 
-import dal.Blog_CateDAO;
-import dal.CategoriesDAO;
-import dal.RoleDAO;
+import dal.OrderDAO;
+import dal.OrderItemDAO;
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import models.Categories;
-import models.Post;
-import models.Role;
-import models.SaleEvents;
+import java.util.ArrayList;
+import models.OrderCate;
+import models.OrderItems;
 
 /**
  *
- * @author User
+ * @author PC ASUS
  */
-@WebServlet(name = "SaleEventsServlet", urlPatterns = {"/saleevents"})
-public class SaleEventsServlet extends HttpServlet {
+public class OrderServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,10 +40,10 @@ public class SaleEventsServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SaleEventsServlet</title>");
+            out.println("<title>Servlet OrderServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SaleEventsServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet OrderServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -65,28 +61,17 @@ public class SaleEventsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String categoryIdParam = request.getParameter("categoryID");
-        int categoryID = (categoryIdParam != null && !categoryIdParam.isEmpty()) ? Integer.parseInt(categoryIdParam) : 1;
-
-        Blog_CateDAO dao = new Blog_CateDAO();
-        CategoriesDAO daoc = new CategoriesDAO();
-        RoleDAO rdao = new RoleDAO(); 
-
-//        List<SaleEvents> saleEvents = dao.getSaleEventsByCategory(categoryID);
-
-        List<Post> activePosts = dao.getPostsByStatus(1);
-
-        List<Categories> categories = daoc.getAllCategoriesPaginated(1, Integer.MAX_VALUE);
-        List<Role> rolee = rdao.getRoles();
-
-//        request.setAttribute("saleEvents", saleEvents);
-        request.setAttribute("activePosts", activePosts);
-        request.setAttribute("categories", categories);
-        request.setAttribute("selectedCategoryID", categoryID);
-        request.setAttribute("rolee", rolee);
-
-        // Forward to JSP
-        request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/saleEvents.jsp").forward(request, response);
+        OrderDAO dao = new OrderDAO();
+        String orderIDPara = request.getParameter("orderID");
+        try {
+            int orderID = Integer.parseInt(orderIDPara);
+            OrderCate order = dao.getOrderCateByID(orderID);
+            request.setAttribute("order", order);
+            RequestDispatcher rd = request.getRequestDispatcher("ShopPages/Pages/OrderInfo.jsp");
+            rd.forward(request, response);
+        } catch (Exception e) {
+            
+        }
     }
 
     /**
@@ -100,7 +85,7 @@ public class SaleEventsServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        processRequest(request, response);
+        processRequest(request, response);
     }
 
     /**

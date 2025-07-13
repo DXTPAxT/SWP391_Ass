@@ -53,7 +53,7 @@
         <div class="wrapper">
 
 
-            <jsp:include page="../../components/header.jsp" />
+          
 
             <jsp:include page="../../components/header.jsp" />
 
@@ -154,10 +154,9 @@
 
                                                                     <span class="btn btn-sm btn-primary">Active</span>
 
-                                                                    <span class="badge bg-success">Active</span>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    <span class="badge bg-danger">Disable</span>
+                                                                    <span class="btn btn-sm btn-primary">Disable</span>
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </td>
@@ -179,7 +178,6 @@
                 </section>
             </div>
 
-            <jsp:include page="../../components/footer.jsp" />
 
             <jsp:include page="../../components/footer.jsp" />
 

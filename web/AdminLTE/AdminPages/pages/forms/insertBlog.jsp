@@ -1,234 +1,175 @@
-<%-- 
-    Document   : addNewUser
-    Created on : Jun 3, 2025, 10:14:57 AM
-    Author     : PC ASUS
---%>
-
-<%@page contentType="text/html" pageEncoding="windows-1252"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>AdminLTE 2 | Advanced form elements</title>
-        <!-- Tell the browser to be responsive to screen width -->
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <!-- Bootstrap 3.3.6 -->
-        <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/bootstrap/css/bootstrap.min.css">
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-        <!-- Ionicons -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-        <!-- daterange picker -->
-        <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/plugins/daterangepicker/daterangepicker.css">
-        <!-- bootstrap datepicker -->
-        <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/plugins/datepicker/datepicker3.css">
-        <!-- iCheck for checkboxes and radio inputs -->
-        <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/plugins/iCheck/all.css">
-        <!-- Bootstrap Color Picker -->
-        <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/plugins/colorpicker/bootstrap-colorpicker.min.css">
-        <!-- Bootstrap time Picker -->
-        <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/plugins/timepicker/bootstrap-timepicker.min.css">
-        <!-- Select2 -->
-        <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/plugins/select2/select2.min.css">
-        <!-- Theme style -->
-        <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/dist/css/AdminLTE.min.css">    
-        <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/dist/css/custom.css">
+<head>
+    <meta charset="utf-8">
+    <title>Insert Blog</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/dist/css/skins/_all-skins.min.css">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 
-        <!-- AdminLTE Skins. Choose a skin from the css/skins
-             folder instead of downloading all of them to reduce the load. -->
-        <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/dist/css/skins/_all-skins.min.css">
+    <jsp:include page="../../components/header.jsp"/>
+    <jsp:include page="../../components/sidebar.jsp">
+        <jsp:param name="ctx" value="${ctx}" />
+    </jsp:include>
 
-        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-        <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
-    </head>
-    <body class="hold-transition skin-blue sidebar-mini">
-        <div class="wrapper">
-            <jsp:include page="../../components/header.jsp" />
-            <jsp:include page="../../components/sidebar.jsp">
-                <jsp:param name="ctx" value="${ctx}" />
-            </jsp:include>
-            <!-- Content Wrapper. Contains page content -->
-            <div class="content-wrapper">
-                <!-- Content Header (Page header) -->
-                <section class="content-header">
-                    <h1>INSERT BLOG</h1>
-                    <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li class="active">Insert Blog</li>
-                    </ol>
-                </section>
-                <!-- Main content -->
-                <div class="box box-success">
-                   <div class="box-body">
-    <c:if test="${not empty error}">
-        <div class="alert alert-danger" style="font-weight:bold;">${error}</div>
-    </c:if>
+    <div class="content-wrapper">
+        <section class="content-header">
+            <h1>Insert Blog</h1>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li><a href="#">Blog</a></li>
+                <li class="active">Insert Blog</li>
+            </ol>
+        </section>
 
-   <form method="post" action="${ctx}/blogadd" enctype="multipart/form-data">
+        <section class="content">
+            <div class="box box-success">
+                <div class="box-body">
+                    <c:if test="${not empty error}">
+                        <div class="alert alert-danger">${error}</div>
+                    </c:if>
 
-        <input type="hidden" name="service" value="insert">
-        <input type="hidden" name="submit" value="submit">
+                    <form method="post" action="${ctx}/blogadd" enctype="multipart/form-data" onsubmit="return validateForm()">
 
-        <!-- Title -->
-        <div class="form-group">
-            <label for="title">Blog Title</label>
-            <input type="text" id="title" name="title" class="form-control" placeholder="Enter blog title" required value="${title}">
-        </div>
+                        <input type="hidden" name="service" value="insert">
+                        <input type="hidden" name="submit" value="submit">
 
-        <!-- Author -->
-        <div class="form-group">
-            <label for="author">Author</label>
-            <input type="text" id="author" name="author" class="form-control" placeholder="Enter author name" required value="${author}">
-        </div>
+                        <!-- Title -->
+                        <div class="form-group">
+                            <label for="title">Blog Title</label>
+                            <input type="text" id="title" name="title" class="form-control" placeholder="Enter blog title" required value="${param.title}">
+                            <p id="title-error" class="text-danger small"></p>
+                        </div>
 
-        <!-- Content -->
-        <div class="form-group">
-            <label for="content">Content</label>
-            <textarea id="content" name="content" rows="8" class="form-control" placeholder="Enter blog content" required>${content}</textarea>
-        </div>
+                        <!-- Author -->
+                        <div class="form-group">
+                            <label for="author">Author</label>
+                            <input type="text" id="author" name="author" class="form-control" placeholder="Enter author name" required value="${param.author}">
+                            <p id="author-error" class="text-danger small"></p>
+                        </div>
 
-        <!-- Brief -->
-        <div class="form-group">
-            <label for="brief">Brief</label>
-            <input type="text" id="brief" name="brief" class="form-control" placeholder="Enter short description" required value="${brief}">
-        </div>
+                        <!-- Updated Date -->
+                        <div class="form-group">
+                            <label for="updated_date">Updated Date</label>
+                            <input type="date" id="updated_date" name="updated_date" class="form-control" required value="${param.updated_date}">
+                        </div>
 
-        <!-- Thumbnail -->
-        <div class="form-group">
-            <label for="thumbnail">Thumbnail</label>
-            <input type="file" id="thumbnail" name="thumbnail" class="form-control" accept="image/*">
-        </div>
+                        <!-- Content -->
+                        <div class="form-group">
+                            <label for="content">Content</label>
+                            <textarea id="content" name="content" rows="8" class="form-control" placeholder="Enter blog content" required>${param.content}</textarea>
+                            <p id="content-error" class="text-danger small"></p>
+                        </div>
 
-        <!-- Category -->
-        <div class="form-group">
-            <label for="bc_id">Category</label>
-            <select id="bc_id" name="bc_id" class="form-control" required>
-                <option value="">Choose Category</option>
-                <c:forEach var="cat" items="${blog_categories}">
-                    <option value="${cat.bc_id}" ${cat.bc_id == bc_id ? 'selected' : ''}>${cat.bc_name}</option>
-                </c:forEach>
-            </select>
-        </div>
+                        <!-- Brief -->
+                        <div class="form-group">
+                            <label for="brief">Brief</label>
+                            <input type="text" id="brief" name="brief" class="form-control" placeholder="Enter short description" required value="${param.brief}">
+                            <p id="brief-error" class="text-danger small"></p>
+                        </div>
 
-        <!-- Add_id (Author ID) -->
-        <div class="form-group">
-            <label for="add_id">Author ID</label>
-            <input type="number" id="add_id" name="add_id" class="form-control" value="${sessionScope.user.id}">
-        </div>
+                        <!-- Thumbnail -->
+                        <div class="form-group">
+                            <label for="thumbnail">Thumbnail</label>
+                            <input type="text" id="thumbnail" name="thumbnail" class="form-control" placeholder="thumbnail.jpg">
+                            <p id="thumbnail-error" class="text-danger small"></p>
+                        </div>
 
-        <!-- Submit -->
-        <button type="submit" class="btn btn-primary">Add Blog</button>
-    </form>
+                        <!-- Category -->
+                        <div class="form-group">
+                            <label for="bc_id">Category</label>
+                            <select id="bc_id" name="bc_id" class="form-control" required>
+                                <option value="">Choose Category</option>
+                                <c:forEach var="cat" items="${blog_categories}">
+                                    <option value="${cat.bc_id}" ${param.bc_id == cat.bc_id ? 'selected' : ''}>${cat.bc_name}</option>
+                                </c:forEach>
+                            </select>
+                            <p id="bc_id-error" class="text-danger small"></p>
+                        </div>
+
+                        <!-- Author ID -->
+                        <div class="form-group">
+                            <label for="add_id">Author ID</label>
+                            <input type="number" id="add_id" name="add_id" class="form-control"
+                                   value="${sessionScope.user != null ? sessionScope.user.userId : ''}">
+                        </div>
+
+                        <!-- Status -->
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select class="form-control" name="status" required>
+                                <option value="1" ${param.status == '1' ? 'selected' : ''}>Active</option>
+                                <option value="0" ${param.status == '0' ? 'selected' : ''}>Inactive</option>
+                            </select>
+                        </div>
+
+                        <!-- Submit -->
+                        <button type="submit" class="btn btn-primary">Add Blog</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <jsp:include page="../../components/footer.jsp"/>
+    <jsp:include page="../../components/control-sidebar.jsp"/>
+
 </div>
 
-                </div>
-                <!-- /.box -->
-            </div>
-            <jsp:include page="../../components/footer.jsp" />
-            <jsp:include page="../../components/control-sidebar.jsp" />
-        </div>
-        <!-- ./wrapper -->
-        <!-- jQuery 2.2.3 -->
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
-        <!-- Bootstrap 3.3.6 -->
-        <script src="${ctx}/AdminLTE/AdminPages/bootstrap/js/bootstrap.min.js"></script>
-        <!-- Select2 -->
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/select2/select2.full.min.js"></script>
-        <!-- InputMask -->
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/input-mask/jquery.inputmask.js"></script>
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/input-mask/jquery.inputmask.extensions.js"></script>
-        <!-- date-range-picker -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/daterangepicker/daterangepicker.js"></script>
-        <!-- bootstrap datepicker -->
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/datepicker/bootstrap-datepicker.js"></script>
-        <!-- bootstrap color picker -->
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
-        <!-- bootstrap time picker -->
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/timepicker/bootstrap-timepicker.min.js"></script>
-        <!-- SlimScroll 1.3.0 -->
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-        <!-- iCheck 1.0.1 -->
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/iCheck/icheck.min.js"></script>
-        <!-- FastClick -->
-        <script src="${ctx}/AdminLTE/AdminPages/plugins/fastclick/fastclick.js"></script>
-        <!-- AdminLTE App -->
-        <script src="${ctx}/AdminLTE/AdminPages/dist/js/app.min.js"></script>
-        <!-- AdminLTE for demo purposes -->
-        <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
-        <!-- Page script -->
-        <script>
-            function validateForm() {
-                let isValid = true;
-                const title = document.getElementById('title').value.trim();
-                const author = document.getElementById('author').value.trim();
-                const brief = document.getElementById('brief').value.trim();
-                const content = document.getElementById('content').value.trim();
-                const bc_id = document.getElementById('bc_id').value;
-                const thumbnail = document.getElementById('thumbnail').value;
+<!-- Scripts -->
+<script>
+    function validateForm() {
+        let isValid = true;
 
-                document.getElementById('title-error').textContent = '';
-                document.getElementById('author-error').textContent = '';
-                document.getElementById('brief-error').textContent = '';
-                document.getElementById('content-error').textContent = '';
-                document.getElementById('bc_id-error').textContent = '';
-                document.getElementById('thumbnail-error').textContent = '';
+        const title = document.getElementById('title').value.trim();
+        const author = document.getElementById('author').value.trim();
+        const brief = document.getElementById('brief').value.trim();
+        const content = document.getElementById('content').value.trim();
+        const bc_id = document.getElementById('bc_id').value;
+        const thumbnail = document.getElementById('thumbnail').value;
 
-                if (title.length < 5) {
-                    document.getElementById('title-error').textContent = 'Ti�u ?? ph?i c� �t nh?t 5 k� t?.';
-                    isValid = false;
-                }
-                if (author.length < 2) {
-                    document.getElementById('author-error').textContent = 'T�c gi? ph?i c� �t nh?t 2 k� t?.';
-                    isValid = false;
-                }
-                if (brief.length < 10) {
-                    document.getElementById('brief-error').textContent = 'T�m t?t ph?i c� �t nh?t 10 k� t?.';
-                    isValid = false;
-                }
-                if (content.length < 20) {
-                    document.getElementById('content-error').textContent = 'N?i dung ph?i c� �t nh?t 20 k� t?.';
-                    isValid = false;
-                }
-                if (!bc_id) {
-                    document.getElementById('bc_id-error').textContent = 'Vui l�ng ch?n danh m?c.';
-                    isValid = false;
-                }
-                if (thumbnail && !thumbnail.match(/\.(jpg|jpeg|png|gif)$/i)) {
-                    document.getElementById('thumbnail-error').textContent = 'File ?nh ph?i c� ??nh d?ng jpg, jpeg, png ho?c gif.';
-                    isValid = false;
-                }
+        document.getElementById('title-error').textContent = '';
+        document.getElementById('author-error').textContent = '';
+        document.getElementById('brief-error').textContent = '';
+        document.getElementById('content-error').textContent = '';
+        document.getElementById('bc_id-error').textContent = '';
+        document.getElementById('thumbnail-error').textContent = '';
 
-                return isValid;
-            }
-        </script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const inputs = document.querySelectorAll(".is-invalid");
+        if (title.length < 5) {
+            document.getElementById('title-error').textContent = 'Title must be at least 5 characters';
+            isValid = false;
+        }
+        if (author.length < 2) {
+            document.getElementById('author-error').textContent = 'Author must be at least 2 characters';
+            isValid = false;
+        }
+        if (brief.length < 10) {
+            document.getElementById('brief-error').textContent = 'Brief must be at least 10 characters';
+            isValid = false;
+        }
+        if (content.length < 20) {
+            document.getElementById('content-error').textContent = 'Content must be at least 20 characters';
+            isValid = false;
+        }
+        if (!bc_id) {
+            document.getElementById('bc_id-error').textContent = 'Please select a category';
+            isValid = false;
+        }
+        if (thumbnail && !thumbnail.match(/\.(jpg|jpeg|png|gif)$/i)) {
+            document.getElementById('thumbnail-error').textContent = 'Thumbnail must be jpg, jpeg, png or gif';
+            isValid = false;
+        }
 
-                inputs.forEach(input => {
-                    input.addEventListener("input", function () {
-                        
-                        input.classList.remove("is-invalid");
+        return isValid;
+    }
+</script>
 
-                        
-                        const errorMsg = input.parentElement.querySelector("p");
-                        if (errorMsg) {
-                            errorMsg.remove();
-                        }
-                    });
-                });
-            });
-        </script>
-    </body>
+</body>
 </html>
-

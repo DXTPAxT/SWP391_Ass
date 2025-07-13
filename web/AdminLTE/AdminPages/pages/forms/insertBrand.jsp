@@ -84,7 +84,7 @@
                                                             || error eq 'Brand name must contain only letters and spaces.' 
                                                             || error eq 'Brand name cannot be entirely uppercase.' 
                                                             || error eq 'Brand name already exists.' ? ' is-invalid' : ''}"
-                                       placeholder="Enter brand name" required value="${brandName}">
+                                       placeholder="Enter brand name"  value="${brandName}">
                                 
                             </div>
                             <!-- Status -->

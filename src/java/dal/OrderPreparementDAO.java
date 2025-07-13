@@ -23,14 +23,14 @@ public class OrderPreparementDAO extends DBAdminContext {
         }
         return count;
     }
-    
+
     public int countOrder1MonthByID(int UserID) {
         int count = 0;
         String sql = """
                        SELECT COUNT(OrderID) as numberOfOrders
                          FROM OrderPreparements
-                         Where UserID = ?
-                         and PrepareTime >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1);
+                         WHERE UserID = ?
+                         AND PrepareTime >= DATE_FORMAT(NOW(), '%Y-%m-01');
                      """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, UserID);
@@ -44,5 +44,3 @@ public class OrderPreparementDAO extends DBAdminContext {
         return count;
     }
 }
-
-

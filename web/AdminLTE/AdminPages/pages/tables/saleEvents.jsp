@@ -166,7 +166,7 @@
                                             <th>Start Date</th>
                                             <th>End Date</th>
                                             <th>Discount (%)</th>
-                                            <th>Status</th>
+                                           
                                             <th>Created By</th>
                                             <th>Approved By</th>
                                             <th>Staff Action</th>

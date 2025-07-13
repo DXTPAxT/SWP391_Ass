@@ -72,11 +72,12 @@ CREATE TABLE Categories (
     CategoryID INT PRIMARY KEY AUTO_INCREMENT,
     CategoryName VARCHAR(100) UNIQUE NOT NULL,
     BrandComID INT NOT NULL,
-    Quantity INT NOT NULL,
+    Quantity INT NOT NULL, -- tổng số hàng đã nhập
     Price INT NOT NULL,
-    Inventory INT DEFAULT 0 NOT NULL,
+    Inventory INT DEFAULT 0 NOT NULL, -- Số hàng tồn kho(Product Status = 1)
+    Queue int default 0 not null, -- Số hàng chờ dùng để trường hợp không đủ hàng tạo đơn.
     Description TEXT NOT NULL,
-    Status INT DEFAULT 1 NOT NULL,
+    Status INT DEFAULT 1 NOT NULL, -- 0 là hết hàng nhưng có nhập thêm, 1 bán, 2 on sale, 3 dừng nhập hàng
     ImageURL TEXT,
     FOREIGN KEY (BrandComID) REFERENCES BrandComs(BrandComID)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -124,11 +125,15 @@ CREATE TABLE WarrantyDetails (
 -- 13. Orders
 CREATE TABLE Orders (
     OrderID INT PRIMARY KEY AUTO_INCREMENT,
-    OrderCode INT DEFAULT NULL,
-    Product_Type INT DEFAULT NULL,
+    OrderCode VARCHAR(100) DEFAULT NULL,
+    Product_Type INT DEFAULT NULL, -- 0 là Items, 1 là Build PC
     CustomerID INT NOT NULL,
     OrderDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     Address TEXT NOT NULL,
+    PhoneNumber TEXT NOT NULL,
+    Fullname TEXT NOT NULL,
+    Note TEXT NULL,
+	PaymentStatusID INT NOT NULL DEFAULT 1,
     TotalAmount INT NOT NULL,
     Status INT DEFAULT 1 NOT NULL,
     FOREIGN KEY (CustomerID) REFERENCES Users(UserID)
@@ -149,7 +154,7 @@ CREATE TABLE OrderItems (
 CREATE TABLE OrderDetails (
     OrderDetailID INT PRIMARY KEY AUTO_INCREMENT,
     OrderItemID INT NOT NULL,
-    ProductID INT NOT NULL,
+    ProductID INT,
     WarrantyDetailID INT NOT NULL,
     UnitPrice INT NOT NULL,
     WarrantyPrice INT NOT NULL,
@@ -364,7 +369,6 @@ CREATE TABLE Order_BuildPC_Products (
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 34. Notifications
-DROP TABLE IF EXISTS Notifications;
 CREATE TABLE Notifications (
     NotificationID INT PRIMARY KEY AUTO_INCREMENT,
     UserID INT NOT NULL,

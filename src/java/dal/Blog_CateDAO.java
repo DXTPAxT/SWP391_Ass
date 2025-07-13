@@ -168,24 +168,26 @@ public class Blog_CateDAO extends DBContext {
     }
 
     public void insertPost(Post p) {
-        String sql = "INSERT INTO Post (Title, Author, Updated_date, Content, Bc_id, Thumbnail, Brief, Add_id) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement st = connection.prepareStatement(sql)) {
-            st.setString(1, p.getTitle());
-            st.setString(2, p.getAuthor());
-            st.setDate(3, new java.sql.Date(p.getUpdated_date().getTime()));
-            st.setString(4, p.getContent());
-            st.setInt(5, p.getBc_id());
-            st.setString(6, p.getThumbnail());
-            st.setString(7, p.getBrief());
-            st.setInt(8, p.getAdd_id());
-            st.setInt(9, p.getStatus());
+    String sql = "INSERT INTO Post (Title, Author, Updated_date, Content, Bc_id, Thumbnail, Brief, Add_id, Status) "
+               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    try (PreparedStatement st = connection.prepareStatement(sql)) {
+        st.setString(1, p.getTitle());
+        st.setString(2, p.getAuthor());
+        st.setDate(3, new java.sql.Date(p.getUpdated_date().getTime()));
+        st.setString(4, p.getContent());
+        st.setInt(5, p.getBc_id());
+        st.setString(6, p.getThumbnail());
+        st.setString(7, p.getBrief());
+        st.setInt(8, p.getAdd_id());
+        st.setInt(9, p.getStatus());
 
-            st.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        st.executeUpdate();
+    } catch (Exception e) {
+        System.err.println("SQL Error during insertPost: " + e.getMessage());
+        e.printStackTrace(); // optional: can log to file instead
     }
+}
+
 
     public Post getPostById(int id) {
         String sql = "SELECT * FROM Post WHERE Post_id = ?";
@@ -213,24 +215,24 @@ public class Blog_CateDAO extends DBContext {
     }
 
     public void updatePost(Post p) {
-        String sql = "UPDATE Post SET Title=?, Author=?, Updated_date=?, Content=?, Bc_id=?, Thumbnail=?, Brief=?, Add_id=?, status=? "
-                + "WHERE Post_id=?";
-        try (PreparedStatement st = connection.prepareStatement(sql)) {
-            st.setString(1, p.getTitle());
-            st.setString(2, p.getAuthor());
-            st.setDate(3, new java.sql.Date(p.getUpdated_date().getTime()));
-            st.setString(4, p.getContent());
-            st.setInt(5, p.getBc_id());
-            st.setString(6, p.getThumbnail());
-            st.setString(7, p.getBrief());
-            st.setInt(8, p.getAdd_id());
-            st.setInt(9, p.getStatus());
-            st.setInt(10, p.getPost_id());
-            st.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    String sql = "UPDATE Post SET Title=?, Author=?, Updated_date=?, Content=?, Bc_id=?, Thumbnail=?, Brief=?, Status=? "
+               + "WHERE Post_id=?";
+    try (PreparedStatement st = connection.prepareStatement(sql)) {
+        st.setString(1, p.getTitle());
+        st.setString(2, p.getAuthor());
+        st.setDate(3, new java.sql.Date(p.getUpdated_date().getTime()));
+        st.setString(4, p.getContent());
+        st.setInt(5, p.getBc_id());
+        st.setString(6, p.getThumbnail());
+        st.setString(7, p.getBrief());
+        st.setInt(8, p.getStatus());
+        st.setInt(9, p.getPost_id());
+        st.executeUpdate();
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
+
 
 //   
     public List<Post> getPostsByStatus(int status) {
@@ -488,7 +490,7 @@ public class Blog_CateDAO extends DBContext {
                 event.setStartDate(rs.getDate("StartDate"));
                 event.setEndDate(rs.getDate("EndDate"));
                 event.setDiscountPercent(rs.getDouble("DiscountPercent"));
-                event.setStatus(rs.getInt("Status"));
+//                event.setStatus(rs.getInt("Status"));
                 event.setCreatedBy(rs.getInt("CreatedBy"));
                 event.setApprovedBy(rs.getObject("ApprovedBy") != null ? rs.getInt("ApprovedBy") : null);
 
@@ -519,7 +521,7 @@ public class Blog_CateDAO extends DBContext {
 
     // Add a sale event
     public void addSaleEvent(SaleEvents event) {
-        String query = "INSERT INTO SaleEvents (CategoryID, Post_id, StartDate, EndDate, DiscountPercent, Status, CreatedBy, ApprovedBy) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO SaleEvents (CategoryID, Post_id, StartDate, EndDate, DiscountPercent, CreatedBy, ApprovedBy) VALUES (?, ?, ?, ?, ?,  ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, event.getCategoryID());
             stmt.setInt(2, event.getPost_id());
@@ -527,6 +529,7 @@ public class Blog_CateDAO extends DBContext {
             stmt.setDate(4, new java.sql.Date(event.getEndDate().getTime()));
             stmt.setDouble(5, event.getDiscountPercent());
             stmt.setInt(6, event.getCreatedBy());
+            stmt.setInt(7, event.getApprovedBy());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
