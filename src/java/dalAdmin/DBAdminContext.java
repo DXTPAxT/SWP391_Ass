@@ -1,4 +1,4 @@
-package dal;
+package dalAdmin;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -57,7 +57,7 @@ public class DBAdminContext {
     }
 
     public static void main(String[] args) {
-        DBContext dbContext = new DBContext();
+        DBAdminContext dbContext = new DBAdminContext();
         if (dbContext.isConnected()) {
             System.out.println("✅ Đã kết nối đến cơ sở dữ liệu MySQL.");
         } else {
