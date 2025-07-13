@@ -24,59 +24,60 @@ import models.WarrantyDetails;
  * @author PC
  */
 public class BuildPCAdminDAO extends DBAdminContext {
+public List<Components> getAllComponents() {
+    List<Components> list = new ArrayList<>();
+    String sql = "SELECT * FROM Components";
+    
+    try (PreparedStatement ps = connection.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
 
-    public List<Components> getALLComponent() {
-        List<Components> list = new ArrayList<>();
-        String sql = "Select *From Components ";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Components c = new Components(
-                        rs.getInt("ComponentID"),
-                        rs.getString("ComponentName"),
-                        rs.getInt("Quantity"),
-                        rs.getInt("Status")
-                );
-                list.add(c);
-            }
-
-        } catch (Exception e) {
+        while (rs.next()) {
+            Components c = new Components(
+                rs.getInt("ComponentID"),
+                rs.getString("ComponentName"),
+                rs.getInt("Quantity"),
+                rs.getInt("Status")
+            );
+            list.add(c);
         }
-        return list;
+
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+
+    return list;
+}
+
 
  public List<BuildPCView> getBuildPCSummaryView() {
     List<BuildPCView> list = new ArrayList<>();
-    String sql = """
-    SELECT 
-        bp.BuildPCID,
-        
-        MAX(CASE WHEN bc.ComponentID = 2 THEN c.CategoryName END) AS MainBoard,
-        MAX(CASE WHEN bc.ComponentID = 3 THEN c.CategoryName END) AS CPU,
-        MAX(CASE WHEN bc.ComponentID = 4 THEN c.CategoryName END) AS GPU,
-        MAX(CASE WHEN bc.ComponentID = 5 THEN c.CategoryName END) AS RAM,
-        MAX(CASE WHEN bc.ComponentID = 6 THEN c.CategoryName END) AS SSD,
-        MAX(CASE WHEN bc.ComponentID = 7 THEN c.CategoryName END) AS PCCase,
-
-        SUM(bpi.Price) AS TotalPrice, 
-        MAX(bp.Status) AS Status,
-        u.UserID,
-        u.FullName,
-        r.RoleName
-    FROM Build_PC bp
-    JOIN Build_PC_Items bpi ON bp.BuildPCID = bpi.BuildPCID
-    JOIN Categories c ON bpi.CategoryID = c.CategoryID
-    JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-    JOIN Users u ON bp.UserID = u.UserID
-    JOIN Roles r ON u.RoleID = r.RoleID
-    WHERE bc.ComponentID BETWEEN 2 AND 7
-    GROUP BY bp.BuildPCID, u.UserID, u.FullName, r.RoleName
-    ORDER BY bp.BuildPCID
-    """;
+    String sql =
+        "SELECT " +
+        "    bp.BuildPCID, " +
+        "    MAX(CASE WHEN bc.ComponentID = 2 THEN c.CategoryName END) AS MainBoard, " +
+        "    MAX(CASE WHEN bc.ComponentID = 3 THEN c.CategoryName END) AS CPU, " +
+        "    MAX(CASE WHEN bc.ComponentID = 4 THEN c.CategoryName END) AS GPU, " +
+        "    MAX(CASE WHEN bc.ComponentID = 5 THEN c.CategoryName END) AS RAM, " +
+        "    MAX(CASE WHEN bc.ComponentID = 6 THEN c.CategoryName END) AS SSD, " +
+        "    MAX(CASE WHEN bc.ComponentID = 7 THEN c.CategoryName END) AS PCCase, " +
+        "    SUM(bpi.Price) AS TotalPrice, " +
+        "    MAX(bp.Status) AS Status, " +
+        "    u.UserID, " +
+        "    u.FullName, " +
+        "    r.RoleName " +
+        "FROM Build_PC bp " +
+        "JOIN Build_PC_Items bpi ON bp.BuildPCID = bpi.BuildPCID " +
+        "JOIN Categories c ON bpi.CategoryID = c.CategoryID " +
+        "JOIN BrandComs bc ON c.BrandComID = bc.BrandComID " +
+        "JOIN Users u ON bp.UserID = u.UserID " +
+        "JOIN Roles r ON u.RoleID = r.RoleID " +
+        "WHERE bc.ComponentID BETWEEN 2 AND 7 " +
+        "GROUP BY bp.BuildPCID, u.UserID, u.FullName, r.RoleName " +
+        "ORDER BY bp.BuildPCID";
 
     try (PreparedStatement ps = connection.prepareStatement(sql);
          ResultSet rs = ps.executeQuery()) {
+
         while (rs.next()) {
             BuildPCView b = new BuildPCView();
             b.setBuildPCID(rs.getInt("BuildPCID"));
@@ -86,19 +87,23 @@ public class BuildPCAdminDAO extends DBAdminContext {
             b.setRam(rs.getString("RAM"));
             b.setSsd(rs.getString("SSD"));
             b.setPcCase(rs.getString("PCCase"));
-            
-            b.setPrice(rs.getInt("TotalPrice")); // Tổng tiền chính xác từ từng item
+
+            b.setPrice(rs.getInt("TotalPrice")); // Hoặc rs.getBigDecimal(...) nếu là DECIMAL
             b.setStatus(rs.getInt("Status"));
             b.setUserID(rs.getInt("UserID"));
             b.setFullName(rs.getString("FullName"));
             b.setRole(rs.getString("RoleName"));
+
             list.add(b);
         }
-    } catch (Exception e) {
+
+    } catch (SQLException e) {
         e.printStackTrace();
     }
+
     return list;
 }
+
 
 
 
@@ -154,144 +159,149 @@ public class BuildPCAdminDAO extends DBAdminContext {
 
     // BuilDPC_ListCate
     public List<Categories> getCategoriesFiltered2(
-            int componentID, String brand, String keyword,
-            int minPrice, int maxPrice, int start, int size) {
+        int componentID, String brand, String keyword,
+        int minPrice, int maxPrice, int start, int size) {
 
-        List<Categories> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("""
-        SELECT 
-          c.*, 
-          bc.ComponentID, 
-          bc.BrandID, 
-          b.BrandName, 
-          comp.ComponentName
-        FROM Categories c
-        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-        JOIN Brands b ON bc.BrandID = b.BrandID
-        JOIN Components comp ON bc.ComponentID = comp.ComponentID
-        WHERE  bc.ComponentID = ?
-    """);
+    List<Categories> list = new ArrayList<>();
+    StringBuilder sql = new StringBuilder(
+        "SELECT " +
+        "  c.*, " +
+        "  bc.ComponentID, " +
+        "  bc.BrandID, " +
+        "  b.BrandName, " +
+        "  comp.ComponentName " +
+        "FROM Categories c " +
+        "JOIN BrandComs bc ON c.BrandComID = bc.BrandComID " +
+        "JOIN Brands b ON bc.BrandID = b.BrandID " +
+        "JOIN Components comp ON bc.ComponentID = comp.ComponentID " +
+        "WHERE bc.ComponentID = ? "
+    );
 
-        List<Object> params = new ArrayList<>();
-        params.add(componentID);
+    List<Object> params = new ArrayList<>();
+    params.add(componentID);
 
-        if (brand != null && !brand.trim().isEmpty()) {
-            sql.append(" AND b.BrandName = ? ");
-            params.add(brand.trim());
-        }
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append(" AND LOWER(c.CategoryName) LIKE ? ");
-            params.add("%" + keyword.trim().toLowerCase() + "%");
-        }
-        if (minPrice >= 0) {
-            sql.append(" AND c.Price >= ? ");
-            params.add(minPrice);
-        }
-        if (maxPrice < Integer.MAX_VALUE) {
-            sql.append(" AND c.Price <= ? ");
-            params.add(maxPrice);
-        }
-
-        sql.append(" ORDER BY c.CategoryID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
-        params.add(start);
-        params.add(size);
-
-        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
-            for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
-            }
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    list.add(extractCategory(rs));
-                }
-            }
-        } catch (SQLException e) {
-
-        }
-
-        return list;
+    if (brand != null && !brand.trim().isEmpty()) {
+        sql.append(" AND b.BrandName = ? ");
+        params.add(brand.trim());
     }
 
-    public int countFilteredByComponent(int componentID, String brand, int minPrice, int maxPrice, String keyword) {
-        StringBuilder sql = new StringBuilder("""
-        SELECT COUNT(*)
-        FROM Categories c
-        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-        JOIN Brands b ON bc.BrandID = b.BrandID
-        WHERE bc.ComponentID = ? AND c.Status IN (1, 2)
-    """);
-        List<Object> params = new ArrayList<>();
-        params.add(componentID);
-
-        if (brand != null && !brand.isEmpty()) {
-            sql.append(" AND b.BrandName = ?");
-            params.add(brand);
-        }
-        if (minPrice >= 0) {
-            sql.append(" AND c.Price >= ?");
-            params.add(minPrice);
-        }
-        if (maxPrice < Integer.MAX_VALUE) {
-            sql.append(" AND c.Price <= ?");
-            params.add(maxPrice);
-        }
-        if (keyword != null && !keyword.isEmpty()) {
-            sql.append(" AND LOWER(c.CategoryName) LIKE ?");
-            params.add("%" + keyword.toLowerCase() + "%");
-        }
-
-        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
-            for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
-            }
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-        } catch (SQLException e) {
-
-        }
-        return 0;
+    if (keyword != null && !keyword.trim().isEmpty()) {
+        sql.append(" AND LOWER(c.CategoryName) LIKE ? ");
+        params.add("%" + keyword.trim().toLowerCase() + "%");
     }
 
-    public List<Brands> getBrandsByComponent(int componentID) {
-        List<Brands> list = new ArrayList<>();
-        String sql = """
-        SELECT DISTINCT b.BrandID, b.BrandName, b.Quantity, b.Status
-        FROM BrandComs bc
-        JOIN Brands b ON bc.BrandID = b.BrandID
-        WHERE bc.ComponentID = ?
-    """;
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, componentID);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    list.add(new Brands(
-                            rs.getInt("BrandID"),
-                            rs.getString("BrandName"),
-                            rs.getInt("Quantity"),
-                            rs.getInt("Status")
-                    ));
-                }
-            }
-        } catch (SQLException e) {
-
-        }
-        return list;
+    if (minPrice >= 0) {
+        sql.append(" AND c.Price >= ? ");
+        params.add(minPrice);
     }
 
-  private int getWarrantyDetailIDByCategoryID(int categoryID) {
-    String sql = """
-    SELECT TOP 1 wd.WarrantyDetailID
-    FROM Categories c
-    JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-    JOIN WarrantyDetails wd ON bc.BrandComID = wd.BrandComID
-    WHERE c.CategoryID = ?
-      AND wd.Status = 1
-    ORDER BY wd.Price ASC
-    """;
+    if (maxPrice < Integer.MAX_VALUE) {
+        sql.append(" AND c.Price <= ? ");
+        params.add(maxPrice);
+    }
+
+    sql.append(" ORDER BY c.CategoryID LIMIT ?, ? ");
+    params.add(start);
+    params.add(size);
+
+    try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+        for (int i = 0; i < params.size(); i++) {
+            ps.setObject(i + 1, params.get(i));
+        }
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(extractCategory(rs));
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace(); // nên ghi log lỗi
+    }
+
+    return list;
+}
+
+public int countFilteredByComponent(int componentID, String brand, int minPrice, int maxPrice, String keyword) {
+    StringBuilder sql = new StringBuilder(
+        "SELECT COUNT(*) " +
+        "FROM Categories c " +
+        "JOIN BrandComs bc ON c.BrandComID = bc.BrandComID " +
+        "JOIN Brands b ON bc.BrandID = b.BrandID " +
+        "WHERE bc.ComponentID = ? AND c.Status IN (1, 2) "
+    );
+
+    List<Object> params = new ArrayList<>();
+    params.add(componentID);
+
+    if (brand != null && !brand.isEmpty()) {
+        sql.append(" AND b.BrandName = ?");
+        params.add(brand);
+    }
+    if (minPrice >= 0) {
+        sql.append(" AND c.Price >= ?");
+        params.add(minPrice);
+    }
+    if (maxPrice < Integer.MAX_VALUE) {
+        sql.append(" AND c.Price <= ?");
+        params.add(maxPrice);
+    }
+    if (keyword != null && !keyword.isEmpty()) {
+        sql.append(" AND LOWER(c.CategoryName) LIKE ?");
+        params.add("%" + keyword.toLowerCase() + "%");
+    }
+
+    try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+        for (int i = 0; i < params.size(); i++) {
+            ps.setObject(i + 1, params.get(i));
+        }
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return 0;
+}
+
+   public List<Brands> getBrandsByComponent(int componentID) {
+    List<Brands> list = new ArrayList<>();
+    String sql =
+        "SELECT DISTINCT b.BrandID, b.BrandName, b.Quantity, b.Status " +
+        "FROM BrandComs bc " +
+        "JOIN Brands b ON bc.BrandID = b.BrandID " +
+        "WHERE bc.ComponentID = ?";
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, componentID);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(new Brands(
+                    rs.getInt("BrandID"),
+                    rs.getString("BrandName"),
+                    rs.getInt("Quantity"),
+                    rs.getInt("Status")
+                ));
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return list;
+}
+
+
+ private int getWarrantyDetailIDByCategoryID(int categoryID) {
+    String sql =
+        "SELECT wd.WarrantyDetailID " +
+        "FROM Categories c " +
+        "JOIN BrandComs bc ON c.BrandComID = bc.BrandComID " +
+        "JOIN WarrantyDetails wd ON bc.BrandComID = wd.BrandComID " +
+        "WHERE c.CategoryID = ? AND wd.Status = 1 " +
+        "ORDER BY wd.Price ASC " +
+        "LIMIT 1";
 
     try (PreparedStatement ps = connection.prepareStatement(sql)) {
         ps.setInt(1, categoryID);
@@ -304,8 +314,9 @@ public class BuildPCAdminDAO extends DBAdminContext {
         e.printStackTrace();
     }
 
-    return 3;  // Trường hợp không có thì mặc định bảo hành ID = 3
+    return 3; // Trường hợp không có thì mặc định bảo hành ID = 3
 }
+
 
 
 public boolean insertBuildPC(List<Integer> categoryIDs, List<Integer> warrantyIDs, int userID) {
@@ -333,6 +344,7 @@ public boolean insertBuildPC(List<Integer> categoryIDs, List<Integer> warrantyID
         int totalPrice = 0;
         List<Object[]> itemData = new ArrayList<>();
 
+        // Dùng lại PreparedStatement như yêu cầu
         PreparedStatement psProduct = connection.prepareStatement(getProductSQL);
         PreparedStatement psWarranty = connection.prepareStatement(getWarrantySQL);
 
@@ -370,6 +382,7 @@ public boolean insertBuildPC(List<Integer> categoryIDs, List<Integer> warrantyID
             itemData.add(new Object[]{categoryID, itemTotal, finalWarrantyID});
         }
 
+        // Chèn bản ghi vào bảng Build_PC
         PreparedStatement psInsertPC = connection.prepareStatement(insertBuildPCSQL, PreparedStatement.RETURN_GENERATED_KEYS);
         psInsertPC.setInt(1, totalPrice);
         psInsertPC.setInt(2, userID);
@@ -382,6 +395,7 @@ public boolean insertBuildPC(List<Integer> categoryIDs, List<Integer> warrantyID
         }
         int buildPCID = rsPC.getInt(1);
 
+        // Chèn các item tương ứng vào bảng Build_PC_Items
         PreparedStatement psInsertItem = connection.prepareStatement(insertItemSQL);
         for (Object[] item : itemData) {
             psInsertItem.setInt(1, buildPCID);
@@ -403,15 +417,21 @@ public boolean insertBuildPC(List<Integer> categoryIDs, List<Integer> warrantyID
     } catch (Exception e) {
         try {
             connection.rollback();
-        } catch (SQLException ex) { ex.printStackTrace(); }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
         e.printStackTrace();
     } finally {
         try {
             connection.setAutoCommit(true);
-        } catch (SQLException ex) { ex.printStackTrace(); }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
+
     return false;
 }
+
 
 
 

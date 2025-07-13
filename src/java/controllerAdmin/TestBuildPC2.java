@@ -1,31 +1,31 @@
 package controllerAdmin;
 
 import dalAdmin.BuildPCAdminDAO;
+import java.util.Arrays;
 import models.BuildPCView;
 import java.util.List;
 
 public class TestBuildPC2 {
 
  
-       public static void main(String[] args) {
+      public static void main(String[] args) {
+        // Danh sách categoryID (giả sử đã tồn tại)
+        List<Integer> categoryIDs = Arrays.asList(9, 18, 37, 47, 52, 65);
+
+        // Danh sách warrantyID tương ứng (có thể = 0 nếu không chọn)
+        List<Integer> warrantyIDs = Arrays.asList(201, 0, 203, 0, 0, 206);
+
+        int userID = 1; // Giả sử user có ID = 1
+
+        // Gọi DAO để insert
         BuildPCAdminDAO dao = new BuildPCAdminDAO();
-        
-        List<BuildPCView> buildPCList = dao.getBuildPCSummaryView();
-        
-        for (BuildPCView b : buildPCList) {
-            System.out.println("BuildPCID: " + b.getBuildPCID());
-            System.out.println("MainBoard: " + b.getMainBoard());
-            System.out.println("CPU: " + b.getCpu());
-            System.out.println("GPU: " + b.getGpu());
-            System.out.println("RAM: " + b.getRam());
-            System.out.println("SSD: " + b.getSsd());
-            System.out.println("Case: " + b.getPcCase());
-            System.out.println("Price: " + b.getPrice());
-            System.out.println("Status: " + b.getStatus());
-            System.out.println("UserID: " + b.getUserID());
-            System.out.println("FullName: " + b.getFullName());
-            System.out.println("Role: " + b.getRole());
-            System.out.println("-----------------------------");
+
+        boolean success = dao.insertBuildPC(categoryIDs, warrantyIDs, userID);
+
+        if (success) {
+            System.out.println("✅ Insert Build PC thành công.");
+        } else {
+            System.out.println("❌ Insert thất bại.");
         }
     }
 }
