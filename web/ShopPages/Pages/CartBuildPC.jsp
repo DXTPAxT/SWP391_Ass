@@ -37,7 +37,7 @@
                         <thead>
                             <tr class="cart_menu">
                                 <td><input type="checkbox" id="checkAll" onchange="toggleAll(this)" class="ml-3 mr-3"/></td>
-                                <td>Cart ID</td>
+                                <td style="display: none;">Cart ID</td>
                                 <td>MainBoard</td>
                                 <td>CPU</td>
                                 <td>GPU</td>
@@ -54,7 +54,7 @@
                                 <c:forEach var="pc" items="${cartBuildPC}">
                                     <tr>
                                         <td><input type="checkbox" class="select-item ml-3 mr-3" value="${pc.cartBuildPCID}"/></td>
-                                        <td>${pc.cartBuildPCID}</td>
+                                        <td style="display: none;">Cart ID</td>
                                         <td>${pc.mainBoard}</td>
                                         <td>${pc.cpu}</td>
                                         <td>${pc.gpu}</td>
@@ -141,7 +141,7 @@
                 });
 
                 const deposit = Math.floor(total * 0.2);
-                if (!confirm(`You will place a deposit of ${deposit.toLocaleString()} VND for ${selected.length} Build PC(s). Continue?`))
+                if (!confirm(`You will place a deposit this Build PC(s). Continue?`))
                     return;
 
                 const ids = Array.from(selected).map(cb => cb.value);
@@ -153,7 +153,7 @@
                         .then(res => res.text())
                         .then(msg => {
                             if (msg === "SUCCESS") {
-                                alert("Deposit successful. The remaining amount will be paid later.");
+                                alert("Deposit successful. The remaining amount will be paid when you take the products.");
                                 location.reload();
                             } else if (msg === "NOT_LOGGED_IN") {
                                 alert("You need to log in to perform this action.");
@@ -177,7 +177,7 @@
                         .then(res => res.text())
                         .then(msg => {
                             if (msg === "SUCCESS") {
-                                alert("Build PC removed from cart.");
+                                alert("Remove successfully.");
                                 btn.closest("tr").remove();
                                 updateTotal();
                             } else {
