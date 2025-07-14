@@ -182,7 +182,7 @@ CREATE TABLE Shipping (
     ShippingID INT PRIMARY KEY AUTO_INCREMENT,
     OrderID INT NOT NULL,
     ShipperID INT NOT NULL,
-    ShippingStatus VARCHAR(50) NOT NULL,
+    ShippingStatus int default 0 NOT NULL,
     ShipTime DATE NOT NULL,
     Note TEXT DEFAULT NULL,
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
@@ -380,3 +380,12 @@ CREATE TABLE Notifications (
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (SenderID) REFERENCES Users(UserID)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- 35. WarrantyAssignments
+CREATE TABLE WarrantyAssignments (
+    OrderID INT NOT NULL,
+    UserID INT NOT NULL,
+    AssignedDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (OrderID, UserID),
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
