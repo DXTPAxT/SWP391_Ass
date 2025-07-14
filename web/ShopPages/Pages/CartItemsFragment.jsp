@@ -8,7 +8,7 @@
             <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/cart/two.png" alt="Product">
         </td>
         <td class="text-left">
-            <strong>${cartItem.category.categoryName}</strong><br>
+            <strong>${cartItem.category.categoryName} ${cartItem.category.categoryID}</strong><br>
             Warranty: ${cartItem.warranty.warranty.warrantyPeriod} months<br>
             <small class="text-muted">(${cartItem.warranty.warranty.description})</small>
         </td>

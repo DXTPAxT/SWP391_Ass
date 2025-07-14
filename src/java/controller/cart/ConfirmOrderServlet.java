@@ -80,9 +80,27 @@ public class ConfirmOrderServlet extends HttpServlet {
             String newCode = dao.generateRandomOrderCode();
             OrderCate order = new OrderCate();
             if ("COD".equals(paymentMethod)) {
-                order = new OrderCate(0, newCode, 0, user.getUserId(), receiverName, null, address, phoneNumber, Integer.parseInt(subTotal), 1, 1);
+                order.setOrderCode(newCode);
+                order.setProduct_Type(0);
+                order.setCustomerID(user.getUserId());
+                order.setAddress(address);
+                order.setFullName(receiverName);
+                order.setPhoneNumber(phoneNumber);
+                order.setTotalAmount(Integer.parseInt(subTotal));
+                order.setPaymentStatusID(1);
+                order.setStatus(1);
+                order.setNote(message);
             } else {
-                order = new OrderCate(0, newCode, 0, user.getUserId(), receiverName, null, address, phoneNumber, Integer.parseInt(subTotal), 1, 2);
+                order.setOrderCode(newCode);
+                order.setProduct_Type(0);
+                order.setCustomerID(user.getUserId());
+                order.setAddress(address);
+                order.setFullName(receiverName);
+                order.setPhoneNumber(phoneNumber);
+                order.setTotalAmount(Integer.parseInt(subTotal));
+                order.setPaymentStatusID(2);
+                order.setStatus(1);
+                order.setNote(message);
             }
 
             int orderId = dao.createOrderAndReturnId(order);
@@ -102,8 +120,22 @@ public class ConfirmOrderServlet extends HttpServlet {
                             allInserted = false;
                             break;
                         } else {
+                            for (int i = 0; i < cartItem.getQuantity(); i++) {
+                                OrderDetail newOrderDetail = new OrderDetail();
+                                newOrderDetail.setOrderItemID(newId);
+                                newOrderDetail.setProductID(0);
+                                newOrderDetail.setStatus(1);
+                                newOrderDetail.setUnitPrice(cartItem.getCategory().getPrice());
+                                newOrderDetail.setWarrantyDetailID(cartItem.getWarranty().getWarrantyDetailID());
+                                newOrderDetail.setWarrantyPrice(cartItem.getWarranty().getPrice());
+                                orderDetailDAO.insertOrderDetail(newOrderDetail);
+                            }
+                        }
+                    } else {
+                        orderItemDAO.addQuantity(orderId, cartItem.getCategory().getCategoryID(), cartItem.getQuantity());
+                        for (int i = 0; i < cartItem.getQuantity(); i++) {
                             OrderDetail newOrderDetail = new OrderDetail();
-                            newOrderDetail.setOrderItemID(newId);
+                            newOrderDetail.setOrderItemID(orderItemID);
                             newOrderDetail.setProductID(0);
                             newOrderDetail.setStatus(1);
                             newOrderDetail.setUnitPrice(cartItem.getCategory().getPrice());
@@ -111,16 +143,6 @@ public class ConfirmOrderServlet extends HttpServlet {
                             newOrderDetail.setWarrantyPrice(cartItem.getWarranty().getPrice());
                             orderDetailDAO.insertOrderDetail(newOrderDetail);
                         }
-                    } else {
-                        orderItemDAO.addQuantity(orderId, cartItem.getCategory().getCategoryID(), cartItem.getQuantity());
-                        OrderDetail newOrderDetail = new OrderDetail();
-                        newOrderDetail.setOrderItemID(orderItemID);
-                        newOrderDetail.setProductID(0);
-                        newOrderDetail.setStatus(1);
-                        newOrderDetail.setUnitPrice(cartItem.getCategory().getPrice());
-                        newOrderDetail.setWarrantyDetailID(cartItem.getWarranty().getWarrantyDetailID());
-                        newOrderDetail.setWarrantyPrice(cartItem.getWarranty().getPrice());
-                        orderDetailDAO.insertOrderDetail(newOrderDetail);
                     }
                 }
 

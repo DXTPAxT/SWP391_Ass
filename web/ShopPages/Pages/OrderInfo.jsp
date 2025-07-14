@@ -69,7 +69,7 @@
                 <!-- Breadcrumb -->
                 <div class="breadcrumbs">
                     <ol class="breadcrumb">
-                        <li><a href="${pageContext.request.contextPath}/Home">Home</a></li>
+                        <li><a href="${pageContext.request.contextPath}/HomePages">Home</a></li>
                         <li class="active">Order #${order.orderCode}</li>
                     </ol>
                 </div>

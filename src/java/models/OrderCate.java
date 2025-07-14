@@ -26,6 +26,26 @@ public class OrderCate {
     public OrderCate() {
     }
 
+    public OrderCate(int OrderID, String OrderCode, int Product_Type, int CustomerID, String CustomerName, String FullName, Date OrderDate, String Address, String phoneNumber, int TotalAmount, int Status, int PaymentStatusID, int StaffID, String StaffName, String Note, Date PrepareTime, ArrayList<OrderItems> orderItems) {
+        this.OrderID = OrderID;
+        this.OrderCode = OrderCode;
+        this.Product_Type = Product_Type;
+        this.CustomerID = CustomerID;
+        this.CustomerName = CustomerName;
+        this.FullName = FullName;
+        this.OrderDate = OrderDate;
+        this.Address = Address;
+        this.phoneNumber = phoneNumber;
+        this.TotalAmount = TotalAmount;
+        this.Status = Status;
+        this.PaymentStatusID = PaymentStatusID;
+        this.StaffID = StaffID;
+        this.StaffName = StaffName;
+        this.Note = Note;
+        this.PrepareTime = PrepareTime;
+        this.orderItems = orderItems;
+    }
+
     public OrderCate(int OrderID, String OrderCode, int Product_Type, int CustomerID, String CustomerName, String FullName, Date OrderDate, String Address, String phoneNumber, int TotalAmount, int Status, int PaymentStatus, int StaffID, String StaffName, Date PrepareTime, ArrayList<OrderItems> orderItems) {
         this.OrderID = OrderID;
         this.OrderCode = OrderCode;
