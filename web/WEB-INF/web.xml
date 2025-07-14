@@ -146,8 +146,8 @@
         <servlet-class>controller.CardBuildPcController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>OrderAdminServlet</servlet-name>
-        <servlet-class>controllerAdmin.OrderAdminServlet</servlet-class>
+        <servlet-name>OrderAdminCateServlet</servlet-name>
+        <servlet-class>controllerAdmin.OrderAdminCateServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>DeleteSelectedCartItemsServlet</servlet-name>
@@ -181,6 +181,14 @@
     <servlet>
         <servlet-name>OrderHistoryServlet</servlet-name>
         <servlet-class>controller.OrderHistoryServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderItemAdminServlet</servlet-name>
+        <servlet-class>controllerAdmin.OrderItemAdminServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderDetailAdminServlet</servlet-name>
+        <servlet-class>controllerAdmin.OrderDetailAdminServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
@@ -327,8 +335,8 @@
         <url-pattern>/CardBuildPc</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>OrderAdminServlet</servlet-name>
-        <url-pattern>/OrderAdmin</url-pattern>
+        <servlet-name>OrderAdminCateServlet</servlet-name>
+        <url-pattern>/OrderAdminCate</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DeleteSelectedCartItemsServlet</servlet-name>
@@ -361,5 +369,13 @@
     <servlet-mapping>
         <servlet-name>OrderHistoryServlet</servlet-name>
         <url-pattern>/OrderHistory</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderItemAdminServlet</servlet-name>
+        <url-pattern>/OrderItemAdmin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderDetailAdminServlet</servlet-name>
+        <url-pattern>/OrderDetailAdmin</url-pattern>
     </servlet-mapping>
 </web-app>

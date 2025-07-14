@@ -1,0 +1,17 @@
+<%-- 
+    Document   : viewOrderCateWaitShip
+    Created on : Jul 14, 2025, 10:54:42 PM
+    Author     : Admin
+--%>
+
+<%@page contentType="text/html" pageEncoding="windows-1252"%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <h1>Hello World!</h1>
+    </body>
+</html>

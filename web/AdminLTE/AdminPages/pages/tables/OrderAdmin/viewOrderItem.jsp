@@ -51,12 +51,12 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Order Tables
+                        Order Items Tables
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
                         <li><a href="#">Order</a></li>
-                        <li class="activ21e">view Order</li>
+                        <li class="activ21e">view Order Items</li>
                     </ol>
                 </section>
 
@@ -71,71 +71,30 @@
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Order ID</th>
-                                                <th>Customer Name</th>
-                                                <th>Consignee</th>
-                                                <th>Staff Name</th>
-                                                <th>Order Date</th>
-                                                <th>Product Type</th>
-                                                <th>Total Amount</th>
-                                                <th>Status</th>
-                                                <th>Update</th>
-                                                <th>View Order Items</th>
+                                                <th>Order Item ID</th>
+                                                <th>Order Code</th>
+                                                <th>Category Name</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:if test="${not empty orders}">
-                                                <c:forEach var="order" items="${orders}">
+                                            <c:if test="${not empty items}">
+                                                <c:forEach var="item" items="${items}">
                                                     <tr>
-                                                        <td>${order.orderID}</td>
-                                                        <td>${order.customerName}</td>
-                                                        <td>${order.fullName}</td>
-                                                        <td>${order.staffName}</td>
-                                                        <td><fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd HH:mm" /></td>
-                                                        <td>
-                                                            <c:choose>
-                                                                <c:when test="${order.product_Type == 0}">Category</c:when>
-                                                            </c:choose>
-                                                        </td>
-                                                        <td>${order.totalAmount}</td>
-
-                                                        <td>
-                                                            <c:choose>
-                                                                <c:when test="${order.status == 0}">
-                                                                    <span class="label label-danger">Canceled</span>
-                                                                </c:when>
-                                                                <c:when test="${order.status == 1}">
-                                                                    <span class="label label-default">Processing</span>
-                                                                </c:when>
-                                                                <c:when test="${order.status == 2}">
-                                                                    <span class="label label-warning">Shipping</span>
-                                                                </c:when>
-                                                                <c:when test="${order.status == 3}">
-                                                                    <span class="label label-success">Completed</span>
-                                                                </c:when>
-                                                                <c:when test="${order.status == 4}">
-                                                                    <span class="label label-danger">Return</span>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <span class="label label-danger">Unknown</span>
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                        </td>
-
-
-                                                        <td>
-                                                            <a href="OrderAdmin?service=update&orderID=${order.orderID}" class="btn btn-primary btn-sm">Update</a>
-                                                        </td>
-                                                        <!-- nut view nay se tro ve orderItems neu Product_Type = 0 con 1 ve OrderBuildPCItems -->
-                                                        <td><a href="WDA?service=listbybrandcomid&brandComID=${bc.brandComID}" 
-                                                               class="btn btn-warning btn-sm">View</a></td>
+                                                        <td>${item.orderItemID}</td>
+                                                        <td>${item.orderCode}</td>
+                                                        <td>${item.categoryName}</td>
+                                                        <td>${item.quantity}</td>
+                                                        <td>${item.price}</td>                                                        
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
+                               
+                            </div>                            
                         </div>
                     </div>
 
