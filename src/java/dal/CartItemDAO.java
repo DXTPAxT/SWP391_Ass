@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import models.CartItem;
 import models.Products;
+import org.apache.jasper.tagplugins.jstl.core.Out;
 
 public class CartItemDAO extends DBContext {
 
@@ -84,10 +85,7 @@ public class CartItemDAO extends DBContext {
     }
 
     public boolean deleteCartItem(int CartItemID) {
-        String sql = """
-                       Delete CartItems
-                       where CartItemID = ?
-                     """;
+        String sql = "DELETE FROM CartItems WHERE CartItemID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, CartItemID);
             int n = ps.executeUpdate();
@@ -106,7 +104,7 @@ public class CartItemDAO extends DBContext {
   SELECT CartItemID, UserID, CategoryID, WarrantyDetailID, Quantity, Status 
   FROM CartItems 
   WHERE UserID = ?
-  ORDER BY CartItemID ASC
+  ORDER BY CartItemID DESC
   LIMIT ?, ?
 """;
 
@@ -178,4 +176,8 @@ public class CartItemDAO extends DBContext {
         return null;
     }
 
+    public static void main(String[] args) {
+        CartItemDAO dao = new CartItemDAO();
+//        System.err.println(dao.deleteCartItemINT(1));
+    }
 }

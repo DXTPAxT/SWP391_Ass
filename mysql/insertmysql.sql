@@ -893,7 +893,6 @@ VALUES ('OR003', 0, 6, '2024-12-11 05:34:02', N'Customer 2 Address #50', N'Pham 
 -- Insert data into CartItems
 INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (5, 16, 6, 1, 1);
 INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (5, 12, 5, 1, 1);
-INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (5, 16, 6, 1, 1);
 INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (5, 71, 12, 1, 1);
 INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (5, 12, 1, 1, 0);
 
