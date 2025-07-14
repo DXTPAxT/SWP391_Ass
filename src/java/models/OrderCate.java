@@ -21,7 +21,16 @@ public class OrderCate {
     private String StaffName;
     private String Note;
     private Date PrepareTime;
-    private ArrayList<OrderItems> orderItems; 
+    private int shipperID;
+    private String shipperName;
+    private String shipperPhone;
+    private Date shipTime;
+
+    private int warrantyStaffID;
+    private String warrantyStaffName;
+    private Date warrantyAssignedDate;
+
+    private ArrayList<OrderItems> orderItems;
 
     public OrderCate() {
     }
@@ -44,6 +53,57 @@ public class OrderCate {
         this.Note = Note;
         this.PrepareTime = PrepareTime;
         this.orderItems = orderItems;
+    }
+
+    public OrderCate(int OrderID, String OrderCode, int Product_Type, int CustomerID, String CustomerName, String FullName, Date OrderDate, String Address, String phoneNumber, int TotalAmount, int Status, int PaymentStatusID, int StaffID, String StaffName, String Note, Date PrepareTime, int shipperID, String shipperName, String shipperPhone, Date shipTime, int warrantyStaffID, String warrantyStaffName, Date warrantyAssignedDate) {
+        this.OrderID = OrderID;
+        this.OrderCode = OrderCode;
+        this.Product_Type = Product_Type;
+        this.CustomerID = CustomerID;
+        this.CustomerName = CustomerName;
+        this.FullName = FullName;
+        this.OrderDate = OrderDate;
+        this.Address = Address;
+        this.phoneNumber = phoneNumber;
+        this.TotalAmount = TotalAmount;
+        this.Status = Status;
+        this.PaymentStatusID = PaymentStatusID;
+        this.StaffID = StaffID;
+        this.StaffName = StaffName;
+        this.Note = Note;
+        this.PrepareTime = PrepareTime;
+        this.shipperID = shipperID;
+        this.shipperName = shipperName;
+        this.shipperPhone = shipperPhone;
+        this.shipTime = shipTime;
+        this.warrantyStaffID = warrantyStaffID;
+        this.warrantyStaffName = warrantyStaffName;
+        this.warrantyAssignedDate = warrantyAssignedDate;
+    }
+
+    public OrderCate(String OrderCode, int Product_Type, int CustomerID, String CustomerName, String FullName, Date OrderDate, String Address, String phoneNumber, int TotalAmount, int Status, int PaymentStatusID, int StaffID, String StaffName, String Note, Date PrepareTime, int shipperID, String shipperName, String shipperPhone, Date shipTime, int warrantyStaffID, String warrantyStaffName, Date warrantyAssignedDate) {
+        this.OrderCode = OrderCode;
+        this.Product_Type = Product_Type;
+        this.CustomerID = CustomerID;
+        this.CustomerName = CustomerName;
+        this.FullName = FullName;
+        this.OrderDate = OrderDate;
+        this.Address = Address;
+        this.phoneNumber = phoneNumber;
+        this.TotalAmount = TotalAmount;
+        this.Status = Status;
+        this.PaymentStatusID = PaymentStatusID;
+        this.StaffID = StaffID;
+        this.StaffName = StaffName;
+        this.Note = Note;
+        this.PrepareTime = PrepareTime;
+        this.shipperID = shipperID;
+        this.shipperName = shipperName;
+        this.shipperPhone = shipperPhone;
+        this.shipTime = shipTime;
+        this.warrantyStaffID = warrantyStaffID;
+        this.warrantyStaffName = warrantyStaffName;
+        this.warrantyAssignedDate = warrantyAssignedDate;
     }
 
     public OrderCate(int OrderID, String OrderCode, int Product_Type, int CustomerID, String CustomerName, String FullName, Date OrderDate, String Address, String phoneNumber, int TotalAmount, int Status, int PaymentStatus, int StaffID, String StaffName, Date PrepareTime, ArrayList<OrderItems> orderItems) {
@@ -151,6 +211,62 @@ public class OrderCate {
         this.Address = Address;
         this.TotalAmount = TotalAmount;
         this.Status = Status;
+    }
+
+    public String getShipperPhone() {
+        return shipperPhone;
+    }
+
+    public void setShipperPhone(String shipperPhone) {
+        this.shipperPhone = shipperPhone;
+    }
+
+    public int getShipperID() {
+        return shipperID;
+    }
+
+    public void setShipperID(int shipperID) {
+        this.shipperID = shipperID;
+    }
+
+    public String getShipperName() {
+        return shipperName;
+    }
+
+    public void setShipperName(String shipperName) {
+        this.shipperName = shipperName;
+    }
+
+    public Date getShipTime() {
+        return shipTime;
+    }
+
+    public void setShipTime(Date shipTime) {
+        this.shipTime = shipTime;
+    }
+
+    public int getWarrantyStaffID() {
+        return warrantyStaffID;
+    }
+
+    public void setWarrantyStaffID(int warrantyStaffID) {
+        this.warrantyStaffID = warrantyStaffID;
+    }
+
+    public String getWarrantyStaffName() {
+        return warrantyStaffName;
+    }
+
+    public void setWarrantyStaffName(String warrantyStaffName) {
+        this.warrantyStaffName = warrantyStaffName;
+    }
+
+    public Date getWarrantyAssignedDate() {
+        return warrantyAssignedDate;
+    }
+
+    public void setWarrantyAssignedDate(Date warrantyAssignedDate) {
+        this.warrantyAssignedDate = warrantyAssignedDate;
     }
 
     public Date getPrepareTime() {
