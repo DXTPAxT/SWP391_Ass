@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import models.CartBuildPC;
 import models.User;
@@ -78,7 +79,7 @@ public class CardBuildPcController extends HttpServlet {
         }
     }
 
-  private void handleDeposit(HttpServletRequest request, PrintWriter out, CartBuildPCDAO dao, int userID) {
+ private void handleDeposit(HttpServletRequest request, PrintWriter out, CartBuildPCDAO dao, int userID) {
     String idsRaw = request.getParameter("ids");
 
     if (idsRaw == null || idsRaw.trim().isEmpty()) {
@@ -93,45 +94,19 @@ public class CardBuildPcController extends HttpServlet {
         try {
             int cartBuildPCID = Integer.parseInt(idStr.trim());
 
-            List<Integer> categoryIDs = dao.getCategoryIDsInCartBuildPC(cartBuildPCID);
-            List<Integer> warrantyIDs = dao.getWarrantyIDsInCartBuildPC(cartBuildPCID);
+            // Gọi hàm insertOrderFromCart để xử lý đặt cọc và ẩn giỏ
+            boolean success = dao.insertOrderFromCart(cartBuildPCID, userID);
+           
 
-            System.out.println(">>> Đang xử lý giỏ BuildPCID: " + cartBuildPCID);
-            System.out.println(">>> Category IDs: " + categoryIDs);
-            System.out.println(">>> Warranty IDs: " + warrantyIDs);
-
-            if (categoryIDs == null || categoryIDs.size() != 6) {
-                System.out.println(">>> ERROR: CartBuildPCID " + cartBuildPCID + " thiếu thành phần hoặc không hợp lệ.");
-                allSuccess = false;
-                continue;
-            }
-
-            if (warrantyIDs == null || warrantyIDs.size() != 6) {
-                System.out.println(">>> Cảnh báo: Warranty thiếu hoặc không đồng bộ, tự động thêm 0.");
-                while (warrantyIDs.size() < 6) {
-                    warrantyIDs.add(0);
-                }
-            }
-
-            boolean inserted = dao.insertBuildPC2(categoryIDs, warrantyIDs, userID);
-            if (inserted) {
-                dao.deleteCartBuildPC(cartBuildPCID);
-                System.out.println(">>> Insert thành công, giỏ đã xóa.");
-            } else {
-                System.out.println(">>> Insert thất bại cho giỏ: " + cartBuildPCID);
-                allSuccess = false;
-            }
-
-        } catch (Exception ex) {
-            System.err.println(">>> Lỗi khi xử lý giỏ BuildPCID: " + idStr);
-            ex.printStackTrace();
+        } catch (Exception e) {
+            System.err.println(" Lỗi xử lý CartBuildPCID: " + idStr);
+            e.printStackTrace();
             allSuccess = false;
         }
     }
 
     out.print(allSuccess ? "SUCCESS" : "FAIL");
 }
-
 
     @Override
     public String getServletInfo() {
