@@ -116,12 +116,17 @@
                         <i class="fa fa-angle-left pull-right"></i>
                     </span>
                 </a>
-                <ul class="treeview-menu">    
-                    <li><a href="${param.ctx}/OrderAdmin?service=listCate"><i class="fa fa-circle-o"></i>View All Order</a></li>
-                    <li><a href="${param.ctx}/OrderAdmin"><i class="fa fa-circle-o"></i>Pending Order</a></li>
-                    <li><a href="${param.ctx}/OrderBuildPCAdmin"><i class="fa fa-circle-o"></i>Order Category Items</a></li>
+                <ul class="treeview-menu"> 
+                    <li><a href="${param.ctx}/OrderAdminCate?service=listRejected"><i class="fa fa-circle-o"></i>Reject Order</a></li>
+                    <li><a href="${param.ctx}/OrderAdminCate?service=listPending"><i class="fa fa-circle-o"></i>Pending Order</a></li>
+                    <li><a href="${param.ctx}/OrderAdminCate?service=listProcessing"><i class="fa fa-circle-o"></i>In Process Order</a></li>
+                    <li><a href="${param.ctx}/OrderAdminCate?service=listWaitShip"><i class="fa fa-circle-o"></i>Waiting Shipping Order</a></li>
+                    <li><a href="${param.ctx}/OrderAdminCate?service=listOnShipping"><i class="fa fa-circle-o"></i>On Shipping Order</a></li>
+                    <li><a href="${param.ctx}/OrderAdminCate?service=listCompleted"><i class="fa fa-circle-o"></i>Success Order</a></li>
+                    <li><a href="${param.ctx}/OrderAdminCate?service=listWarranty"><i class="fa fa-circle-o"></i>Warranty Order</a></li>
+                    <li><a href="${param.ctx}/OrderAdminCate?service=listPendingWarranty"><i class="fa fa-circle-o"></i>Pending Warranty Order</a></li>
                     <!-- don thay the neu phai doi hang cho khach -->
-                    <li><a href="${param.ctx}/OrderAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert Replacement Order </a></li> 
+                    <li><a href="${param.ctx}/OrderAdminCate?service=insert"><i class="fa fa-circle-o"></i>Insert Replacement Order </a></li> 
                 </ul>
             </li>
             <li class="treeview">
@@ -132,7 +137,7 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">                               
-                    <li><a href="${param.ctx}/OrderAdmin?service=listBuildPC"><i class="fa fa-circle-o"></i>View All Order</a></li>
+                    <li><a href="${param.ctx}/OrderAdmin?service=listBuildPC"><i class="fa fa-circle-o"></i>View Order</a></li>
                     <li><a href="${param.ctx}/OrderAdmin"><i class="fa fa-circle-o"></i>Pending Order</a></li>
                     <li><a href="${param.ctx}/OrderBuildPCAdmin"><i class="fa fa-circle-o"></i>Order Build PC Items</a></li>
                     <!-- don thay the neu phai doi hang cho khach -->

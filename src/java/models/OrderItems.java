@@ -10,12 +10,43 @@ public class OrderItems {
     private int CategoryID;
     private int Quantity;
     private int Price;
-    
+    private String orderCode;
+    private String categoryName;
+    private int inventory;
+    private int queue;
     private ArrayList<OrderDetail> orderDetailList;
 
     public OrderItems() {
     }
 
+    public OrderItems(Categories category, int OrderItemID, int OrderID, int CategoryID, int Quantity, int Price, String orderCode, String categoryName, int inventory, int queue, ArrayList<OrderDetail> orderDetailList) {
+        this.category = category;
+        this.OrderItemID = OrderItemID;
+        this.OrderID = OrderID;
+        this.CategoryID = CategoryID;
+        this.Quantity = Quantity;
+        this.Price = Price;
+        this.orderCode = orderCode;
+        this.categoryName = categoryName;
+        this.inventory = inventory;
+        this.queue = queue;
+        this.orderDetailList = orderDetailList;
+    }
+
+    public OrderItems(int OrderItemID, int OrderID, int CategoryID, int Quantity, int Price, String orderCode, String categoryName, int inventory, int queue, ArrayList<OrderDetail> orderDetailList) {
+        this.OrderItemID = OrderItemID;
+        this.OrderID = OrderID;
+        this.CategoryID = CategoryID;
+        this.Quantity = Quantity;
+        this.Price = Price;
+        this.orderCode = orderCode;
+        this.categoryName = categoryName;
+        this.inventory = inventory;
+        this.queue = queue;
+        this.orderDetailList = orderDetailList;
+    }
+    
+    
     public OrderItems(Categories category, int OrderItemID, int OrderID, int CategoryID, int Quantity, int Price, ArrayList<OrderDetail> orderDetailList) {
         this.category = category;
         this.OrderItemID = OrderItemID;
@@ -105,4 +136,37 @@ public class OrderItems {
     public void setOrderDetailList(ArrayList<OrderDetail> orderDetailList) {
         this.orderDetailList = orderDetailList;
     }
+
+    public String getOrderCode() {
+        return orderCode;
+    }
+
+    public void setOrderCode(String orderCode) {
+        this.orderCode = orderCode;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public int getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(int inventory) {
+        this.inventory = inventory;
+    }
+
+    public int getQueue() {
+        return queue;
+    }
+
+    public void setQueue(int queue) {
+        this.queue = queue;
+    }
+    
 }
