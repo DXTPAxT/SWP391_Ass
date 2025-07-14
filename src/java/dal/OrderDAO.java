@@ -141,6 +141,44 @@ public class OrderDAO extends DBContext {
         return order;
     }
 
+    public ArrayList<OrderCate> getOrdersByCustomerID(int customerID) {
+        ArrayList<OrderCate> orders = new ArrayList<>();
+        String sql = "SELECT * FROM Orders WHERE CustomerID = ? ORDER BY OrderID DESC";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, customerID);
+            ResultSet rs = ps.executeQuery();
+
+            OrderItemDAO orderItemDAO = new OrderItemDAO();
+
+            while (rs.next()) {
+                OrderCate order = new OrderCate();
+                order.setOrderID(rs.getInt("OrderID"));
+                order.setOrderCode(rs.getString("OrderCode"));
+                order.setProduct_Type(rs.getInt("Product_Type"));
+                order.setCustomerID(rs.getInt("CustomerID"));
+                order.setOrderDate(rs.getTimestamp("OrderDate"));
+                order.setAddress(rs.getString("Address"));
+                order.setPhoneNumber(rs.getString("PhoneNumber"));
+                order.setFullName(rs.getString("Fullname"));
+                order.setNote(rs.getString("Note"));
+                order.setPaymentStatusID(rs.getInt("PaymentStatusID"));
+                order.setTotalAmount(rs.getInt("TotalAmount"));
+                order.setStatus(rs.getInt("Status"));
+
+                // Gọi DAO để lấy danh sách OrderItems của OrderID hiện tại
+                ArrayList<OrderItems> items = orderItemDAO.getOrderItemsByOrderID(order.getOrderID());
+                order.setOrderItems(items);
+
+                orders.add(order);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return orders;
+    }
+
     public static void main(String[] args) {
         // 2. Tạo DAO
         OrderDAO dao = new OrderDAO();
@@ -162,5 +200,6 @@ public class OrderDAO extends DBContext {
 
         System.out.println("New Order ID: " + orderId);
         System.out.println(dao.getOrderByID(8));
+        System.out.println(dao.getOrdersByCustomerID(5));
     }
 }

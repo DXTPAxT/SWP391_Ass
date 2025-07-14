@@ -178,6 +178,10 @@
         <servlet-name>OrderServlet</servlet-name>
         <servlet-class>controller.cart.OrderServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>OrderHistoryServlet</servlet-name>
+        <servlet-class>controller.OrderHistoryServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
         <url-pattern>/Demo</url-pattern>
@@ -353,5 +357,9 @@
     <servlet-mapping>
         <servlet-name>OrderServlet</servlet-name>
         <url-pattern>/Order</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderHistoryServlet</servlet-name>
+        <url-pattern>/OrderHistory</url-pattern>
     </servlet-mapping>
 </web-app>
