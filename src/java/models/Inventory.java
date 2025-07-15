@@ -14,18 +14,16 @@ public class Inventory {
     private int inventoryID;
     private int categoryID;
     private int quantity;
-    private boolean restockExpected;
-    private java.util.Date lastUpdated;
+    private boolean isRestocking;
 
     public Inventory() {
     }
 
-    public Inventory(int inventoryID, int categoryID, int quantity, boolean restockExpected, Date lastUpdated) {
+    public Inventory(int inventoryID, int categoryID, int quantity, boolean isRestocking) {
         this.inventoryID = inventoryID;
         this.categoryID = categoryID;
         this.quantity = quantity;
-        this.restockExpected = restockExpected;
-        this.lastUpdated = lastUpdated;
+        this.isRestocking = isRestocking;
     }
 
     public int getInventoryID() {
@@ -52,25 +50,19 @@ public class Inventory {
         this.quantity = quantity;
     }
 
-    public boolean isRestockExpected() {
-        return restockExpected;
+    public boolean isIsRestocking() {
+        return isRestocking;
     }
 
-    public void setRestockExpected(boolean restockExpected) {
-        this.restockExpected = restockExpected;
-    }
-
-    public Date getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public void setLastUpdated(Date lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    public void setIsRestocking(boolean isRestocking) {
+        this.isRestocking = isRestocking;
     }
 
     @Override
     public String toString() {
-        return "Inventory{" + "inventoryID=" + inventoryID + ", categoryID=" + categoryID + ", quantity=" + quantity + ", restockExpected=" + restockExpected + ", lastUpdated=" + lastUpdated + '}';
+        return "Inventory{" + "inventoryID=" + inventoryID + ", categoryID=" + categoryID + ", quantity=" + quantity + ", isRestocking=" + isRestocking + '}';
     }
+
+    
     
 }
