@@ -6,7 +6,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 import models.CartBuildPC;
 import models.User;
@@ -79,34 +78,36 @@ public class CardBuildPcController extends HttpServlet {
         }
     }
 
- private void handleDeposit(HttpServletRequest request, PrintWriter out, CartBuildPCDAO dao, int userID) {
-    String idsRaw = request.getParameter("ids");
+    private void handleDeposit(HttpServletRequest request, PrintWriter out, CartBuildPCDAO dao, int userID) {
+        String idsRaw = request.getParameter("ids");
 
-    if (idsRaw == null || idsRaw.trim().isEmpty()) {
-        out.print("FAIL");
-        return;
-    }
-
-    String[] idArray = idsRaw.split(",");
-    boolean allSuccess = true;
-
-    for (String idStr : idArray) {
-        try {
-            int cartBuildPCID = Integer.parseInt(idStr.trim());
-
-            // Gọi hàm insertOrderFromCart để xử lý đặt cọc và ẩn giỏ
-            boolean success = dao.insertOrderFromCart(cartBuildPCID, userID);
-           
-
-        } catch (Exception e) {
-            System.err.println(" Lỗi xử lý CartBuildPCID: " + idStr);
-            e.printStackTrace();
-            allSuccess = false;
+        if (idsRaw == null || idsRaw.trim().isEmpty()) {
+            out.print("FAIL");
+            return;
         }
-    }
 
-    out.print(allSuccess ? "SUCCESS" : "FAIL");
-}
+        String[] idArray = idsRaw.split(",");
+        boolean allSuccess = true;
+
+        for (String idStr : idArray) {
+            try {
+                int cartBuildPCID = Integer.parseInt(idStr.trim());
+
+                boolean success = dao.insertOrderFromCart(cartBuildPCID, userID);
+                if (!success) {
+                    System.err.println("❌ insertOrderFromCart thất bại cho CartBuildPCID = " + cartBuildPCID);
+                    allSuccess = false;
+                }
+
+            } catch (Exception e) {
+                System.err.println("❌ Lỗi xử lý CartBuildPCID: " + idStr);
+                e.printStackTrace();
+                allSuccess = false;
+            }
+        }
+
+        out.print(allSuccess ? "SUCCESS" : "FAIL");
+    }
 
     @Override
     public String getServletInfo() {
