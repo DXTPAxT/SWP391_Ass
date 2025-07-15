@@ -336,22 +336,22 @@ CREATE TABLE Comments (
     FOREIGN KEY (ParentCommentID) REFERENCES Comments(CommentID)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 31. Order Build PC Items (sửa để dùng CartBuildPCID)
+-- 31. Order Build PC Items
 CREATE TABLE Order_BuildPCItems (
     OrderBuildPCItemID INT PRIMARY KEY AUTO_INCREMENT,
     OrderID INT NOT NULL,
-    CartBuildPCID INT,
+    BuildPCID INT NOT NULL,
     Price INT NOT NULL,
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
-    FOREIGN KEY (CartBuildPCID) REFERENCES Cart_Build_PC(CartBuildPCID) 
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    FOREIGN KEY (BuildPCID) REFERENCES Build_PC(BuildPCID)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 32. Order Build PC Details
 CREATE TABLE Order_BuildPCDetails (
     OrderBuildPCDetailID INT PRIMARY KEY AUTO_INCREMENT,
     OrderBuildPCItemID INT NOT NULL,
     CategoryID INT NOT NULL,
-    WarrantyDetailID INT  NULL,
+    WarrantyDetailID INT NOT NULL,
     Price INT NOT NULL,
     Status INT DEFAULT 1 NOT NULL,
     FOREIGN KEY (OrderBuildPCItemID) REFERENCES Order_BuildPCItems(OrderBuildPCItemID),
