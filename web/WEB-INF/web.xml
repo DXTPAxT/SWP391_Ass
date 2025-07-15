@@ -179,6 +179,10 @@
         <servlet-class>controller.cart.OrderServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>UpdateSaleEventServlet</servlet-name>
+        <servlet-class>controllerAdmin.UpdateSaleEventServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>OrderHistoryServlet</servlet-name>
         <servlet-class>controller.OrderHistoryServlet</servlet-class>
     </servlet>
@@ -365,6 +369,10 @@
     <servlet-mapping>
         <servlet-name>OrderServlet</servlet-name>
         <url-pattern>/Order</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateSaleEventServlet</servlet-name>
+        <url-pattern>/updatesale</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>OrderHistoryServlet</servlet-name>

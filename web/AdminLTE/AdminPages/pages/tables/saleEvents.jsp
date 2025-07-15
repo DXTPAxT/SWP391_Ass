@@ -166,11 +166,12 @@
                                             <th>Start Date</th>
                                             <th>End Date</th>
                                             <th>Discount (%)</th>
-                                           
+                                            <th>Status</th>
                                             <th>Created By</th>
                                             <th>Approved By</th>
-                                            <th>Staff Action</th>
+                                            <th>Action</th> <!-- New header -->
                                         </tr>
+
                                         <c:forEach var="event" items="${saleEvents}">
                                             <tr>
                                                 <td>${event.eventID}</td>
@@ -193,70 +194,40 @@
                                                 <td>${event.discountPercent}</td>
                                                 <td>
                                                     <c:choose>
-                                                        <c:when test="${event.status == 1}">
-                                                            <span class="status-badge status-active">Active</span>
-                                                        </c:when>
-                                                        <c:when test="${event.status == 2}">
-                                                            <span class="status-badge status-pending">Not Started</span>
-                                                        </c:when>
-                                                        <c:when test="${event.status == 3}">
-                                                            <span class="status-badge status-ended">Ended</span>
-                                                        </c:when>
-                                                        <c:when test="${event.status == 0}">
-                                                            <span class="status-badge">Out of Stock</span>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <span class="status-badge">Unknown</span>
-                                                        </c:otherwise>
+                                                        <c:when test="${event.status == 0}">Out of Stock</c:when>
+                                                        <c:when test="${event.status == 1}">Active</c:when>
+                                                        <c:when test="${event.status == 2}">Pending</c:when>
+                                                        <c:when test="${event.status == 3}">Ended</c:when>
+                                                        <c:otherwise>Unknown</c:otherwise>
                                                     </c:choose>
                                                 </td>
 
-                                                <!-- Created By (staff) -->
+                                                <!-- New Action column -->
                                                 <td>
-                                                    <c:forEach var="role" items="${rolee}">
-                                                        <c:if test="${role.userID == event.createdBy}">
-                                                            ${role.fullName} (${role.roleName})
-                                                        </c:if>
-                                                    </c:forEach>
-                                                </td>
+                                                    <a href="${ctx}/viewUser?userID=${event.createdBy}" style="color:#337ab7; display:block;">Created By</a>
 
-                                                <!-- Approved By (admin) -->
-                                                <td>
                                                     <c:choose>
                                                         <c:when test="${event.approvedBy != null}">
-                                                            <c:forEach var="role" items="${rolee}">
-                                                                <c:if test="${role.userID == event.approvedBy}">
-                                                                    ${role.fullName} (${role.roleName})
-                                                                </c:if>
-                                                            </c:forEach>
+                                                            <a href="${ctx}/viewUser?userID=${event.approvedBy}" style="color:#337ab7; display:block;">Approved By</a>
                                                         </c:when>
                                                         <c:otherwise>
-                                                            <span style="color:gray;">Pending</span>
+                                                            <span style="color:gray; display:block;">Waiting Approval</span>
                                                         </c:otherwise>
                                                     </c:choose>
                                                 </td>
-
-                                                <!-- Action -->
                                                 <td>
+                                                    <a href="${ctx}/updatesale?eventID=${event.eventID}" class="btn btn-sm btn-info">Edit</a>
                                                     <c:if test="${event.status == 2}">
-                                                        <form action="updateEventStatus" method="post" style="display:inline;">
+                                                        <form action="${ctx}/approveSaleEvent" method="post" style="display:inline;">
                                                             <input type="hidden" name="eventID" value="${event.eventID}" />
-                                                            <input type="hidden" name="categoryID" value="${event.categoryID}" />
-                                                            <c:choose>
-                                                                <c:when test="${event.stock > 0}">
-                                                                    <button type="submit" name="action" value="approve" class="status-btn" style="background-color: #5cb85c; color: white;">Approve</button>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <button type="submit" name="action" value="outOfStock" class="status-btn" style="background-color: #d9534f; color: white;">Out of Stock</button>
-                                                                    <button type="submit" name="action" value="end" class="status-btn" style="background-color: #f0ad4e; color: white;">End</button>
-                                                                </c:otherwise>
-                                                            </c:choose>
+                                                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
                                                         </form>
                                                     </c:if>
                                                 </td>
                                             </tr>
                                         </c:forEach>
                                     </table>
+
 
                                 </div>
                             </div>
@@ -272,5 +243,5 @@
     <script src="${ctx}/AdminLTE/AdminPages/bootstrap/js/bootstrap.min.js"></script>
     <!-- AdminLTE App -->
     <script src="${ctx}/AdminLTE/AdminPages/dist/js/app.min.js"></script>
-</body>
+</body>                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 </html>

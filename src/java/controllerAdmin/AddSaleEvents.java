@@ -65,24 +65,7 @@ public class AddSaleEvents extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            Blog_CateDAO dao = new Blog_CateDAO();
-            CategoriesDAO daoca = new CategoriesDAO();
-// Lấy danh sách category (có thể dùng từ Inventory hoặc CategoriesDAO nếu cần)
-            List<Categories> categories = daoca.getAllCategoriesPaginated(1, Integer.MAX_VALUE);
-            // Lấy danh sách bài viết đang hoạt động
-            List<Post> activePosts = dao.getPostsByStatus(1);
-
-            // Gửi dữ liệu sang trang thêm sale
-            request.setAttribute("categories", categories);
-            request.setAttribute("activePosts", activePosts);
-            // Chuyển sang trang form thêm sự kiện
-            request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/insertSaleEvents.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Có lỗi khi tải dữ liệu cho form thêm sự kiện.");
-            request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/insertSaleEvents.jsp").forward(request, response);
-        }
+        request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertSaleEvents.jsp").forward(request, response);
     }
 
     /**
@@ -98,40 +81,33 @@ public class AddSaleEvents extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
         try {
-            // Lấy và ép kiểu dữ liệu từ form
             int categoryID = Integer.parseInt(request.getParameter("categoryID"));
             int postID = Integer.parseInt(request.getParameter("postID"));
-            int createdBy = Integer.parseInt(request.getParameter("createdBy"));
-            String approvedByStr = request.getParameter("approvedBy");
-            Integer approvedBy = (approvedByStr != null && !approvedByStr.isEmpty()) ? Integer.parseInt(approvedByStr) : null;
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date startDate = sdf.parse(request.getParameter("startDate"));
-            Date endDate = sdf.parse(request.getParameter("endDate"));
+            Date startDate = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("startDate"));
+            Date endDate = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("endDate"));
+            double discount = Double.parseDouble(request.getParameter("discount"));
 
-            double discountPercent = Double.parseDouble(request.getParameter("discountPercent"));
+            HttpSession session = request.getSession();
+            User staff = (User) session.getAttribute("user");
 
-            // Tạo đối tượng SaleEvents
-            SaleEvents event = new SaleEvents();
+            Blog_CateDAO dao = new Blog_CateDAO();
             event.setCategoryID(categoryID);
             event.setPost_id(postID);
             event.setStartDate(startDate);
             event.setEndDate(endDate);
-            event.setDiscountPercent(discountPercent);
-            event.setStatus(2);
-            event.setCreatedBy(createdBy);
-            event.setApprovedBy(approvedBy);
+            event.setDiscountPercent(discount);
+            event.setStatus(2); // Chờ duyệt
+            event.setCreatedBy(staff.getUserID());
+            event.setApprovedBy(null); // Chưa duyệt
 
-            Blog_CateDAO dao = new Blog_CateDAO();
-            dao.addSaleEvent(event);
+            new Blog_CateDAO.addSaleEvent(event);
 
-            // Chuyển hướng sau khi thêm thành công
-            response.sendRedirect(request.getContextPath() + "/saleevents?categoryID=" + categoryID);
-
+            response.sendRedirect("saleevents");
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Có lỗi xảy ra khi thêm sự kiện khuyến mãi.");
-            request.getRequestDispatcher("/AdminLTE/AdminPages/pages/forms/insertSaleEvents.jsp").forward(request, response);
+            response.sendRedirect("error.jsp");
         }
+
     }
 
     /**
