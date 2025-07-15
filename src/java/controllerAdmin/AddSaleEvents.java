@@ -13,12 +13,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import models.Categories;
 import models.Post;
 import models.SaleEvents;
+import models.User;
 
 /**
  *
@@ -90,17 +92,18 @@ public class AddSaleEvents extends HttpServlet {
             HttpSession session = request.getSession();
             User staff = (User) session.getAttribute("user");
 
-            Blog_CateDAO dao = new Blog_CateDAO();
+            SaleEvents event = new SaleEvents();
             event.setCategoryID(categoryID);
             event.setPost_id(postID);
             event.setStartDate(startDate);
             event.setEndDate(endDate);
             event.setDiscountPercent(discount);
             event.setStatus(2); // Chờ duyệt
-            event.setCreatedBy(staff.getUserID());
+            event.setCreatedBy(staff.getUserId());
             event.setApprovedBy(null); // Chưa duyệt
 
-            new Blog_CateDAO.addSaleEvent(event);
+            Blog_CateDAO dao = new Blog_CateDAO(); 
+            dao.addSaleEvent(event);
 
             response.sendRedirect("saleevents");
         } catch (Exception e) {

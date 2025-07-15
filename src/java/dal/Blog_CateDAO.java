@@ -465,6 +465,31 @@ public class Blog_CateDAO extends DBContext {
         }
         return list;
     }
+   public SaleEvents getSaleEventByID(int eventID) {
+    SaleEvents event = null;
+    String sql = "SELECT * FROM SaleEvents WHERE EventID = ?";
+    try {
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, eventID);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            event = new SaleEvents();
+            event.setEventID(rs.getInt("EventID"));
+            event.setCategoryID(rs.getInt("CategoryID"));
+            event.setPost_id(rs.getInt("Post_id"));
+            event.setStartDate(rs.getDate("StartDate"));
+            event.setEndDate(rs.getDate("EndDate"));
+            event.setDiscountPercent(rs.getDouble("DiscountPercent"));
+            event.setStatus(rs.getInt("Status"));
+            event.setCreatedBy(rs.getInt("CreatedBy"));
+            event.setApprovedBy(rs.getObject("ApprovedBy") != null ? rs.getInt("ApprovedBy") : null);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return event;
+}
+
 public List<SaleEvents> getSaleEventsByCategory(int categoryID) {
         List<SaleEvents> list = new ArrayList<>();
         String sql = "SELECT * FROM SaleEvents WHERE CategoryID = ?";
