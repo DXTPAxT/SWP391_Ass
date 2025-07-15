@@ -143,7 +143,7 @@ public class OrderDAO extends DBContext {
 
     public ArrayList<OrderCate> getOrdersByCustomerID(int customerID) {
         ArrayList<OrderCate> orders = new ArrayList<>();
-        String sql = "SELECT * FROM Orders WHERE CustomerID = ? ORDER BY OrderID DESC";
+        String sql = "SELECT * FROM Orders WHERE CustomerID = ? AND Product_Type = 0 ORDER BY OrderID DESC";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, customerID);
