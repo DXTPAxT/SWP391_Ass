@@ -1,6 +1,11 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%
+    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+    java.util.Calendar cal = java.util.Calendar.getInstance();
+    models.OrderCate orderObj = (models.OrderCate) request.getAttribute("order");
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -55,7 +60,7 @@
 
             .card-right {
                 flex: 0 0 70%;
-                max-width: 70%;
+                max-width: 100%;
             }
 
             /* ===== ORDER TRACKING ===== */
@@ -227,9 +232,11 @@
                                     <table class="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th>ProductID</th>
+                                                <th>Product Code</th>
                                                 <th>Unit Price</th>
                                                 <th>Warranty Price</th>
+                                                <th>Warranty Period</th>
+                                                <th>Warranty desc</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
@@ -237,14 +244,28 @@
                                         <tbody>
                                             <c:forEach var="detail" items="${item.orderDetailList}">
                                                 <tr>
-                                                    <td>${detail.productID}</td>
+                                                    <td>${empty detail.product.productCode ? 'Not Prepared' : detail.product.productCode}</td>
                                                     <td><fmt:formatNumber value="${detail.unitPrice}" type="number" groupingUsed="true"/> VND</td>
                                                     <td><fmt:formatNumber value="${detail.warrantyPrice}" type="number" groupingUsed="true"/> VND</td>
-                                                    <td>${detail.status}</td>
+                                                    <td>${detail.warranty.warrantyPeriod} Months</td>   
+                                                    <td>${detail.warranty.description} Months</td>
                                                     <td>
-                                                        <c:if test="${detail.status == 1}">
-                                                            <a href="#" class="btn btn-primary mt-0">Activate Warranty</button>
-                                                            </c:if>
+                                                        <c:choose>
+                                                            <c:when test="${detail.product.status == 0}">Delivered</c:when>
+                                                            <c:when test="${detail.product.status == 1}">Not Prepared Yet</c:when>
+                                                            <c:when test="${detail.product.status == 2}">Under Warranty</c:when>
+                                                            <c:otherwise>Preparing</c:otherwise>
+                                                        </c:choose>
+                                                    </td>
+                                                    <td>
+                                                        <c:choose>
+                                                            <c:when test="${order.orderStatus.statusID >= 5 && detail.product.status == 0}">
+                                                                <a href="#" class="btn btn-primary mt-0">Activate Warranty</a>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <button class="btn btn-secondary mt-0" disabled>Activate Warranty</button>
+                                                            </c:otherwise>
+                                                        </c:choose>
                                                     </td>
                                                 </tr>
                                             </c:forEach>

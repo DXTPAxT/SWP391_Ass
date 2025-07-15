@@ -5,6 +5,8 @@ public class OrderDetail {
     private int OrderDetailID;
     private int OrderItemID;
     private int ProductID;
+    private Products product;
+    private WarrantyDetails warranty;
     private int WarrantyDetailID; 
     private int UnitPrice;
     private int WarrantyPrice;
@@ -87,6 +89,20 @@ public class OrderDetail {
     public void setStatus(int Status) {
         this.Status = Status;
     }
-    
-    
+
+    public Products getProduct() {
+        return product;
+    }
+
+    public void setProduct(Products product) {
+        this.product = product;
+    }
+
+    public WarrantyDetails getWarranty() {
+        return warranty;
+    }
+
+    public void setWarranty(WarrantyDetails warranty) {
+        this.warranty = warranty;
+    }
 }

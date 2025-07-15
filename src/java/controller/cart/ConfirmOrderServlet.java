@@ -162,6 +162,9 @@ public class ConfirmOrderServlet extends HttpServlet {
                 session.setAttribute("toast", "Create order failed!");
                 forwardBackToCheckout(request, response, cartItems, receiverName, phoneNumber, address, message, subTotal, null);
             }
+            for (CartItem cartItem : cartItems) {
+                cartDao.deleteCartItem(cartItem.getCartItemID());
+            }
 
         } catch (Exception e) {
             session.setAttribute("toastType", "error");
