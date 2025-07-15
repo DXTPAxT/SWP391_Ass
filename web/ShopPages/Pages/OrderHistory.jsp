@@ -77,7 +77,6 @@
                 <c:if test="${not empty orders}">
                     <div class="container">
                         <h2 class="text-center" style="margin-bottom: 30px;">Order History</h2>
-
                         <c:forEach var="order" items="${orders}">
                             <div class="panel panel-default" style="margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-radius: 8px;">
                                 <div class="panel-heading" style="background-color: #f5f5f5; border-bottom: 1px solid #ddd; border-radius: 8px 8px 0 0;">
