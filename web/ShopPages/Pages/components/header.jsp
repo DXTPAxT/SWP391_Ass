@@ -72,6 +72,7 @@
                                                     <a href="CardBuildPc">CartPC</a>
                                                 </div>
                                             </li>
+                                            <li><a href="${pageContext.request.contextPath}/OrderHistory"><i class="fa fa-list-alt"></i> Order history</a></li>
                                             <li><a href="${pageContext.request.contextPath}/User?service=myAccount"><i class="fa fa-user"></i> Account</a></li>
                                             </c:if>
 

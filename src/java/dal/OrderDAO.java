@@ -4,15 +4,17 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Random;
 import models.OrderCate; // Đảm bảo đã có class OrderCate
+import models.OrderItems;
 
 public class OrderDAO extends DBContext {
 
-    // Hàm tạo order và trả về OrderID vừa tạo, trả về -1 nếu lỗi
+// Hàm tạo order và trả về OrderID vừa tạo, trả về -1 nếu lỗi
     public int createOrderAndReturnId(OrderCate order) {
-        String sql = "INSERT INTO Orders (OrderCode, Product_Type, CustomerID, Address, FullName, PhoneNumber, TotalAmount, PaymentStatusID, Status) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Orders (OrderCode, Product_Type, CustomerID, Address, FullName, PhoneNumber, TotalAmount, PaymentStatusID, Status, Note) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setObject(1, order.getOrderCode());
             ps.setObject(2, order.getProduct_Type());
@@ -21,8 +23,9 @@ public class OrderDAO extends DBContext {
             ps.setString(5, order.getFullName());
             ps.setString(6, order.getPhoneNumber());
             ps.setInt(7, order.getTotalAmount());
-            ps.setInt(8, order.getPaymentStatus());
+            ps.setInt(8, order.getPaymentStatusID());
             ps.setInt(9, order.getStatus());
+            ps.setString(10, order.getNote()); // Thêm Note
             int affectedRows = ps.executeUpdate();
             if (affectedRows > 0) {
                 try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -75,7 +78,7 @@ public class OrderDAO extends DBContext {
           PhoneNumber,
           TotalAmount,
           Status,
-          PaymentStatus
+          PaymentStatusID
         FROM Orders
         WHERE OrderID = ?
     """;
@@ -95,7 +98,7 @@ public class OrderDAO extends DBContext {
                     order.setPhoneNumber(rs.getString("PhoneNumber"));
                     order.setTotalAmount(rs.getInt("TotalAmount"));
                     order.setStatus(rs.getInt("Status"));
-                    order.setPaymentStatus(rs.getInt("PaymentStatus"));
+                    order.setPaymentStatusID(rs.getInt("PaymentStatusID"));
                     return order;
                 }
             }
@@ -103,6 +106,77 @@ public class OrderDAO extends DBContext {
             e.printStackTrace();
         }
         return null; // not found
+    }
+
+    public OrderCate getOrderCateByID(int orderID) {
+        OrderCate order = null;
+        String sql = "SELECT * FROM Orders WHERE OrderID = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, orderID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                order = new OrderCate();
+                order.setOrderID(rs.getInt("OrderID"));
+                order.setOrderCode(rs.getString("OrderCode"));
+                order.setProduct_Type(rs.getInt("Product_Type"));
+                order.setCustomerID(rs.getInt("CustomerID"));
+                order.setOrderDate(rs.getTimestamp("OrderDate"));
+                order.setAddress(rs.getString("Address"));
+                order.setPhoneNumber(rs.getString("PhoneNumber"));
+                order.setFullName(rs.getString("Fullname"));
+                order.setNote(rs.getString("Note"));
+                order.setPaymentStatusID(rs.getInt("PaymentStatusID"));
+                order.setTotalAmount(rs.getInt("TotalAmount"));
+                order.setStatus(rs.getInt("Status"));
+
+                // Gọi OrderItemDAO để lấy danh sách OrderItems kèm OrderDetail
+                OrderItemDAO orderItemDAO = new OrderItemDAO();
+                ArrayList<OrderItems> items = orderItemDAO.getOrderItemsByOrderID(orderID);
+                order.setOrderItems(items);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return order;
+    }
+
+    public ArrayList<OrderCate> getOrdersByCustomerID(int customerID) {
+        ArrayList<OrderCate> orders = new ArrayList<>();
+        String sql = "SELECT * FROM Orders WHERE CustomerID = ? ORDER BY OrderID DESC";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, customerID);
+            ResultSet rs = ps.executeQuery();
+
+            OrderItemDAO orderItemDAO = new OrderItemDAO();
+
+            while (rs.next()) {
+                OrderCate order = new OrderCate();
+                order.setOrderID(rs.getInt("OrderID"));
+                order.setOrderCode(rs.getString("OrderCode"));
+                order.setProduct_Type(rs.getInt("Product_Type"));
+                order.setCustomerID(rs.getInt("CustomerID"));
+                order.setOrderDate(rs.getTimestamp("OrderDate"));
+                order.setAddress(rs.getString("Address"));
+                order.setPhoneNumber(rs.getString("PhoneNumber"));
+                order.setFullName(rs.getString("Fullname"));
+                order.setNote(rs.getString("Note"));
+                order.setPaymentStatusID(rs.getInt("PaymentStatusID"));
+                order.setTotalAmount(rs.getInt("TotalAmount"));
+                order.setStatus(rs.getInt("Status"));
+
+                // Gọi DAO để lấy danh sách OrderItems của OrderID hiện tại
+                ArrayList<OrderItems> items = orderItemDAO.getOrderItemsByOrderID(order.getOrderID());
+                order.setOrderItems(items);
+
+                orders.add(order);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return orders;
     }
 
     public static void main(String[] args) {
@@ -118,12 +192,14 @@ public class OrderDAO extends DBContext {
         order.setFullName("John Doe");
         order.setPhoneNumber("0123456789");
         order.setTotalAmount(5000000);
-        order.setPaymentStatus(1);
+        order.setPaymentStatusID(1);
         order.setStatus(1);
 
         // 4. Gọi hàm insert và lấy ID
         int orderId = dao.createOrderAndReturnId(order);
 
         System.out.println("New Order ID: " + orderId);
+        System.out.println(dao.getOrderByID(8));
+        System.out.println(dao.getOrdersByCustomerID(5));
     }
 }

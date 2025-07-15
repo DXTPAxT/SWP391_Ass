@@ -879,21 +879,29 @@ INSERT INTO WarrantyDetails (WarrantyID, BrandComID, Price, Status) VALUES
 
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
-VALUES ('OR001', 0, 5, '2025-04-27 05:34:02', N'Customer 2 Address #49', N'Nguyen Van A', '0123456789', 7632869, 1, 1);
+VALUES ('OR001', 0, 5, '2025-04-27 05:34:02', N'Customer 2 Address #49', N'Nguyen Van A', '0123456789', 7632869, 3, 1);
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
-VALUES ('OR002', 0, 5, '2025-04-27 05:34:02', N'Customer 2 Address #49', N'Nguyen Van A', '0123456789', 7632869, 1, 1);
+VALUES ('OR002', 0, 5, '2025-04-27 05:34:02', N'Customer 2 Address #49', N'Nguyen Van A', '0123456789', 7632869, 3, 1);
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
-VALUES ('OR002', 1,5, '2024-12-11 05:34:02', N'Customer 2 Address #50', N'Le Thi B', '0987654321', 9077684, 1, 2);
+VALUES ('OR002', 1,5, '2024-12-11 05:34:02', N'Customer 2 Address #50', N'Le Thi B', '0987654321', 9077684, 3, 2);
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
-VALUES ('OR003', 0, 6, '2024-12-11 05:34:02', N'Customer 2 Address #50', N'Pham Van C', '0367890123', 9077684, 1, 2);
+VALUES ('OR003', 0, 6, '2024-12-11 05:34:02', N'Customer 2 Address #50', N'Pham Van C', '0367890123', 9077684, 3, 2);
+
+INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
+VALUES ('OR004', 0, 6, '2024-12-11 05:34:02', N'Customer 2 Address #50', N'Pham Van C', '0367890123', 9077684, 0, 2);
+
+INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
+VALUES ('OR004', 0, 6, '2024-12-11 05:34:02', N'Customer 2 Address #50', N'Pham Van C', '0367890123', 9077684, 1, 2);
+
+INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
+VALUES ('OR004', 0, 6, '2024-12-11 05:34:02', N'Customer 2 Address #50', N'Pham Van C', '0367890123', 9077684, 2, 2);
 
 -- Insert data into CartItems
 INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (5, 16, 6, 1, 1);
 INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (5, 12, 5, 1, 1);
-INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (5, 16, 6, 1, 1);
 INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (5, 71, 12, 1, 1);
 INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (5, 12, 1, 1, 0);
 
@@ -909,6 +917,11 @@ INSERT INTO OrderItems (OrderID, CategoryID, Quantity, Price) VALUES (2, 42, 2, 
 INSERT INTO OrderItems (OrderID, CategoryID, Quantity, Price) VALUES (4, 31, 1, 2619488);
 INSERT INTO OrderItems (OrderID, CategoryID, Quantity, Price) VALUES (4, 56, 1, 1030626);
 INSERT INTO OrderItems (OrderID, CategoryID, Quantity, Price) VALUES (4, 60, 2, 1049969);
+INSERT INTO OrderItems (OrderID, CategoryID, Quantity, Price) VALUES (5, 60, 2, 1049969);
+INSERT INTO OrderItems (OrderID, CategoryID, Quantity, Price) VALUES (6, 60, 2, 1049969);
+INSERT INTO OrderItems (OrderID, CategoryID, Quantity, Price) VALUES (6, 1, 2, 1049969);
+INSERT INTO OrderItems (OrderID, CategoryID, Quantity, Price) VALUES (7, 60, 2, 1049969);
+INSERT INTO OrderItems (OrderID, CategoryID, Quantity, Price) VALUES (7, 1, 2, 1049969);
 
 -- Insert valid OrderDetails data
 INSERT INTO OrderDetails (OrderItemID, ProductID, WarrantyDetailID, UnitPrice, WarrantyPrice, Status) VALUES (1, 1, 1, 7388968, 160277, 1);
@@ -1023,17 +1036,18 @@ Ideal temps: CPU < 85°C, GPU < 80°C.',
 'Highlights from the NVIDIA RTX 50 series graphics card launch event.', 1);
 
 INSERT INTO OrderPreparements (UserID, OrderID, PrepareTime) VALUES 
-(2, 1, CURDATE()), 
-(2, 2, CURDATE()), 
+(2, 1, CURDATE()),  
+(2, 2, CURDATE()),  
 (2, 3, CURDATE()),
-(2, 4, CURDATE());
-
+(2, 4, CURDATE()),
+(2, 5, CURDATE()),
+(2, 7, CURDATE());
 
 INSERT INTO Shipping (OrderID, ShipperID, ShippingStatus, ShipTime) VALUES 
-(1, 4, 'On going', CURDATE()),
-(2, 4, 'On going', CURDATE()),
-(3, 4, 'On going', CURDATE()),
-(4, 4, 'On going', CURDATE());
+(1, 4, 1, CURDATE()),
+(2, 4, 1, CURDATE()),
+(3, 4, 1, CURDATE()),
+(4, 4, 1, CURDATE());
 
 
 

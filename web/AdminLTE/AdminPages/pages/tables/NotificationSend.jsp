@@ -94,6 +94,10 @@
                                     <label for="title" style="font-size: 1.5em; font-weight: bold;">Title:</label>
                                     <input type="text" class="form-control" id="title" name="title" required style="font-size: 1.5em; height: 48px; font-weight: bold;" />
                                 </div>
+                                <div class="form-group">
+                                    <label for="message" style="font-size: 1.2em; font-weight: bold;">Message:</label>
+                                    <textarea class="form-control" id="message" name="message" required style="font-size: 1.2em; height: 80px;"></textarea>
+                                </div>
                                 <button type="submit" class="btn btn-primary">Send</button>
                                 <a href="${ctx}/NotificationServlet?service=list" class="btn btn-default">Cancel</a>
                             </form>

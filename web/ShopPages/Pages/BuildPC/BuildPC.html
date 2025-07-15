@@ -450,13 +450,12 @@
             if (!confirm("Bạn có chắc chắn muốn reset tất cả các linh kiện đã chọn không?"))
                 return;
 
+            // delete localStorage
             localStorage.removeItem("selectedComponents");
 
             for (let id = 2; id <= 7; id++) {
                 const meta = document.getElementById(`meta-${id}`);
                 const price = document.getElementById(`price-${id}`);
-                const warranty = document.getElementById(`warranty-${id}`);
-                const total = document.getElementById(`total-${id}`);
                 const removeBtn = document.getElementById(`remove-${id}`);
                 const img = document.getElementById(`img-${id}`);
 
@@ -464,20 +463,18 @@
                     meta.innerText = "";
                 if (price)
                     price.innerText = "";
-                if (warranty)
-                    warranty.innerText = "";
-                if (total)
-                    total.innerText = "";
                 if (removeBtn)
                     removeBtn.style.display = "none";
                 if (img)
                     img.src = img.getAttribute("data-default");
             }
 
+            // Reset mỏny
+            totalDisplay.innerText = "0";
+
+            // Reset  JS
             for (let key in selectedComponents)
                 delete selectedComponents[key];
-
-            updateTotal();
         }
 
     </script>
@@ -503,24 +500,21 @@
                 image.src = `${ctx}/ShopPages/Pages/images/anhproduct/${imgURL}`;
             }
 
-            const compID = parseInt(componentID);
-
-            selectedComponents[compID] = {
+            selectedComponents[componentID] = {
                 categoryID: realCategoryID,
                 categoryName,
                 brandName,
-                price: parseInt(price),
-                imgURL: imgURL,
+                price,
+                imgURL,
                 warrantyDesc,
-                warrantyPrice: parseInt(warrantyPrice) || 0,
-                warrantyDetailID: parseInt(warrantyDetailID) || 0
+                warrantyPrice,
+                warrantyDetailID 
             };
 
             localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
             updateTotal();
             document.getElementById("customModal").style.display = "none";
             document.body.style.overflow = "";
-
         }
 
 
@@ -539,37 +533,24 @@
 
 
 // Delete Component
-
         function removeComponent(componentID) {
-            if (!confirm("You Wanto delete this item?"))
+            const confirmDelete = confirm("Are you sure you want to remove this component?");
+            if (!confirmDelete)
                 return;
 
             delete selectedComponents[componentID];
             localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
 
-            const meta = document.getElementById(`meta-${componentID}`);
-            const price = document.getElementById(`price-${componentID}`);
-            const warranty = document.getElementById(`warranty-${componentID}`);
-            const total = document.getElementById(`total-${componentID}`);
-            const removeBtn = document.getElementById(`remove-${componentID}`);
-            const img = document.getElementById(`img-${componentID}`);
+            document.getElementById(`meta-${componentID}`).innerText = "";
+            document.getElementById(`price-${componentID}`).innerText = "";
+            document.getElementById(`remove-${componentID}`).style.display = 'none';
 
-            if (meta)
-                meta.innerText = "";
-            if (price)
-                price.innerText = "";
-            if (warranty)
-                warranty.innerText = "";
-            if (total)
-                total.innerText = "";
-            if (removeBtn)
-                removeBtn.style.display = "none";
-            if (img)
-                img.src = img.getAttribute("data-default");
+            // auto resert
+            const img = document.getElementById(`img-${componentID}`);
+            img.src = img.getAttribute("data-default");
 
             updateTotal();
         }
-
 
 
 
@@ -648,9 +629,7 @@
                         body.innerHTML = "<p style='color:red;'>Lỗi khi tải danh sách PC</p>";
                     });
         }
-        function loadPC(buildPCID, imgMain, imgCPU, imgGPU, imgRAM, imgSSD, imgCase,
-                mainWarrantyID, cpuWarrantyID, gpuWarrantyID, ramWarrantyID, ssdWarrantyID, caseWarrantyID) {
-
+        function loadPC(buildPCID, imgMain, imgCPU, imgGPU, imgRAM, imgSSD, imgCase) {
             fetch(`${ctx}/BuildPC?service=loadBuildPC&buildPCID=${buildPCID}`)
                     .then(res => res.text())
                     .then(data => {
@@ -659,60 +638,61 @@
 
                         items.forEach(line => {
                             const parts = line.split('|');
-                            if (parts.length < 9)
+                            if (parts.length !== 6) {
+                                console.error("Lỗi dữ liệu thiếu thông tin:", line);
                                 return;
+                            }
 
-                            const [
-                                categoryID, categoryName, brandName, price, imageURL, componentID,
-                                warrantyDesc, warrantyPrice, warrantyDetailID
-                            ] = parts;
+                            const [categoryID, categoryName, brandName, price, imageURL, componentID] = parts;
 
-                            const compID = parseInt(componentID);
-                            components[compID] = {
+                            let img = imageURL || "default.jpg";
+                            if (componentID == 2 && imgMain)
+                                img = imgMain;
+                            if (componentID == 3 && imgCPU)
+                                img = imgCPU;
+                            if (componentID == 4 && imgGPU)
+                                img = imgGPU;
+                            if (componentID == 5 && imgRAM)
+                                img = imgRAM;
+                            if (componentID == 6 && imgSSD)
+                                img = imgSSD;
+                            if (componentID == 7 && imgCase)
+                                img = imgCase;
+
+                            components[componentID] = {
                                 categoryID,
                                 categoryName,
                                 brandName,
                                 price: parseInt(price),
-                                imgURL: imageURL,
-                                warrantyDesc,
-                                warrantyPrice: parseInt(warrantyPrice) || 0,
-                                warrantyDetailID: parseInt(warrantyDetailID) || 0
+                                imgURL: img
                             };
-
                         });
 
-                        // Gán vào selectedComponents
+                        // Lưu vào selectedComponents
                         for (let id = 2; id <= 7; id++) {
                             const comp = components[id];
                             if (comp) {
-                                comp.warrantyDetailID = [
-                                    mainWarrantyID, cpuWarrantyID, gpuWarrantyID,
-                                    ramWarrantyID, ssdWarrantyID, caseWarrantyID
-                                ][id - 2] || 0;
-
                                 document.getElementById(`meta-${id}`).innerText = `${comp.categoryName} - ${comp.brandName}`;
-                                document.getElementById(`price-${id}`).innerText = `Sản phẩm: ${comp.price.toLocaleString()}₫`;
-                                document.getElementById(`warranty-${id}`).innerText = comp.warrantyDesc
-                                        ? `Bảo hành: ${comp.warrantyDesc} - ${comp.warrantyPrice.toLocaleString()}₫`
-                                        : "Bảo hành: Không chọn";
-                                document.getElementById(`total-${id}`).innerText =
-                                        `Tổng: ${(comp.price + comp.warrantyPrice).toLocaleString()}₫`;
-                                document.getElementById(`img-${id}`).src =
-                                        `${ctx}/ShopPages/Pages/images/anhproduct/${comp.imgURL}`;
-                                document.getElementById(`remove-${id}`).style.display = "inline-block";
+                                document.getElementById(`price-${id}`).innerText = `${comp.price.toLocaleString()}₫`;
+                                document.getElementById(`remove-${id}`).style.display = 'inline-block';
+                                const img = document.getElementById(`img-${id}`);
+                                img.src = `${ctx}/ShopPages/Pages/images/anhproduct/${comp.imgURL}`;
+                                selectedComponents[id] = {
+                                    categoryID: comp.categoryID,
+                                    categoryName: comp.categoryName,
+                                    brandName: comp.brandName,
+                                    price: comp.price,
+                                    imgURL: comp.imgURL
+                                };
                             }
                         }
 
-                        Object.assign(selectedComponents, components);
                         localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
-
                         updateTotal();
-                        document.getElementById("pcListModal").style.display = "none";
+                        document.getElementById("pcListModal").style.display = 'none';
                     })
                     .catch(() => alert("❌ Lỗi khi tải cấu hình"));
         }
-
-
     </script>
     <!-- Add to cart -->
     <script>
@@ -763,32 +743,32 @@
     </script>
     <!-- Choose Warranty -->
     <script>
-        function chooseProductWithWarranty(componentID, realCategoryID, categoryName, brandName, price, imgURL, radioCategoryID) {
-            const selectedRadio = document.querySelector(`input[name="warranty-${radioCategoryID}"]:checked`);
+function chooseProductWithWarranty(componentID, realCategoryID, categoryName, brandName, price, imgURL, radioCategoryID) {
+    const selectedRadio = document.querySelector(`input[name="warranty-${radioCategoryID}"]:checked`);
+    
+    let warrantyDetailID = 0;
+    let warrantyDesc = "Không chọn";
+    let warrantyPrice = 0;
 
-            let warrantyDetailID = 0;
-            let warrantyDesc = "Không chọn";
-            let warrantyPrice = 0;
+    if (selectedRadio) {
+        warrantyDetailID = parseInt(selectedRadio.value);
 
-            if (selectedRadio) {
-                warrantyDetailID = parseInt(selectedRadio.value);
+        const label = selectedRadio.nextElementSibling;
+        const labelText = label.innerText || "";
 
-                const label = selectedRadio.nextElementSibling;
-                const labelText = label.innerText || "";
+        // Lấy mô tả trước dấu '-'
+        const descParts = labelText.split("-");
+        warrantyDesc = descParts[0]?.trim() || "Không rõ";
 
-                // Lấy mô tả trước dấu '-'
-                const descParts = labelText.split("-");
-                warrantyDesc = descParts[0]?.trim() || "Không rõ";
-
-                // Bóc phần giá
-                const priceMatch = labelText.match(/([\d.,]+)₫/);
-                if (priceMatch) {
-                    warrantyPrice = parseInt(priceMatch[1].replace(/[,\.]/g, ""));
-                }
-            }
-
-            selectProduct(componentID, realCategoryID, categoryName, brandName, price, imgURL, warrantyDesc, warrantyPrice, warrantyDetailID);
+        // Bóc phần giá
+        const priceMatch = labelText.match(/([\d.,]+)₫/);
+        if (priceMatch) {
+            warrantyPrice = parseInt(priceMatch[1].replace(/[,\.]/g, ""));
         }
+    }
+
+    selectProduct(componentID, realCategoryID, categoryName, brandName, price, imgURL, warrantyDesc, warrantyPrice, warrantyDetailID);
+}
 
     </script>
 </body>

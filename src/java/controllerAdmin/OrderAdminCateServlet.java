@@ -4,7 +4,7 @@
  */
 package controllerAdmin;
 
-import dalAdmin.OrderAdminDAO;
+import dalAdmin.OrderCateAdminDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,12 +13,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import models.OrderCate;
+import models.OrderItems;
 
 /**
  *
  * @author Admin
  */
-public class OrderAdminServlet extends HttpServlet {
+public class OrderAdminCateServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -30,18 +31,67 @@ public class OrderAdminServlet extends HttpServlet {
                 service = "listCate";
             }
 
-            OrderAdminDAO dao = new OrderAdminDAO();
+            OrderCateAdminDAO dao = new OrderCateAdminDAO();
             if (service.equals("listCate")) {
-                List<OrderCate> orders = dao.getAllOrderItems();
+                List<OrderCate> orders = dao.getOrdersByStatus(7);
                 request.setAttribute("orders", orders);
-                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewAllOrderCate.jsp").forward(request, response);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/Order/viewAllOrderCate.jsp").forward(request, response);
 
-            }else if (service.equals("listBuildPC")) {
-                List<OrderCate> orders = dao.getAllOrderBuildPC();
+            } else if (service.equals("listRejected")) {
+                List<OrderCate> orders = dao.getOrdersByStatus(0);
                 request.setAttribute("orders", orders);
-                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewOrder.jsp").forward(request, response);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/Order/viewOrderCateRejected.jsp").forward(request, response);
 
+            } else if (service.equals("listPending")) {
+                List<OrderCate> orders = dao.getOrdersByStatus(1);
+                request.setAttribute("orders", orders);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/Order/viewOrderCatePending.jsp").forward(request, response);
+
+            } else if (service.equals("listProcessing")) {
+                List<OrderCate> orders = dao.getOrdersByStatus(2);
+                request.setAttribute("orders", orders);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/Order/viewOrderCateProcessing.jsp").forward(request, response);
+
+            } else if (service.equals("listWaitShip")) {
+                List<OrderCate> orders = dao.getOrdersByStatus(3);
+                request.setAttribute("orders", orders);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/Order/viewOrderCateWaitShip.jsp").forward(request, response);
+
+            } else if (service.equals("listOnShipping")) {
+                List<OrderCate> orders = dao.getOrdersByStatus(4);
+                request.setAttribute("orders", orders);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/Order/viewOrderCateOnShipping.jsp").forward(request, response);
+
+            } else if (service.equals("listCompleted")) {
+                List<OrderCate> orders = dao.getOrdersByStatus(5);
+                request.setAttribute("orders", orders);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/Order/viewOrderCateCompleted.jsp").forward(request, response);
+
+            } else if (service.equals("listPendingWarranty")) {
+                List<OrderCate> orders = dao.getOrdersByStatus(6);
+                request.setAttribute("orders", orders);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/Order/viewOrderCatePendingWarranty.jsp").forward(request, response);
+
+            } else if (service.equals("listWarranty")) {
+                List<OrderCate> orders = dao.getOrdersByStatus(7);
+                request.setAttribute("orders", orders);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/Order/viewOrderCateWarranty.jsp").forward(request, response);
+            } else if (service.equals("updateStatus")) {
+                try {
+                    int orderID = Integer.parseInt(request.getParameter("orderID"));
+                    int status = Integer.parseInt(request.getParameter("status"));
+
+                    dao.updateOrderStatus(orderID, status); // Gọi DAO cập nhật
+
+                    // Redirect hoặc forward sau khi cập nhật thành công
+                    response.sendRedirect("OrderAdminCate?service=listPending");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order update request.");
+                }
             }
+
+
             /*else if (service.equals("update")) {
                 String submit = request.getParameter("submit");
 
@@ -73,11 +123,10 @@ public class OrderAdminServlet extends HttpServlet {
                     }
                 }
             }*/
-
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *

@@ -155,7 +155,6 @@ public class NotificationAdminDAO extends DBAdminContext {
     
     public boolean addNotification(Notification notification) {
         String sql = "INSERT INTO Notifications (UserID, SenderID, Title, Message, IsRead, CreatedAt) VALUES (?, ?, ?, ?, ?, ?)";
-        
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, notification.getUserID());
@@ -164,10 +163,17 @@ public class NotificationAdminDAO extends DBAdminContext {
             ps.setString(4, notification.getMessage());
             ps.setBoolean(5, notification.isIsRead());
             ps.setTimestamp(6, notification.getCreatedAt());
-            
-            return ps.executeUpdate() > 0;
+            boolean result = ps.executeUpdate() > 0;
+            if (!result) {
+                System.err.println("[addNotification] Insert failed: " + notification);
+            }
+            return result;
         } catch (SQLException e) {
-            System.out.println("Error adding notification: " + e.getMessage());
+            System.err.println("[addNotification] SQLException: " + e.getMessage());
+            System.err.println("[addNotification] Notification: " + notification);
+        } catch (Exception ex) {
+            System.err.println("[addNotification] Exception: " + ex.getMessage());
+            System.err.println("[addNotification] Notification: " + notification);
         }
         return false;
     }

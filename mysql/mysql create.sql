@@ -182,7 +182,7 @@ CREATE TABLE Shipping (
     ShippingID INT PRIMARY KEY AUTO_INCREMENT,
     OrderID INT NOT NULL,
     ShipperID INT NOT NULL,
-    ShippingStatus VARCHAR(50) NOT NULL,
+    ShippingStatus int default 0 NOT NULL,
     ShipTime DATE NOT NULL,
     Note TEXT DEFAULT NULL,
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
@@ -336,22 +336,22 @@ CREATE TABLE Comments (
     FOREIGN KEY (ParentCommentID) REFERENCES Comments(CommentID)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 31. Order Build PC Items
+-- 31. Order Build PC Items (sửa để dùng CartBuildPCID)
 CREATE TABLE Order_BuildPCItems (
     OrderBuildPCItemID INT PRIMARY KEY AUTO_INCREMENT,
     OrderID INT NOT NULL,
-    BuildPCID INT NOT NULL,
+    CartBuildPCID INT,
     Price INT NOT NULL,
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
-    FOREIGN KEY (BuildPCID) REFERENCES Build_PC(BuildPCID)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    FOREIGN KEY (CartBuildPCID) REFERENCES Cart_Build_PC(CartBuildPCID) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 32. Order Build PC Details
 CREATE TABLE Order_BuildPCDetails (
     OrderBuildPCDetailID INT PRIMARY KEY AUTO_INCREMENT,
     OrderBuildPCItemID INT NOT NULL,
     CategoryID INT NOT NULL,
-    WarrantyDetailID INT NOT NULL,
+    WarrantyDetailID INT  NULL,
     Price INT NOT NULL,
     Status INT DEFAULT 1 NOT NULL,
     FOREIGN KEY (OrderBuildPCItemID) REFERENCES Order_BuildPCItems(OrderBuildPCItemID),
@@ -380,3 +380,12 @@ CREATE TABLE Notifications (
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (SenderID) REFERENCES Users(UserID)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- 35. WarrantyAssignments
+CREATE TABLE WarrantyAssignments (
+    OrderID INT NOT NULL,
+    UserID INT NOT NULL,
+    AssignedDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (OrderID, UserID),
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);

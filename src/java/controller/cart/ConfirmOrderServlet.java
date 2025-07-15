@@ -2,6 +2,7 @@ package controller.cart;
 
 import dal.CartItemDAO;
 import dal.OrderDAO;
+import dal.OrderDetailDAO;
 import dal.OrderItemDAO;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import models.CartItem;
 import models.OrderCate;
+import models.OrderDetail;
 import models.OrderItems;
 import models.User;
 import utils.Validator;
@@ -27,7 +29,9 @@ public class ConfirmOrderServlet extends HttpServlet {
         User user = (User) session.getAttribute("user");
         OrderDAO dao = new OrderDAO();
         OrderItemDAO orderItemDAO = new OrderItemDAO();
+        OrderDetailDAO orderDetailDAO = new OrderDetailDAO();
         CartItemDAO cartDao = new CartItemDAO();
+
         ArrayList<CartItem> cartItems = new ArrayList<>();
 
         // Get parameters
@@ -76,9 +80,27 @@ public class ConfirmOrderServlet extends HttpServlet {
             String newCode = dao.generateRandomOrderCode();
             OrderCate order = new OrderCate();
             if ("COD".equals(paymentMethod)) {
-                order = new OrderCate(0, newCode, 0, user.getUserId(), receiverName, null, address, phoneNumber, Integer.parseInt(subTotal), 1, 1);
+                order.setOrderCode(newCode);
+                order.setProduct_Type(0);
+                order.setCustomerID(user.getUserId());
+                order.setAddress(address);
+                order.setFullName(receiverName);
+                order.setPhoneNumber(phoneNumber);
+                order.setTotalAmount(Integer.parseInt(subTotal));
+                order.setPaymentStatusID(1);
+                order.setStatus(1);
+                order.setNote(message);
             } else {
-                order = new OrderCate(0, newCode, 0, user.getUserId(), receiverName, null, address, phoneNumber, Integer.parseInt(subTotal), 1, 2);
+                order.setOrderCode(newCode);
+                order.setProduct_Type(0);
+                order.setCustomerID(user.getUserId());
+                order.setAddress(address);
+                order.setFullName(receiverName);
+                order.setPhoneNumber(phoneNumber);
+                order.setTotalAmount(Integer.parseInt(subTotal));
+                order.setPaymentStatusID(2);
+                order.setStatus(1);
+                order.setNote(message);
             }
 
             int orderId = dao.createOrderAndReturnId(order);
@@ -86,15 +108,41 @@ public class ConfirmOrderServlet extends HttpServlet {
             if (orderId != -1) {
                 boolean allInserted = true;
                 for (CartItem cartItem : cartItems) {
-                    OrderItems newOrderItem = new OrderItems();
-                    newOrderItem.setOrderID(orderId);
-                    newOrderItem.setCategoryID(cartItem.getCategory().getCategoryID());
-                    newOrderItem.setPrice(cartItem.getCategory().getPrice());
-                    newOrderItem.setQuantity(cartItem.getQuantity());
-                    int newId = orderItemDAO.insertOrderItem(newOrderItem);
-                    if (newId == -1) {
-                        allInserted = false;
-                        break;
+                    int orderItemID = orderItemDAO.checkOrderItemExist(orderId, cartItem.getCategory().getCategoryID());
+                    if (orderItemID == -1) {
+                        OrderItems newOrderItem = new OrderItems();
+                        newOrderItem.setOrderID(orderId);
+                        newOrderItem.setCategoryID(cartItem.getCategory().getCategoryID());
+                        newOrderItem.setPrice(cartItem.getCategory().getPrice());
+                        newOrderItem.setQuantity(cartItem.getQuantity());
+                        int newId = orderItemDAO.insertOrderItem(newOrderItem);
+                        if (newId == -1) {
+                            allInserted = false;
+                            break;
+                        } else {
+                            for (int i = 0; i < cartItem.getQuantity(); i++) {
+                                OrderDetail newOrderDetail = new OrderDetail();
+                                newOrderDetail.setOrderItemID(newId);
+                                newOrderDetail.setProductID(0);
+                                newOrderDetail.setStatus(1);
+                                newOrderDetail.setUnitPrice(cartItem.getCategory().getPrice());
+                                newOrderDetail.setWarrantyDetailID(cartItem.getWarranty().getWarrantyDetailID());
+                                newOrderDetail.setWarrantyPrice(cartItem.getWarranty().getPrice());
+                                orderDetailDAO.insertOrderDetail(newOrderDetail);
+                            }
+                        }
+                    } else {
+                        orderItemDAO.addQuantity(orderId, cartItem.getCategory().getCategoryID(), cartItem.getQuantity());
+                        for (int i = 0; i < cartItem.getQuantity(); i++) {
+                            OrderDetail newOrderDetail = new OrderDetail();
+                            newOrderDetail.setOrderItemID(orderItemID);
+                            newOrderDetail.setProductID(0);
+                            newOrderDetail.setStatus(1);
+                            newOrderDetail.setUnitPrice(cartItem.getCategory().getPrice());
+                            newOrderDetail.setWarrantyDetailID(cartItem.getWarranty().getWarrantyDetailID());
+                            newOrderDetail.setWarrantyPrice(cartItem.getWarranty().getPrice());
+                            orderDetailDAO.insertOrderDetail(newOrderDetail);
+                        }
                     }
                 }
 
@@ -102,7 +150,7 @@ public class ConfirmOrderServlet extends HttpServlet {
                     if ("COD".equals(paymentMethod)) {
                         response.sendRedirect("Order?action=viewOrder&orderID=" + orderId);
                     } else {
-                        
+
                     }
                 } else {
                     session.setAttribute("toastType", "error");
