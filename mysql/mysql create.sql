@@ -385,6 +385,7 @@ CREATE TABLE WarrantyAssignments (
     OrderID INT NOT NULL,
     UserID INT NOT NULL,
     AssignedDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Note Text default null,
     PRIMARY KEY (OrderID, UserID),
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
