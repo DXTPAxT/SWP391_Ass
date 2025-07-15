@@ -67,7 +67,7 @@ public class OrderDAO extends DBContext {
 
     public OrderCate getOrderByID(int orderID) {
         String sql = """
-        SELECT o.OrderID, o.OrderCode, o.Product_Type, o.CustomerID, o.FullName, o.OrderDate, o.Address, o.PhoneNumber, o.TotalAmount, o.Status, o.PaymentStatusID, os.StatusID, os.StatusName
+        SELECT o.OrderID, o.OrderCode, o.Product_Type, o.CustomerID, o.FullName, o.OrderDate, o.Address, o.PhoneNumber, o.TotalAmount, o.Status, o.PaymentStatusID, os.StatusID, os.Status
         FROM Orders o
         LEFT JOIN OrderStatus os ON o.Status = os.StatusID
         WHERE o.OrderID = ?
@@ -89,7 +89,7 @@ public class OrderDAO extends DBContext {
                     order.setStatus(rs.getInt("Status"));
                     order.setPaymentStatusID(rs.getInt("PaymentStatusID"));
                     // Thêm thông tin status chi tiết
-                    models.OrderStatus status = new models.OrderStatus(rs.getInt("StatusID"), rs.getString("StatusName"));
+                    models.OrderStatus status = new models.OrderStatus(rs.getInt("StatusID"), rs.getString("Status"));
                     order.setOrderStatus(status);
                     return order;
                 }
@@ -102,7 +102,7 @@ public class OrderDAO extends DBContext {
 
     public OrderCate getOrderCateByID(int orderID) {
         OrderCate order = null;
-        String sql = "SELECT o.*, os.StatusID, os.StatusName FROM Orders o LEFT JOIN OrderStatus os ON o.Status = os.StatusID WHERE o.OrderID = ?";
+        String sql = "SELECT o.*, os.StatusID, os.Status FROM Orders o LEFT JOIN OrderStatus os ON o.Status = os.StatusID WHERE o.OrderID = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, orderID);
@@ -122,7 +122,7 @@ public class OrderDAO extends DBContext {
                 order.setTotalAmount(rs.getInt("TotalAmount"));
                 order.setStatus(rs.getInt("Status"));
                 // Thêm thông tin status chi tiết
-                models.OrderStatus status = new models.OrderStatus(rs.getInt("StatusID"), rs.getString("StatusName"));
+                models.OrderStatus status = new models.OrderStatus(rs.getInt("StatusID"), rs.getString("Status"));
                 order.setOrderStatus(status);
                 // Gọi OrderItemDAO để lấy danh sách OrderItems kèm OrderDetail
                 OrderItemDAO orderItemDAO = new OrderItemDAO();
@@ -137,7 +137,7 @@ public class OrderDAO extends DBContext {
 
     public ArrayList<OrderCate> getOrdersByCustomerID(int customerID) {
         ArrayList<OrderCate> orders = new ArrayList<>();
-        String sql = "SELECT o.*, os.StatusID, os.StatusName FROM Orders o LEFT JOIN OrderStatus os ON o.Status = os.StatusID WHERE o.CustomerID = ? AND o.Product_Type = 0 ORDER BY o.OrderID DESC";
+        String sql = "SELECT o.*, os.StatusID, os.Status FROM Orders o LEFT JOIN OrderStatus os ON o.Status = os.StatusID WHERE o.CustomerID = ? AND o.Product_Type = 0 ORDER BY o.OrderID DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, customerID);
             ResultSet rs = ps.executeQuery();
@@ -157,7 +157,7 @@ public class OrderDAO extends DBContext {
                 order.setTotalAmount(rs.getInt("TotalAmount"));
                 order.setStatus(rs.getInt("Status"));
                 // Thêm thông tin status chi tiết
-                models.OrderStatus status = new models.OrderStatus(rs.getInt("StatusID"), rs.getString("StatusName"));
+                models.OrderStatus status = new models.OrderStatus(rs.getInt("StatusID"), rs.getString("Status"));
                 order.setOrderStatus(status);
                 // Gọi DAO để lấy danh sách OrderItems của OrderID hiện tại
                 ArrayList<OrderItems> items = orderItemDAO.getOrderItemsByOrderID(order.getOrderID());
@@ -170,96 +170,27 @@ public class OrderDAO extends DBContext {
         return orders;
     }
 
-    public ArrayList<OrderCate> getOrdersByCustomerAndStatus(int customerID, int statusID) {
-        ArrayList<OrderCate> orders = new ArrayList<>();
-        String sql = """
-        SELECT o.*, os.StatusID, os.StatusName 
-        FROM Orders o 
-        LEFT JOIN OrderStatus os ON o.Status = os.StatusID 
-        WHERE o.CustomerID = ? AND o.Status = ? AND o.Product_Type = 0
-        ORDER BY o.OrderID DESC
-    """;
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, customerID);
-            ps.setInt(2, statusID);
-            ResultSet rs = ps.executeQuery();
-            OrderItemDAO orderItemDAO = new OrderItemDAO();
-            while (rs.next()) {
-                OrderCate order = new OrderCate();
-                order.setOrderID(rs.getInt("OrderID"));
-                order.setOrderCode(rs.getString("OrderCode"));
-                order.setProduct_Type(rs.getInt("Product_Type"));
-                order.setCustomerID(rs.getInt("CustomerID"));
-                order.setOrderDate(rs.getTimestamp("OrderDate"));
-                order.setAddress(rs.getString("Address"));
-                order.setPhoneNumber(rs.getString("PhoneNumber"));
-                order.setFullName(rs.getString("Fullname"));
-                order.setNote(rs.getString("Note"));
-                order.setPaymentStatusID(rs.getInt("PaymentStatusID"));
-                order.setTotalAmount(rs.getInt("TotalAmount"));
-                order.setStatus(rs.getInt("Status"));
-
-                // Trạng thái chi tiết
-                models.OrderStatus status = new models.OrderStatus(rs.getInt("StatusID"), rs.getString("StatusName"));
-                order.setOrderStatus(status);
-
-                // Danh sách sản phẩm
-                ArrayList<OrderItems> items = orderItemDAO.getOrderItemsByOrderID(order.getOrderID());
-                order.setOrderItems(items);
-
-                orders.add(order);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return orders;
-    }
-
     public static void main(String[] args) {
+        // 2. Tạo DAO
         OrderDAO dao = new OrderDAO();
 
-        // 1. Test generateRandomOrderCode
-        String randomCode = dao.generateRandomOrderCode();
-        System.out.println("Generated Code: " + randomCode);
+        // 3. Tạo OrderCate mẫu
+        OrderCate order = new OrderCate();
+        order.setOrderCode("1");
+        order.setProduct_Type(0);
+        order.setCustomerID(1);
+        order.setAddress("123 Main Street");
+        order.setFullName("John Doe");
+        order.setPhoneNumber("0123456789");
+        order.setTotalAmount(5000000);
+        order.setPaymentStatusID(1);
+        order.setStatus(1);
 
-        // 2. Tạo OrderCate mẫu để test insert
-        OrderCate newOrder = new OrderCate();
-        newOrder.setOrderCode(randomCode);
-        newOrder.setProduct_Type(0);
-        newOrder.setCustomerID(6); // Đảm bảo CustomerID tồn tại
-        newOrder.setAddress("123 Main Street");
-        newOrder.setFullName("John Doe");
-        newOrder.setPhoneNumber("0123456789");
-        newOrder.setTotalAmount(5000000);
-        newOrder.setPaymentStatusID(1); // Giả sử 1 là "Chưa thanh toán"
-        newOrder.setStatus(5); // Giả sử 1 là "Chờ xử lý"
-        newOrder.setNote("Giao hàng nhanh trong ngày");
+        // 4. Gọi hàm insert và lấy ID
+        int orderId = dao.createOrderAndReturnId(order);
 
-        // 3. Gọi hàm insert và lấy OrderID vừa tạo
-        int newOrderId = dao.createOrderAndReturnId(newOrder);
-        System.out.println("▶️ New Order ID: " + newOrderId);
-
-        // 4. Test getOrderByID
-        OrderCate orderById = dao.getOrderByID(newOrderId);
-        System.out.println("▶️ Order by ID:");
-        System.out.println(orderById);
-
-        // 5. Test getOrderCateByID (bao gồm cả OrderItems nếu có)
-        OrderCate fullOrder = dao.getOrderCateByID(newOrderId);
-        System.out.println("▶️ Full Order with Items:");
-        System.out.println(fullOrder);
-        if (fullOrder != null && fullOrder.getOrderItems() != null) {
-            for (OrderItems item : fullOrder.getOrderItems()) {
-                System.out.println(" - Item: " + item);
-            }
-        }
-
-        // 6. Test getOrdersByCustomerID
-        ArrayList<OrderCate> ordersByCustomer = dao.getOrdersByCustomerID(newOrder.getCustomerID());
-        System.out.println("▶️ All Orders of Customer ID: " + newOrder.getCustomerID());
-        for (OrderCate oc : ordersByCustomer) {
-            System.out.println(oc);
-        }
+        System.out.println("New Order ID: " + orderId);
+        System.out.println(dao.getOrderByID(8));
+        System.out.println(dao.getOrdersByCustomerID(5));
     }
-
 }

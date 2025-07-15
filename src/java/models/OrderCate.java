@@ -20,6 +20,7 @@ public class OrderCate {
     private int StaffID;
     private String StaffName;
     private String Note;
+    private OrderStatus orderStatus;
     private Date PrepareTime;
     private int shipperID;
     private String shipperName;
@@ -403,6 +404,14 @@ public class OrderCate {
 
     public void setNote(String Note) {
         this.Note = Note;
+    }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
 }

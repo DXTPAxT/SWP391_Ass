@@ -6,6 +6,18 @@ INSERT INTO Roles (RoleName) VALUES
 ('Customer'),
 ('Shipper');
 
+-- Insert data into OrderStatus
+INSERT INTO OrderStatus (StatusID, StatusName) values
+(0, 'Reject'),
+(1, 'Pending'),
+(2, 'On-progress'),
+(3, 'Waiting for ship'),
+(4, 'On Ship'),
+(5, 'Complete'),
+(6, 'Pending Warranty'),
+(7, 'On Warranty'),
+(8, 'Pending BuildPC');
+
 -- Insert data into Users
 INSERT INTO Users (RoleID, FullName, Email, PhoneNumber, PasswordHash, CreatedAt, Status) VALUES
 (1, 'Alice Nguyen', 'alice@domain.com', '0912345678', 'hashedpassword123', NOW(), 1),
@@ -957,7 +969,7 @@ VALUES
 (2, 'User Guides'),
 (3, 'Product Reviews'),
 (4, 'Promotions & Events');
-
+	
 -- Dữ liệu mẫu chèn vào bảng Post
 INSERT INTO Post (Post_id, Title, Author, Updated_date, Content, Bc_id, Thumbnail, Brief, Add_id) VALUES
 (1, 'Introduction to Laptop Components', 'ThuongTN', NOW(),
