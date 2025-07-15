@@ -99,6 +99,7 @@
                                                 <th>Unit Price</th>
                                                 <th>Warranty Price</th>
                                                 <th>Status</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -108,6 +109,11 @@
                                                     <td><fmt:formatNumber value="${detail.unitPrice}" type="number" groupingUsed="true"/> VND</td>
                                                     <td><fmt:formatNumber value="${detail.warrantyPrice}" type="number" groupingUsed="true"/> VND</td>
                                                     <td>${detail.status}</td>
+                                                    <td>
+                                                        <c:if test="${detail.status == 1}">
+                                                            <a href="#" class="btn btn-primary mt-0">Activate Warranty</button>
+                                                        </c:if>
+                                                    </td>
                                                 </tr>
                                             </c:forEach>
                                         </tbody>
