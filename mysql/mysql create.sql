@@ -358,7 +358,7 @@ CREATE TABLE Order_BuildPCDetails (
     OrderBuildPCDetailID INT PRIMARY KEY AUTO_INCREMENT,
     OrderBuildPCItemID INT NOT NULL,
     CategoryID INT NOT NULL,
-    WarrantyDetailID INT NOT NULL,
+    WarrantyDetailID INT  NULL,
     Price INT NOT NULL,
     Status INT DEFAULT 1 NOT NULL,
     FOREIGN KEY (OrderBuildPCItemID) REFERENCES Order_BuildPCItems(OrderBuildPCItemID),

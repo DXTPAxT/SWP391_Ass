@@ -143,6 +143,10 @@ public class CartBuildPCDAO extends DBContext {
         WHERE cbi.CartBuildPCID = ?
     """;
         String insertBuildPCSQL = "INSERT INTO Build_PC (Price, Status, UserID) VALUES (?, 1, ?)";
+        String insertBuildPCItemSQL = """
+        INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) 
+        VALUES (?, ?, ?, ?, 1)
+    """;
         String insertOrderSQL = """
         INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, PhoneNumber, Fullname, PaymentStatusID, TotalAmount, Status) 
         VALUES (?, 2, ?, NOW(), '', ?, ?, 1, ?, 1)
@@ -202,6 +206,20 @@ public class CartBuildPCDAO extends DBContext {
                 return false;
             }
             int buildPCID = rsBuildPC.getInt(1);
+            // 3.5 Insert Build_PC_Items
+            PreparedStatement psInsertBuildPCItem = connection.prepareStatement(insertBuildPCItemSQL);
+            for (Object[] item : items) {
+                psInsertBuildPCItem.setInt(1, buildPCID);
+                psInsertBuildPCItem.setInt(2, (int) item[0]); // CategoryID
+                psInsertBuildPCItem.setInt(3, (int) item[2]); // Price
+                if ((int) item[1] > 0) {
+                    psInsertBuildPCItem.setInt(4, (int) item[1]); // WarrantyDetailID
+                } else {
+                    psInsertBuildPCItem.setNull(4, Types.INTEGER);
+                }
+                psInsertBuildPCItem.addBatch();
+            }
+            psInsertBuildPCItem.executeBatch();
 
             // 4. Tạo đơn hàng
             PreparedStatement psOrder = connection.prepareStatement(insertOrderSQL, Statement.RETURN_GENERATED_KEYS);
@@ -248,8 +266,7 @@ public class CartBuildPCDAO extends DBContext {
             }
             psInsertDetail.executeBatch();
 
-            
-            // 7. Xóa giỏ sau khi đặt hàng thành công
+            // 7. Xóa giỏ sau khi đặt hàng thành côngF
             PreparedStatement psDeleteItems = connection.prepareStatement(deleteCartItemsSQL);
             psDeleteItems.setInt(1, cartBuildPCID);
             psDeleteItems.executeUpdate();
