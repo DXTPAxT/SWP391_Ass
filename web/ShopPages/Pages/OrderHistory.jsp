@@ -137,62 +137,72 @@
                     </form>
                 </div>
 
-                <c:if test="${not empty orders}">
-                    <div class="container">
-                        <c:forEach var="order" items="${orders}">
-                            <div class="panel panel-default" style="margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-radius: 8px;">
-                                <div class="panel-heading" style="background-color: #f5f5f5; border-bottom: 1px solid #ddd; border-radius: 8px 8px 0 0;">
-                                    <strong>Order Code:</strong> ${order.orderCode} |
-                                    <strong>Date:</strong> <fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy HH:mm" /> |
-                                    <strong>Status: ${order.orderStatus.status}</strong>
-                                </div>
-                                <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <p><strong>Receiver:</strong> ${order.fullName}</p>
-                                            <p><strong>Phone:</strong> ${order.phoneNumber}</p>
-                                            <p><strong>Address:</strong> ${order.address}</p>
-                                            <p><strong>Note:</strong> ${order.note}</p>
-                                        </div>
-                                        <div class="col-md-6 text-right">
-                                            <p><strong>Payment:</strong>
-                                                <c:choose>
-                                                    <c:when test="${order.paymentStatusID == 1}">💵 Unpaid</c:when>
-                                                    <c:when test="${order.paymentStatusID == 2}">💳 Paid</c:when>
-                                                    <c:otherwise>Unknown</c:otherwise>
-                                                </c:choose>
-                                            </p>
-                                            <p><strong>Total:</strong> <fmt:formatNumber value="${order.totalAmount}" type="number" groupingUsed="true" /> VND</p>
-                                            <a href="Order?orderID=${order.orderID}" class="btn btn-info">View Details</a>
-                                        </div>
+                <!-- Danh sách đơn hàng -->
+                <c:choose>
+                    <c:when test="${not empty orders}">
+                        <div class="container">
+                            <c:forEach var="order" items="${orders}">
+                                <div class="panel panel-default" style="margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-radius: 8px;">
+                                    <div class="panel-heading" style="background-color: #f5f5f5; border-bottom: 1px solid #ddd; border-radius: 8px 8px 0 0;">
+                                        <strong>Order Code:</strong> ${order.orderCode} |
+                                        <strong>Date:</strong> <fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy HH:mm" /> |
+                                        <strong>Status: ${order.orderStatus.status}</strong>
                                     </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>Receiver:</strong> ${order.fullName}</p>
+                                                <p><strong>Phone:</strong> ${order.phoneNumber}</p>
+                                                <p><strong>Address:</strong> ${order.address}</p>
+                                                <p><strong>Note:</strong> ${order.note}</p>
+                                            </div>
+                                            <div class="col-md-6 text-right">
+                                                <p><strong>Payment:</strong>
+                                                    <c:choose>
+                                                        <c:when test="${order.paymentStatusID == 1}">💵 Unpaid</c:when>
+                                                        <c:when test="${order.paymentStatusID == 2}">💳 Paid</c:when>
+                                                        <c:otherwise>Unknown</c:otherwise>
+                                                    </c:choose>
+                                                </p>
+                                                <p><strong>Total:</strong> 
+                                                    <fmt:formatNumber value="${order.totalAmount}" type="number" groupingUsed="true" /> VND
+                                                </p>
+                                                <a href="Order?orderID=${order.orderID}" class="btn btn-info">View Details</a>
+                                            </div>
+                                        </div>
 
-                                    <hr>
-                                    <table class="table table-striped table-hover table-bordered">
-                                        <thead style="background-color: #eee;">
-                                            <tr>
-                                                <th>Product Name</th>
-                                                <th>Quantity</th>
-                                                <th>Unit Price</th>
-                                                <th>Subtotal</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <c:forEach var="item" items="${order.orderItems}">
+                                        <hr>
+                                        <table class="table table-striped table-hover table-bordered">
+                                            <thead style="background-color: #eee;">
                                                 <tr>
-                                                    <td>${item.category.categoryName}</td>
-                                                    <td>${item.quantity}</td>
-                                                    <td><fmt:formatNumber value="${item.price}" type="number" groupingUsed="true" /> VND</td>
-                                                    <td><fmt:formatNumber value="${item.quantity * item.price}" type="number" groupingUsed="true"/> VND</td>
+                                                    <th>Product Name</th>
+                                                    <th>Quantity</th>
+                                                    <th>Unit Price</th>
+                                                    <th>Subtotal</th>
                                                 </tr>
-                                            </c:forEach>
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                                <c:forEach var="item" items="${order.orderItems}">
+                                                    <tr>
+                                                        <td>${item.category.categoryName}</td>
+                                                        <td>${item.quantity}</td>
+                                                        <td><fmt:formatNumber value="${item.price}" type="number" groupingUsed="true" /> VND</td>
+                                                        <td><fmt:formatNumber value="${item.quantity * item.price}" type="number" groupingUsed="true"/> VND</td>
+                                                    </tr>
+                                                </c:forEach>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
-                        </c:forEach>
-                    </div>
-                </c:if>
+                            </c:forEach>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="alert alert-warning text-center" style="margin-top: 40px; font-size: 18px;">
+                            🚫 No orders found.
+                        </div>
+                    </c:otherwise>
+                </c:choose>
 
 
             </div>
