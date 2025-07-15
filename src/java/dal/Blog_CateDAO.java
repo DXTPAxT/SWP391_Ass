@@ -9,17 +9,18 @@ import java.util.ArrayList;
 import static java.util.Collections.list;
 import java.sql.Date;
 import java.util.List;
-import javax.lang.model.util.Types;
 import models.Blog_Cate;
 import models.Comment;
 import models.Post;
 import models.SaleEvents;
+import java.sql.Types;
+
 
 public class Blog_CateDAO extends DBContext {
 
     public List<Blog_Cate> getAllBlogCategory() {
         List<Blog_Cate> list = new ArrayList<>();
-        String sql = "SELECT Bc_id, Bc_name FROM Blogs_category";
+        String sql = "SELECT Bc_id, Bc_name FROM blogs_category";
 
         try {
             Connection conn = connection;
@@ -43,7 +44,7 @@ public class Blog_CateDAO extends DBContext {
 
     public List<Post> getTop5NewestPosts() {
         List<Post> list = new ArrayList<>();
-        String sql = "SELECT TOP 5 * FROM Post ORDER BY Updated_date DESC";
+        String sql = "SELECT * FROM post ORDER BY Updated_date DESC LIMIT 5;";
 
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -69,7 +70,7 @@ public class Blog_CateDAO extends DBContext {
 
     public List<Post> getPostsByCategoryId(int bc_id) {
         List<Post> list = new ArrayList<>();
-        String sql = "SELECT * FROM Post WHERE Bc_id = ?";
+        String sql = "SELECT * FROM post WHERE Bc_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, bc_id);
             ResultSet rs = ps.executeQuery();
@@ -95,7 +96,7 @@ public class Blog_CateDAO extends DBContext {
 
     public List<Post> getAllPost() {
         List<Post> list = new ArrayList<>();
-        String sql = "SELECT p.*, c.Bc_name FROM Post p JOIN Blogs_category c ON p.Bc_id = c.Bc_id";
+        String sql = "SELECT p.*, c.Bc_name FROM post p JOIN blogs_category c ON p.Bc_id = c.Bc_id";
 
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -127,7 +128,11 @@ public class Blog_CateDAO extends DBContext {
 
     public List<Comment> getCommentsByPostId(int Post_id) {
         List<Comment> list = new ArrayList<>();
-        String query = "SELECT c.*, u.FullName FROM Comment c JOIN Users u ON c.UserID = u.UserID WHERE c.Post_id = ? ORDER BY c.CreatedAt ASC";
+        String query = "SELECT c.*, u.FullName \n"
+                + "FROM comments c \n"
+                + "JOIN users u ON c.UserID = u.UserID \n"
+                + "WHERE c.Post_id = ? \n"
+                + "ORDER BY c.CreatedAt ASC;";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, Post_id);
@@ -151,7 +156,8 @@ public class Blog_CateDAO extends DBContext {
     }
 
     public void addComment(Comment c) {
-        String query = "INSERT INTO Comment (Post_id, UserID, CommentText, ParentCommentID) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO comments (Post_id, UserID, CommentText, ParentCommentID)\n"
+                + "VALUES (?, ?, ?, ?);";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, c.getPost_id());
             ps.setInt(2, c.getUserID());
@@ -168,26 +174,25 @@ public class Blog_CateDAO extends DBContext {
     }
 
     public void insertPost(Post p) {
-    String sql = "INSERT INTO Post (Title, Author, Updated_date, Content, Bc_id, Thumbnail, Brief, Add_id, Status) "
-               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    try (PreparedStatement st = connection.prepareStatement(sql)) {
-        st.setString(1, p.getTitle());
-        st.setString(2, p.getAuthor());
-        st.setDate(3, new java.sql.Date(p.getUpdated_date().getTime()));
-        st.setString(4, p.getContent());
-        st.setInt(5, p.getBc_id());
-        st.setString(6, p.getThumbnail());
-        st.setString(7, p.getBrief());
-        st.setInt(8, p.getAdd_id());
-        st.setInt(9, p.getStatus());
+        String sql = "INSERT INTO Post (Title, Author, Updated_date, Content, Bc_id, Thumbnail, Brief, Add_id, Status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setString(1, p.getTitle());
+            st.setString(2, p.getAuthor());
+            st.setDate(3, new java.sql.Date(p.getUpdated_date().getTime()));
+            st.setString(4, p.getContent());
+            st.setInt(5, p.getBc_id());
+            st.setString(6, p.getThumbnail());
+            st.setString(7, p.getBrief());
+            st.setInt(8, p.getAdd_id());
+            st.setInt(9, p.getStatus());
 
-        st.executeUpdate();
-    } catch (Exception e) {
-        System.err.println("SQL Error during insertPost: " + e.getMessage());
-        e.printStackTrace(); // optional: can log to file instead
+            st.executeUpdate();
+        } catch (Exception e) {
+            System.err.println("SQL Error during insertPost: " + e.getMessage());
+            e.printStackTrace(); // optional: can log to file instead
+        }
     }
-}
-
 
     public Post getPostById(int id) {
         String sql = "SELECT * FROM Post WHERE Post_id = ?";
@@ -215,24 +220,23 @@ public class Blog_CateDAO extends DBContext {
     }
 
     public void updatePost(Post p) {
-    String sql = "UPDATE Post SET Title=?, Author=?, Updated_date=?, Content=?, Bc_id=?, Thumbnail=?, Brief=?, Status=? "
-               + "WHERE Post_id=?";
-    try (PreparedStatement st = connection.prepareStatement(sql)) {
-        st.setString(1, p.getTitle());
-        st.setString(2, p.getAuthor());
-        st.setDate(3, new java.sql.Date(p.getUpdated_date().getTime()));
-        st.setString(4, p.getContent());
-        st.setInt(5, p.getBc_id());
-        st.setString(6, p.getThumbnail());
-        st.setString(7, p.getBrief());
-        st.setInt(8, p.getStatus());
-        st.setInt(9, p.getPost_id());
-        st.executeUpdate();
-    } catch (Exception e) {
-        e.printStackTrace();
+        String sql = "UPDATE Post SET Title=?, Author=?, Updated_date=?, Content=?, Bc_id=?, Thumbnail=?, Brief=?, Status=? "
+                + "WHERE Post_id=?";
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setString(1, p.getTitle());
+            st.setString(2, p.getAuthor());
+            st.setDate(3, new java.sql.Date(p.getUpdated_date().getTime()));
+            st.setString(4, p.getContent());
+            st.setInt(5, p.getBc_id());
+            st.setString(6, p.getThumbnail());
+            st.setString(7, p.getBrief());
+            st.setInt(8, p.getStatus());
+            st.setInt(9, p.getPost_id());
+            st.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
-
 
 //   
     public List<Post> getPostsByStatus(int status) {
@@ -354,9 +358,7 @@ public class Blog_CateDAO extends DBContext {
 
     public List<Post> getPostsByPage(int index) {
         List<Post> list = new ArrayList<>();
-        String sql = "SELECT * FROM Post \n"
-                + "ORDER BY Post_id\n"
-                + "OFFSET ? ROWS FETCH NEXT 4 ROWS ONLY;";
+        String sql = "SELECT * FROM Post ORDER BY Post_id LIMIT ?, 4";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, (index - 1) * 4);
@@ -450,114 +452,124 @@ public class Blog_CateDAO extends DBContext {
         return list;
     }
 
-    public String getStockStatusByCategoryID(int categoryID) {
-        String sql = "SELECT Quantity, RestockExpected FROM Inventory WHERE CategoryID = ?";
+   public List<SaleEvents> getAllSaleEvents() {
+        List<SaleEvents> list = new ArrayList<>();
+        String sql = "SELECT * FROM SaleEvents";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(parseSaleEvent(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+public List<SaleEvents> getSaleEventsByCategory(int categoryID) {
+        List<SaleEvents> list = new ArrayList<>();
+        String sql = "SELECT * FROM SaleEvents WHERE CategoryID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, categoryID);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                int qty = rs.getInt("Quantity");
-                boolean restock = rs.getBoolean("RestockExpected");
-                if (qty > 0) {
-                    return "in_stock";
-                }
-                if (qty == 0 && restock) {
-                    return "restocking";
-                }
-                if (qty == 0 && !restock) {
-                    return "discontinued";
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "unknown";
-    }
-
-    public List<SaleEvents> getSaleEventsByCategory(int categoryID) {
-        List<SaleEvents> saleEvents = new ArrayList<>();
-        String query = "SELECT * FROM SaleEvents WHERE CategoryID = ?";
-        String stockQuery = "SELECT Quantity, RestockExpected FROM Inventory WHERE CategoryID = ?";
-        try (
-                PreparedStatement stmt = connection.prepareStatement(query); PreparedStatement stockStmt = connection.prepareStatement(stockQuery)) {
-            stmt.setInt(1, categoryID);
-            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                SaleEvents event = new SaleEvents();
-                event.setEventID(rs.getInt("EventID"));
-                event.setCategoryID(rs.getInt("CategoryID"));
-                event.setPost_id(rs.getInt("Post_id"));
-                event.setStartDate(rs.getDate("StartDate"));
-                event.setEndDate(rs.getDate("EndDate"));
-                event.setDiscountPercent(rs.getDouble("DiscountPercent"));
-//                event.setStatus(rs.getInt("Status"));
-                event.setCreatedBy(rs.getInt("CreatedBy"));
-                event.setApprovedBy(rs.getObject("ApprovedBy") != null ? rs.getInt("ApprovedBy") : null);
-
-                // Check tồn kho
-                stockStmt.setInt(1, event.getCategoryID());
-                ResultSet stockRs = stockStmt.executeQuery();
-                int stock = -99;
-                if (stockRs.next()) {
-                    int quantity = stockRs.getInt("Quantity");
-                    boolean restock = stockRs.getBoolean("RestockExpected");
-                    if (quantity > 0) {
-                        stock = 1;
-                    } else if (quantity == 0 && restock) {
-                        stock = 0;
-                    } else if (quantity == 0 && !restock) {
-                        stock = -1;
-                    }
-                }
-                event.setStock(stock);
-
-                saleEvents.add(event);
+                list.add(parseSaleEvent(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return saleEvents;
+        return list;
     }
-
-    // Add a sale event
     public void addSaleEvent(SaleEvents event) {
-        String query = "INSERT INTO SaleEvents (CategoryID, Post_id, StartDate, EndDate, DiscountPercent, CreatedBy, ApprovedBy) VALUES (?, ?, ?, ?, ?,  ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, event.getCategoryID());
-            stmt.setInt(2, event.getPost_id());
-            stmt.setDate(3, new java.sql.Date(event.getStartDate().getTime()));
-            stmt.setDate(4, new java.sql.Date(event.getEndDate().getTime()));
-            stmt.setDouble(5, event.getDiscountPercent());
-            stmt.setInt(6, event.getCreatedBy());
-            stmt.setInt(7, event.getApprovedBy());
-            stmt.executeUpdate();
+        String sql = "INSERT INTO SaleEvents (CategoryID, Post_id, StartDate, EndDate, DiscountPercent, Status, CreatedBy, ApprovedBy) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, event.getCategoryID());
+            ps.setInt(2, event.getPost_id());
+            ps.setDate(3, new java.sql.Date(event.getStartDate().getTime()));
+            ps.setDate(4, new java.sql.Date(event.getEndDate().getTime()));
+            ps.setDouble(5, event.getDiscountPercent());
+            ps.setInt(6, event.getStatus()); // thường là 2 (chờ duyệt)
+            ps.setInt(7, event.getCreatedBy());
+            if (event.getApprovedBy() != null) {
+                ps.setInt(8, event.getApprovedBy());
+            } else {
+                ps.setNull(8, Types.INTEGER);
+            }
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
-    // Update sale event status
-    public void updateSaleEventStatus(int eventID, int status) {
-        String query = "UPDATE SaleEvents SET Status = ? WHERE EventID = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, status);
-            stmt.setInt(2, eventID);
-            stmt.executeUpdate();
+// Duyệt sale event (admin)
+    public void approveSaleEvent(int eventID, int adminID) {
+        int newStatus = determineStatusFromInventory(eventID);
+        String sql = "UPDATE SaleEvents SET Status = ?, ApprovedBy = ? WHERE EventID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, newStatus);
+            ps.setInt(2, adminID);
+            ps.setInt(3, eventID);
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+    // Xác định status dựa vào tồn kho
+    private int determineStatusFromInventory(int eventID) {
+        String sql = "SELECT i.Quantity, i.IsRestocking "
+                   + "FROM SaleEvents se JOIN Inventory i ON se.CategoryID = i.CategoryID "
+                   + "WHERE se.EventID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, eventID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int quantity = rs.getInt("Quantity");
+                boolean isRestocking = rs.getBoolean("IsRestocking");
 
-    // Check sale event status based on dates
-    private int checkEventStatus(SaleEvents event) {
-        Date currentDate = new Date(System.currentTimeMillis());
-        if (currentDate.before(event.getStartDate())) {
-            return 2; // Chưa bắt đầu
-        } else if (currentDate.after(event.getEndDate())) {
-            return 3; // Đã kết thúc
-        } else {
-            return 1; // Đang hoạt động
+                if (quantity > 0) return 1;       // Còn hàng
+                else if (isRestocking) return 0;  // Hết hàng sẽ nhập
+                else return 3;                    // Hết hàng không nhập
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return 2; // fallback nếu lỗi
+    }
+    public void updateSaleEvent(SaleEvents event) {
+        String sql = "UPDATE SaleEvents SET CategoryID = ?, Post_id = ?, StartDate = ?, EndDate = ?, "
+                   + "DiscountPercent = ?, Status = ?, CreatedBy = ?, ApprovedBy = ? WHERE EventID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, event.getCategoryID());
+            ps.setInt(2, event.getPost_id());
+            ps.setDate(3, new java.sql.Date(event.getStartDate().getTime()));
+            ps.setDate(4, new java.sql.Date(event.getEndDate().getTime()));
+            ps.setDouble(5, event.getDiscountPercent());
+            ps.setInt(6, event.getStatus());
+            ps.setInt(7, event.getCreatedBy());
+
+            if (event.getApprovedBy() != null) {
+                ps.setInt(8, event.getApprovedBy());
+            } else {
+                ps.setNull(8, Types.INTEGER);
+            }
+
+            ps.setInt(9, event.getEventID());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    private SaleEvents parseSaleEvent(ResultSet rs) throws SQLException {
+        SaleEvents event = new SaleEvents();
+        event.setEventID(rs.getInt("EventID"));
+        event.setCategoryID(rs.getInt("CategoryID"));
+        event.setPost_id(rs.getInt("Post_id"));
+        event.setStartDate(rs.getDate("StartDate"));
+        event.setEndDate(rs.getDate("EndDate"));
+        event.setDiscountPercent(rs.getDouble("DiscountPercent"));
+        event.setStatus(rs.getInt("Status"));
+        event.setCreatedBy(rs.getInt("CreatedBy"));
+        event.setApprovedBy(rs.getObject("ApprovedBy") != null ? rs.getInt("ApprovedBy") : null);
+        return event;
     }
 
     public static void main(String[] args) {
@@ -568,7 +580,7 @@ public class Blog_CateDAO extends DBContext {
         //        }
 //                System.out.println(dao.searchPostsByTitle("laptop"));
 
-        //        System.out.println(dao.countAllPosts());
+//                System.out.println(dao.);
 //        Post p = new Post();
 //        p.setTitle("Giới thiệu Laptop mới");
 //        p.setAuthor("Nguyễn Văn A");

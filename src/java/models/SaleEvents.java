@@ -11,38 +11,29 @@ import java.util.Date;
  * @author User
  */
 public class SaleEvents {
-
     private int eventID;
     private int categoryID;
-    private int Post_id;
+    private int post_id;
     private Date startDate;
     private Date endDate;
     private double discountPercent;
     private int status;
-    private int stock;
-    private int CreatedBy;
-    private Integer ApprovedBy;
+    private int createdBy;
+    private Integer approvedBy;
 
     public SaleEvents() {
     }
 
-    public SaleEvents(int eventID, int categoryID, int Post_id, Date startDate, Date endDate, double discountPercent, int status) {
+    public SaleEvents(int eventID, int categoryID, int post_id, Date startDate, Date endDate, double discountPercent, int status, int createdBy, Integer approvedBy) {
         this.eventID = eventID;
         this.categoryID = categoryID;
-        this.Post_id = Post_id;
+        this.post_id = post_id;
         this.startDate = startDate;
         this.endDate = endDate;
         this.discountPercent = discountPercent;
         this.status = status;
-    }
-
-    public SaleEvents(int stock) {
-        this.stock = stock;
-    }
-
-    public SaleEvents(int CreatedBy, Integer ApprovedBy) {
-        this.CreatedBy = CreatedBy;
-        this.ApprovedBy = ApprovedBy;
+        this.createdBy = createdBy;
+        this.approvedBy = approvedBy;
     }
 
     public int getEventID() {
@@ -62,11 +53,11 @@ public class SaleEvents {
     }
 
     public int getPost_id() {
-        return Post_id;
+        return post_id;
     }
 
-    public void setPost_id(int Post_id) {
-        this.Post_id = Post_id;
+    public void setPost_id(int post_id) {
+        this.post_id = post_id;
     }
 
     public Date getStartDate() {
@@ -101,35 +92,25 @@ public class SaleEvents {
         this.status = status;
     }
 
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
     public int getCreatedBy() {
-        return CreatedBy;
+        return createdBy;
     }
 
-    public void setCreatedBy(int CreatedBy) {
-        this.CreatedBy = CreatedBy;
+    public void setCreatedBy(int createdBy) {
+        this.createdBy = createdBy;
     }
 
     public Integer getApprovedBy() {
-        return ApprovedBy;
+        return approvedBy;
     }
 
-    public void setApprovedBy(Integer ApprovedBy) {
-        this.ApprovedBy = ApprovedBy;
+    public void setApprovedBy(Integer approvedBy) {
+        this.approvedBy = approvedBy;
     }
 
     @Override
     public String toString() {
-        return "SaleEvents{" + "eventID=" + eventID + ", categoryID=" + categoryID + ", Post_id=" + Post_id + ", startDate=" + startDate + ", endDate=" + endDate + ", discountPercent=" + discountPercent + ", status=" + status + ", stock=" + stock + ", CreatedBy=" + CreatedBy + ", ApprovedBy=" + ApprovedBy + '}';
+        return "SaleEvents{" + "eventID=" + eventID + ", categoryID=" + categoryID + ", post_id=" + post_id + ", startDate=" + startDate + ", endDate=" + endDate + ", discountPercent=" + discountPercent + ", status=" + status + ", createdBy=" + createdBy + ", approvedBy=" + approvedBy + '}';
     }
-
-   
-
+    
 }
