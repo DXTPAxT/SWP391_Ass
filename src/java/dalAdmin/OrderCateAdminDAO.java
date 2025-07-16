@@ -22,7 +22,7 @@ public class OrderCateAdminDAO extends DBAdminContext {
             o.OrderDate,
             o.Address AS OrderAddress,
             o.TotalAmount,
-            o.Status AS OrderStatus,
+            o.Status,
 
             customer.UserID AS CustomerUserID,
             customer.FullName AS CustomerName,
@@ -72,7 +72,7 @@ public class OrderCateAdminDAO extends DBAdminContext {
                     order.setOrderDate(rs.getTimestamp("OrderDate"));
                     order.setAddress(rs.getString("OrderAddress"));
                     order.setTotalAmount(rs.getInt("TotalAmount"));
-                    order.setStatus(rs.getInt("OrderStatus"));
+                    order.setStatus(rs.getInt("Status"));
 
                     // Customer
                     order.setCustomerID(rs.getInt("CustomerUserID"));
