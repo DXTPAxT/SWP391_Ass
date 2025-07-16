@@ -146,7 +146,7 @@
                                     <div class="panel-heading" style="background-color: #f5f5f5; border-bottom: 1px solid #ddd; border-radius: 8px 8px 0 0;">
                                         <strong>Order Code:</strong> ${order.orderCode} |
                                         <strong>Date:</strong> <fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy HH:mm" /> |
-                                        <strong>Status: ${order.orderStatus.status}</strong>
+                                        <strong>Status: ${order.order_Status.status}</strong>
                                     </div>
                                     <div class="panel-body">
                                         <div class="row">

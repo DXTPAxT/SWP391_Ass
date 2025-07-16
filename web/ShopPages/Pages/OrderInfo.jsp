@@ -165,15 +165,16 @@
                 </div>
 
                 <h3>Order Status</h3>
-
+                <h4>Payment status: ${order.paymentStatusID == 1 ? 'Not Paid' : 'Paid'}</h4>
+                <strong>Order Date:</strong> <fmt:formatDate value="${order.orderDate}" pattern="HH:mm dd/MM/yyyy"/>
                 <c:choose>
-                    <c:when test="${order.orderStatus.statusID == 0}">
+                    <c:when test="${order.order_Status.statusID == 0}">
                         <div class="reject-step" style="color: red; font-weight: bold;">❌ Rejected</div>
                     </c:when>
 
                     <c:otherwise>
                         <ul class="order-steps">
-                            <c:set var="currentStatus" value="${order.orderStatus.statusID}" />
+                            <c:set var="currentStatus" value="${order.order_Status.statusID}" />
                             <c:forEach var="step" begin="1" end="5">
                                 <c:set var="stepClass" value="" />
                                 <c:choose>
@@ -223,6 +224,11 @@
                                        class="btn btn-success"
                                        >
                                         Buy new one
+                                    </a>                                    
+                                    <a href="${pageContext.request.contextPath}/CategoriesController?service=detail&categoryID=${item.category.categoryID}"
+                                       class="btn btn-success"
+                                       >
+                                        Feedback
                                     </a>
                                 </div>
 
@@ -259,7 +265,7 @@
                                                     </td>
                                                     <td>
                                                         <c:choose>
-                                                            <c:when test="${order.orderStatus.statusID >= 5 && detail.product.status == 0}">
+                                                            <c:when test="${order.order_Status.statusID >= 5 && detail.product.status == 0}">
                                                                 <a href="#" class="btn btn-primary mt-0">Activate Warranty</a>
                                                             </c:when>
                                                             <c:otherwise>
@@ -303,11 +309,6 @@
                         <p><strong>Address:</strong> ${order.address}</p>
                         <p><strong>Note:</strong> ${order.note}</p>
                     </div>
-                </div>
-
-                <!-- Payment Info -->
-                <div class="payment-options">
-                    <h4>Payment: ${order.paymentStatusID}</h4>
                 </div>
             </div>
         </section>

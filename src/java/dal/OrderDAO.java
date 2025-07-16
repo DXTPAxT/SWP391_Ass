@@ -89,8 +89,8 @@ public class OrderDAO extends DBContext {
                     order.setStatus(rs.getInt("Status"));
                     order.setPaymentStatusID(rs.getInt("PaymentStatusID"));
                     // Thêm thông tin status chi tiết
-                    models.OrderStatus status = new models.OrderStatus(rs.getInt("StatusID"), rs.getString("StatusName"));
-                    order.setOrderStatus(status);
+                    models.Order_Status status = new models.Order_Status(rs.getInt("StatusID"), rs.getString("StatusName"));
+                    order.setOrder_Status(status);
                     return order;
                 }
             }
@@ -122,8 +122,8 @@ public class OrderDAO extends DBContext {
                 order.setTotalAmount(rs.getInt("TotalAmount"));
                 order.setStatus(rs.getInt("Status"));
                 // Thêm thông tin status chi tiết
-                models.OrderStatus status = new models.OrderStatus(rs.getInt("StatusID"), rs.getString("StatusName"));
-                order.setOrderStatus(status);
+                models.Order_Status status = new models.Order_Status(rs.getInt("StatusID"), rs.getString("StatusName"));
+                order.setOrder_Status(status);
                 // Gọi OrderItemDAO để lấy danh sách OrderItems kèm OrderDetail
                 OrderItemDAO orderItemDAO = new OrderItemDAO();
                 ArrayList<OrderItems> items = orderItemDAO.getOrderItemsByOrderID(orderID);
@@ -157,8 +157,8 @@ public class OrderDAO extends DBContext {
                 order.setTotalAmount(rs.getInt("TotalAmount"));
                 order.setStatus(rs.getInt("Status"));
                 // Thêm thông tin status chi tiết
-                models.OrderStatus status = new models.OrderStatus(rs.getInt("StatusID"), rs.getString("StatusName"));
-                order.setOrderStatus(status);
+                models.Order_Status status = new models.Order_Status(rs.getInt("StatusID"), rs.getString("StatusName"));
+                order.setOrder_Status(status);
                 // Gọi DAO để lấy danh sách OrderItems của OrderID hiện tại
                 ArrayList<OrderItems> items = orderItemDAO.getOrderItemsByOrderID(order.getOrderID());
                 order.setOrderItems(items);
@@ -200,8 +200,8 @@ public class OrderDAO extends DBContext {
                 order.setStatus(rs.getInt("Status"));
 
                 // Trạng thái chi tiết
-                models.OrderStatus status = new models.OrderStatus(rs.getInt("StatusID"), rs.getString("StatusName"));
-                order.setOrderStatus(status);
+                models.Order_Status status = new models.Order_Status(rs.getInt("StatusID"), rs.getString("StatusName"));
+                order.setOrder_Status(status);
 
                 // Danh sách sản phẩm
                 ArrayList<OrderItems> items = orderItemDAO.getOrderItemsByOrderID(order.getOrderID());
