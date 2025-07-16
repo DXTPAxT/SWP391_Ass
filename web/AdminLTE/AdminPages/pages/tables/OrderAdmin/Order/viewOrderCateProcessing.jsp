@@ -74,6 +74,7 @@
                                         <thead>
                                             <tr>
                                                 <th>Order ID</th>
+                                                <th>Order Code</th>   
                                                 <th>Customer Name</th>
                                                 <th>Consignee</th>
                                                 <th>Staff Name</th>
@@ -88,6 +89,7 @@
                                                 <c:forEach var="order" items="${orders}">
                                                     <tr>
                                                         <td>${order.orderID}</td>
+                                                        <td>${order.orderCode}</td>
                                                         <td>${order.customerName}</td>
                                                         <td>${order.fullName}</td>
                                                         <td>${order.staffName}</td>
@@ -100,7 +102,7 @@
                                                         </td>
                                                         <td>${order.totalAmount}</td>
                                                         <td>
-                                                            <a href="OrderAdminCate?service=listItemPending&orderID=${order.orderID}" 
+                                                            <a href="OrderItemAdmin?service=listProcess&orderID=${order.orderID}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                     </tr>

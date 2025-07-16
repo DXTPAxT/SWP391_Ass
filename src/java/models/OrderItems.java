@@ -1,9 +1,9 @@
-
 package models;
 
 import java.util.ArrayList;
 
 public class OrderItems {
+
     private Categories category;
     private int OrderItemID;
     private int OrderID;
@@ -15,6 +15,15 @@ public class OrderItems {
     private int inventory;
     private int queue;
     private ArrayList<OrderDetail> orderDetailList;
+    private boolean completed = false; // Mặc định là false để tránh null
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
 
     public OrderItems() {
     }
@@ -45,8 +54,7 @@ public class OrderItems {
         this.queue = queue;
         this.orderDetailList = orderDetailList;
     }
-    
-    
+
     public OrderItems(Categories category, int OrderItemID, int OrderID, int CategoryID, int Quantity, int Price, ArrayList<OrderDetail> orderDetailList) {
         this.category = category;
         this.OrderItemID = OrderItemID;
@@ -168,5 +176,5 @@ public class OrderItems {
     public void setQueue(int queue) {
         this.queue = queue;
     }
-    
+
 }
