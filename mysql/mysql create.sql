@@ -351,20 +351,20 @@ CREATE TABLE Order_BuildPCDetails (
     OrderBuildPCDetailID INT PRIMARY KEY AUTO_INCREMENT,
     OrderBuildPCItemID INT NOT NULL,
     CategoryID INT NOT NULL,
-    WarrantyDetailID INT NOT NULL,
     Price INT NOT NULL,
     Status INT DEFAULT 1 NOT NULL,
     FOREIGN KEY (OrderBuildPCItemID) REFERENCES Order_BuildPCItems(OrderBuildPCItemID),
-    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
-    FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 33. Order Build PC Products
 CREATE TABLE Order_BuildPC_Products (
     OrderBuildPCProductID INT PRIMARY KEY AUTO_INCREMENT,
     OrderBuildPCDetailID INT NOT NULL,
-    ProductID INT NOT NULL,
+    ProductID INT default NULL,
+	WarrantyDetailID INT NULL,
     FOREIGN KEY (OrderBuildPCDetailID) REFERENCES Order_BuildPCDetails(OrderBuildPCDetailID),
+    FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
