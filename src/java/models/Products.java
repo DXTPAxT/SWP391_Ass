@@ -11,6 +11,24 @@ public class Products {
     private int status;
     private int CategoryID;
     private String CategoryName;
+    private int warrantyPeriod;
+    private String warrantyDescription;
+
+    public int getWarrantyPeriod() {
+        return warrantyPeriod;
+    }
+
+    public void setWarrantyPeriod(int warrantyPeriod) {
+        this.warrantyPeriod = warrantyPeriod;
+    }
+
+    public String getWarrantyDescription() {
+        return warrantyDescription;
+    }
+
+    public void setWarrantyDescription(String warrantyDescription) {
+        this.warrantyDescription = warrantyDescription;
+    }
 
     public Products() {
     }
@@ -61,7 +79,6 @@ public class Products {
     public void setCategoryName(String CategoryName) {
         this.CategoryName = CategoryName;
     }
-    
 
     public String getImportCode() {
         return ImportCode;

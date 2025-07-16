@@ -74,14 +74,14 @@
                                         <thead>
                                             <tr>
                                                 <th>Order ID</th>
-                                                <th>Customer Name</th>
                                                 <th>Consignee</th>
-                                                <th>Staff Name</th>
-                                                <th>Shipper Name</th>
-                                                <th>Shipper Phone</th>
+                                                <th>Phone</th>
+                                                <th>Note</th>
+                                                <th>Address</th>
                                                 <th>Order Date</th>
                                                 <th>Product Type</th>
                                                 <th>Total Amount</th>
+                                                <th>Payment</th>
                                                 <th>View Order Items</th>
                                             </tr>
                                         </thead>
@@ -90,11 +90,10 @@
                                                 <c:forEach var="order" items="${orders}">
                                                     <tr>
                                                         <td>${order.orderID}</td>
-                                                        <td>${order.customerName}</td>
                                                         <td>${order.fullName}</td>
-                                                        <td>${order.staffName}</td>
-                                                        <td>${order.shipperName}</td>
-                                                        <td>${order.shipperPhone}</td>
+                                                        <td>${order.phoneNumber}</td>
+                                                        <td style="white-space: normal; word-break: break-word; max-width: 200px;">${order.note}</td>
+                                                        <td style="white-space: normal; word-break: break-word; max-width: 200px;">${order.address}</td>
                                                         <td><fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                         <td>
                                                             <c:choose>
@@ -104,7 +103,21 @@
                                                         </td>
                                                         <td>${order.totalAmount}</td>
                                                         <td>
-                                                            <a href="OrderAdminCate?service=listItemPending&orderID=${order.orderID}" 
+                                                            <c:choose>
+                                                                <c:when test="${order.paymentStatusID == 1}">
+                                                                    Pay when receive
+                                                                </c:when>
+                                                                <c:when test="${order.paymentStatusID == 2}">
+                                                                    Online Banking
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    Unknown
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+
+                                                        <td>
+                                                            <a href="OrderItemAdmin?service=listItemOnShip&orderID=${order.orderID}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                     </tr>

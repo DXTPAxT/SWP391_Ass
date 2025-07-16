@@ -190,7 +190,7 @@ CREATE TABLE Shipping (
     OrderID INT NOT NULL,
     ShipperID INT NOT NULL,
     ShippingStatus int default 0 NOT NULL,
-    ShipTime DATE NOT NULL,
+    ShipTime DATE default NULL,
     Note TEXT DEFAULT NULL,
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
     FOREIGN KEY (ShipperID) REFERENCES Users(UserID)

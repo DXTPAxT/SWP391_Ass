@@ -104,6 +104,141 @@ public class OrderAdminCateServlet extends HttpServlet {
                     e.printStackTrace();
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order update request.");
                 }
+            } else if (service.equals("updateStatusProcess")) {
+                try {
+                    int orderID = Integer.parseInt(request.getParameter("orderID"));
+                    int status = Integer.parseInt(request.getParameter("status"));
+
+                    HttpSession session = request.getSession(false);
+                    User currentUser = (User) session.getAttribute("user");
+
+                    if (currentUser == null || currentUser.getRole().getRoleID() != 2) { // 2 là Staff
+                        response.sendRedirect(request.getContextPath() + "/Login");
+                        return;
+                    }
+
+                    dao.updateOrderStatus(orderID, status);
+
+                    // Nếu là nhận đơn (status = 2), lưu staff chuẩn bị
+                    if (status == 2 || status == 0) {
+                        dao.insertOrderPreparement(currentUser.getRole().getRoleID(), orderID);
+                    }
+
+                    response.sendRedirect("OrderAdminCate?service=listProcessing");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order update request.");
+                }
+            } else if (service.equals("updateStatusShip")) {
+                try {
+                    int orderID = Integer.parseInt(request.getParameter("orderID"));
+                    int status = Integer.parseInt(request.getParameter("status"));
+
+                    HttpSession session = request.getSession(false);
+                    User currentUser = (User) session.getAttribute("user");
+
+                    if (currentUser == null || currentUser.getRole().getRoleID() != 4) { // 4 là Shipper
+                        response.sendRedirect(request.getContextPath() + "/Login");
+                        return;
+                    }
+
+                    // Chỉ cập nhật trạng thái nếu insert shipping thành công
+                    boolean success = dao.insertShipping(currentUser.getUserId(), orderID, null);
+                    if (success) {
+                        dao.updateOrderStatus(orderID, status);
+                        response.sendRedirect("OrderAdminCate?service=listOnShipping");
+                    } else {
+                        request.setAttribute("error", "Không thể nhận đơn. Đã có lỗi xảy ra khi gán shipper.");
+                        request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/Order/listOnShipping.jsp").forward(request, response);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order update request.");
+                }
+            } else if (service.equals("updateStatusShipFinish")) {
+                try {
+                    int orderID = Integer.parseInt(request.getParameter("orderID"));
+                    int status = Integer.parseInt(request.getParameter("status")); // ví dụ: 5 = Delivered
+                    String note = request.getParameter("note"); // lấy ghi chú từ textarea
+
+                    HttpSession session = request.getSession(false);
+                    User currentUser = (User) session.getAttribute("user");
+
+                    // Kiểm tra quyền
+                    if (currentUser == null || currentUser.getRole().getRoleID() != 4) { // 4 là Shipper
+                        response.sendRedirect(request.getContextPath() + "/Login");
+                        return;
+                    }
+
+                    // Kiểm tra Shipper phụ trách đơn
+                    boolean isCorrectShipper = dao.isShippingHandledByUser(currentUser.getUserId(), orderID);
+                    if (!isCorrectShipper) {
+                        request.setAttribute("error", "Bạn không có quyền hoàn thành đơn này.");
+                        request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/Order/listOnShipping.jsp").forward(request, response);
+                        return;
+                    }
+
+                    // Tiến hành cập nhật trạng thái giao hàng
+                    boolean success = dao.completeShipping(currentUser.getUserId(), orderID, note);
+
+                    if (success) {
+                        dao.updateOrderStatus(orderID, status);
+                        response.sendRedirect("OrderAdminCate?service=listOnShipping");
+                    } else {
+                        request.setAttribute("error", "Cập nhật giao hàng thất bại. Vui lòng thử lại.");
+                        request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/Order/listOnShipping.jsp").forward(request, response);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order update request.");
+                }
+            } else if (service.equals("viewConsignee")) {
+                try {
+                    int orderID = Integer.parseInt(request.getParameter("orderID"));
+
+                    // Gọi DAO để lấy chi tiết đơn hàng
+                    OrderCate order = dao.getOrderByID(orderID);
+
+                    // Lấy danh sách các đơn theo trạng thái hiện tại nếu cần giữ bảng chính
+                    int currentStatus = order.getStatus(); // hoặc bạn có thể truyền từ param
+                    List<OrderCate> orders = dao.getOrdersByStatus(currentStatus);
+
+                    // Truyền dữ liệu sang JSP
+                    request.setAttribute("orders", orders);
+                    request.setAttribute("selectedOrder", order); // dùng để hiển thị phần bên dưới
+                    request.setAttribute("orderID", orderID);
+
+                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/Order/viewOrderCateCompleted.jsp").forward(request, response);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
+                }
+            }else if (service.equals("viewShipping")) {
+                try {
+                    int orderID = Integer.parseInt(request.getParameter("orderID"));
+
+                    // Gọi DAO để lấy chi tiết đơn hàng
+                    OrderCate order = dao.getOrderByID(orderID);
+
+                    // Lấy danh sách các đơn theo trạng thái hiện tại nếu cần giữ bảng chính
+                    int currentStatus = order.getStatus(); // hoặc bạn có thể truyền từ param
+                    List<OrderCate> orders = dao.getOrdersByStatus(currentStatus);
+
+                    // Truyền dữ liệu sang JSP
+                    request.setAttribute("orders", orders);
+                    request.setAttribute("selectedShipping", order); // dùng để hiển thị phần bên dưới
+                    request.setAttribute("orderID", orderID);
+
+                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/Order/viewOrderCateCompleted.jsp").forward(request, response);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
+                }
             }
 
             /*else if (service.equals("update")) {

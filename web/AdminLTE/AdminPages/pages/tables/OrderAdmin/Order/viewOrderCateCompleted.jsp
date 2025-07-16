@@ -74,15 +74,14 @@
                                         <thead>
                                             <tr>
                                                 <th>Order ID</th>
-                                                <th>Customer Name</th>
-                                                <th>Consignee</th>
+                                                <th>Customer Name</th>                                                
                                                 <th>Staff Name</th>
-                                                <th>Shipper Name</th>
-                                                <th>Shipper Phone</th>
                                                 <th>Order Date</th>
                                                 <th>Product Type</th>
                                                 <th>Total Amount</th>
                                                 <th>View Order Items</th>
+                                                <th>View Consignee</th>
+                                                <th>View Shipping</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -91,11 +90,7 @@
                                                     <tr>
                                                         <td>${order.orderID}</td>
                                                         <td>${order.customerName}</td>
-                                                        <td>${order.fullName}</td>
                                                         <td>${order.staffName}</td>
-                                                        <td>${order.shipperName}</td>
-                                                        <td>${order.shipperPhone}</td>
-                                                        <td><fmt:formatDate value="${order.shipTime}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                         <td><fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                         <td>
                                                             <c:choose>
@@ -105,12 +100,46 @@
                                                         </td>
                                                         <td>${order.totalAmount}</td>
                                                         <td>
-                                                            <a href="OrderAdminCate?service=listItemPending&orderID=${order.orderID}" 
+                                                            <a href="OrderItemAdmin?service=listItemComplete&orderID=${order.orderID}" 
+                                                               class="btn btn-warning btn-sm">View</a>
+                                                        </td>
+                                                        <td>
+                                                            <a href="OrderAdminCate?service=viewConsignee&orderID=${order.orderID}" 
+                                                               class="btn btn-warning btn-sm">View</a>
+                                                        </td>
+                                                        <td>
+                                                            <a href="OrderAdminCate?service=viewShipping&orderID=${order.orderID}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
+                                            <c:if test="${not empty selectedShipping}">
+                                            <div class="box box-info" style="margin-top: 30px; padding: 20px;">
+                                                <h4><i class="fa fa-truck"></i> Shipping Information</h4>
+                                                <table class="table table-striped table-bordered">
+                                                    <tr>
+                                                        <th>Shipper Name</th>
+                                                        <td>${selectedShipping.shipperName}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Shipper Phone</th>
+                                                        <td>${selectedShipping.shipperPhone}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Ship Time</th>
+                                                        <td>
+                                                            <fmt:formatDate value="${selectedShipping.shipTime}" pattern="dd-MM-yyyy" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Note</th>
+                                                        <td style="white-space: pre-line;">${selectedShipping.shipNote}</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </c:if>
+
 
                                         </tbody>
                                     </table>
@@ -121,6 +150,30 @@
 
                     <!-- /.box-body -->
                 </section>
+                <c:if test="${not empty selectedOrder}">
+                    <div class="box box-primary" style="margin-top: 30px; padding: 20px;">
+                        <h4><i class="fa fa-user"></i> Consignee Information</h4>
+                        <table class="table table-striped table-bordered">
+                            <tr>
+                                <th>Full Name</th>
+                                <td>${selectedOrder.fullName}</td>
+                            </tr>
+                            <tr>
+                                <th>Phone Number</th>
+                                <td>${selectedOrder.phoneNumber}</td>
+                            </tr>
+                            <tr>
+                                <th>Address</th>
+                                <td>${selectedOrder.address}</td>
+                            </tr>
+                            <tr>
+                                <th>Note</th>
+                                <td>${selectedOrder.note}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </c:if>
+
             </div>
             <!-- /.box -->
 
