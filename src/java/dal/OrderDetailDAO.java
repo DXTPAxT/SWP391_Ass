@@ -4,14 +4,24 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import models.OrderDetail;
+import models.Products;
+import models.WarrantyDetails;
 
 public class OrderDetailDAO extends DBContext {
 
     public ArrayList<OrderDetail> getOrderDetailsByOrderItemID(int orderItemID) {
         ArrayList<OrderDetail> list = new ArrayList<>();
-        String sql = "SELECT * FROM OrderDetails WHERE OrderItemID = ?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        String sql = "SELECT od.*, "
+                + "p.ProductID, p.ProductCode, p.Status AS ProductStatus, "
+                + "wd.WarrantyDetailID, wd.WarrantyID, wd.BrandComID, wd.Price, wd.Status AS WarrantyDetailStatus, "
+                + "w.WarrantyPeriod, w.Description "
+                + "FROM OrderDetails od "
+                + "LEFT JOIN Products p ON od.ProductID = p.ProductID "
+                + "LEFT JOIN WarrantyDetails wd ON od.WarrantyDetailID = wd.WarrantyDetailID "
+                + "LEFT JOIN Warranties w ON wd.WarrantyID = w.WarrantyID "
+                + "WHERE od.OrderItemID = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, orderItemID);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -23,6 +33,27 @@ public class OrderDetailDAO extends DBContext {
                 od.setUnitPrice(rs.getInt("UnitPrice"));
                 od.setWarrantyPrice(rs.getInt("WarrantyPrice"));
                 od.setStatus(rs.getInt("Status"));
+
+                // SET PRODUCT
+                if (rs.getInt("ProductID") != 0) {
+                    Products product = new Products();
+                    product.setProductID(rs.getInt("ProductID"));
+                    product.setProductCode(rs.getString("ProductCode"));
+                    product.setStatus(rs.getInt("ProductStatus"));
+                    od.setProduct(product);
+                }
+
+                // SET WARRANTY
+                WarrantyDetails warranty = new WarrantyDetails();
+                warranty.setWarrantyDetailID(rs.getInt("WarrantyDetailID"));
+                warranty.setWarrantyID(rs.getInt("WarrantyID"));
+                warranty.setBrandComID(rs.getInt("BrandComID"));
+                warranty.setPrice(rs.getInt("Price"));
+                warranty.setStatus(rs.getInt("WarrantyDetailStatus"));
+                warranty.setWarrantyPeriod(rs.getInt("WarrantyPeriod"));
+                warranty.setDescription(rs.getString("Description"));
+                od.setWarranty(warranty);
+
                 list.add(od);
             }
         } catch (Exception e) {

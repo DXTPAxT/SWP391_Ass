@@ -1,6 +1,11 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%
+    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+    java.util.Calendar cal = java.util.Calendar.getInstance();
+    models.OrderCate orderObj = (models.OrderCate) request.getAttribute("order");
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -55,7 +60,92 @@
 
             .card-right {
                 flex: 0 0 70%;
-                max-width: 70%;
+                max-width: 100%;
+            }
+
+            /* ===== ORDER TRACKING ===== */
+            .order-steps {
+                display: flex;
+                justify-content: space-between;
+                margin: 30px 0;
+                list-style: none;
+                padding-left: 0;
+                gap: 20px;
+            }
+
+            .order-steps li {
+                flex: 1;
+                text-align: center;
+                position: relative;
+                color: #aaa;
+                font-weight: 400;
+                padding: 0 5px;
+            }
+
+            .order-steps li::before {
+                content: "";
+                position: absolute;
+                top: 20px;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background-color: #ccc;
+                z-index: -1;
+                margin: 0 auto;
+                width: 100%;
+            }
+
+            /* ✅ Đã hoàn thành */
+            .order-steps li.completed {
+                color: #28a745;
+                font-weight: bold;
+            }
+
+            .order-steps li.completed::before {
+                background-color: #28a745;
+            }
+
+            .order-steps li.completed::after {
+                content: "✓";
+                display: block;
+                margin-top: 5px;
+                color: #28a745;
+                font-weight: bold;
+            }
+
+            /* ✅ Đang thực hiện */
+            .order-steps li.current {
+                color: #ffc107;
+                font-weight: bold;
+            }
+
+            .order-steps li.current::before {
+                background-color: #ffc107;
+            }
+
+            .order-steps li.current::after {
+                content: "⟳";
+                display: block;
+                margin-top: 5px;
+                color: #ffc107;
+                font-weight: bold;
+            }
+
+            /* ===== REJECT STATUS ===== */
+            .reject-step {
+                text-align: center;
+                color: #dc3545;
+                font-weight: bold;
+                font-size: 18px;
+                margin: 30px 0;
+            }
+
+            .reject-step::after {
+                content: "✘";
+                display: block;
+                font-size: 24px;
+                color: #dc3545;
+                margin-top: 5px;
             }
         </style>
     </head>
@@ -74,6 +164,48 @@
                     </ol>
                 </div>
 
+                <h3>Order Status</h3>
+
+                <c:choose>
+                    <c:when test="${order.orderStatus.statusID == 0}">
+                        <div class="reject-step" style="color: red; font-weight: bold;">❌ Rejected</div>
+                    </c:when>
+
+                    <c:otherwise>
+                        <ul class="order-steps">
+                            <c:set var="currentStatus" value="${order.orderStatus.statusID}" />
+                            <c:forEach var="step" begin="1" end="5">
+                                <c:set var="stepClass" value="" />
+                                <c:choose>
+                                    <c:when test="${step < currentStatus}">
+                                        <c:set var="stepClass" value="completed" />
+                                    </c:when>
+                                    <c:when test="${step == currentStatus}">
+                                        <c:choose>
+                                            <c:when test="${currentStatus == 5}">
+                                                <c:set var="stepClass" value="completed" />
+                                            </c:when>
+                                            <c:otherwise>
+                                                <c:set var="stepClass" value="current" />
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:when>
+                                </c:choose>
+
+                                <li class="${stepClass}">
+                                    <c:choose>
+                                        <c:when test="${step == 1}">Pending</c:when>
+                                        <c:when test="${step == 2}">On-progress</c:when>
+                                        <c:when test="${step == 3}">Waiting for ship</c:when>
+                                        <c:when test="${step == 4}">On Ship</c:when>
+                                        <c:when test="${step == 5}">Complete</c:when>
+                                    </c:choose>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </c:otherwise>
+                </c:choose>
+
                 <!-- Order Info -->
                 <div class="review-payment">
                     <h2>Order Details</h2>
@@ -87,6 +219,11 @@
                                 <div class="card-left">
                                     <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/cart/two.png" alt="Product">
                                     <h4 class="category-name">${item.category.categoryName}</h4>
+                                    <a href="${pageContext.request.contextPath}/CategoriesController?service=detail&categoryID=${item.category.categoryID}"
+                                       class="btn btn-success"
+                                       >
+                                        Buy new one
+                                    </a>
                                 </div>
 
                                 <div class="card-right">
@@ -95,9 +232,11 @@
                                     <table class="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th>ProductID</th>
+                                                <th>Product Code</th>
                                                 <th>Unit Price</th>
                                                 <th>Warranty Price</th>
+                                                <th>Warranty Period</th>
+                                                <th>Warranty desc</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
@@ -105,14 +244,28 @@
                                         <tbody>
                                             <c:forEach var="detail" items="${item.orderDetailList}">
                                                 <tr>
-                                                    <td>${detail.productID}</td>
+                                                    <td>${empty detail.product.productCode ? 'Not Prepared' : detail.product.productCode}</td>
                                                     <td><fmt:formatNumber value="${detail.unitPrice}" type="number" groupingUsed="true"/> VND</td>
                                                     <td><fmt:formatNumber value="${detail.warrantyPrice}" type="number" groupingUsed="true"/> VND</td>
-                                                    <td>${detail.status}</td>
+                                                    <td>${detail.warranty.warrantyPeriod} Months</td>   
+                                                    <td>${detail.warranty.description} Months</td>
                                                     <td>
-                                                        <c:if test="${detail.status == 1}">
-                                                            <a href="#" class="btn btn-primary mt-0">Activate Warranty</button>
-                                                        </c:if>
+                                                        <c:choose>
+                                                            <c:when test="${detail.product.status == 0}">Delivered</c:when>
+                                                            <c:when test="${detail.product.status == 1}">Not Prepared Yet</c:when>
+                                                            <c:when test="${detail.product.status == 2}">Under Warranty</c:when>
+                                                            <c:otherwise>Preparing</c:otherwise>
+                                                        </c:choose>
+                                                    </td>
+                                                    <td>
+                                                        <c:choose>
+                                                            <c:when test="${order.orderStatus.statusID >= 5 && detail.product.status == 0}">
+                                                                <a href="#" class="btn btn-primary mt-0">Activate Warranty</a>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <button class="btn btn-secondary mt-0" disabled>Activate Warranty</button>
+                                                            </c:otherwise>
+                                                        </c:choose>
                                                     </td>
                                                 </tr>
                                             </c:forEach>
@@ -154,12 +307,8 @@
 
                 <!-- Payment Info -->
                 <div class="payment-options">
-                    <h4>Status</h4>
-                    <p>Status ID: ${order.status}</p>
-                    <h4>Payment Status</h4>
-                    <p>Status ID: ${order.paymentStatusID}</p>
+                    <h4>Payment: ${order.paymentStatusID}</h4>
                 </div>
-
             </div>
         </section>
 
