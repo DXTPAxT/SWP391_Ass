@@ -8,11 +8,11 @@ package models;
  *
  * @author PC ASUS
  */
-public class OrderStatus {
+public class Order_Status {
     private int statusID;
     private String status;
 
-    public OrderStatus(int statusID, String status) {
+    public Order_Status(int statusID, String status) {
         this.statusID = statusID;
         this.status = status;
     }

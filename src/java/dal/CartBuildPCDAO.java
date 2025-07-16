@@ -142,16 +142,22 @@ public class CartBuildPCDAO extends DBContext {
         FROM Cart_Build_PC_Items cbi
         WHERE cbi.CartBuildPCID = ?
     """;
-        String insertOrderSQL = """
-        INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID) 
-        VALUES (?, 2, ?, NOW(), '', ?, ?, ?, 1, 1)
+        String insertBuildPCSQL = "INSERT INTO Build_PC (Price, Status, UserID) VALUES (?, 1, ?)";
+        String insertBuildPCItemSQL = """
+        INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status) 
+        VALUES (?, ?, ?, ?, 1)
     """;
-        String insertOrderItemSQL = "INSERT INTO Order_BuildPCItems (OrderID, CartBuildPCID, Price) VALUES (?, ?, ?)";
+        String insertOrderSQL = """
+        INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, PhoneNumber, Fullname, PaymentStatusID, TotalAmount, Status) 
+        VALUES (?, 2, ?, NOW(), '', ?, ?, 1, ?, 1)
+    """;
+        String insertOrderItemSQL = "INSERT INTO Order_BuildPCItems (OrderID, BuildPCID, Price) VALUES (?, ?, ?)";
         String insertDetailSQL = """
         INSERT INTO Order_BuildPCDetails (OrderBuildPCItemID, CategoryID, WarrantyDetailID, Price, Status) 
         VALUES (?, ?, ?, ?, 1)
     """;
-        String updateCartStatusSQL = "UPDATE Cart_Build_PC SET Status = 0 WHERE CartBuildPCID = ?";
+        String deleteCartItemsSQL = "DELETE FROM Cart_Build_PC_Items WHERE CartBuildPCID = ?";
+        String deleteCartSQL = "DELETE FROM Cart_Build_PC WHERE CartBuildPCID = ?";
 
         try {
             connection.setAutoCommit(false);
@@ -189,13 +195,39 @@ public class CartBuildPCDAO extends DBContext {
 
             int finalPrice = (int) Math.round(totalPrice * 0.8);
 
-            // 3. Insert đơn hàng
+            // 3. Tạo BuildPC
+            PreparedStatement psBuildPC = connection.prepareStatement(insertBuildPCSQL, Statement.RETURN_GENERATED_KEYS);
+            psBuildPC.setInt(1, finalPrice);
+            psBuildPC.setInt(2, userID);
+            psBuildPC.executeUpdate();
+            ResultSet rsBuildPC = psBuildPC.getGeneratedKeys();
+            if (!rsBuildPC.next()) {
+                connection.rollback();
+                return false;
+            }
+            int buildPCID = rsBuildPC.getInt(1);
+            // 3.5 Insert Build_PC_Items
+            PreparedStatement psInsertBuildPCItem = connection.prepareStatement(insertBuildPCItemSQL);
+            for (Object[] item : items) {
+                psInsertBuildPCItem.setInt(1, buildPCID);
+                psInsertBuildPCItem.setInt(2, (int) item[0]); // CategoryID
+                psInsertBuildPCItem.setInt(3, (int) item[2]); // Price
+                if ((int) item[1] > 0) {
+                    psInsertBuildPCItem.setInt(4, (int) item[1]); // WarrantyDetailID
+                } else {
+                    psInsertBuildPCItem.setNull(4, Types.INTEGER);
+                }
+                psInsertBuildPCItem.addBatch();
+            }
+            psInsertBuildPCItem.executeBatch();
+
+            // 4. Tạo đơn hàng
             PreparedStatement psOrder = connection.prepareStatement(insertOrderSQL, Statement.RETURN_GENERATED_KEYS);
-            psOrder.setString(1, "OD" + System.currentTimeMillis());
-            psOrder.setInt(2, userID);
-            psOrder.setString(3, fullName);
-            psOrder.setString(4, phone);
-            psOrder.setInt(5, finalPrice);
+            psOrder.setString(1, "OD" + System.currentTimeMillis()); // OrderCode
+            psOrder.setInt(2, userID);       // CustomerID
+            psOrder.setString(3, phone);     // PhoneNumber
+            psOrder.setString(4, fullName);  // Fullname
+            psOrder.setInt(5, finalPrice);   // TotalAmount
             psOrder.executeUpdate();
 
             ResultSet rsOrder = psOrder.getGeneratedKeys();
@@ -205,10 +237,10 @@ public class CartBuildPCDAO extends DBContext {
             }
             int orderID = rsOrder.getInt(1);
 
-            // 4. Insert Order_BuildPCItems
+            // 5. Insert Order_BuildPCItems
             PreparedStatement psInsertOrderItem = connection.prepareStatement(insertOrderItemSQL, Statement.RETURN_GENERATED_KEYS);
             psInsertOrderItem.setInt(1, orderID);
-            psInsertOrderItem.setInt(2, cartBuildPCID);
+            psInsertOrderItem.setInt(2, buildPCID);
             psInsertOrderItem.setInt(3, finalPrice);
             psInsertOrderItem.executeUpdate();
 
@@ -219,7 +251,7 @@ public class CartBuildPCDAO extends DBContext {
             }
             int orderBuildPCItemID = rsOrderItem.getInt(1);
 
-            // 5. Insert chi tiết từng linh kiện
+            // 6. Insert chi tiết linh kiện
             PreparedStatement psInsertDetail = connection.prepareStatement(insertDetailSQL);
             for (Object[] item : items) {
                 psInsertDetail.setInt(1, orderBuildPCItemID);
@@ -234,10 +266,14 @@ public class CartBuildPCDAO extends DBContext {
             }
             psInsertDetail.executeBatch();
 
-            // 6. Cập nhật trạng thái giỏ về 0
-            PreparedStatement psUpdateCart = connection.prepareStatement(updateCartStatusSQL);
-            psUpdateCart.setInt(1, cartBuildPCID);
-            psUpdateCart.executeUpdate();
+            // 7. Xóa giỏ sau khi đặt hàng thành côngF
+            PreparedStatement psDeleteItems = connection.prepareStatement(deleteCartItemsSQL);
+            psDeleteItems.setInt(1, cartBuildPCID);
+            psDeleteItems.executeUpdate();
+
+            PreparedStatement psDeleteCart = connection.prepareStatement(deleteCartSQL);
+            psDeleteCart.setInt(1, cartBuildPCID);
+            psDeleteCart.executeUpdate();
 
             connection.commit();
             return true;
@@ -257,6 +293,21 @@ public class CartBuildPCDAO extends DBContext {
             }
         }
         return false;
+    }
+
+    public static void main(String[] args) {
+        CartBuildPCDAO dao = new CartBuildPCDAO();
+
+        int cartBuildPCID = 1; // ID giỏ Build PC cần test (đảm bảo tồn tại và đúng cấu trúc dữ liệu)
+        int userID = 2;        // ID người dùng tương ứng với giỏ hàng
+
+        boolean success = dao.insertOrderFromCart(cartBuildPCID, userID);
+
+        if (success) {
+            System.out.println("✔️ Đặt hàng từ giỏ Build PC thành công!");
+        } else {
+            System.out.println("❌ Đặt hàng thất bại. Kiểm tra dữ liệu đầu vào hoặc lỗi hệ thống.");
+        }
     }
 
 }

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import models.OrderCate;
 import java.sql.*;
+import models.Categories;
 import models.OrderItems;
+import models.Products;
 
 public class OrderCateAdminDAO extends DBAdminContext {
 
@@ -20,7 +22,7 @@ public class OrderCateAdminDAO extends DBAdminContext {
             o.OrderDate,
             o.Address AS OrderAddress,
             o.TotalAmount,
-            o.Status AS OrderStatus,
+            o.Status,
 
             customer.UserID AS CustomerUserID,
             customer.FullName AS CustomerName,
@@ -70,7 +72,7 @@ public class OrderCateAdminDAO extends DBAdminContext {
                     order.setOrderDate(rs.getTimestamp("OrderDate"));
                     order.setAddress(rs.getString("OrderAddress"));
                     order.setTotalAmount(rs.getInt("TotalAmount"));
-                    order.setStatus(rs.getInt("OrderStatus"));
+                    order.setStatus(rs.getInt("Status"));
 
                     // Customer
                     order.setCustomerID(rs.getInt("CustomerUserID"));
@@ -101,7 +103,62 @@ public class OrderCateAdminDAO extends DBAdminContext {
 
         return list;
     }
-    
+
+    public List<OrderItems> getAllOrderCateItemsByOrderID(int orderID) {
+        List<OrderItems> list = new ArrayList<>();
+
+        String sql = """
+        SELECT 
+            oi.OrderItemID,
+            oi.OrderID,
+            oi.CategoryID,
+            oi.Quantity,
+            oi.Price,
+            o.OrderCode,
+            c.CategoryName,
+            c.Inventory,
+            c.Queue
+        FROM OrderItems oi
+        JOIN Orders o ON oi.OrderID = o.OrderID
+        JOIN Categories c ON oi.CategoryID = c.CategoryID
+        WHERE oi.OrderID = ?;
+    """;
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, orderID);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    OrderItems item = new OrderItems();
+
+                    int orderItemID = rs.getInt("OrderItemID");
+                    int quantity = rs.getInt("Quantity");
+
+                    item.setOrderItemID(orderItemID);
+                    item.setOrderID(rs.getInt("OrderID"));
+                    item.setCategoryID(rs.getInt("CategoryID"));
+                    item.setQuantity(quantity);
+                    item.setPrice(rs.getInt("Price"));
+
+                    item.setOrderCode(rs.getString("OrderCode"));
+                    item.setCategoryName(rs.getString("CategoryName"));
+                    item.setInventory(rs.getInt("Inventory"));
+                    item.setQueue(rs.getInt("Queue"));
+
+                    // ➕ Kiểm tra số lượng sản phẩm đã được gán ProductCode
+                    int assigned = getAssignedProductCount(orderItemID, conn);
+                    item.setCompleted(assigned >= quantity);
+
+                    list.add(item);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 
     public void updateOrderStatus(int orderID, int status) {
         String sql = "UPDATE Orders SET Status = ? WHERE OrderID = ?";
@@ -115,17 +172,189 @@ public class OrderCateAdminDAO extends DBAdminContext {
         }
     }
 
-    /*public static void main(String[] args) {
+    public void insertOrderPreparement(int userID, int orderID) {
+        String sql = "INSERT INTO OrderPreparements (UserID, OrderID, PrepareTime) VALUES (?, ?, CURRENT_DATE)";
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userID);
+            ps.setInt(2, orderID);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void fillProductsForOrderItem(int orderItemID) {
+        String getDetailsSQL = """
+        SELECT OrderDetailID 
+        FROM OrderDetails 
+        WHERE OrderItemID = ? AND ProductID IS NULL
+    """;
+
+        String getProductsSQL = """
+        SELECT p.ProductID 
+        FROM Products p
+        JOIN Imports i ON p.ImportID = i.ImportID
+        WHERE i.CategoryID = (
+            SELECT CategoryID FROM OrderItems WHERE OrderItemID = ?
+        ) AND p.Status = 1
+        LIMIT ?
+    """;
+
+        String updateSQL = """
+        UPDATE OrderDetails 
+        SET ProductID = ? 
+        WHERE OrderDetailID = ?
+    """;
+
+        String markUsedSQL = """
+        UPDATE Products 
+        SET Status = 0 
+        WHERE ProductID = ?
+    """;
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement psGetDetails = conn.prepareStatement(getDetailsSQL); PreparedStatement psGetProducts = conn.prepareStatement(getProductsSQL); PreparedStatement psUpdate = conn.prepareStatement(updateSQL); PreparedStatement psMarkUsed = conn.prepareStatement(markUsedSQL)) {
+
+            List<Integer> detailIDs = new ArrayList<>();
+
+            psGetDetails.setInt(1, orderItemID);
+            try (ResultSet rs = psGetDetails.executeQuery()) {
+                while (rs.next()) {
+                    detailIDs.add(rs.getInt("OrderDetailID"));
+                }
+            }
+
+            if (detailIDs.isEmpty()) {
+                return;
+            }
+
+            psGetProducts.setInt(1, orderItemID);
+            psGetProducts.setInt(2, detailIDs.size());
+
+            List<Integer> productIDs = new ArrayList<>();
+            try (ResultSet rs = psGetProducts.executeQuery()) {
+                while (rs.next()) {
+                    productIDs.add(rs.getInt("ProductID"));
+                }
+            }
+
+            // Gán từng product vào từng dòng order detail
+            for (int i = 0; i < Math.min(detailIDs.size(), productIDs.size()); i++) {
+                int orderDetailID = detailIDs.get(i);
+                int productID = productIDs.get(i);
+
+                psUpdate.setInt(1, productID);
+                psUpdate.setInt(2, orderDetailID);
+                psUpdate.addBatch();
+
+                psMarkUsed.setInt(1, productID);
+                psMarkUsed.addBatch();
+            }
+
+            psUpdate.executeBatch();
+            psMarkUsed.executeBatch();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isOrderItemCompleted(int orderItemID, int expectedQuantity) {
+        String sql = "SELECT COUNT(*) AS cnt FROM OrderDetails WHERE OrderItemID = ? AND ProductID IS NOT NULL";
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderItemID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt("cnt");
+                    return count >= expectedQuantity;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private int getAssignedProductCount(int orderItemID, Connection conn) {
+        String sql = """
+        SELECT COUNT(*) 
+        FROM OrderDetails 
+        WHERE OrderItemID = ? AND ProductID IS NOT NULL;
+    """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderItemID);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    public List<Products> getProductsByOrderItemID(int orderItemID) {
+        List<Products> list = new ArrayList<>();
+        String sql = "SELECT p.ProductID, p.ProductCode FROM OrderDetails od JOIN Products p ON od.ProductID = p.ProductID WHERE od.OrderItemID = ?";
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderItemID);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Products p = new Products();
+                    p.setProductID(rs.getInt("ProductID"));
+                    p.setProductCode(rs.getString("ProductCode"));
+                    list.add(p);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public void updateOrderStatusIfComplete(int orderID) {
+        String checkSql = """
+        SELECT COUNT(*) AS MissingCount
+        FROM OrderItems oi
+        JOIN OrderDetails od ON oi.OrderItemID = od.OrderItemID
+        WHERE oi.OrderID = ? AND od.ProductID IS NULL;
+    """;
+
+        String updateSql = "UPDATE Orders SET Status = 3 WHERE OrderID = ?";
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement checkPs = conn.prepareStatement(checkSql)) {
+
+            checkPs.setInt(1, orderID);
+            try (ResultSet rs = checkPs.executeQuery()) {
+                if (rs.next() && rs.getInt("MissingCount") == 0) {
+                    try (PreparedStatement updatePs = conn.prepareStatement(updateSql)) {
+                        updatePs.setInt(1, orderID);
+                        updatePs.executeUpdate();
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
         OrderCateAdminDAO dao = new OrderCateAdminDAO();
-        List<OrderItems> orders ;
+        List<OrderItems> orders = dao.getAllOrderCateItemsByOrderID(4);
 
         if (orders.isEmpty()) {
             System.out.println("No orders found in the database.");
         } else {
             for (OrderItems order : orders) {
-                System.out.println("Order ID: " + order.getOrderID());
+                System.out.println("Order ID: " + order.getInventory());
 
             }
         }
-    }*/
+    }
 }

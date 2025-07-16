@@ -98,9 +98,10 @@
                                                         </td>
                                                         <td>${order.totalAmount}</td>
                                                         <td>
-                                                            <a href="OrderAdminCate?service=listItemPending&orderID=${order.orderID}" 
+                                                            <a href="${ctx}/OrderItemAdmin?service=listPending&orderID=${order.orderID}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
+
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>

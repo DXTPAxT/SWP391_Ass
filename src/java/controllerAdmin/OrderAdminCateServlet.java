@@ -11,9 +11,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import models.OrderCate;
 import models.OrderItems;
+import models.User;
 
 /**
  *
@@ -81,16 +83,28 @@ public class OrderAdminCateServlet extends HttpServlet {
                     int orderID = Integer.parseInt(request.getParameter("orderID"));
                     int status = Integer.parseInt(request.getParameter("status"));
 
-                    dao.updateOrderStatus(orderID, status); // Gọi DAO cập nhật
+                    HttpSession session = request.getSession(false);
+                    User currentUser = (User) session.getAttribute("user");
 
-                    // Redirect hoặc forward sau khi cập nhật thành công
+                    if (currentUser == null || currentUser.getRole().getRoleID() != 2) { // 2 là Staff
+                        response.sendRedirect(request.getContextPath() + "/Login");
+                        return;
+                    }
+
+                    dao.updateOrderStatus(orderID, status);
+
+                    // Nếu là nhận đơn (status = 2), lưu staff chuẩn bị
+                    if (status == 2 || status == 0) {
+                        dao.insertOrderPreparement(currentUser.getRole().getRoleID(), orderID);
+                    }
+
                     response.sendRedirect("OrderAdminCate?service=listPending");
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order update request.");
                 }
             }
-
 
             /*else if (service.equals("update")) {
                 String submit = request.getParameter("submit");

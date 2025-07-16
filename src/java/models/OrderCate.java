@@ -20,7 +20,7 @@ public class OrderCate {
     private int StaffID;
     private String StaffName;
     private String Note;
-    private OrderStatus orderStatus;
+    private Order_Status orderStatus1;
     private Date PrepareTime;
     private int shipperID;
     private String shipperName;
@@ -406,12 +406,12 @@ public class OrderCate {
         this.Note = Note;
     }
 
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
+    public Order_Status getOrder_Status() {
+        return orderStatus1;
     }
 
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setOrder_Status(Order_Status orderStatus1) {
+        this.orderStatus1 = orderStatus1;
     }
 
 }
