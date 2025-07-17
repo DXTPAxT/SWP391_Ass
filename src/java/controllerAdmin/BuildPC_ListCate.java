@@ -235,13 +235,13 @@ public class BuildPC_ListCate extends HttpServlet {
 
         try {
             List<BuildPCAdmin> items = dao.getBuildPCItemsByBuildPCID(buildPCID);
-            String creatorRole = dao.getRoleNameOfCreator(buildPCID); // THÊM DÒNG NÀY
+            String creatorRole = dao.getRoleNameOfCreator(buildPCID);
 
             response.setContentType("text/plain;charset=UTF-8");
             PrintWriter out = response.getWriter();
 
             // Dòng đầu tiên là role của người tạo
-            out.println("ROLE|" + creatorRole); // THÊM DÒNG NÀY
+            out.println("ROLE|" + creatorRole); 
 
             // Sau đó là các dòng thành phần
             for (BuildPCAdmin item : items) {
