@@ -291,7 +291,7 @@
                 </section>
 
                 <div id="statusWrapper" class="form-group mt-3" style="display: none;">
-                    <label for="statusSelect">Trạng thái:</label>
+                    <label for="statusSelect">Status:</label>
                     <select class="form-control" id="statusSelect">
                     </select>
                 </div>
@@ -491,14 +491,9 @@
                                             } else if (role === "Customer" || role === "" || role == null) {
                                                 statusWrapper.style.display = "block";
                                                 statusSelect.innerHTML = `
-                <option value="0">Waiting for confirmation</option>
-                <option value="1">Confirmed</option>
-                <option value="2">Building PC</option>
-                <option value="3">Build finish</option>
-                <option value="4">Waiting for Ship</option>
-                <option value="5">Shipping</option>
-                <option value="6">Shipped</option>
-                <option value="7">Complete</option>`;
+                <option value="0">Reject</option>
+                <option value="9">Waiting Confirm Order</option>
+                <option value="10">Confirm Order, send to Staff</option>`;
                                             } else {
                                                 statusWrapper.style.display = "none";  // Role không hợp lệ thì ẩn dropdown
                                             }

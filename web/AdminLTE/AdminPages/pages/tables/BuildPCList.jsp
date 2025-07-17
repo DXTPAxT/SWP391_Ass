@@ -118,27 +118,30 @@
                                                     <c:otherwise>
                                                         <c:choose>
                                                             <c:when test="${b.status == 0}">
-                                                                <span class="label label-warning">Chờ xác nhận</span>
+                                                                <span class="label label-warning">Reject</span>
                                                             </c:when>
                                                             <c:when test="${b.status == 1}">
-                                                                <span class="label label-primary">Đã xác nhận</span>
+                                                                <span class="label label-primary">Staff have Confirm</span>
                                                             </c:when>
                                                             <c:when test="${b.status == 2}">
-                                                                <span class="label label-info">Đang Build PC</span>
+                                                                <span class="label label-info">In Process Order</span>
                                                             </c:when>
                                                             <c:when test="${b.status == 3}">
-                                                                <span class="label label-success">Đã Build xong</span>
+                                                                <span class="label label-success">Waiting Shipping Order</span>
                                                             </c:when>
                                                             <c:when test="${b.status == 4}">
-                                                                <span class="label label-default">Chờ Ship</span>
+                                                                <span class="label label-default">On Shipping Order </span>
                                                             </c:when>
                                                             <c:when test="${b.status == 5}">
-                                                                <span class="label label-info">Đang Ship</span>
+                                                                <span class="label label-info">Success Order</span>
                                                             </c:when>
-                                                            <c:when test="${b.status == 6}">
-                                                                <span class="label label-success">Đã Ship</span>
+                                                            <c:when test="${b.status == 9}">
+                                                                <span class="label label-success">Waiting Confirm Order</span>
                                                             </c:when>
-                                                            <c:when test="${b.status == 7}">
+                                                            <c:when test="${b.status == 10}">
+                                                                <span class="label label-success">Confirm Order, send to Staff</span>
+                                                            </c:when>
+                                                                 <c:when test="${b.status == 7}">
                                                                 <span class="label label-success">Hoàn thành</span>
                                                             </c:when>
                                                             <c:otherwise>
