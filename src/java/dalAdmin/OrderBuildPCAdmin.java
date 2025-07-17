@@ -2,7 +2,9 @@ package dalAdmin;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import models.BuildPCAdmin;
 import models.OrderCate;
 import models.Products;
@@ -92,9 +94,9 @@ public class OrderBuildPCAdmin extends DBAdminContext {
 
     // 2. Lấy danh sách linh kiện BuildPC trong 1 đơn hàng
     public List<BuildPCAdmin> getBuildPCItemsByOrderID(int orderID) {
-    List<BuildPCAdmin> list = new ArrayList<>();
+        List<BuildPCAdmin> list = new ArrayList<>();
 
-    String sql = """
+        String sql = """
         SELECT 
             obi.OrderBuildPCItemID,
             obi.BuildPCID,
@@ -124,53 +126,52 @@ public class OrderBuildPCAdmin extends DBAdminContext {
         ORDER BY obi.OrderBuildPCItemID, obd.OrderBuildPCDetailID;
     """;
 
-    try (Connection conn = connection; PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setInt(1, orderID);
-        try (ResultSet rs = ps.executeQuery()) {
-            int currentQueue = 0;
-            int lastItemID = -1;
+        try (Connection conn = connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderID);
+            try (ResultSet rs = ps.executeQuery()) {
+                int currentQueue = 0;
+                int lastItemID = -1;
 
-            while (rs.next()) {
-                int currentItemID = rs.getInt("OrderBuildPCItemID");
+                while (rs.next()) {
+                    int currentItemID = rs.getInt("OrderBuildPCItemID");
 
-                // Nếu gặp OrderBuildPCItemID mới thì tăng số thứ tự
-                if (currentItemID != lastItemID) {
-                    currentQueue++;
-                    lastItemID = currentItemID;
+                    // Nếu gặp OrderBuildPCItemID mới thì tăng số thứ tự
+                    if (currentItemID != lastItemID) {
+                        currentQueue++;
+                        lastItemID = currentItemID;
+                    }
+
+                    BuildPCAdmin item = new BuildPCAdmin();
+
+                    item.setBuildPCIterm(currentItemID);
+                    item.setBuildPCID(rs.getInt("BuildPCID"));
+                    item.setCateID(rs.getInt("CategoryID"));
+                    item.setCateName(rs.getString("CategoryName"));
+                    item.setImgURL(rs.getString("ImageURL"));
+                    item.setPrice(rs.getInt("Price"));
+                    item.setStatus(rs.getInt("Status"));
+                    item.setComponentID(rs.getInt("ComponentID"));
+                    item.setBrandName(rs.getString("BrandName"));
+                    item.setWarrantyDetailID(rs.getInt("WarrantyDetailID"));
+                    item.setWarrantyPrice(rs.getInt("WarrantyPrice"));
+                    item.setWarrantyDesc(rs.getString("WarrantyDesc"));
+
+                    item.setQueue(currentQueue); // Gán số thứ tự (queue)
+
+                    list.add(item);
                 }
-
-                BuildPCAdmin item = new BuildPCAdmin();
-
-                item.setBuildPCIterm(currentItemID);
-                item.setBuildPCID(rs.getInt("BuildPCID"));
-                item.setCateID(rs.getInt("CategoryID"));
-                item.setCateName(rs.getString("CategoryName"));
-                item.setImgURL(rs.getString("ImageURL"));
-                item.setPrice(rs.getInt("Price"));
-                item.setStatus(rs.getInt("Status"));
-                item.setComponentID(rs.getInt("ComponentID"));
-                item.setBrandName(rs.getString("BrandName"));
-                item.setWarrantyDetailID(rs.getInt("WarrantyDetailID"));
-                item.setWarrantyPrice(rs.getInt("WarrantyPrice"));
-                item.setWarrantyDesc(rs.getString("WarrantyDesc"));
-
-                item.setQueue(currentQueue); // Gán số thứ tự (queue)
-
-                list.add(item);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+
+        return list;
     }
 
-    return list;
-}
-
-
     // 3. Cập nhật trạng thái đơn hàng
-   public void updateOrderStatus(int orderID, int status) {
-    String updateOrderSQL = "UPDATE Orders SET Status = ? WHERE OrderID = ?";
-    String updateBuildPCSQL = """
+    public void updateOrderStatus(int orderID, int status) {
+        String updateOrderSQL = "UPDATE Orders SET Status = ? WHERE OrderID = ?";
+        String updateBuildPCSQL = """
         UPDATE Build_PC 
         SET Status = ? 
         WHERE BuildPCID IN (
@@ -178,25 +179,36 @@ public class OrderBuildPCAdmin extends DBAdminContext {
         )
     """;
 
-    try (Connection conn = connection;
-         PreparedStatement psOrder = conn.prepareStatement(updateOrderSQL);
-         PreparedStatement psBuildPC = conn.prepareStatement(updateBuildPCSQL)) {
+        try (Connection conn = connection; PreparedStatement psOrder = conn.prepareStatement(updateOrderSQL); PreparedStatement psBuildPC = conn.prepareStatement(updateBuildPCSQL)) {
 
-        // Cập nhật đơn hàng
-        psOrder.setInt(1, status);
-        psOrder.setInt(2, orderID);
-        psOrder.executeUpdate();
+            // Cập nhật đơn hàng
+            psOrder.setInt(1, status);
+            psOrder.setInt(2, orderID);
+            psOrder.executeUpdate();
 
-        // Cập nhật Build_PC tương ứng
-        psBuildPC.setInt(1, status);
-        psBuildPC.setInt(2, orderID);
-        psBuildPC.executeUpdate();
+            // Cập nhật Build_PC tương ứng
+            psBuildPC.setInt(1, status);
+            psBuildPC.setInt(2, orderID);
+            psBuildPC.executeUpdate();
 
-    } catch (Exception e) {
-        e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
 
+    public void updateOrderStatus2(int orderID, int status) {
+        String updateOrderSQL = "UPDATE Orders SET Status = ? WHERE OrderID = ?";
+
+        try (Connection conn = connection; PreparedStatement psOrder = conn.prepareStatement(updateOrderSQL)) {
+
+            psOrder.setInt(1, status);
+            psOrder.setInt(2, orderID);
+            psOrder.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     // 4. Gán nhân viên chuẩn bị
     public void insertOrderPreparement(int userID, int orderID) {
@@ -226,6 +238,98 @@ public class OrderBuildPCAdmin extends DBAdminContext {
             e.printStackTrace();
         }
         return false;
+    }
+    // check inventory
+
+    public List<BuildPCAdmin> getAllOrderBuildPCItemsByOrderID(int orderID) {
+        List<BuildPCAdmin> list = new ArrayList<>();
+
+        String sql = """
+        SELECT 
+            obi.OrderBuildPCItemID,
+                
+            bpi.BuildPCID,
+            c.CategoryName,
+            bpi.Price,
+            c.Inventory,
+            c.Queue,
+            bpi.Status
+        FROM Order_BuildPCItems obi
+        JOIN Build_PC bp ON obi.BuildPCID = bp.BuildPCID
+        JOIN Build_PC_Items bpi ON bpi.BuildPCID = bp.BuildPCID
+        JOIN Categories c ON bpi.CategoryID = c.CategoryID
+        WHERE obi.OrderID = ?;
+    """;
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, orderID);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    BuildPCAdmin item = new BuildPCAdmin();
+
+                    item.setOrderBuildPCItemID(rs.getInt("OrderBuildPCItemID"));
+                    item.setBuildPCID(rs.getInt("BuildPCID"));
+                    item.setCateName(rs.getString("CategoryName"));
+                    item.setPrice(rs.getInt("Price"));
+                    item.setInventory(rs.getInt("Inventory"));
+                    item.setQueue(rs.getInt("Queue"));
+                    item.setStatus(rs.getInt("Status"));
+
+                    list.add(item);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+    //update inventory
+    public void updateQueueForBuildPCOrder(int orderID) {
+        String sql = """
+        SELECT c.CategoryID, c.Inventory
+        FROM Order_BuildPCItems obi
+        JOIN Build_PC_Items bpi ON obi.BuildPCID = bpi.BuildPCID
+        JOIN Categories c ON bpi.CategoryID = c.CategoryID
+        WHERE obi.OrderID = ?
+    """;
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, orderID);
+            ResultSet rs = ps.executeQuery();
+
+            Map<Integer, Integer> queueMap = new HashMap<>();
+
+            while (rs.next()) {
+                int categoryId = rs.getInt("CategoryID");
+                int inventory = rs.getInt("Inventory");
+
+                if (inventory < 1) {
+                    // Mặc định mỗi linh kiện 1 chiếc cho 1 BuildPC → tăng queue lên 1
+                    queueMap.put(categoryId, queueMap.getOrDefault(categoryId, 0) + 1);
+                }
+            }
+
+            // Cập nhật Queue cho từng Category thiếu hàng
+            for (Map.Entry<Integer, Integer> entry : queueMap.entrySet()) {
+                int categoryId = entry.getKey();
+                int missingQty = entry.getValue();
+
+                String updateSQL = "UPDATE Categories SET Queue = Queue + ? WHERE CategoryID = ?";
+                try (PreparedStatement psUpdate = conn.prepareStatement(updateSQL)) {
+                    psUpdate.setInt(1, missingQty);
+                    psUpdate.setInt(2, categoryId);
+                    psUpdate.executeUpdate();
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void fillProductsForBuildPCDetail(int detailID) {
@@ -604,22 +708,23 @@ public class OrderBuildPCAdmin extends DBAdminContext {
         }
         return false;
     }
-public static void main(String[] args) {
-    OrderBuildPCAdmin dao = new OrderBuildPCAdmin();
-    int testOrderID = 8; // Thay bằng OrderID thật đang có trong DB
 
-    List<BuildPCAdmin> items = dao.getBuildPCItemsByOrderID(testOrderID);
-    System.out.println("🧪 Tổng số dòng: " + items.size());
+    public static void main(String[] args) {
+        OrderBuildPCAdmin dao = new OrderBuildPCAdmin();
+        int testOrderID = 8; // Thay bằng OrderID thật đang có trong DB
 
-    for (BuildPCAdmin item : items) {
-        System.out.println("➡️ OrderBuildPCItemID: " + item.getBuildPCIterm());
-        System.out.println("   Category: " + item.getCateName());
-        System.out.println("   Price: " + item.getPrice());
-        System.out.println("   ComponentID: " + item.getComponentID());
-        System.out.println("   Brand: " + item.getBrandName());
-        System.out.println("   WarrantyDesc: " + item.getWarrantyDesc());
-        System.out.println("-----------------------------");
+        List<BuildPCAdmin> items = dao.getBuildPCItemsByOrderID(testOrderID);
+        System.out.println("🧪 Tổng số dòng: " + items.size());
+
+        for (BuildPCAdmin item : items) {
+            System.out.println("➡️ OrderBuildPCItemID: " + item.getBuildPCIterm());
+            System.out.println("   Category: " + item.getCateName());
+            System.out.println("   Price: " + item.getPrice());
+            System.out.println("   ComponentID: " + item.getComponentID());
+            System.out.println("   Brand: " + item.getBrandName());
+            System.out.println("   WarrantyDesc: " + item.getWarrantyDesc());
+            System.out.println("-----------------------------");
+        }
     }
-}
 
 }

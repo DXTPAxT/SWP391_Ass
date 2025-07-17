@@ -99,17 +99,17 @@
 
                             </div>
                             <div class="text-center" style="margin-top: 20px;">
-                                <form action="OrderBuildPCDetails" method="post" style="display: inline;">
+                                <form action="OrderBuildPC" method="post" style="display: inline;">
                                     <input type="hidden" name="service" value="updateStatus">
                                     <input type="hidden" name="status" value="10">
-                                    <input type="hidden" name="orderID" value="${param.orderID}">
+                                    <input type="hidden" name="orderID" value="${orderID}">
                                     <button type="submit" class="btn btn-success">Receive</button>
                                 </form>
 
-                                <form action="OrderAdminCate" method="post" style="display: inline; margin-left: 10px;">
+                                <form action="OrderBuildPC" method="post" style="display: inline; margin-left: 10px;">
                                     <input type="hidden" name="service" value="updateStatus">
                                     <input type="hidden" name="status" value="0">
-                                    <input type="hidden" name="orderID" value="${param.orderID}">
+                                    <input type="hidden" name="orderID" value="${orderID}">
                                     <button type="submit" class="btn btn-danger">Reject</button>
                                 </form>
                             </div>

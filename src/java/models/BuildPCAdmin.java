@@ -23,6 +23,8 @@ public class BuildPCAdmin {
     private String brandName;
     private String imgURL;
 private int queue;
+  private int orderBuildPCItemID;
+   private int inventory;
     public BuildPCAdmin() {
     }
 
@@ -85,6 +87,22 @@ private int queue;
 public int getQueue() {
     return queue;
 }
+
+    public int getOrderBuildPCItemID() {
+        return orderBuildPCItemID;
+    }
+
+    public void setOrderBuildPCItemID(int orderBuildPCItemID) {
+        this.orderBuildPCItemID = orderBuildPCItemID;
+    }
+
+    public int getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(int inventory) {
+        this.inventory = inventory;
+    }
 
 public void setQueue(int queue) {
     this.queue = queue;

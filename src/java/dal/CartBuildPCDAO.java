@@ -142,7 +142,7 @@ public class CartBuildPCDAO extends DBContext {
         FROM Cart_Build_PC_Items cbi
         WHERE cbi.CartBuildPCID = ?
     """;
-    String insertBuildPCSQL = "INSERT INTO Build_PC (Price, Status, UserID) VALUES (?, 9, ?)";
+    String insertBuildPCSQL = "INSERT INTO Build_PC (Price, Status, UserID) VALUES (?, 1, ?)";
 
     String insertBuildPCItemSQL = """
         INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status)

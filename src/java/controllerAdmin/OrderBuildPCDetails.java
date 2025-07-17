@@ -40,7 +40,7 @@ public class OrderBuildPCDetails extends HttpServlet {
                 List<BuildPCAdmin> items = dao.getBuildPCItemsByOrderID(orderID);
 
                 request.setAttribute("items", items);
-                request.setAttribute("orderID", orderID); // nếu cần truyền về JSP
+                request.setAttribute("orderID", orderID);
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderDoing/OrderPCDetail.jsp").forward(request, response);
 
             } catch (Exception e) {
