@@ -165,6 +165,8 @@ CREATE TABLE OrderDetails (
     WarrantyDetailID INT NOT NULL,
     UnitPrice INT NOT NULL,
     WarrantyPrice INT NOT NULL,
+    Start Date default null,
+    End Date default null,
     Status INT DEFAULT 1 NOT NULL,
     FOREIGN KEY (OrderItemID) REFERENCES OrderItems(OrderItemID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
@@ -370,6 +372,8 @@ CREATE TABLE Order_BuildPC_Products (
     OrderBuildPCDetailID INT NOT NULL,
     ProductID INT default NULL,
 	WarrantyDetailID INT NULL,
+    Start Date default null,
+    End Date default null,
     FOREIGN KEY (OrderBuildPCDetailID) REFERENCES Order_BuildPCDetails(OrderBuildPCDetailID),
     FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
