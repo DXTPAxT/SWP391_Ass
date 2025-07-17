@@ -188,7 +188,6 @@ public class OrderCateAdminDAO extends DBAdminContext {
             e.printStackTrace();
         }
     }
-
     public boolean insertShipping(int shipperID, int orderID, java.sql.Date shipTime) {
         String sql = "INSERT INTO Shipping (OrderID, ShipperID, ShipTime) VALUES (?, ?, ?)";
 
@@ -347,7 +346,6 @@ public class OrderCateAdminDAO extends DBAdminContext {
         try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, orderItemID);
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Products p = new Products();
@@ -395,7 +393,6 @@ public class OrderCateAdminDAO extends DBAdminContext {
             e.printStackTrace();
         }
     }
-
     public boolean isShippingHandledByUser(int userID, int orderID) {
         String sql = "SELECT 1 FROM Shipping WHERE OrderID = ? AND ShipperID = ?";
         try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -608,7 +605,6 @@ public class OrderCateAdminDAO extends DBAdminContext {
     }
 
    
-
     public static void main(String[] args) {
         OrderCateAdminDAO dao = new OrderCateAdminDAO();
         List<OrderItems> orders = dao.getAllOrderCateItemsByOrderID(4);

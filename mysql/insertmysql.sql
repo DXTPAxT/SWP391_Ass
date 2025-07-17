@@ -904,6 +904,7 @@ INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, Ful
 VALUES ('OR004', 0, 6, '2024-12-11 05:34:02', 'Customer 2 Address #50', 'Pham Van C', '0367890123', 9077684, 5, 2);
 
 
+
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
 VALUES ('OR005', 0, 6, '2024-12-11 05:34:02', 'Customer 2 Address #50', 'Pham Van C', '0367890123', 9077684, 0, 2);
 

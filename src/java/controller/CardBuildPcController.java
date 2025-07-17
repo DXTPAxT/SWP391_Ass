@@ -7,7 +7,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 import models.CartBuildPC;
 import models.User;
@@ -101,7 +100,6 @@ public class CardBuildPcController extends HttpServlet {
             response.getWriter().print("FAIL");
             return;
         }
-    }
 
     int depositAmount = (int) (total * 0.2);
 

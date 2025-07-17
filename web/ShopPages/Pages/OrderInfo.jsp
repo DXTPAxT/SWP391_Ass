@@ -147,6 +147,73 @@
                 color: #dc3545;
                 margin-top: 5px;
             }
+
+            @media (max-width: 768px) {
+                .cart-card-header {
+                    display: flex;
+                    flex-direction: column; /* chiều dọc */
+                    gap: 16px;
+                }
+
+                .card-right {
+                    display: none !important; /* Ẩn card-right trên mobile */
+                }
+
+                .responsive-card {
+                    display: block;
+                    background-color: #fff;
+                    border: 1px solid #ccc;
+                    border-radius: 12px;
+                    padding: 20px;
+                    margin: 20px 0;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                    max-width: 95%;
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+
+                .responsive-card h5 {
+                    text-align: center;
+                    margin-bottom: 16px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #333;
+                }
+
+                .responsive-card .rc-item {
+                    margin-bottom: 12px;
+                    font-size: 14px;
+                    line-height: 1.6;
+                }
+
+                .responsive-card .rc-item strong {
+                    display: inline-block;
+                    min-width: 140px;
+                    color: #222;
+                    font-weight: 600;
+                }
+
+                .responsive-card .btn {
+                    padding: 6px 14px;
+                    font-size: 13px;
+                    border-radius: 6px;
+                    font-weight: 500;
+                }
+            }
+
+            @media (min-width: 769px) {
+                .responsive-card {
+                    display: none;
+                }
+            }
+            .error {
+                color: red;
+                font-weight: bold;
+            }
+            .message {
+                color: green;
+                font-weight: bold;
+            }
         </style>
     </head>
 
@@ -159,21 +226,36 @@
                 <!-- Breadcrumb -->
                 <div class="breadcrumbs">
                     <ol class="breadcrumb">
-                        <li><a href="${pageContext.request.contextPath}/HomePages">Home</a></li>
+                        <li><a href="${pageContext.request.contextPath}/OrderHistory">Order History</a></li>
                         <li class="active">Order #${order.orderCode}</li>
                     </ol>
                 </div>
 
-                <h3>Order Status</h3>
+                <!-- Hiển thị thông báo lỗi/thành công -->
+                <c:if test="${not empty message}">
+                    <p class="message">${message}</p>
+                    <%
+                        request.getSession().removeAttribute("message");
+                    %>
+                </c:if>
+                <c:if test="${not empty error}">
+                    <p class="error">${error}</p>
+                    <%
+                        request.getSession().removeAttribute("error");
+                    %>
+                </c:if>
 
+                <h3>Order Status</h3>
+                <h4>Payment status: ${order.paymentStatusID == 1 ? 'Not Paid' : 'Paid'}</h4>
+                <strong>Order Date:</strong> <fmt:formatDate value="${order.orderDate}" pattern="HH:mm dd/MM/yyyy"/>
                 <c:choose>
-                    <c:when test="${order.orderStatus.statusID == 0}">
+                    <c:when test="${order.order_Status.statusID == 0}">
                         <div class="reject-step" style="color: red; font-weight: bold;">❌ Rejected</div>
                     </c:when>
 
                     <c:otherwise>
                         <ul class="order-steps">
-                            <c:set var="currentStatus" value="${order.orderStatus.statusID}" />
+                            <c:set var="currentStatus" value="${order.order_Status.statusID}" />
                             <c:forEach var="step" begin="1" end="5">
                                 <c:set var="stepClass" value="" />
                                 <c:choose>
@@ -223,6 +305,11 @@
                                        class="btn btn-success"
                                        >
                                         Buy new one
+                                    </a>                                    
+                                    <a href="${pageContext.request.contextPath}/feedback?orderItemID=${item.orderItemID}"
+                                       class="btn btn-success"
+                                       >
+                                        Feedback
                                     </a>
                                 </div>
 
@@ -259,7 +346,7 @@
                                                     </td>
                                                     <td>
                                                         <c:choose>
-                                                            <c:when test="${order.orderStatus.statusID >= 5 && detail.product.status == 0}">
+                                                            <c:when test="${order.order_Status.statusID >= 5 && detail.product.status == 0}">
                                                                 <a href="#" class="btn btn-primary mt-0">Activate Warranty</a>
                                                             </c:when>
                                                             <c:otherwise>
@@ -272,11 +359,42 @@
                                         </tbody>
                                     </table>
                                 </div>
+
+                                <c:forEach var="detail" items="${item.orderDetailList}">
+                                    <div class="responsive-card d-md-none">
+                                        <h5 class="mb-2">Order Details:</h5>
+                                        <div class="rc-item"><strong>Product Code:</strong> ${empty detail.product.productCode ? 'Not Prepared' : detail.product.productCode}</div>
+                                        <div class="rc-item"><strong>Unit Price:</strong> <fmt:formatNumber value="${detail.unitPrice}" type="number" groupingUsed="true"/> VND</div>
+                                        <div class="rc-item"><strong>Warranty Price:</strong> <fmt:formatNumber value="${detail.warrantyPrice}" type="number" groupingUsed="true"/> VND</div>
+                                        <div class="rc-item"><strong>Warranty Period:</strong> ${detail.warranty.warrantyPeriod} Months</div>
+                                        <div class="rc-item"><strong>Warranty Description:</strong> ${detail.warranty.description}</div>
+                                        <div class="rc-item">
+                                            <strong>Status:</strong>
+                                            <c:choose>
+                                                <c:when test="${detail.product.status == 0}">Delivered</c:when>
+                                                <c:when test="${detail.product.status == 1}">Not Prepared Yet</c:when>
+                                                <c:when test="${detail.product.status == 2}">Under Warranty</c:when>
+                                                <c:otherwise>Preparing</c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                        <div class="rc-item">
+                                            <c:choose>
+                                                <c:when test="${order.order_Status.statusID >= 5 && detail.product.status == 0}">
+                                                    <a href="#" class="btn btn-warning btn-sm mt-1 text-white">Activate Warranty</a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <button class="btn btn-secondary btn-sm mt-1" disabled>Activate Warranty</button>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                    </div>
+                                </c:forEach>
                             </div>
                         </div>
                         <hr/>
                     </c:forEach>
                 </div>
+
 
                 <!-- Total Summary -->
                 <table class="table table-condensed total-result">
@@ -301,13 +419,8 @@
                         <p><strong>Name:</strong> ${order.fullName}</p>
                         <p><strong>Phone:</strong> ${order.phoneNumber}</p>
                         <p><strong>Address:</strong> ${order.address}</p>
-                        <p><strong>Note:</strong> ${order.note}</p>
+                        <p><strong>Note:</strong> ${empty order.note ? 'No note' : order.note}</p>
                     </div>
-                </div>
-
-                <!-- Payment Info -->
-                <div class="payment-options">
-                    <h4>Payment: ${order.paymentStatusID}</h4>
                 </div>
             </div>
         </section>
