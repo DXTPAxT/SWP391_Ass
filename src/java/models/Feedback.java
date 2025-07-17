@@ -13,6 +13,8 @@ public class Feedback {
     private int categoryID;
     private String categoryName;
     private String roleName;
+    
+    private OrderItems orderItems;
 
     // Constructor mặc định
     public Feedback() {
@@ -81,6 +83,14 @@ public class Feedback {
     public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
     public String getRoleName() { return roleName; }
     public void setRoleName(String roleName) { this.roleName = roleName; }
+
+    public OrderItems getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(OrderItems orderItems) {
+        this.orderItems = orderItems;
+    }
 
     @Override
     public String toString() {

@@ -102,7 +102,7 @@ public class FeedbackDAO extends DBContext {
             ps.setInt(1, feedbackID);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new Feedback(
+                    Feedback newFeedback = new Feedback(
                         rs.getInt("FeedbackID"),
                         rs.getInt("UserID"),
                         rs.getString("Content"),
@@ -116,6 +116,8 @@ public class FeedbackDAO extends DBContext {
                         null, // categoryName (không lấy ở đây)
                         rs.getString("RoleName")
                     );
+                    newFeedback.setOrderItems(new OrderItemDAO().getOrderItemByID(rs.getInt("OrderItemID")));
+                    return newFeedback;
                 }
             }
         } catch (SQLException e) {
@@ -150,12 +152,13 @@ public class FeedbackDAO extends DBContext {
         return false;
     }
 
-    public List<Feedback> getFeedbackByUserId(int userID) {
-        List<Feedback> list = new ArrayList<>();
+    public ArrayList<Feedback> getFeedbackByUserId(int userID, int OrderItemID) {
+        ArrayList<Feedback> list = new ArrayList<>();
         String sql = "SELECT f.FeedbackID, f.UserID, f.Content, f.OrderItemID, f.CreatedAt, f.Rate, f.Status, u.FullName, f.Reply, r.RoleName " +
-                     "FROM Feedbacks f JOIN Users u ON f.UserID = u.UserID JOIN Roles r ON u.RoleID = r.RoleID WHERE f.UserID = ?";
+                     "FROM Feedbacks f JOIN Users u ON f.UserID = u.UserID JOIN Roles r ON u.RoleID = r.RoleID WHERE f.UserID = ? AND OrderItemID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userID);
+            ps.setInt(2, OrderItemID);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Feedback f = new Feedback(
@@ -172,6 +175,7 @@ public class FeedbackDAO extends DBContext {
                         null, // categoryName (không lấy ở đây)
                         rs.getString("RoleName")
                     );
+                    f.setOrderItems(new OrderItemDAO().getOrderItemByID(OrderItemID));
                     list.add(f);
                 }
             }

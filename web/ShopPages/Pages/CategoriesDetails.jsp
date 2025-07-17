@@ -300,8 +300,8 @@
                                                     <p>${fb.content}</p>
                                                     <div>
                                                         <c:if test="${sessionScope.user != null && (sessionScope.user.userId == fb.userID || sessionScope.user.role.roleID == 1)}">
-                                                            <a href="${pageContext.request.contextPath}/feedback?action=edit&id=${fb.feedbackID}&categoryID=${categoryID}" class="btn btn-primary btn-sm">Sửa</a>
-                                                            <a href="${pageContext.request.contextPath}/feedback?action=delete&id=${fb.feedbackID}&categoryID=${categoryID}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa feedback này?')">Xóa</a>
+                                                            <a href="${pageContext.request.contextPath}/feedback?action=edit&id=${fb.feedbackID}&categoryID=${categoryID}" class="btn btn-primary btn-sm">Edit</a>
+                                                            <!--<a href="${pageContext.request.contextPath}/feedback?action=delete&id=${fb.feedbackID}&categoryID=${categoryID}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa feedback này?')">Xóa</a>-->
                                                         </c:if>
                                                     </div>
                                                 </div>

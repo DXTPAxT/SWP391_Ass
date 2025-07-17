@@ -133,4 +133,49 @@ public class OrderItemDAO extends DBContext {
         return false; // Lỗi hoặc không tồn tại bản ghi để update
     }
 
+    public OrderItems getOrderItemByID(int orderItemID) {
+        String sql = """
+        SELECT oi.OrderItemID, oi.OrderID, oi.CategoryID, oi.Quantity, oi.Price,
+               c.CategoryName, c.BrandComID, c.Quantity AS CatQuantity, c.Price AS CatPrice,
+               c.Inventory, c.Queue, c.Description, c.Status AS CatStatus, c.ImageURL
+        FROM OrderItems oi
+        JOIN Categories c ON oi.CategoryID = c.CategoryID
+        WHERE oi.OrderItemID = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, orderItemID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    OrderItems oi = new OrderItems();
+                    oi.setOrderItemID(rs.getInt("OrderItemID"));
+                    oi.setOrderID(rs.getInt("OrderID"));
+                    oi.setCategoryID(rs.getInt("CategoryID"));
+                    oi.setQuantity(rs.getInt("Quantity"));
+                    oi.setPrice(rs.getInt("Price"));
+
+                    // Map Category
+                    Categories category = new Categories();
+                    category.setCategoryID(rs.getInt("CategoryID"));
+                    category.setCategoryName(rs.getString("CategoryName"));
+                    category.setBrandComID(rs.getInt("BrandComID"));
+                    category.setQuantity(rs.getInt("CatQuantity"));
+                    category.setPrice(rs.getInt("CatPrice"));
+                    category.setInventory(rs.getInt("Inventory"));
+                    category.setQueue(rs.getInt("Queue"));
+                    category.setDescription(rs.getString("Description"));
+                    category.setStatus(rs.getInt("CatStatus"));
+                    category.setImgURL(rs.getString("ImageURL"));
+
+                    oi.setCategory(category);
+
+                    return oi;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
