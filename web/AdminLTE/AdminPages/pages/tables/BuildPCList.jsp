@@ -121,10 +121,11 @@
                                                                 <span class="label label-warning">Reject</span>
                                                             </c:when>
                                                             <c:when test="${b.status == 1}">
-                                                                <span class="label label-primary">Staff have Confirm</span>
+                                                                <span class="label label-primary">Waiting Confirm Order</span>
                                                             </c:when>
                                                             <c:when test="${b.status == 2}">
-                                                                <span class="label label-info">In Process Order</span>
+                                                                <span class="label label-info"> Staff have confrim
+                                                                                                  In Process Order</span>
                                                             </c:when>
                                                             <c:when test="${b.status == 3}">
                                                                 <span class="label label-success">Waiting Shipping Order</span>
