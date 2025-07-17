@@ -760,6 +760,23 @@ public List<BuildPCAdmin> getBuildPCItemsByBuildPCID(int buildPCID) {
 
         return list;
     }
+   public String getRoleNameOfCreator(int buildPCID) {
+    String sql = "SELECT r.RoleName FROM Build_PC b " +
+                 "JOIN Users u ON b.UserID = u.UserID " +
+                 "JOIN Roles r ON u.RoleID = r.RoleID " +
+                 "WHERE b.BuildPCID = ?";
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, buildPCID);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getString("RoleName");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return "";
+}
+
 public static void main(String[] args) {
     try {
         BuildPCAdminDAO dao = new BuildPCAdminDAO();
