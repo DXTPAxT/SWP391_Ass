@@ -183,16 +183,20 @@
         <servlet-class>controller.OrderHistoryServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>OrderItemAdminServlet</servlet-name>
-        <servlet-class>controllerAdmin.OrderItemAdminServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>OrderDetailAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.OrderDetailAdminServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ProductServlet</servlet-name>
         <servlet-class>controller.ProductServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderBuildPC</servlet-name>
+        <servlet-class>controllerAdmin.OrderBuildPC</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderBuildPCDetails</servlet-name>
+        <servlet-class>controllerAdmin.OrderBuildPCDetails</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
@@ -375,15 +379,19 @@
         <url-pattern>/OrderHistory</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>OrderItemAdminServlet</servlet-name>
-        <url-pattern>/OrderItemAdmin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>OrderDetailAdminServlet</servlet-name>
         <url-pattern>/OrderDetailAdmin</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ProductServlet</servlet-name>
         <url-pattern>/Product</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderBuildPC</servlet-name>
+        <url-pattern>/OrderBuildPC</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderBuildPCDetails</servlet-name>
+        <url-pattern>/OrderBuildPCDetails</url-pattern>
     </servlet-mapping>
 </web-app>

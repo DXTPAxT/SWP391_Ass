@@ -386,19 +386,4 @@ public void updateOrderCustomerInfo(int orderID, String fullname, String phone, 
 }
 
 
-    public static void main(String[] args) {
-        CartBuildPCDAO dao = new CartBuildPCDAO();
-
-        int cartBuildPCID = 1; // ID giỏ Build PC cần test (đảm bảo tồn tại và đúng cấu trúc dữ liệu)
-        int userID = 2;        // ID người dùng tương ứng với giỏ hàng
-
-        boolean success = dao.insertOrderFromCart(cartBuildPCID, userID);
-
-        if (success) {
-            System.out.println("✔️ Đặt hàng từ giỏ Build PC thành công!");
-        } else {
-            System.out.println("❌ Đặt hàng thất bại. Kiểm tra dữ liệu đầu vào hoặc lỗi hệ thống.");
-        }
-    }
-
 }
