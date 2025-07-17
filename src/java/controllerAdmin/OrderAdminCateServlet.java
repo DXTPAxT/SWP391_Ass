@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import models.OrderCate;
+import models.OrderItems;
 import models.Products;
 import models.User;
 
@@ -92,9 +93,21 @@ public class OrderAdminCateServlet extends HttpServlet {
 
                 dao.updateOrderStatus(orderID, status);
 
-                // Nếu là nhận đơn (status = 2), lưu staff chuẩn bị
                 if (status == 2 || status == 0) {
-                    dao.insertOrderPreparement(currentUser.getRole().getRoleID(), orderID);
+                    // Kiểm tra tồn kho và cập nhật Queue nếu cần
+                    List<OrderItems> items = dao.getAllOrderCateItemsByOrderID(orderID);
+                    for (OrderItems item : items) {
+                        int orderedQty = item.getQuantity();
+                        int inventory = item.getInventory();
+                        int categoryId = item.getCategoryID();
+
+                        if (orderedQty > inventory) {
+                            dao.increaseQueueByCategoryId(categoryId, orderedQty);
+                        }
+                    }
+
+                    // Gán nhân viên chuẩn bị đơn
+                    dao.insertOrderPreparement(currentUser.getUserId(), orderID);
                 }
 
                 response.sendRedirect("OrderAdminCate?service=listPending");
@@ -115,11 +128,20 @@ public class OrderAdminCateServlet extends HttpServlet {
                     return;
                 }
 
+                // Trước khi xử lý, kiểm tra còn ProductID null không
+                if (dao.hasUnassignedProducts(orderID)) {
+                    // ✅ Gán lỗi vào session để chuyến trang vẫn nhận được
+                    request.getSession().setAttribute("error", "Some products have not been assigned Product Codes yet.");
+
+                    // ✅ Redirect về đúng trang bạn chỉ định (trang danh sách sản phẩm cần xử lý của đơn hàng)
+                    response.sendRedirect("OrderItemAdmin?service=listProcess&orderID=" + orderID);
+                    return;
+                }
+
                 dao.updateOrderStatus(orderID, status);
 
-                // Nếu là nhận đơn (status = 2), lưu staff chuẩn bị
                 if (status == 2 || status == 0) {
-                    dao.insertOrderPreparement(currentUser.getRole().getRoleID(), orderID);
+                    dao.insertOrderPreparement(currentUser.getUserId(), orderID);
                 }
 
                 response.sendRedirect("OrderAdminCate?service=listProcessing");
