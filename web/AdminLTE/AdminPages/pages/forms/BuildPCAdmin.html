@@ -416,6 +416,8 @@
                                     const modalBody = document.getElementById('modalBody');
                                     const totalDisplay = document.getElementById('totalPrice');
                                     let selectedComponents = JSON.parse(localStorage.getItem("selectedComponents")) || {};
+                                    let isCustomerPC = false;
+
                                     function openModal(componentid, componentName) {
                                         modal.style.display = 'flex';
                                         modalTitle.innerText = `Select ${componentName}`;
@@ -458,7 +460,7 @@
                                         const statusWrapper = document.getElementById("statusWrapper");
                                         const btn = document.getElementById("createPCBtn");
 
-                                        // Load các linh kiện đã chọn (nếu có)
+
                                         // Load các linh kiện đã chọn (nếu có)
                                         for (const compID of Object.keys(selectedComponents)) {
                                             const comp = selectedComponents[compID];
@@ -500,13 +502,42 @@
                                             } else {
                                                 statusWrapper.style.display = "none";  // Role không hợp lệ thì ẩn dropdown
                                             }
-
-                                            // Load dữ liệu PC hiện tại
                                             fetch(`${ctx}/BuildPC_ListCate?service=loadBuildPC&buildPCID=${buildPCID}`)
                                                     .then(res => res.text())
                                                     .then(text => {
                                                         const lines = text.trim().split("\n");
-                                                        lines.forEach(line => {
+
+                                                        // Lấy dòng role đầu tiên
+                                                        const firstLine = lines[0];
+                                                        let creatorRole = "";
+
+                                                        if (firstLine.startsWith("ROLE|")) {
+                                                            creatorRole = firstLine.split("|")[1].trim();
+                                                            if (creatorRole === "Customer") {
+                                                                isCustomerPC = true;
+                                                            }
+                                                        }
+
+
+                                                        // Nếu là PC của Customer thì ẩn toàn bộ nút "Choose" và "Remove"
+                                                        if (creatorRole === "Customer") {
+                                                            // Ẩn các nút Choose
+                                                            document.querySelectorAll(".component-block").forEach(block => {
+                                                                const chooseBtn = block.querySelector("button.btn-primary");
+                                                                if (chooseBtn)
+                                                                    chooseBtn.style.display = "none";
+                                                            });
+
+                                                            // Ẩn tất cả các nút Remove (id bắt đầu bằng remove-)
+                                                            document.querySelectorAll('[id^="remove-"]').forEach(btn => {
+                                                                btn.style.display = "none";
+                                                            });
+                                                        }
+
+
+                                                        // Bỏ qua dòng đầu tiên (ROLE) => parse các dòng còn lại là component
+                                                        for (let i = 1; i < lines.length; i++) {
+                                                            const line = lines[i];
                                                             const [componentID, categoryID, categoryName, brandName, price, imgURL, warrantyDesc, warrantyPrice, warrantyDetailID] = line.split("|");
                                                             updateComponentUI({
                                                                 componentID: parseInt(componentID),
@@ -519,10 +550,10 @@
                                                                 warrantyPrice: parseFloat(warrantyPrice) || 0,
                                                                 warrantyDetailID: parseInt(warrantyDetailID) || 0
                                                             });
-                                                        });
+                                                        }
+
                                                         localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
                                                     });
-
                                         }
                                     });
 
@@ -603,10 +634,13 @@
                                         }
                                         document.getElementById(`total-${componentID}`).innerText = `Tổng: ${totalItem.toLocaleString()}₫`;
 
-                                        document.getElementById(`remove-${componentID}`).style.display = 'inline-block';
+                                        if (!isCustomerPC) {
+                                            document.getElementById(`remove-${componentID}`).style.display = 'inline-block';
+                                        }
+
                                         document.getElementById(`img-${componentID}`).src = `${ctx}/ShopPages/Pages/images/anhproduct/${imgURL}`;
 
-                                  
+
                                         selectedComponents[componentID] = {
                                             categoryID: parseInt(categoryID),
                                             categoryName,
@@ -705,16 +739,12 @@
 
                                         const categoryIDs = requiredComponents.map(id => {
                                             const value = parseInt(selectedComponents[id]?.categoryID);
-                                            if (isNaN(value))
-                                                return 0;
-                                            return value;
+                                            return isNaN(value) ? 0 : value;
                                         }).join(",");
 
                                         const warrantyIDs = requiredComponents.map(id => {
                                             const value = parseInt(selectedComponents[id]?.warrantyDetailID);
-                                            if (isNaN(value))
-                                                return 0;
-                                            return value;
+                                            return isNaN(value) ? 0 : value;
                                         }).join(",");
 
                                         const statusSelect = document.getElementById('statusSelect');
@@ -728,10 +758,13 @@
                                             return;
                                         }
 
+                                        // Lấy role từ localStorage
+                                        const role = localStorage.getItem("userRole") || "Customer";
+
                                         fetch(`${ctx}/BuildPC_ListCate?service=update`, {
                                             method: "POST",
                                             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                                            body: `buildPCID=${buildPCID}&categoryIDs=${encodeURIComponent(categoryIDs)}&warrantyIDs=${encodeURIComponent(warrantyIDs)}&status=${status}`
+                                            body: `buildPCID=${buildPCID}&categoryIDs=${encodeURIComponent(categoryIDs)}&warrantyIDs=${encodeURIComponent(warrantyIDs)}&status=${status}&role=${role}`
                                         })
                                                 .then(res => {
                                                     if (res.status === 409)
@@ -751,6 +784,7 @@
                                                     alert("Lỗi: " + err.message);
                                                 });
                                     }
+
 
 
                                     function chooseProductWithWarranty(componentID, realCategoryID, categoryName, brandName, price, imgURL, radioCategoryID) {

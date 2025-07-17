@@ -158,7 +158,8 @@ public class BuildPC_ListCate extends HttpServlet {
                 warrantyIDs.add(Math.max(wID, 0));
             }
 
-            String role = user.getRole() != null ? user.getRole().getRoleName() : "Customer";
+            String roleParam = request.getParameter("role");
+            String role = (roleParam != null && !roleParam.isEmpty()) ? roleParam : (user.getRole() != null ? user.getRole().getRoleName() : "Customer");
 
             if ("Admin".equalsIgnoreCase(role)) {
                 if (dao.isDuplicateBuildPC(categoryIDs, buildPCID)) {
@@ -234,9 +235,15 @@ public class BuildPC_ListCate extends HttpServlet {
 
         try {
             List<BuildPCAdmin> items = dao.getBuildPCItemsByBuildPCID(buildPCID);
+            String creatorRole = dao.getRoleNameOfCreator(buildPCID); // THÊM DÒNG NÀY
+
             response.setContentType("text/plain;charset=UTF-8");
             PrintWriter out = response.getWriter();
 
+            // Dòng đầu tiên là role của người tạo
+            out.println("ROLE|" + creatorRole); // THÊM DÒNG NÀY
+
+            // Sau đó là các dòng thành phần
             for (BuildPCAdmin item : items) {
                 String line = item.getComponentID() + "|"
                         + item.getCateID() + "|"
