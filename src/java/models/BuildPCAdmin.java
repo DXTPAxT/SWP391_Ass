@@ -22,7 +22,7 @@ public class BuildPCAdmin {
     private int Status;
     private String brandName;
     private String imgURL;
-
+private int queue;
     public BuildPCAdmin() {
     }
 
@@ -82,7 +82,13 @@ public class BuildPCAdmin {
         this.WarrantyPrice = WarrantyPrice;
         this.WarrantyDesc = WarrantyDesc;
     }
+public int getQueue() {
+    return queue;
+}
 
+public void setQueue(int queue) {
+    this.queue = queue;
+}
     public String getWarrantyDesc() {
         return WarrantyDesc;
     }

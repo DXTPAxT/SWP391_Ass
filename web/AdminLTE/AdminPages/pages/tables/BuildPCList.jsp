@@ -78,7 +78,7 @@
                                         <th>Role</th>
                                         <th>Status</th>
                                         <th>Update</th>
-                                       
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -141,7 +141,7 @@
                                                             <c:when test="${b.status == 10}">
                                                                 <span class="label label-success">Confirm Order, send to Staff</span>
                                                             </c:when>
-                                                                 <c:when test="${b.status == 7}">
+                                                            <c:when test="${b.status == 7}">
                                                                 <span class="label label-success">Hoàn thành</span>
                                                             </c:when>
                                                             <c:otherwise>
@@ -155,13 +155,14 @@
 
 
                                             <td>
-                                                <button type="button" class="btn btn-warning btn-sm"
-                                                        onclick="goToUpdate(${b.buildPCID}, '${b.role}', ${b.userID})">
-                                                    Update
-                                                </button>
-
-
+                                                <c:if test="${b.role ne 'Customer'}">
+                                                    <button type="button" class="btn btn-warning btn-sm"
+                                                            onclick="goToUpdate(${b.buildPCID}, '${b.role}', ${b.userID})">
+                                                        Update
+                                                    </button>
+                                                </c:if>
                                             </td>
+
 
                                         </tr>
                                     </c:forEach>
@@ -193,17 +194,17 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- Scripts -->
         <script>
-                                                            $(function () {
-                                                                $("#example1").DataTable();
-                                                                $('#example2').DataTable({
-                                                                    "paging": true,
-                                                                    "lengthChange": true,
-                                                                    "searching": true,
-                                                                    "ordering": true,
-                                                                    "info": true,
-                                                                    "autoWidth": true
+                                                                $(function () {
+                                                                    $("#example1").DataTable();
+                                                                    $('#example2').DataTable({
+                                                                        "paging": true,
+                                                                        "lengthChange": true,
+                                                                        "searching": true,
+                                                                        "ordering": true,
+                                                                        "info": true,
+                                                                        "autoWidth": true
+                                                                    });
                                                                 });
-                                                            });
         </script>
         <script>
             $(function () {
