@@ -1,8 +1,3 @@
-<%-- 
-    Document   : insertProduct
-    Created on : May 28, 2025, 9:48:28 PM
-    Author     : Admin
---%>
 
 <%@page contentType="text/html" pageEncoding="windows-1252"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -66,6 +61,11 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="box">
+                                <c:if test="${not empty error}">
+                                    <div class="alert alert-danger text-center" style="font-weight: bold;">
+                                        ${error}
+                                    </div>
+                                </c:if>
 
                                 <!-- /.box-header -->
                                 <div class="box-body">
@@ -92,25 +92,27 @@
                                                         <td>${item.inventory}</td>
                                                         <td>${item.queue}</td>
                                                         <td>
-                                                            <c:choose>
-                                                                <c:when test="${item.completed}">
-                                                                    <form action="OrderItemAdmin" method="get" style="display:inline;">
-                                                                        <input type="hidden" name="service" value="viewProducts" />
-                                                                        <input type="hidden" name="orderItemID" value="${item.orderItemID}" />
-                                                                        <input type="hidden" name="orderID" value="${param.orderID}" />
-                                                                        <button type="submit" class="btn btn-info btn-sm">View</button>
-                                                                    </form>
+                                                            <c:if test="${item.quantity <= item.inventory}">
+                                                                <c:choose>
+                                                                    <c:when test="${item.completed}">
+                                                                        <form action="OrderItemAdmin" method="get" style="display:inline;">
+                                                                            <input type="hidden" name="service" value="viewProducts" />
+                                                                            <input type="hidden" name="orderItemID" value="${item.orderItemID}" />
+                                                                            <input type="hidden" name="orderID" value="${param.orderID}" />
+                                                                            <button type="submit" class="btn btn-info btn-sm">View</button>
+                                                                        </form>
 
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <form action="OrderItemAdmin" method="post" style="display:inline;">
-                                                                        <input type="hidden" name="service" value="insertProduct" />
-                                                                        <input type="hidden" name="orderItemID" value="${item.orderItemID}" />
-                                                                        <input type="hidden" name="orderID" value="${param.orderID}" />
-                                                                        <button type="submit" class="btn btn-success btn-sm">Insert</button>
-                                                                    </form>
-                                                                </c:otherwise>
-                                                            </c:choose>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <form action="OrderItemAdmin" method="post" style="display:inline;">
+                                                                            <input type="hidden" name="service" value="insertProduct" />
+                                                                            <input type="hidden" name="orderItemID" value="${item.orderItemID}" />
+                                                                            <input type="hidden" name="orderID" value="${param.orderID}" />
+                                                                            <button type="submit" class="btn btn-success btn-sm">Insert</button>
+                                                                        </form>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </c:if>
                                                         </td>
                                                     </tr>                                                  
                                                 </c:forEach>
@@ -138,11 +140,7 @@
                                 </div>
 
                                 <!-- Error message -->
-                                <c:if test="${not empty error}">
-                                    <div class="alert alert-danger text-center" style="margin-top: 15px;">
-                                        ${error}
-                                    </div>
-                                </c:if>
+                                
 
 
                             </div>

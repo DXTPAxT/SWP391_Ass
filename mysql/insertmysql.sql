@@ -892,7 +892,7 @@ INSERT INTO WarrantyDetails (WarrantyID, BrandComID, Price, Status) VALUES
 
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
-VALUES ('OR001', 0, 5, '2025-04-27 05:34:02', 'Customer 2 Address #49', 'Nguyen Van A', '0123456789', 7632869, 3, 1);
+VALUES ('OR001', 0, 5, '2022-04-27 05:34:02', 'Customer 2 Address #49', 'Nguyen Van A', '0123456789', 7632869, 3, 1);
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
 VALUES ('OR002', 0, 5, '2025-04-27 05:34:02', 'Customer 2 Address #49', 'Nguyen Van A', '0123456789', 7632869, 3, 1);
@@ -906,7 +906,7 @@ VALUES ('OR004', 0, 6, '2024-12-11 05:34:02', 'Customer 2 Address #50', 'Pham Va
 
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
-VALUES ('OR005', 0, 6, '2024-12-11 05:34:02', 'Customer 2 Address #50', 'Pham Van C', '0367890123', 9077684, 0, 2);
+VALUES ('OR005', 0, 6, '2024-01-11 05:34:02', 'Customer 2 Address #50', 'Pham Van C', '0367890123', 9077684, 0, 2);
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
 VALUES ('OR006', 0, 6, '2024-12-11 05:34:02', 'Customer 2 Address #50', 'Pham Van C', '0367890123', 9077684, 1, 2);
@@ -939,7 +939,7 @@ INSERT INTO OrderItems (OrderID, CategoryID, Quantity, Price) VALUES (7, 60, 2, 
 INSERT INTO OrderItems (OrderID, CategoryID, Quantity, Price) VALUES (7, 1, 2, 1049969);
 
 -- Insert valid OrderDetails data
-INSERT INTO OrderDetails (OrderItemID, ProductID, WarrantyDetailID, UnitPrice, WarrantyPrice, Status) VALUES (1, 1, 1, 7388968, 160277, 1);
+INSERT INTO OrderDetails (OrderItemID, ProductID, WarrantyDetailID, UnitPrice, WarrantyPrice, Status, Start, End) VALUES (1, 1, 1, 7388968, 160277, 1,'2022-04-27', '2024-04-27' );
 INSERT INTO OrderDetails (OrderItemID, ProductID, WarrantyDetailID, UnitPrice, WarrantyPrice, Status) VALUES (2, 51, 4, 960190, 368646, 1);
 INSERT INTO OrderDetails (OrderItemID, ProductID, WarrantyDetailID, UnitPrice, WarrantyPrice, Status) VALUES (3, 7, 4, 6064089, 152252, 1);
 INSERT INTO OrderDetails (OrderItemID, ProductID, WarrantyDetailID, UnitPrice, WarrantyPrice, Status) VALUES (3, 8, 5, 4274287, 171350, 1);
@@ -1059,7 +1059,7 @@ INSERT INTO OrderPreparements (UserID, OrderID, PrepareTime) VALUES
 (2, 7, CURDATE());
 
 INSERT INTO Shipping (OrderID, ShipperID, ShippingStatus, ShipTime) VALUES 
-(1, 4, 1, CURDATE()),
+(1, 4, 1, '2022-04-27'),
 (2, 4, 1, CURDATE()),
 (3, 4, 1, CURDATE()),
 (4, 4, 1, CURDATE());
