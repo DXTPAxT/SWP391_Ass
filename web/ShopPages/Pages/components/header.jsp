@@ -61,14 +61,18 @@
                     <div class="col-sm-8">
                         <div class="shop-menu pull-right">
                             <ul class="nav navbar-nav"  style=" padding-top: 50px ">
-                                <li>
-                                    <a href="${pageContext.request.contextPath}/WarrantyProduct">
-                                        <i class="fa fa-search"></i> Warranty
-                                    </a>
-                                </li>
+
                                 <c:choose>
                                     <c:when test="${not empty sessionScope.user}">                                        
-                                        <c:if test="${not empty sessionScope.user and sessionScope.user.role.roleID == 3}">
+                                        <c:if test="${not empty sessionScope.user and sessionScope.user.role.roleID == 3}">    
+                                             <li class="cart-dropdown">
+                                                <a href="#"><i class="fa fa-shopping-cart"></i> Warranty</a>
+                                                <div class="dropdown-content">
+                                                    <div class="arrow-up"></div>
+                                                    <a href="${pageContext.request.contextPath}/Product?service=checkWarranty">Warranty Item</a>
+                                                    <a href="CardBuildPc">Warranty Build PC</a>
+                                                </div>
+                                            </li>
                                             <li class="cart-dropdown">
                                                 <a href="#"><i class="fa fa-shopping-cart"></i> Cart</a>
                                                 <div class="dropdown-content">

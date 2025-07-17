@@ -114,31 +114,7 @@
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
-                                            <c:if test="${not empty selectedShipping}">
-                                            <div class="box box-info" style="margin-top: 30px; padding: 20px;">
-                                                <h4><i class="fa fa-truck"></i> Shipping Information</h4>
-                                                <table class="table table-striped table-bordered">
-                                                    <tr>
-                                                        <th>Shipper Name</th>
-                                                        <td>${selectedShipping.shipperName}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Shipper Phone</th>
-                                                        <td>${selectedShipping.shipperPhone}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Ship Time</th>
-                                                        <td>
-                                                            <fmt:formatDate value="${selectedShipping.shipTime}" pattern="dd-MM-yyyy" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Note</th>
-                                                        <td style="white-space: pre-line;">${selectedShipping.shipNote}</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </c:if>
+                                           
 
 
                                         </tbody>
@@ -173,6 +149,31 @@
                         </table>
                     </div>
                 </c:if>
+                 <c:if test="${not empty selectedShipping}">
+                                            <div class="box box-info" style="margin-top: 30px; padding: 20px;">
+                                                <h4><i class="fa fa-truck"></i> Shipping Information</h4>
+                                                <table class="table table-striped table-bordered">
+                                                    <tr>
+                                                        <th>Shipper Name</th>
+                                                        <td>${selectedShipping.shipperName}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Shipper Phone</th>
+                                                        <td>${selectedShipping.shipperPhone}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Ship Time</th>
+                                                        <td>
+                                                            <fmt:formatDate value="${selectedShipping.shipTime}" pattern="dd-MM-yyyy" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Note</th>
+                                                        <td style="white-space: pre-line;">${selectedShipping.shipNote}</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </c:if> 
 
             </div>
             <!-- /.box -->
