@@ -92,13 +92,21 @@
                                                                     <span class="label label-success">Active</span>
                                                                 </c:when>
                                                                 <c:when test="${product.status == 2}">
-                                                                    <span class="label label-warning">Under Repair</span>
+                                                                    <span class="label label-warning">Warranty</span>
                                                                 </c:when>
+                                                                <c:when test="${product.status == 4}">
+                                                                    <span class="label label-warning">Warranty</span>
+                                                                </c:when>
+                                                                <c:when test="${product.status == 3}">
+                                                                    <span class="label label-warning">Pending Warranty</span>
+                                                                </c:when> 
                                                                 <c:otherwise>
                                                                     <span class="label label-danger">Disable</span>
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </td>
+
+
                                                         <td>
                                                             <a href="Import?service=listbypro&productCode=${product.productCode}" 
                                                                class="btn btn-warning btn-sm">View</a>
@@ -120,7 +128,7 @@
                                                                 </c:choose>
 
                                                                 <c:choose>
-                                                                    <c:when test="${product.status == 1 || product.status == 2}">
+                                                                    <c:when test="${product.status == 1 || product.status == 4}">
                                                                         <button type="submit" class="btn btn-danger btn-sm"
                                                                                 onclick="return confirm('This will disable the product. Continue?');">
                                                                             Disable
@@ -178,17 +186,17 @@
         <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
         <!-- page script -->
         <script>
-                        $(function () {
-                            $("#example1").DataTable();
-                            $('#example2').DataTable({
-                                "paging": true,
-                                "lengthChange": true,
-                                "searching": true,
-                                "ordering": true,
-                                "info": true,
-                                "autoWidth": true
-                            });
-                        });
+                                                                                    $(function () {
+                                                                                        $("#example1").DataTable();
+                                                                                        $('#example2').DataTable({
+                                                                                            "paging": true,
+                                                                                            "lengthChange": true,
+                                                                                            "searching": true,
+                                                                                            "ordering": true,
+                                                                                            "info": true,
+                                                                                            "autoWidth": true
+                                                                                        });
+                                                                                    });
         </script>
         <script>
             $(function () {

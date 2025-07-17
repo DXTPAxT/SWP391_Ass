@@ -334,7 +334,9 @@ public class OrderCateAdminDAO extends DBAdminContext {
             p.ProductID, 
             p.ProductCode,
             w.WarrantyPeriod,
-            w.Description
+            w.Description,
+            od.Start,
+            od.End
         FROM OrderDetails od
         JOIN Products p ON od.ProductID = p.ProductID
         JOIN WarrantyDetails wd ON od.WarrantyDetailID = wd.WarrantyDetailID
@@ -355,7 +357,8 @@ public class OrderCateAdminDAO extends DBAdminContext {
                     // Optional: only if your Products class supports these fields
                     p.setWarrantyPeriod(rs.getInt("WarrantyPeriod"));
                     p.setWarrantyDescription(rs.getString("Description"));
-
+                    p.setStart(rs.getDate("Start"));
+                    p.setEnd(rs.getDate("End"));
                     list.add(p);
                 }
             }
@@ -518,6 +521,93 @@ public class OrderCateAdminDAO extends DBAdminContext {
 
         return order;
     }
+
+    public void updateOrderDetailsWarrantyDates() {
+        String sql = """
+            UPDATE OrderDetails od
+            JOIN OrderItems oi ON od.OrderItemID = oi.OrderItemID
+            JOIN Orders o ON oi.OrderID = o.OrderID
+            JOIN Shipping s ON s.OrderID = o.OrderID
+            JOIN WarrantyDetails wd ON wd.WarrantyDetailID = od.WarrantyDetailID
+            JOIN Warranties w ON wd.WarrantyID = w.WarrantyID
+            SET 
+                od.`Start` = s.ShipTime,
+                od.`End` = DATE_ADD(s.ShipTime, INTERVAL w.WarrantyPeriod MONTH)
+            WHERE s.ShipTime IS NOT NULL
+              AND od.`Start` IS NULL
+        """;
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            int rows = ps.executeUpdate();
+            System.out.println("✅ Đã cập nhật " + rows + " dòng trong OrderDetails (Start/End).");
+
+        } catch (SQLException e) {
+            System.err.println("❌ Lỗi khi cập nhật ngày bảo hành trong OrderDetails:");
+            e.printStackTrace();
+        }
+    }
+
+    public List<String> getPendingWarrantyProductsByOrderId(int orderId) {
+        List<String> productCodes = new ArrayList<>();
+        String sql = """
+        SELECT p.ProductCode
+        FROM Products p
+        JOIN OrderDetails od ON p.ProductID = od.ProductID
+        JOIN OrderItems oi ON od.OrderItemID = oi.OrderItemID
+        WHERE p.Status = 3 Or p.Status = 4 AND oi.OrderID = ?
+    """;
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, orderId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    productCodes.add(rs.getString("ProductCode"));
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return productCodes;
+    }
+
+    public boolean updateProductStatusByCode(String productCode, int status) {
+        String sql = "UPDATE Products SET Status = ? WHERE ProductCode = ?";
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, status);
+            ps.setString(2, productCode);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean hasApprovedProductInOrder(int orderID) {
+        String sql = """
+        SELECT 1
+        FROM Products p
+        JOIN OrderDetails od ON p.ProductID = od.ProductID
+        JOIN OrderItems oi ON od.OrderItemID = oi.OrderItemID
+        WHERE oi.OrderID = ? AND p.Status = 4
+        LIMIT 1
+    """;
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderID);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next(); // có ít nhất 1 sản phẩm Status = 4
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+   
 
     public static void main(String[] args) {
         OrderCateAdminDAO dao = new OrderCateAdminDAO();

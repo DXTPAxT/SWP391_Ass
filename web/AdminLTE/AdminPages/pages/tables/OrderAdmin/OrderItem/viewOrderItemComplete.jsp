@@ -140,6 +140,8 @@
                                         <th>Product Code</th>
                                         <th>Warranty Period</th>
                                         <th>Description</th>
+                                        <th>Start</th>
+                                        <th>End</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -148,6 +150,9 @@
                                             <td>${p.productCode}</td>
                                             <td>${p.warrantyPeriod}</td>
                                             <td style="white-space: normal; word-break: break-word; max-width: 200px;">${p.warrantyDescription}</td>
+                                            <td><fmt:formatDate value="${p.start}" pattern="dd/MM/yyyy" /></td>
+                                            <td><fmt:formatDate value="${p.end}" pattern="dd/MM/yyyy" /></td>
+
                                         </tr>
                                     </c:forEach>
                                 </tbody>

@@ -13,6 +13,24 @@ public class Products {
     private String CategoryName;
     private int warrantyPeriod;
     private String warrantyDescription;
+    private Date Start;
+    private Date End;
+
+    public Date getStart() {
+        return Start;
+    }
+
+    public void setStart(Date Start) {
+        this.Start = Start;
+    }
+
+    public Date getEnd() {
+        return End;
+    }
+
+    public void setEnd(Date End) {
+        this.End = End;
+    }
 
     public int getWarrantyPeriod() {
         return warrantyPeriod;
@@ -119,7 +137,5 @@ public class Products {
     public void setStatus(int status) {
         this.status = status;
     }
-    
-    
 
 }

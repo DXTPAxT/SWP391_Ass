@@ -11,13 +11,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <fmt:setLocale value="vi_VN" />
 <c:set var="sessionUser" value="${sessionScope.user}" />
-<%
-    if (session.getAttribute("user") == null) {
-        String query = request.getQueryString() != null ? "?" + request.getQueryString() : "";
-        String redirectServlet = request.getContextPath() + "/CategoriesController" + query;
-        session.setAttribute("redirectAfterLogin", redirectServlet);
-    }
-%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -152,35 +145,100 @@
 
         <jsp:include page="/ShopPages/Pages/components/header.jsp" />
 
+        <div class="container my-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <h4 class="text-primary mb-4">
+                                🔍 Order Lookup by Product Code
+                            </h4>
 
+                            <form action="Product" method="get" class="row g-2 align-items-center">
+                                <input type="hidden" name="service" value="checkWarranty" />
+                                <div class="col-sm-9">
+                                    <input type="text" name="productCode" class="form-control form-control-lg"
+                                           placeholder="Enter Product Code..." required>
+                                </div>
+                                <div class="col-sm-3 text-sm-left text-center">
+                                    <button type="submit" class="btn btn-warning btn-lg w-100">
+                                        🔎 Search
+                                    </button>
+                                </div>
+                            </form>
 
-        <!-- Search by ProductCode -->
-        <div class="container mt-5 mb-4">
-            <h4>🔍 Tra cứu đơn hàng theo mã sản phẩm</h4>
-            <form action="OrderLookupServlet" method="get" class="form-inline">
-                <div class="form-group">
-                    <input type="text" name="productCode" class="form-control" placeholder="Nhập Product Code..." required style="min-width: 300px;">
+                            <c:if test="${not empty orderInfo}">
+                                <div class="mt-5">
+                                    <div class="alert alert-success d-flex align-items-center" role="alert">
+                                        <strong class="me-2">✔ Lookup Result</strong>
+                                    </div>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover">
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row" class="w-25">Order Code</th>
+                                                    <td>${orderInfo.orderCode}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Consignee</th>
+                                                    <td>${orderInfo.fullName}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Category</th>
+                                                    <td>${orderInfo.categoryName}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Product Code</th>
+                                                    <td>${orderInfo.productCode}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Warranty Period</th>
+                                                    <td>${orderInfo.warrantyPeriod} month(s)</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Description</th>
+                                                    <td>${orderInfo.warrantyDescription}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Start Date</th>
+                                                    <td><fmt:formatDate value="${orderInfo.start}" pattern="dd/MM/yyyy"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>End Date</th>
+                                                    <td><fmt:formatDate value="${orderInfo.end}" pattern="dd/MM/yyyy"/></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <p>customerID: ${orderInfo.customerID}</p>
+                                    <p>session userId: ${sessionUser.userId}</p>
+
+                                    <!-- ✅ Show 'Send to Warranty' button if user is owner -->
+                                    <c:if test="${not empty sessionUser && orderInfo.customerID == sessionUser.userId}">
+                                        <form action="Product" method="post" class="mt-3">
+                                            <input type="hidden" name="service" value="updateWarrantyStatus" />
+                                            <input type="hidden" name="orderCode" value="${orderInfo.orderCode}" />
+                                            <input type="hidden" name="productCode" value="${orderInfo.productCode}" />
+                                            <button type="submit" class="btn btn-danger w-100">
+                                                🛠 Send this product to warranty
+                                            </button>
+                                        </form>
+                                    </c:if>
+                                </div>
+                            </c:if>
+
+                            <!-- ✅ Notifications -->
+                            <c:if test="${not empty success}">
+                                <div class="alert alert-success mt-4">${success}</div>
+                            </c:if>
+                            <c:if test="${not empty error}">
+                                <div class="alert alert-danger mt-4">${error}</div>
+                            </c:if>
+                        </div>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary ml-2">Tìm kiếm</button>
-            </form>
-
-            <c:if test="${not empty orderInfo}">
-                <div class="mt-4">
-                    <h5>Kết quả tra cứu:</h5>
-                    <ul>
-                        <li><strong>Mã đơn hàng:</strong> ${orderInfo.orderCode}</li>
-                        <li><strong>Họ tên khách hàng:</strong> ${orderInfo.fullName}</li>
-                        <li><strong>Danh mục:</strong> ${orderInfo.categoryName}</li>
-                        <li><strong>Mã sản phẩm:</strong> ${orderInfo.productCode}</li>
-                        <li><strong>Bảo hành:</strong> ${orderInfo.warrantyPeriod} tháng</li>
-                        <li><strong>Mô tả bảo hành:</strong> ${orderInfo.warrantyDescription}</li>
-                    </ul>
-                </div>
-            </c:if>
-
-            <c:if test="${not empty error}">
-                <div class="alert alert-danger mt-3">${error}</div>
-            </c:if>
+            </div>
         </div>
 
         <!-- LOGIN REQUIRED MODAL -->
