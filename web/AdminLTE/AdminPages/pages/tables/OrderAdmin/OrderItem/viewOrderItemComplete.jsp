@@ -75,10 +75,8 @@
                                                 <th>Order Code</th>
                                                 <th>Category Name</th>
                                                 <th>Quantity</th>
-                                                <th>Price</th>
-                                                <th>Inventory</th>
-                                                <th>Queue</th>
-                                                <th>Insert Product</th>
+                                                <th>Price</th>         
+                                                <th>View Product</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -89,28 +87,14 @@
                                                         <td>${item.categoryName}</td>
                                                         <td>${item.quantity}</td>
                                                         <td>${item.price}</td>
-                                                        <td>${item.inventory}</td>
-                                                        <td>${item.queue}</td>
-                                                        <td>
-                                                            <c:choose>
-                                                                <c:when test="${item.completed}">
-                                                                    <form action="OrderItemAdmin" method="get" style="display:inline;">
-                                                                        <input type="hidden" name="service" value="viewProducts" />
-                                                                        <input type="hidden" name="orderItemID" value="${item.orderItemID}" />
-                                                                        <input type="hidden" name="orderID" value="${param.orderID}" />
-                                                                        <button type="submit" class="btn btn-info btn-sm">View</button>
-                                                                    </form>
 
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <form action="OrderItemAdmin" method="post" style="display:inline;">
-                                                                        <input type="hidden" name="service" value="insertProduct" />
-                                                                        <input type="hidden" name="orderItemID" value="${item.orderItemID}" />
-                                                                        <input type="hidden" name="orderID" value="${param.orderID}" />
-                                                                        <button type="submit" class="btn btn-success btn-sm">Insert</button>
-                                                                    </form>
-                                                                </c:otherwise>
-                                                            </c:choose>
+                                                        <td>                                                                       
+                                                            <form action="OrderItemAdmin" method="get" style="display:inline;">
+                                                                <input type="hidden" name="service" value="viewProductsComplete" />
+                                                                <input type="hidden" name="orderItemID" value="${item.orderItemID}" />
+                                                                <input type="hidden" name="orderID" value="${param.orderID}" />
+                                                                <button type="submit" class="btn btn-info btn-sm">View</button>
+                                                            </form>
                                                         </td>
                                                     </tr>                                                  
                                                 </c:forEach>
@@ -124,16 +108,8 @@
                                 <div class="text-center" style="margin-top: 20px;">
                                     <!-- Back button -->
                                     <form action="OrderAdminCate" method="get" style="display:inline;">
-                                        <input type="hidden" name="service" value="listProcessing" />
+                                        <input type="hidden" name="service" value="listWaitShip" />
                                         <button type="submit" class="btn btn-default">Back</button>
-                                    </form>
-
-                                    <!-- Finish button -->
-                                    <form action="OrderAdminCate" method="post" style="display: inline; margin-left: 10px;">
-                                        <input type="hidden" name="service" value="updateStatusProcess">
-                                        <input type="hidden" name="status" value="3">
-                                        <input type="hidden" name="orderID" value="${param.orderID}">
-                                        <button type="submit" class="btn btn-success">Finish</button>
                                     </form>
                                 </div>
 
@@ -164,6 +140,8 @@
                                         <th>Product Code</th>
                                         <th>Warranty Period</th>
                                         <th>Description</th>
+                                        <th>Start</th>
+                                        <th>End</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -172,6 +150,9 @@
                                             <td>${p.productCode}</td>
                                             <td>${p.warrantyPeriod}</td>
                                             <td style="white-space: normal; word-break: break-word; max-width: 200px;">${p.warrantyDescription}</td>
+                                            <td><fmt:formatDate value="${p.start}" pattern="dd/MM/yyyy" /></td>
+                                            <td><fmt:formatDate value="${p.end}" pattern="dd/MM/yyyy" /></td>
+
                                         </tr>
                                     </c:forEach>
                                 </tbody>

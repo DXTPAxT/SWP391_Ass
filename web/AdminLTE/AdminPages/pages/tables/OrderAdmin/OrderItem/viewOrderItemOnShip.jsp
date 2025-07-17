@@ -66,8 +66,6 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="box">
-
-                                <!-- /.box-header -->
                                 <div class="box-body">
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
@@ -75,10 +73,8 @@
                                                 <th>Order Code</th>
                                                 <th>Category Name</th>
                                                 <th>Quantity</th>
-                                                <th>Price</th>
-                                                <th>Inventory</th>
-                                                <th>Queue</th>
-                                                <th>Insert Product</th>
+                                                <th>Price</th>      
+                                                <th>View Product</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -88,29 +84,14 @@
                                                         <td>${item.orderCode}</td>
                                                         <td>${item.categoryName}</td>
                                                         <td>${item.quantity}</td>
-                                                        <td>${item.price}</td>
-                                                        <td>${item.inventory}</td>
-                                                        <td>${item.queue}</td>
-                                                        <td>
-                                                            <c:choose>
-                                                                <c:when test="${item.completed}">
-                                                                    <form action="OrderItemAdmin" method="get" style="display:inline;">
-                                                                        <input type="hidden" name="service" value="viewProducts" />
-                                                                        <input type="hidden" name="orderItemID" value="${item.orderItemID}" />
-                                                                        <input type="hidden" name="orderID" value="${param.orderID}" />
-                                                                        <button type="submit" class="btn btn-info btn-sm">View</button>
-                                                                    </form>
-
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <form action="OrderItemAdmin" method="post" style="display:inline;">
-                                                                        <input type="hidden" name="service" value="insertProduct" />
-                                                                        <input type="hidden" name="orderItemID" value="${item.orderItemID}" />
-                                                                        <input type="hidden" name="orderID" value="${param.orderID}" />
-                                                                        <button type="submit" class="btn btn-success btn-sm">Insert</button>
-                                                                    </form>
-                                                                </c:otherwise>
-                                                            </c:choose>
+                                                        <td>${item.price}</td>                 
+                                                        <td>                                                                       
+                                                            <form action="OrderItemAdmin" method="get" style="display:inline;">
+                                                                <input type="hidden" name="service" value="viewProductsOnShip" />
+                                                                <input type="hidden" name="orderItemID" value="${item.orderItemID}" />
+                                                                <input type="hidden" name="orderID" value="${param.orderID}" />
+                                                                <button type="submit" class="btn btn-info btn-sm">View</button>
+                                                            </form>
                                                         </td>
                                                     </tr>                                                  
                                                 </c:forEach>
@@ -118,34 +99,44 @@
                                         </tbody>
                                     </table>                                    
                                 </div>
-                                </table>
 
-                                <!-- Action buttons -->
-                                <div class="text-center" style="margin-top: 20px;">
+                                <!-- Ghi chú (Note) -->
+                                <div class="form-group" style="margin: 30px 40px 20px 40px;">
+                                    <label for="note"><strong>Note:</strong></label>
+                                    <textarea 
+                                        name="note" 
+                                        id="note" 
+                                        rows="4" 
+                                        class="form-control" 
+                                        style="resize: vertical; border-radius: 6px; box-shadow: none;" 
+                                        placeholder="Write your note here..."></textarea>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="text-center" style="margin-bottom: 25px;">
                                     <!-- Back button -->
                                     <form action="OrderAdminCate" method="get" style="display:inline;">
-                                        <input type="hidden" name="service" value="listProcessing" />
-                                        <button type="submit" class="btn btn-default">Back</button>
+                                        <input type="hidden" name="service" value="listOnShipping" />
+                                        <button type="submit" class="btn btn-default btn-lg">Back</button>
                                     </form>
 
-                                    <!-- Finish button -->
+                                    <!-- Complete button -->
                                     <form action="OrderAdminCate" method="post" style="display: inline; margin-left: 10px;">
-                                        <input type="hidden" name="service" value="updateStatusProcess">
-                                        <input type="hidden" name="status" value="3">
+                                        <input type="hidden" name="service" value="updateStatusShipFinish">
+                                        <input type="hidden" name="status" value="5">
                                         <input type="hidden" name="orderID" value="${param.orderID}">
-                                        <button type="submit" class="btn btn-success">Finish</button>
+                                        <button type="submit" class="btn btn-success btn-lg">Complete</button>
                                     </form>
                                 </div>
 
                                 <!-- Error message -->
                                 <c:if test="${not empty error}">
-                                    <div class="alert alert-danger text-center" style="margin-top: 15px;">
+                                    <div class="alert alert-danger text-center" style="margin: 0 40px 25px 40px;">
                                         ${error}
                                     </div>
                                 </c:if>
-
-
                             </div>
+
 
                         </div>
                     </div>

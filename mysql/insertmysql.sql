@@ -27,7 +27,8 @@ INSERT INTO Users (RoleID, FullName, Email, PhoneNumber, PasswordHash, CreatedAt
 (3, 'LinhNV', 'customer@example.com', '0912345678', 'hashedpassword3', NOW(), 1),
 (3, 'Cus1', 'customer1@example.com', '0912345678', 'hashedpassword3', NOW(), 1),
 (3, 'Cus2', 'customer2@example.com', '0912345679', 'hashedpassword3', NOW(), 1),
-(3, 'Cus3', 'customer3@example.com', '0912345610', 'hashedpassword3', NOW(), 1);
+(3, 'Cus3', 'customer3@example.com', '0912345610', 'hashedpassword3', NOW(), 1),
+(4, 'Ship1', 'ship1@example.com', '0912345610', 'hashedpassword3', NOW(), 1);
 
 
 INSERT INTO CustomerInfo (UserID, Address) VALUES
@@ -900,7 +901,8 @@ INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, Ful
 VALUES ('OR003', 1,5, '2024-12-11 05:34:02', 'Customer 2 Address #50', 'Le Thi B', '0987654321', 9077684, 3, 2);
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
-VALUES ('OR004', 0, 6, '2024-12-11 05:34:02', N'Customer 2 Address #50', N'Pham Van C', '0367890123', 9077684, 5, 2);
+VALUES ('OR004', 0, 6, '2024-12-11 05:34:02', 'Customer 2 Address #50', 'Pham Van C', '0367890123', 9077684, 5, 2);
+
 
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)

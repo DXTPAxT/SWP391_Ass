@@ -54,14 +54,14 @@
                                 <c:forEach var="pc" items="${cartBuildPC}">
                                     <tr>
                                         <td><input type="checkbox" class="select-item ml-3 mr-3" value="${pc.cartBuildPCID}"/></td>
-                                        <td style="display: none;">Cart ID</td>
+                                        <td style="display: none;">${pc.cartBuildPCID}</td>
                                         <td>${pc.mainBoard}</td>
                                         <td>${pc.cpu}</td>
                                         <td>${pc.gpu}</td>
                                         <td>${pc.ram}</td>
                                         <td>${pc.ssd}</td>
                                         <td>${pc.pcCase}</td>
-                                        <td><fmt:formatNumber value="${pc.price}" type="number" groupingUsed="true"/> VND</td>
+                                        <td><fmt:formatNumber value="${pc.price}" type="number" /> VND</td>
                                         <td>
                                             <button onclick="confirmDelete(this, ${pc.cartBuildPCID})">
                                                 <i class="fa fa-times"></i>
@@ -102,12 +102,13 @@
                 let total = 0;
                 document.querySelectorAll(".select-item:checked").forEach(cb => {
                     const row = cb.closest("tr");
-                    const priceText = row?.querySelector("td:nth-child(9)")?.innerText.replace(/[^0-9]/g, '');
+                    const priceText = row?.querySelector("td:nth-child(9)")?.innerText.replace(/[^\d]/g, '');
                     if (priceText)
                         total += parseInt(priceText);
                 });
-                document.getElementById("selected-total").innerText = total.toLocaleString() + " VND";
-                document.getElementById("deposit-amount").innerText = Math.floor(total * 0.2).toLocaleString() + " VND";
+                document.getElementById("selected-total").innerText = total + " VND";
+                document.getElementById("deposit-amount").innerText = Math.floor(total * 0.2) + " VND";
+
             }
 
             function toggleAll(master) {
@@ -132,61 +133,39 @@
                     return;
                 }
 
+                // Tính tổng tiền và deposit (không để dấu phẩy!)
                 let total = 0;
                 selected.forEach(cb => {
                     const row = cb.closest("tr");
-                    const priceText = row?.querySelector("td:nth-child(9)")?.innerText.replace(/[^0-9]/g, '');
+                    const priceText = row?.querySelector("td:nth-child(9)")?.innerText.replace(/[^\d]/g, '');
                     if (priceText)
                         total += parseInt(priceText);
                 });
-
-                const deposit = Math.floor(total * 0.2);
-                if (!confirm(`You will place a deposit this Build PC(s). Continue?`))
-                    return;
-
+                const deposit = Math.floor(total * 0.2); 
                 const ids = Array.from(selected).map(cb => cb.value);
-                fetch("CardBuildPc", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
-                    body: new URLSearchParams({service: "depositBuildPC", ids: ids.join(",")})
-                })
-                        .then(res => res.text())
-                        .then(msg => {
-                            if (msg === "SUCCESS") {
-                                alert("Deposit successful. The remaining amount will be paid when you take the products.");
-                                location.reload();
-                            } else if (msg === "NOT_LOGGED_IN") {
-                                alert("You need to log in to perform this action.");
-                                window.location.href = "Login";
-                            } else {
-                                alert("An error occurred while placing the deposit.");
-                            }
-                        })
-                        .catch(() => alert("Server connection error!"));
-            }
 
-            function confirmDelete(btn, cartID) {
-                if (!confirm("Are you sure you want to remove this Build PC from your cart?"))
-                    return;
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = "ShopPages/Pages/confirmVnPayOrder.jsp";
 
-                fetch("CardBuildPc", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
-                    body: new URLSearchParams({service: "deleteCartBuildPC", id: cartID})
-                })
-                        .then(res => res.text())
-                        .then(msg => {
-                            if (msg === "SUCCESS") {
-                                alert("Remove successfully.");
-                                btn.closest("tr").remove();
-                                updateTotal();
-                            } else {
-                                alert("Failed to remove Build PC.");
-                            }
-                        })
-                        .catch(() => alert("Server connection error!"));
+                const idsInput = document.createElement("input");
+                idsInput.name = "ids";
+                idsInput.value = ids;
+                form.appendChild(idsInput);
+
+                const amountInput = document.createElement("input");
+                amountInput.name = "amount";
+                amountInput.value = deposit.toString().replace(/[^\d]/g, "");
+
+                form.appendChild(amountInput);
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
             }
         </script>
+
+
 
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.js"></script>
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/bootstrap.min.js"></script>

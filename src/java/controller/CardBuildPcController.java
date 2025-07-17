@@ -1,6 +1,7 @@
 package controller;
 
 import dal.CartBuildPCDAO;
+import dal.VnPayUtil;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
@@ -58,7 +59,8 @@ public class CardBuildPcController extends HttpServlet {
         try {
             switch (service) {
                 case "deleteCartBuildPC" -> handleDelete(request, out, dao);
-                case "depositBuildPC" -> handleDeposit(request, out, dao, user.getUserId());
+              case "depositBuildPC" -> handleDeposit(request, response, dao, user.getUserId());
+
                 default -> out.print("FAIL");
             }
         } catch (Exception e) {
@@ -78,36 +80,35 @@ public class CardBuildPcController extends HttpServlet {
         }
     }
 
-    private void handleDeposit(HttpServletRequest request, PrintWriter out, CartBuildPCDAO dao, int userID) {
-        String idsRaw = request.getParameter("ids");
+ private void handleDeposit(HttpServletRequest request, HttpServletResponse response, CartBuildPCDAO dao, int userID)
+        throws IOException, ServletException {
+    String idsRaw = request.getParameter("ids");
+    if (idsRaw == null || idsRaw.trim().isEmpty()) {
+        response.getWriter().print("FAIL");
+        return;
+    }
 
-        if (idsRaw == null || idsRaw.trim().isEmpty()) {
-            out.print("FAIL");
+    String[] idArr = idsRaw.split(",");
+    int total = 0;
+
+    for (String idStr : idArr) {
+        try {
+            int cartBuildPCID = Integer.parseInt(idStr.trim());
+            int price = dao.getCartBuildPCPrice(cartBuildPCID);  // ← bạn đã có hàm này
+            total += price;
+        } catch (NumberFormatException e) {
+            response.getWriter().print("FAIL");
             return;
         }
 
-        String[] idArray = idsRaw.split(",");
-        boolean allSuccess = true;
+    int depositAmount = (int) (total * 0.2);
 
-        for (String idStr : idArray) {
-            try {
-                int cartBuildPCID = Integer.parseInt(idStr.trim());
+    // Đẩy sang trang xác nhận đặt cọc
+    request.setAttribute("cartIDs", idsRaw); // danh sách ID sẽ dùng ở bước sau
+    request.setAttribute("amount", depositAmount);
+    request.getRequestDispatcher("ShopPages/Pages/confirmVnPayOrder.jsp").forward(request, response);
+}
 
-                boolean success = dao.insertOrderFromCart(cartBuildPCID, userID);
-                if (!success) {
-                    System.err.println("❌ insertOrderFromCart thất bại cho CartBuildPCID = " + cartBuildPCID);
-                    allSuccess = false;
-                }
-
-            } catch (Exception e) {
-                System.err.println("❌ Lỗi xử lý CartBuildPCID: " + idStr);
-                e.printStackTrace();
-                allSuccess = false;
-            }
-        }
-
-        out.print(allSuccess ? "SUCCESS" : "FAIL");
-    }
 
     @Override
     public String getServletInfo() {
