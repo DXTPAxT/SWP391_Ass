@@ -22,7 +22,9 @@ public class BuildPCAdmin {
     private int Status;
     private String brandName;
     private String imgURL;
-
+private int queue;
+  private int orderBuildPCItemID;
+   private int inventory;
     public BuildPCAdmin() {
     }
 
@@ -82,7 +84,29 @@ public class BuildPCAdmin {
         this.WarrantyPrice = WarrantyPrice;
         this.WarrantyDesc = WarrantyDesc;
     }
+public int getQueue() {
+    return queue;
+}
 
+    public int getOrderBuildPCItemID() {
+        return orderBuildPCItemID;
+    }
+
+    public void setOrderBuildPCItemID(int orderBuildPCItemID) {
+        this.orderBuildPCItemID = orderBuildPCItemID;
+    }
+
+    public int getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(int inventory) {
+        this.inventory = inventory;
+    }
+
+public void setQueue(int queue) {
+    this.queue = queue;
+}
     public String getWarrantyDesc() {
         return WarrantyDesc;
     }

@@ -53,12 +53,12 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Order Rejected Tables
+                        Order Process Tables
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
                         <li><a href="#">Order</a></li>
-                        <li class="activ21e">view Order Rejected</li>
+                        <li class="activ21e">view Order Process</li>
                     </ol>
                 </section>
 

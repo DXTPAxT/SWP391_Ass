@@ -11,6 +11,7 @@ import java.util.Date;
  * @author User
  */
 public class SaleEvents {
+
     private int eventID;
     private int categoryID;
     private int post_id;
@@ -20,6 +21,8 @@ public class SaleEvents {
     private int status;
     private int createdBy;
     private Integer approvedBy;
+    private String createdByName;
+    private String approvedByName;
 
     public SaleEvents() {
     }
@@ -34,6 +37,11 @@ public class SaleEvents {
         this.status = status;
         this.createdBy = createdBy;
         this.approvedBy = approvedBy;
+    }
+
+    public SaleEvents(String createdByName, String approvedByName) {
+        this.createdByName = createdByName;
+        this.approvedByName = approvedByName;
     }
 
     public int getEventID() {
@@ -108,9 +116,27 @@ public class SaleEvents {
         this.approvedBy = approvedBy;
     }
 
+    public String getCreatedByName() {
+        return createdByName;
+    }
+
+    public void setCreatedByName(String createdByName) {
+        this.createdByName = createdByName;
+    }
+
+    public String getApprovedByName() {
+        return approvedByName;
+    }
+
+    public void setApprovedByName(String approvedByName) {
+        this.approvedByName = approvedByName;
+    }
+
     @Override
     public String toString() {
-        return "SaleEvents{" + "eventID=" + eventID + ", categoryID=" + categoryID + ", post_id=" + post_id + ", startDate=" + startDate + ", endDate=" + endDate + ", discountPercent=" + discountPercent + ", status=" + status + ", createdBy=" + createdBy + ", approvedBy=" + approvedBy + '}';
+        return "SaleEvents{" + "eventID=" + eventID + ", categoryID=" + categoryID + ", post_id=" + post_id + ", startDate=" + startDate + ", endDate=" + endDate + ", discountPercent=" + discountPercent + ", status=" + status + ", createdBy=" + createdBy + ", approvedBy=" + approvedBy + ", createdByName=" + createdByName + ", approvedByName=" + approvedByName + '}';
     }
+
     
+
 }

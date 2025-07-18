@@ -140,7 +140,7 @@
 
                 </div>
             </div>
-        </div>
+        
     </section>
 
     <%@ include file="components/footer.jsp" %>

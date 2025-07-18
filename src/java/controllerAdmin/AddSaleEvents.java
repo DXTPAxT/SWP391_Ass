@@ -13,12 +13,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import models.Categories;
 import models.Post;
 import models.SaleEvents;
+import models.User;
 
 /**
  *
@@ -65,6 +67,14 @@ public class AddSaleEvents extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        CategoriesDAO cdao = new CategoriesDAO();
+        Blog_CateDAO dao = new Blog_CateDAO();
+
+        List<Categories> categoryList = cdao.getAllCategories();
+        List<Post> postList = dao.getAllPost();
+
+        request.setAttribute("categoryList", categoryList);
+        request.setAttribute("postList", postList);
         request.getRequestDispatcher("AdminLTE/AdminPages/pages/forms/insertSaleEvents.jsp").forward(request, response);
     }
 
@@ -81,26 +91,43 @@ public class AddSaleEvents extends HttpServlet {
             throws ServletException, IOException {
 //        processRequest(request, response);
         try {
+            String cateIdStr = request.getParameter("categoryID");
+            String Post_idStr = request.getParameter("Post_id");
+            String startDateStr = request.getParameter("startDate");
+            String endDateStr = request.getParameter("endDate");
+            String discountStr = request.getParameter("discountPercent");
+
+            System.out.println("categoryID = " + cateIdStr);
+            System.out.println("Post_id = " + Post_idStr);
+            System.out.println("startDate = " + startDateStr);
+            System.out.println("endDate = " + endDateStr);
+            System.out.println("discountPercent = " + discountStr);
+
             int categoryID = Integer.parseInt(request.getParameter("categoryID"));
-            int postID = Integer.parseInt(request.getParameter("postID"));
+            int Post_id = Integer.parseInt(request.getParameter("Post_id"));
             Date startDate = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("startDate"));
             Date endDate = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("endDate"));
-            double discount = Double.parseDouble(request.getParameter("discount"));
+            double discount = Double.parseDouble(request.getParameter("discountPercent"));
 
             HttpSession session = request.getSession();
             User staff = (User) session.getAttribute("user");
-
-            Blog_CateDAO dao = new Blog_CateDAO();
+            if (staff == null) {
+                
+                response.sendRedirect("SignUp");
+                return;
+            }
+            SaleEvents event = new SaleEvents();
             event.setCategoryID(categoryID);
-            event.setPost_id(postID);
+            event.setPost_id(Post_id);
             event.setStartDate(startDate);
             event.setEndDate(endDate);
             event.setDiscountPercent(discount);
             event.setStatus(2); // Chờ duyệt
-            event.setCreatedBy(staff.getUserID());
+            event.setCreatedBy(staff.getUserId());
             event.setApprovedBy(null); // Chưa duyệt
 
-            new Blog_CateDAO.addSaleEvent(event);
+            Blog_CateDAO dao = new Blog_CateDAO();
+            dao.addSaleEvent(event);
 
             response.sendRedirect("saleevents");
         } catch (Exception e) {

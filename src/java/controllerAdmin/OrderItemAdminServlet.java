@@ -80,6 +80,84 @@ public class OrderItemAdminServlet extends HttpServlet {
             request.setAttribute("orderID", orderID); // để hiển thị nút Receive / Reject
 
             request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/OrderItem/viewOrderItemProcess.jsp").forward(request, response);
+        } else if (service.equals("listItemWaitShip")) {
+            try {
+                int orderID = Integer.parseInt(request.getParameter("orderID"));
+                List<OrderItems> items = dao.getAllOrderCateItemsByOrderID(orderID);
+
+                request.setAttribute("items", items);
+                request.setAttribute("orderID", orderID); // nếu cần truyền về JSP
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/OrderItem/viewOrderItemWaitShip.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
+            }
+        } else if (service.equals("viewProductsWait")) {
+            int orderItemID = Integer.parseInt(request.getParameter("orderItemID"));
+            int orderID = Integer.parseInt(request.getParameter("orderID")); // cần truyền thêm từ form
+
+            List<Products> products = dao.getProductsByOrderItemID(orderItemID);
+            List<OrderItems> items = dao.getAllOrderCateItemsByOrderID(orderID);
+
+            request.setAttribute("products", products);
+            request.setAttribute("items", items);
+            request.setAttribute("selectedOrderItemID", orderItemID); // dùng cho so sánh hiển thị
+            request.setAttribute("orderID", orderID); // để hiển thị nút Receive / Reject
+
+            request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/OrderItem/viewOrderItemWaitShip.jsp").forward(request, response);
+        } else if (service.equals("listItemOnShip")) {
+            try {
+                int orderID = Integer.parseInt(request.getParameter("orderID"));
+                List<OrderItems> items = dao.getAllOrderCateItemsByOrderID(orderID);
+
+                request.setAttribute("items", items);
+                request.setAttribute("orderID", orderID); // nếu cần truyền về JSP
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/OrderItem/viewOrderItemOnShip.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
+            }
+        } else if (service.equals("viewProductsOnShip")) {
+            int orderItemID = Integer.parseInt(request.getParameter("orderItemID"));
+            int orderID = Integer.parseInt(request.getParameter("orderID")); // cần truyền thêm từ form
+
+            List<Products> products = dao.getProductsByOrderItemID(orderItemID);
+            List<OrderItems> items = dao.getAllOrderCateItemsByOrderID(orderID);
+
+            request.setAttribute("products", products);
+            request.setAttribute("items", items);
+            request.setAttribute("selectedOrderItemID", orderItemID); // dùng cho so sánh hiển thị
+            request.setAttribute("orderID", orderID); // để hiển thị nút Receive / Reject
+
+            request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/OrderItem/viewOrderItemOnShip.jsp").forward(request, response);
+        } else if (service.equals("listItemComplete")) {
+            try {
+                int orderID = Integer.parseInt(request.getParameter("orderID"));
+                List<OrderItems> items = dao.getAllOrderCateItemsByOrderID(orderID);
+
+                request.setAttribute("items", items);
+                request.setAttribute("orderID", orderID); // nếu cần truyền về JSP
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/OrderItem/viewOrderItemComplete.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
+            }
+        } else if (service.equals("viewProductsComplete")) {
+            int orderItemID = Integer.parseInt(request.getParameter("orderItemID"));
+            int orderID = Integer.parseInt(request.getParameter("orderID")); // cần truyền thêm từ form
+
+            List<Products> products = dao.getProductsByOrderItemID(orderItemID);
+            List<OrderItems> items = dao.getAllOrderCateItemsByOrderID(orderID);
+
+            request.setAttribute("products", products);
+            request.setAttribute("items", items);
+            request.setAttribute("selectedOrderItemID", orderItemID); // dùng cho so sánh hiển thị
+            request.setAttribute("orderID", orderID); // để hiển thị nút Receive / Reject
+
+            request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/OrderItem/viewOrderItemComplete.jsp").forward(request, response);
         }
 
     }
