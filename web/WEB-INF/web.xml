@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <!-- SERVLETS -->
+       <servlet>
+        <servlet-name>OrderItemAdmin</servlet-name>
+        <servlet-class>controllerAdmin.OrderItemAdminServlet</servlet-class>
+    </servlet>
     <servlet>
         <servlet-name>Demo</servlet-name>
         <servlet-class>controller.Demo</servlet-class>
@@ -12,10 +16,6 @@
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
         <servlet-class>controller.LoginServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ProductServlet</servlet-name>
-        <servlet-class>controller.ProductServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>HomeServlet</servlet-name>
@@ -166,6 +166,10 @@
         <servlet-class>controllerAdmin.AddSaleEvents</servlet-class>
     </servlet>
     <!-- MAPPINGS -->
+    <servlet-mapping>
+        <servlet-name>OrderItemAdmin</servlet-name>
+        <url-pattern>/OrderItemAdmin</url-pattern>
+    </servlet-mapping>
     <servlet>
         <servlet-name>CheckoutServlet</servlet-name>
         <servlet-class>controller.cart.CheckoutServlet</servlet-class>
@@ -187,10 +191,6 @@
         <servlet-class>controller.OrderHistoryServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>OrderItemAdminServlet</servlet-name>
-        <servlet-class>controllerAdmin.OrderItemAdminServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>OrderDetailAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.OrderDetailAdminServlet</servlet-class>
     </servlet>
@@ -201,6 +201,18 @@
     <servlet>
         <servlet-name>LikeCommentServlet</servlet-name>
         <servlet-class>controller.LikeCommentServlet</servlet-class>
+ </servlet>
+    <servlet>
+        <servlet-name>ProductServlet</servlet-name>
+        <servlet-class>controller.ProductServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderBuildPC</servlet-name>
+        <servlet-class>controllerAdmin.OrderBuildPC</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderBuildPCDetails</servlet-name>
+        <servlet-class>controllerAdmin.OrderBuildPCDetails</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
@@ -213,10 +225,6 @@
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/Login</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ProductServlet</servlet-name>
-        <url-pattern>/Product</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
@@ -387,13 +395,11 @@
         <url-pattern>/OrderHistory</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>OrderItemAdminServlet</servlet-name>
-        <url-pattern>/OrderItemAdmin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>OrderDetailAdminServlet</servlet-name>
         <url-pattern>/OrderDetailAdmin</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+      </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ApproveSaleServlet</servlet-name>
         <url-pattern>/approvesale</url-pattern>
@@ -401,5 +407,17 @@
     <servlet-mapping>
         <servlet-name>LikeCommentServlet</servlet-name>
         <url-pattern>/likeComment</url-pattern>
+  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProductServlet</servlet-name>
+        <url-pattern>/Product</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderBuildPC</servlet-name>
+        <url-pattern>/OrderBuildPC</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderBuildPCDetails</servlet-name>
+        <url-pattern>/OrderBuildPCDetails</url-pattern>
     </servlet-mapping>
 </web-app>

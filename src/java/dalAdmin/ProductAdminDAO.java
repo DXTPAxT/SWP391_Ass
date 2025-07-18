@@ -193,7 +193,7 @@ public class ProductAdminDAO extends DBAdminContext {
                 if (currentStatus == 1) {
                     newStatus = 0; // 1 → 0
                 } else if (currentStatus == 0) {
-                    newStatus = 2; // 0 → 2
+                    newStatus = 4; // 0 → 2
                 } else {
                     newStatus = 0; // 2 → 0
                 }
@@ -226,7 +226,7 @@ public class ProductAdminDAO extends DBAdminContext {
             e.printStackTrace();
         }
     }
-
+   
     public static void main(String[] args) {
         // Tạo kết nối database (giả sử bạn có một lớp DBContext để lấy connection)
         try {

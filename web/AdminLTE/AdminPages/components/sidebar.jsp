@@ -138,9 +138,10 @@
                     </span>
                 </a>
                 <ul class="treeview-menu" <% if ("orderbuildpc".equals(activeMenu)) { %>style="display:block;"<% } %>>                               
-                    <li><a href="${param.ctx}/OrderAdmin?service=listBuildPC" class="<% if ("orderbuildpc".equals(activeMenu)) { %>active<% } %>"><i class="fa fa-circle-o"></i>View Order</a></li>
-                    <li><a href="${param.ctx}/OrderAdmin"><i class="fa fa-circle-o"></i>Pending Order</a></li>
-                    <li><a href="${param.ctx}/OrderBuildPCAdmin"><i class="fa fa-circle-o"></i>Order Build PC Items</a></li>
+                    <li><a href="${param.ctx}/OrderBuildPC?service=listRejected" class="<% if ("orderbuildpc".equals(activeMenu)) { %>active<% } %>"><i class="fa fa-circle-o"></i>Reject</a></li>
+                    <li><a href="${param.ctx}/OrderBuildPC?service=listWaitingStaff"><i class="fa fa-circle-o"></i>Staff Mission</a></li>
+                    <li><a href="${param.ctx}/OrderAdmin"><i class="fa fa-circle-o"></i>In Process PC Order</a></li>
+                    <li><a href="${param.ctx}/OrderBuildPCAdmin"><i class="fa fa-circle-o"></i>Success PC Order</a></li>
                     <!-- don thay the neu phai doi hang cho khach -->
                     <li><a href="${param.ctx}/OrderAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert Replacement Order </a></li> 
                 </ul>
@@ -153,7 +154,7 @@
                     </span>
                 </a>
                 <ul class="treeview-menu" <% if ("feedback".equals(activeMenu)) { %>style="display:block;"<% } %>>                               
-                    <li><a href="${param.ctx}/FeedBackAdmin" class="<% if ("feedback".equals(activeMenu)) { %>active<% } %>"><i class="fa fa-circle-o"></i>View Feedback</a></li> 
+                    <li><a href="${param.ctx}/FeedBackAdmin" class="<% if ("feedback".equals(activeMenu)) { %>active<% } %>"><i ass="fa fa-circle-o"></i>View Feedback</a></li> 
                 </ul>
             </li>
             <li class="treeview <% if ("blog".equals(activeMenu)) { %>menu-open active<% } %>">
@@ -205,8 +206,8 @@
                     <li><a href="${pageContext.request.contextPath}/BuildPC_ListCate?service=list" class="<% if ("buildpc".equals(activeMenu)) { %>active<% } %>">
                             <i class="fa fa-circle-o"></i> View PC</a>
                     </li>
-
-                    <li><a href="${param.ctx}/AdminLTE/AdminPages/pages/forms/BuildPCAdmin.html"><i class="fa fa-circle-o"></i>Creative new PC    </a></li>
+                    <li><a href="${param.ctx}/OrderBuildPC?service=listWaitingConfirm"><i class="fa fa-circle-o"></i>Waiting PC-Pending</a></li>
+                    <li><a href="${param.ctx}/AdminLTE/AdminPages/pages/forms/BuildPCAdmin.html"><i class="fa fa-circle-o"></i>Creative new PC </a></li>
                 </ul>
             </li>
             <li>

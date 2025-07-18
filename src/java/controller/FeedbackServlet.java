@@ -1,6 +1,7 @@
 package controller;
 
 import dal.FeedbackDAO;
+import dal.OrderItemDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import models.OrderItems;
 
 @WebServlet("/feedback")
 public class FeedbackServlet extends HttpServlet {
@@ -35,39 +37,39 @@ public class FeedbackServlet extends HttpServlet {
         HttpSession session = req.getSession();
 
         try {
-//            if (action == null) {
-//                session.removeAttribute("error");
-//                List<Feedback> allFeedback = dao.getAllFeedbacks();
-//                req.setAttribute("feedbackList", allFeedback);
-//                RequestDispatcher rs = req.getRequestDispatcher("/ShopPages/Pages/feedback.jsp");
-//                rs.forward(req, res);
-//            } else {
-//                switch (action) {
-//                    case "delete":
-//                        handleDeleteFeedback(req, res);
-//                        break;
-//                    case "edit":
-//                        handleEditFeedback(req, res);
-//                        break;
-//                    case "category":
-//                        handleCategoryFeedback(req, res);
-//                        break;
-//                    case "user":
-//                        handleUserFeedback(req, res);
-//                        break;
-//                    default:
-//                        session.removeAttribute("error");
-//                        List<Feedback> allFeedback = dao.getAllFeedbacks();
-//                        req.setAttribute("feedbackList", allFeedback);
-//                        RequestDispatcher rs = req.getRequestDispatcher("/ShopPages/Pages/feedback.jsp");
-//                        rs.forward(req, res);
-//                        break;
-//                }
-//            }
+            if (action == null) {
+                session.removeAttribute("error");
+                int userId = ((User) session.getAttribute("user")).getUserId();
+                int OrderItemID = Integer.parseInt(req.getParameter("orderItemID"));
+                OrderItemDAO orderItemDAO = new OrderItemDAO();
+                OrderItems item = orderItemDAO.getOrderItemByID(OrderItemID);
+                ArrayList<Feedback> allFeedback = dao.getFeedbackByUserId(userId, OrderItemID);
+                req.setAttribute("item", item);
+                req.setAttribute("feedbackList", allFeedback);
+                RequestDispatcher rs = req.getRequestDispatcher("/ShopPages/Pages/feedback.jsp");
+                rs.forward(req, res);
+            } else {
+                switch (action) {
+                    case "delete":
+                        handleDeleteFeedback(req, res);
+                        break;
+                    case "edit":
+                        handleEditFeedback(req, res);
+                        break;
+                    default:
+                        session.removeAttribute("error");
+                        List<Feedback> allFeedback = dao.getAllFeedbacks();
+                        req.setAttribute("feedbackList", allFeedback);
+                        RequestDispatcher rs = req.getRequestDispatcher("/ShopPages/Pages/feedback.jsp");
+                        rs.forward(req, res);
+                        break;
+                }
+            }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error in doGet: " + e.getMessage(), e);
             session.setAttribute("error", "Failed to load feedback page: " + e.getMessage());
-            req.setAttribute("feedbackList", new ArrayList<>());
+            req.setAttribute("feedbackList", null);
+            session.setAttribute("error", e.getMessage());
             req.getRequestDispatcher("/ShopPages/Pages/feedback.jsp").forward(req, res);
         }
     }
@@ -79,7 +81,7 @@ public class FeedbackServlet extends HttpServlet {
         HttpSession session = req.getSession();
         try {
             if ("update".equals(action)) {
-//                handleUpdateFeedback(req, res);
+                handleUpdateFeedback(req, res);
             } else {
                 User currentUser = (User) session.getAttribute("user");
                 if (currentUser == null) {
@@ -115,6 +117,7 @@ public class FeedbackServlet extends HttpServlet {
             res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=1");
         }
     }
+
     private void handleDeleteFeedback(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         HttpSession session = req.getSession();
@@ -158,6 +161,7 @@ public class FeedbackServlet extends HttpServlet {
             throws IOException, ServletException {
         HttpSession session = req.getSession();
         User currentUser = (User) session.getAttribute("user");
+        String categoryID = req.getParameter("categoryID");
         int feedbackId;
         try {
             feedbackId = Integer.parseInt(req.getParameter("id"));
@@ -180,6 +184,9 @@ public class FeedbackServlet extends HttpServlet {
             return;
         }
 
+        if (categoryID != null && !categoryID.isEmpty()) {
+            req.setAttribute("categoryID", categoryID);
+        }
         req.setAttribute("feedback", feedback);
         req.getRequestDispatcher("/ShopPages/Pages/edit-feedback.jsp").forward(req, res);
     }
@@ -196,28 +203,26 @@ public class FeedbackServlet extends HttpServlet {
         }
 
         int feedbackId;
-        int categoryId = 1; // default fallback
+        String categoryId = req.getParameter("categoryID"); // default fallback
+
         try {
             feedbackId = Integer.parseInt(req.getParameter("feedbackID"));
-            if (req.getParameter("categoryID") != null) {
-                categoryId = Integer.parseInt(req.getParameter("categoryID"));
-            }
         } catch (NumberFormatException e) {
             session.setAttribute("error", "Invalid feedback ID");
-            res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
+            res.sendRedirect(req.getContextPath() + "/error.jsp");
             return;
         }
 
         Feedback feedback = dao.getFeedbackById(feedbackId);
         if (feedback == null) {
             session.setAttribute("error", "Feedback not found");
-            res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
+            res.sendRedirect(req.getContextPath() + "/error.jsp");
             return;
         }
 
         if (currentUser.getUserId() != feedback.getUserID() && currentUser.getRole().getRoleID() != 1) {
             session.setAttribute("error", "You are not authorized to edit this feedback");
-            res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
+            res.sendRedirect(req.getContextPath() + "/error.jsp");
             return;
         }
 
@@ -248,63 +253,15 @@ public class FeedbackServlet extends HttpServlet {
 
         if (success) {
             session.setAttribute("message", "Feedback updated successfully");
-            res.sendRedirect(req.getContextPath() + "/feedback?action=category&categoryID=" + categoryId);
+            if (categoryId != null && !categoryId.isEmpty()) {
+                res.sendRedirect(req.getContextPath() + "/CategoriesController?service=detail&categoryID=" + categoryId);
+            } else {
+                res.sendRedirect(req.getContextPath() + "/Order?orderID=" + feedback.getOrderItems().getOrderID());
+            }
         } else {
             session.setAttribute("error", "Failed to update feedback");
             req.setAttribute("feedback", feedback);
             req.getRequestDispatcher("/ShopPages/Pages/edit-feedback.jsp").forward(req, res);
-        }
-    }
-
-    private void handleCategoryFeedback(HttpServletRequest req, HttpServletResponse res)
-            throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        int categoryId;
-        try {
-            categoryId = Integer.parseInt(req.getParameter("categoryID"));
-        } catch (NumberFormatException e) {
-            session.setAttribute("error", "Invalid category ID");
-            req.setAttribute("feedbackList", new ArrayList<>());
-            req.getRequestDispatcher("/ShopPages/Pages/CategoriesDetails.jsp").forward(req, res);
-            return;
-        }
-
-        try {
-            session.removeAttribute("error");
-            List<Feedback> categoryFeedback = dao.getFeedbackByCategoryId(categoryId);
-            req.setAttribute("feedbackList", categoryFeedback != null ? categoryFeedback : new ArrayList<>());
-            req.setAttribute("categoryID", categoryId);
-            req.getRequestDispatcher("/ShopPages/Pages/CategoriesDetails.jsp").forward(req, res);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error in handleCategoryFeedback: " + e.getMessage(), e);
-            session.setAttribute("error", "Failed to retrieve feedbacks for category: " + e.getMessage());
-            req.setAttribute("feedbackList", new ArrayList<>());
-            req.setAttribute("categoryID", categoryId);
-            req.getRequestDispatcher("/ShopPages/Pages/CategoriesDetails.jsp").forward(req, res);
-        }
-    }
-
-    private void handleUserFeedback(HttpServletRequest req, HttpServletResponse res)
-            throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        User currentUser = (User) session.getAttribute("user");
-
-        if (currentUser == null) {
-            session.setAttribute("error", "Please login to view your feedback");
-            res.sendRedirect(req.getContextPath() + "/Login");
-            return;
-        }
-
-        try {
-            session.removeAttribute("error");
-            List<Feedback> userFeedback = dao.getFeedbackByUserId(currentUser.getUserId());
-            req.setAttribute("feedbackList", userFeedback != null ? userFeedback : new ArrayList<>());
-            req.getRequestDispatcher("/ShopPages/Pages/my-feedback.jsp").forward(req, res);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error in handleUserFeedback: " + e.getMessage(), e);
-            session.setAttribute("error", "Failed to retrieve your feedbacks: " + e.getMessage());
-            req.setAttribute("feedbackList", new ArrayList<>());
-            req.getRequestDispatcher("/ShopPages/Pages/my-feedback.jsp").forward(req, res);
         }
     }
 }

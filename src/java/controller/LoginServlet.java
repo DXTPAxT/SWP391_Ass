@@ -37,7 +37,7 @@ public class LoginServlet extends HttpServlet {
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("user");
             if (user == null) {
-                RequestDispatcher rs = request.getRequestDispatcher("ShopPages/Pages/login.jsp");
+                RequestDispatcher rs = request.getRequestDispatcher("/ShopPages/Pages/login.jsp");
                 rs.forward(request, response);
             } else {
                 if (user.getRole().getRoleID() == 3) {

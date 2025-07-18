@@ -53,12 +53,12 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Order Rejected Tables
+                        Order Process Tables
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
                         <li><a href="#">Order</a></li>
-                        <li class="activ21e">view Order Rejected</li>
+                        <li class="activ21e">view Order Process</li>
                     </ol>
                 </section>
 
@@ -74,6 +74,7 @@
                                         <thead>
                                             <tr>
                                                 <th>Order ID</th>
+                                                <th>Order Code</th>   
                                                 <th>Customer Name</th>
                                                 <th>Consignee</th>
                                                 <th>Staff Name</th>
@@ -88,6 +89,7 @@
                                                 <c:forEach var="order" items="${orders}">
                                                     <tr>
                                                         <td>${order.orderID}</td>
+                                                        <td>${order.orderCode}</td>
                                                         <td>${order.customerName}</td>
                                                         <td>${order.fullName}</td>
                                                         <td>${order.staffName}</td>
@@ -100,7 +102,7 @@
                                                         </td>
                                                         <td>${order.totalAmount}</td>
                                                         <td>
-                                                            <a href="OrderAdminCate?service=listItemPending&orderID=${order.orderID}" 
+                                                            <a href="OrderItemAdmin?service=listProcess&orderID=${order.orderID}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                     </tr>

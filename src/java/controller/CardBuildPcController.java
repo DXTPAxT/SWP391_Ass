@@ -1,12 +1,12 @@
 package controller;
 
 import dal.CartBuildPCDAO;
+import dal.VnPayUtil;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 import models.CartBuildPC;
 import models.User;
@@ -59,7 +59,8 @@ public class CardBuildPcController extends HttpServlet {
         try {
             switch (service) {
                 case "deleteCartBuildPC" -> handleDelete(request, out, dao);
-                case "depositBuildPC" -> handleDeposit(request, out, dao, user.getUserId());
+              case "depositBuildPC" -> handleDeposit(request, response, dao, user.getUserId());
+
                 default -> out.print("FAIL");
             }
         } catch (Exception e) {
@@ -79,34 +80,35 @@ public class CardBuildPcController extends HttpServlet {
         }
     }
 
- private void handleDeposit(HttpServletRequest request, PrintWriter out, CartBuildPCDAO dao, int userID) {
+ private void handleDeposit(HttpServletRequest request, HttpServletResponse response, CartBuildPCDAO dao, int userID)
+        throws IOException, ServletException {
     String idsRaw = request.getParameter("ids");
-
     if (idsRaw == null || idsRaw.trim().isEmpty()) {
-        out.print("FAIL");
+        response.getWriter().print("FAIL");
         return;
     }
 
-    String[] idArray = idsRaw.split(",");
-    boolean allSuccess = true;
+    String[] idArr = idsRaw.split(",");
+    int total = 0;
 
-    for (String idStr : idArray) {
+    for (String idStr : idArr) {
         try {
             int cartBuildPCID = Integer.parseInt(idStr.trim());
-
-            // Gọi hàm insertOrderFromCart để xử lý đặt cọc và ẩn giỏ
-            boolean success = dao.insertOrderFromCart(cartBuildPCID, userID);
-           
-
-        } catch (Exception e) {
-            System.err.println(" Lỗi xử lý CartBuildPCID: " + idStr);
-            e.printStackTrace();
-            allSuccess = false;
+            int price = dao.getCartBuildPCPrice(cartBuildPCID);  // ← bạn đã có hàm này
+            total += price;
+        } catch (NumberFormatException e) {
+            response.getWriter().print("FAIL");
+            return;
         }
-    }
 
-    out.print(allSuccess ? "SUCCESS" : "FAIL");
+    int depositAmount = (int) (total * 0.2);
+
+    // Đẩy sang trang xác nhận đặt cọc
+    request.setAttribute("cartIDs", idsRaw); // danh sách ID sẽ dùng ở bước sau
+    request.setAttribute("amount", depositAmount);
+    request.getRequestDispatcher("ShopPages/Pages/confirmVnPayOrder.jsp").forward(request, response);
 }
+ }
 
     @Override
     public String getServletInfo() {

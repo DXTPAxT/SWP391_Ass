@@ -11,6 +11,12 @@ CREATE TABLE Roles (
     RoleName VARCHAR(50) UNIQUE NOT NULL
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Order Status
+CREATE TABLE OrderStatus (
+	StatusID INT PRIMARY KEY,
+    StatusName varchar(20) Unique not null
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 2. Users
 CREATE TABLE Users (
     UserID INT PRIMARY KEY AUTO_INCREMENT,
@@ -136,7 +142,8 @@ CREATE TABLE Orders (
 	PaymentStatusID INT NOT NULL DEFAULT 1,
     TotalAmount INT NOT NULL,
     Status INT DEFAULT 1 NOT NULL,
-    FOREIGN KEY (CustomerID) REFERENCES Users(UserID)
+    FOREIGN KEY (CustomerID) REFERENCES Users(UserID),
+    FOREIGN KEY (Status) REFERENCES OrderStatus(StatusID)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 14. Order Items
@@ -158,6 +165,8 @@ CREATE TABLE OrderDetails (
     WarrantyDetailID INT NOT NULL,
     UnitPrice INT NOT NULL,
     WarrantyPrice INT NOT NULL,
+    Start Date default null,
+    End Date default null,
     Status INT DEFAULT 1 NOT NULL,
     FOREIGN KEY (OrderItemID) REFERENCES OrderItems(OrderItemID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
@@ -183,7 +192,7 @@ CREATE TABLE Shipping (
     OrderID INT NOT NULL,
     ShipperID INT NOT NULL,
     ShippingStatus int default 0 NOT NULL,
-    ShipTime DATE NOT NULL,
+    ShipTime DATE default NULL,
     Note TEXT DEFAULT NULL,
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
     FOREIGN KEY (ShipperID) REFERENCES Users(UserID)
@@ -351,20 +360,22 @@ CREATE TABLE Order_BuildPCDetails (
     OrderBuildPCDetailID INT PRIMARY KEY AUTO_INCREMENT,
     OrderBuildPCItemID INT NOT NULL,
     CategoryID INT NOT NULL,
-    WarrantyDetailID INT NOT NULL,
     Price INT NOT NULL,
     Status INT DEFAULT 1 NOT NULL,
     FOREIGN KEY (OrderBuildPCItemID) REFERENCES Order_BuildPCItems(OrderBuildPCItemID),
-    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
-    FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID)
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 33. Order Build PC Products
 CREATE TABLE Order_BuildPC_Products (
     OrderBuildPCProductID INT PRIMARY KEY AUTO_INCREMENT,
     OrderBuildPCDetailID INT NOT NULL,
-    ProductID INT NOT NULL,
+    ProductID INT default NULL,
+	WarrantyDetailID INT NULL,
+    Start Date default null,
+    End Date default null,
     FOREIGN KEY (OrderBuildPCDetailID) REFERENCES Order_BuildPCDetails(OrderBuildPCDetailID),
+    FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -380,6 +391,7 @@ CREATE TABLE Notifications (
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (SenderID) REFERENCES Users(UserID)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 35. WarrantyAssignments
 CREATE TABLE WarrantyAssignments (
     OrderID INT NOT NULL,

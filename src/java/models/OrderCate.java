@@ -20,11 +20,13 @@ public class OrderCate {
     private int StaffID;
     private String StaffName;
     private String Note;
+    private Order_Status orderStatus1;
     private Date PrepareTime;
     private int shipperID;
     private String shipperName;
     private String shipperPhone;
     private Date shipTime;
+    private String shipNote;
 
     private int warrantyStaffID;
     private String warrantyStaffName;
@@ -105,6 +107,7 @@ public class OrderCate {
         this.warrantyStaffName = warrantyStaffName;
         this.warrantyAssignedDate = warrantyAssignedDate;
     }
+    
 
     public OrderCate(int OrderID, String OrderCode, int Product_Type, int CustomerID, String CustomerName, String FullName, Date OrderDate, String Address, String phoneNumber, int TotalAmount, int Status, int PaymentStatus, int StaffID, String StaffName, Date PrepareTime, ArrayList<OrderItems> orderItems) {
         this.OrderID = OrderID;
@@ -404,5 +407,22 @@ public class OrderCate {
     public void setNote(String Note) {
         this.Note = Note;
     }
+
+    public Order_Status getOrder_Status() {
+        return orderStatus1;
+    }
+
+    public void setOrder_Status(Order_Status orderStatus1) {
+        this.orderStatus1 = orderStatus1;
+    }
+
+    public String getShipNote() {
+        return shipNote;
+    }
+
+    public void setShipNote(String shipNote) {
+        this.shipNote = shipNote;
+    }
+    
 
 }

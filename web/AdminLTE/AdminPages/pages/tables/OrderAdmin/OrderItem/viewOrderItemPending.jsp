@@ -41,10 +41,11 @@
     <body class="hold-transition skin-blue sidebar-mini">
         <div class="wrapper">
 
-            <jsp:include page="../../components/header.jsp" />
-            <jsp:include page="../../components/sidebar.jsp">
+            <jsp:include page="../../../../components/header.jsp" />
+            <jsp:include page="../../../../components/sidebar.jsp">
                 <jsp:param name="ctx" value="${ctx}" />
             </jsp:include>
+
 
             <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
@@ -121,8 +122,8 @@
             <!-- /.box -->
 
             <!-- /.content-wrapper -->
-            <jsp:include page="../../components/footer.jsp" />
-            <jsp:include page="../../components/control-sidebar.jsp" />
+            <jsp:include page="../../../../components/footer.jsp" />
+            <jsp:include page="../../../../components/control-sidebar.jsp" />
         </div>
         <!-- ./wrapper -->
 
