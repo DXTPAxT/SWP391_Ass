@@ -166,7 +166,19 @@
                 </a>
                 <ul class="treeview-menu" <% if ("blog".equals(activeMenu)) { %>style="display:block;"<% } %>>                               
                     <li><a href="${param.ctx}/bloga" class="<% if ("blog".equals(activeMenu)) { %>active<% } %>"><i class="fa fa-circle-o"></i>View Blog</a></li>
-                    <li><a href="${param.ctx}/BlogAdmin&service=insert"><i class="fa fa-circle-o"></i>Insert new Blog</a></li>
+                    <li><a href="${param.ctx}/blogadd"><i class="fa fa-circle-o"></i>Insert new Blog</a></li>
+                </ul>
+            </li>
+            <li class="treeview <% if ("saleevents".equals(activeMenu)) { %>menu-open active<% } %>">
+                <a href="#">
+                    <i class="fa fa-laptop"></i> <span>Sale Events</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" <% if ("blog".equals(activeMenu)) { %>style="display:block;"<% } %>>                               
+                    <li><a href="${param.ctx}/saleevents" class="<% if ("blog".equals(activeMenu)) { %>active<% } %>"><i class="fa fa-circle-o"></i>View Sale Events</a></li>
+                    <li><a href="${param.ctx}/addsale"><i class="fa fa-circle-o"></i>Insert Sale Events</a></li>
                 </ul>
             </li>
             <li class="treeview <% if ("user".equals(activeMenu)) { %>menu-open active<% } %>">

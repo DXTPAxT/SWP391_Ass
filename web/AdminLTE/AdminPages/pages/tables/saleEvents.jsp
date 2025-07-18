@@ -167,9 +167,8 @@
                                             <th>End Date</th>
                                             <th>Discount (%)</th>
                                             <th>Status</th>
-                                            <th>Created By</th>
-                                            <th>Approved By</th>
-                                            <th>Action</th> <!-- New header -->
+                                            <th>Action</th>
+                                            <th>Approval</th>
                                         </tr>
 
                                         <c:forEach var="event" items="${saleEvents}">
@@ -204,19 +203,10 @@
 
                                                 <!-- New Action column -->
                                                 <td>
-                                                    <a href="${ctx}/viewUser?userID=${event.createdBy}" style="color:#337ab7; display:block;">Created By</a>
-
-                                                    <c:choose>
-                                                        <c:when test="${event.approvedBy != null}">
-                                                            <a href="${ctx}/viewUser?userID=${event.approvedBy}" style="color:#337ab7; display:block;">Approved By</a>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <span style="color:gray; display:block;">Waiting Approval</span>
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </td>
-                                                <td>
-                                                    <a href="${ctx}/updatesale?eventID=${event.eventID}" class="btn btn-sm btn-info">Edit</a>
+                                                    <a href="${ctx}/viewUser?userID=${event.createdBy}" style="color:#337ab7; display:block;">
+                                                        ${event.createdByName}
+                                                    </a>
+                                                    <a href="${ctx}/updatesale?eventID=${event.eventID}" class="btn btn-sm btn-info">Update</a>
                                                     <c:if test="${event.status == 2}">
                                                         <form action="${ctx}/approveSaleEvent" method="post" style="display:inline;">
                                                             <input type="hidden" name="eventID" value="${event.eventID}" />
@@ -224,6 +214,20 @@
                                                         </form>
                                                     </c:if>
                                                 </td>
+
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${event.approvedBy != null}">
+                                                            <a href="${ctx}/viewUser?userID=${event.approvedBy}" style="color:#337ab7;">
+                                                                ${event.approvedByName}
+                                                            </a>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span style="color:gray;">Waiting Approval</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+
                                             </tr>
                                         </c:forEach>
                                     </table>

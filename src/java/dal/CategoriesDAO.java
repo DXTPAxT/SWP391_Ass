@@ -811,6 +811,25 @@ String sql = """
 
         return list;
     }
+public List<Categories> getAllCategories() {
+    String sql = """
+        SELECT c.*, bc.ComponentID, bc.BrandID, b.BrandName, comp.ComponentName
+        FROM Categories c
+        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        JOIN Components comp ON bc.ComponentID = comp.ComponentID
+    """;
+    List<Categories> list = new ArrayList<>();
+    try (PreparedStatement ps = connection.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            list.add(extractCategory(rs));
+        }
+    } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, null, e);
+    }
+    return list;
+}
 
     /* public static void main(String[] args) {
     CategoriesDAO dao = new CategoriesDAO();

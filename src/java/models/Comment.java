@@ -4,21 +4,29 @@
  */
 package models;
 
-import java.sql.Timestamp;    
-
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author User
  */
 public class Comment {
+
     private int CommentID;
     private int Post_id;
     private int UserID;
     private String CommentText;
     private Timestamp CreatedAt;
-    private Integer ParentCommentID; 
+    private Integer ParentCommentID;
     private String FullName;
+    private List<Comment> replies = new ArrayList<>();
+
+    public void addReply(Comment reply) {
+        this.replies.add(reply);
+    }
+
     public Comment() {
     }
 
@@ -96,7 +104,4 @@ public class Comment {
         return "Comment{" + "CommentID=" + CommentID + ", Post_id=" + Post_id + ", UserID=" + UserID + ", CommentText=" + CommentText + ", CreatedAt=" + CreatedAt + ", ParentCommentID=" + ParentCommentID + ", FullName=" + FullName + '}';
     }
 
-    
-    
 }
-
