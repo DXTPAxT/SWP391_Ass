@@ -24,30 +24,29 @@ public class BlogDetailServlet extends HttpServlet {
         String Post_id_raw = request.getParameter("Post_id");
 
         Blog_CateDAO dao = new Blog_CateDAO();
-
-        try {
-            int Bc_id = Integer.parseInt(Bc_id_raw);
-            List<Post> postList = dao.getPostsByCategoryId(Bc_id);
-            request.setAttribute("postList", postList);
-        } catch (NumberFormatException e) {
-            request.setAttribute("postList", null);
-        }
-
         Post postDetail = null;
-        List<Comment> comments = null;
+        List<Comment> nestedComments = null;
 
         try {
+            if (Bc_id_raw != null) {
+                int Bc_id = Integer.parseInt(Bc_id_raw);
+                List<Post> postList = dao.getPostsByCategoryId(Bc_id);
+                request.setAttribute("postList", postList);
+            }
+
             int Post_id = Integer.parseInt(Post_id_raw);
             postDetail = dao.getPostById(Post_id);
-            comments = dao.getCommentsByPostId(Post_id);
+
+            // Lấy danh sách comment theo Post_id
+            List<Comment> flatList = dao.getCommentsByPostId(Post_id);
+            nestedComments = dao.buildNestedComments(flatList);
+
         } catch (NumberFormatException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
-List<Comment> flatList = commentDAO.getCommentsByPostId(Post_id);
-List<Comment> nestedComments = buildNestedComments(flatList);
 
         request.setAttribute("post", postDetail);
-        request.setAttribute("comments", nestedComments);  
+        request.setAttribute("comments", nestedComments);
 
         List<Blog_Cate> categories = dao.getAllBlogCategory();
         List<Post> top5Posts = dao.getTop5NewestPosts();
@@ -66,7 +65,7 @@ List<Comment> nestedComments = buildNestedComments(flatList);
 
         String Post_idRaw = request.getParameter("Post_id");
         String Bc_idRaw = request.getParameter("Bc_id");
-        String commentText = request.getParameter("comment_text"); 
+        String commentText = request.getParameter("comment_text");
         String ParentCommentIDRaw = request.getParameter("ParentCommentID");
 
         int userId = 3; // giả sử user đang login
@@ -92,7 +91,7 @@ List<Comment> nestedComments = buildNestedComments(flatList);
             response.sendRedirect("blogdetail?Post_id=" + Post_id + (Bc_idRaw != null ? "&Bc_id=" + Bc_idRaw : ""));
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("error.jsp"); 
+            response.sendRedirect("error.jsp");
         }
     }
 

@@ -23,8 +23,12 @@ public class Comment {
     private String FullName;
     private List<Comment> replies = new ArrayList<>();
 
-    public void addReply(Comment reply) {
-        this.replies.add(reply);
+    public List<Comment> getReplies() {
+        return replies;
+    }
+
+    public void setReplies(List<Comment> replies) {
+        this.replies = replies;
     }
 
     public Comment() {

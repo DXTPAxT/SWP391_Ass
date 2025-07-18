@@ -287,37 +287,54 @@
                             <div class="comments-section">
                                 <h3>Comments</h3>
 
+
+
+                                <!-- Hàm đệ quy hiển thị bình luận -->
                                 <c:forEach var="comment" items="${comments}">
-                                    <div class="comment">
-                                        <div class="comment-meta">
-                                            <strong>${comment.fullName}</strong> | ${comment.createdAt}
-                                        </div>
-                                        <div class="comment-content">
-                                            ${comment.commentText}
-                                        </div>
+                                    <div style="margin-left: ${comment.parentCommentID == null ? 0 : 40}px; border-left: 1px solid #ccc; padding-left: 10px; margin-top: 10px;">
+                                        <p><strong>${comment.fullName}</strong> | ${comment.createdAt}</p>
+                                        <p>${comment.commentText}</p>
 
-                                        <div class="comment-actions" style="margin-top: 8px;">
-                                            <!-- Like form -->
-                                            <form action="${ctx}/likeComment" method="post" style="display: inline;">
-                                                <input type="hidden" name="comment_id" value="${comment.commentID}" />
-                                                <button type="submit" style="border: none; background: none; color: #fe980f;">❤️ Like</button>
-                                            </form>
+                                        <!-- Form trả lời -->
+                                        <form action="blogdetail" method="post">
+                                            <input type="hidden" name="Post_id" value="${post.post_id}" />
+                                            <input type="hidden" name="ParentCommentID" value="${comment.commentID}" />
+                                            <textarea name="comment_text" rows="2" cols="50" placeholder="Reply..."></textarea><br>
+                                            <button type="submit">Reply</button>
+                                        </form>
 
-                                            <!-- Reply toggle button -->
-                                            <button onclick="toggleReplyForm(${comment.commentID})" style="border: none; background: none; color: #fe980f;">💬 Reply</button>
-                                        </div>
+                                        <!-- Đệ quy replies -->
+                                        <c:if test="${not empty comment.replies}">
+                                            <c:forEach var="reply" items="${comment.replies}">
+                                                <div style="margin-left: 40px;">
+                                                    <p><strong>${reply.fullName}</strong> | ${reply.createdAt}</p>
+                                                    <p>${reply.commentText}</p>
 
-                                        <!-- Reply form (hidden by default) -->
-                                        <div id="reply-form-${comment.commentID}" style="display: none; margin-top: 10px;">
-                                            <form action="${ctx}/blogdetail" method="post">
-                                                <input type="hidden" name="Post_id" value="${post.post_id}" />
-                                                <input type="hidden" name="ParentCommentID" value="${comment.commentID}" />
-                                                <textarea name="comment_text" placeholder="Trả lời bình luận này" rows="2" required></textarea>
-                                                <button type="submit">Submit Reply</button>
-                                            </form>
-                                        </div>
+                                                    <!-- Form trả lời cho reply -->
+                                                    <form action="blogdetail" method="post">
+                                                        <input type="hidden" name="Post_id" value="${post.post_id}" />
+                                                        <input type="hidden" name="ParentCommentID" value="${reply.commentID}" />
+                                                        <textarea name="comment_text" rows="2" cols="50" placeholder="Reply..."></textarea><br>
+                                                        <button type="submit">Reply</button>
+                                                    </form>
+
+                                                    <!-- Đệ quy sâu hơn nếu cần -->
+                                                    <c:if test="${not empty reply.replies}">
+                                                        <c:forEach var="subReply" items="${reply.replies}">
+                                                            <div style="margin-left: 40px;">
+                                                                <p><strong>${subReply.fullName}</strong> | ${subReply.createdAt}</p>
+                                                                <p>${subReply.commentText}</p>
+
+                                                                <!-- Có thể thêm form reply cho subReply nếu muốn -->
+                                                            </div>
+                                                        </c:forEach>
+                                                    </c:if>
+                                                </div>
+                                            </c:forEach>
+                                        </c:if>
                                     </div>
                                 </c:forEach>
+
 
                                 <script>
                                     function toggleReplyForm(commentID) {
