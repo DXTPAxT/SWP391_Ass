@@ -152,7 +152,6 @@ public class OrderCateAdminDAO extends DBAdminContext {
                     item.setInventory(rs.getInt("Inventory"));
                     item.setQueue(rs.getInt("Queue"));
 
-                    // ➕ Kiểm tra số lượng sản phẩm đã được gán ProductCode
                     int assigned = getAssignedProductCount(orderItemID, conn);
                     item.setCompleted(assigned >= quantity);
 
