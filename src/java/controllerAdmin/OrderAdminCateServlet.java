@@ -32,7 +32,6 @@ public class OrderAdminCateServlet extends HttpServlet {
         if (service == null) {
             service = "listCate";
         }
-
         OrderCateAdminDAO dao = new OrderCateAdminDAO();
         if (service.equals("listCate")) {
             List<OrderCate> orders = dao.getOrdersByStatus(7);
@@ -145,7 +144,6 @@ public class OrderAdminCateServlet extends HttpServlet {
                 }
 
                 response.sendRedirect("OrderAdminCate?service=listProcessing");
-
             } catch (IOException | NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order update request.");
             }
@@ -408,7 +406,6 @@ public class OrderAdminCateServlet extends HttpServlet {
             } catch (NumberFormatException e) {
                 request.setAttribute("error", "Invalid data.");
             }
-
             request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/Order/viewOrderCateWarranty.jsp")
                     .forward(request, response);
         }
