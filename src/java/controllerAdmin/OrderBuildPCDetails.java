@@ -47,6 +47,32 @@ public class OrderBuildPCDetails extends HttpServlet {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
             }
+        }else if (service.equals("StaffMission")) {
+            try {
+                int orderID = Integer.parseInt(request.getParameter("orderID"));
+                List<BuildPCAdmin> items = dao.getBuildPCItemsByOrderID(orderID);
+
+                request.setAttribute("items", items);
+                request.setAttribute("orderID", orderID);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderDoing/StaffMissionConfirm.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
+            }
+        }else if (service.equals("InProcessing")) {
+            try {
+                int orderID = Integer.parseInt(request.getParameter("orderID"));
+                List<BuildPCAdmin> items = dao.getBuildPCItemsByOrderID(orderID);
+
+                request.setAttribute("items", items);
+                request.setAttribute("orderID", orderID);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderDoing/OrderPCDetail.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
+            }
         }
     } 
 

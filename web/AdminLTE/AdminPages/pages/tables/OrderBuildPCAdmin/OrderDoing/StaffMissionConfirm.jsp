@@ -47,18 +47,17 @@
             </jsp:include>
 
 
-
             <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Order PC Pending Tables
+                        Order Items Tables
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
                         <li><a href="#">Order</a></li>
-                        <li class="activ21e">view  Order PC Pending</li>
+                        <li class="activ21e">view Order Items</li>
                     </ol>
                 </section>
 
@@ -73,52 +72,41 @@
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Order ID</th>
-                                                <th>Customer Name</th>
-                                                <th>Consignee</th>
-                                                <th>Order Date</th>
-                                                <th>Product Type</th>
-                                                <th>Total Amount</th>
-                                                <th>View Order Items</th>
+                                                <th>Order Code</th>
+                                                <th>Category Name</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Inventory</th>
+                                                <th>Queue</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:if test="${not empty orders}">
-                                                <c:forEach var="order" items="${orders}">
+                                            <c:if test="${not empty items}">
+                                                <c:forEach var="item" items="${items}">
                                                     <tr>
-                                                        <td>${order.orderID}</td>
-                                                        <td>${order.customerName}</td>
-                                                        <td>${order.fullName}</td>
-                                                        <td><fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd HH:mm" /></td>
-                                                        <td>
-                                                            <c:choose>
-                                                                <c:when test="${order.product_Type != null && order.product_Type == 0}">Category</c:when>
-                                                                <c:otherwise>Build PC</c:otherwise>
-                                                            </c:choose>
-                                                        </td>
-                                                        <td>${order.totalAmount}</td>
-                                                        <!--
-                                                        <td>
-                                                            <form action="${ctx}/OrderBuildPC" method="post" style="display:inline;">
-                                                                <input type="hidden" name="service" value="StaffConfirm"/>
-                                                                <input type="hidden" name="status" value="2"/> 
-                                                                <input type="hidden" name="orderID" value="${order.orderID}"/>
-                                                                <button type="submit" class="btn btn-success btn-sm">Confirm</button>
-                                                            </form>
-                                                        </td>
-                                                        -->
-                                                        <td>
-                                                            <a href="${ctx}/OrderBuildPCDetails?service=StaffMission&orderID=${order.orderID}" 
-                                                               class="btn btn-warning btn-sm">View</a>
-                                                        </td>
+                                                        <td>${item.buildPCIterm}</td>
+                                                        <td>${item.cateName}</td>
+                                                        <td>${item.quantity}</td>
+                                                        <td>${item.price}</td>
+                                                        <td>${item.inventory}</td>
+                                                        <td>${item.queue}</td>
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
-
                                         </tbody>
                                     </table>
                                 </div>
+                               
                             </div>
+                            <div class="text-center" style="margin-top: 20px;">
+                                    <form action="OrderBuildPC" method="post" style="display: inline;">
+                                        <input type="hidden" name="service" value="StaffConfirm">
+                                        <input type="hidden" name="status" value="2">
+                                        <input type="hidden" name="orderID" value="${param.orderID}">
+                                        <button type="submit" class="btn btn-success">Confirm</button>
+                                    </form>
+
+                                </div>
                         </div>
                     </div>
 

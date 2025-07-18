@@ -98,26 +98,26 @@ public class OrderBuildPC extends HttpServlet {
                 }
 
                 dao.updateOrderStatus(orderID, status);
-                if(status ==1 || status ==0){
-                List<BuildPCAdmin> items= dao.getAllOrderBuildPCItemsByOrderID(orderID);
-                for(BuildPCAdmin item :items){
-                    int orderedQty = 1;
-                    int inventory = item.getInventory();
-                    int categoryId = item.getCateID();
-                    if(inventory > orderedQty){
-                        dao.updateQueueForBuildPCOrder(orderID);
+                if (status == 10 || status == 0) {
+                    List<BuildPCAdmin> items = dao.getAllOrderBuildPCItemsByOrderID(orderID);
+                    for (BuildPCAdmin item : items) {
+                        int orderedQty = 1;
+                        int inventory = item.getInventory();
+                        int categoryId = item.getCateID();
+                        if (inventory > orderedQty) {
+                            dao.updateQueueForBuildPCOrder(orderID);
+                        }
+
                     }
-                    
                 }
-                }
-                   response.sendRedirect("OrderBuildPC?service=listWaitingConfirm");
+                response.sendRedirect("OrderBuildPC?service=listWaitingConfirm");
 
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID or status format");
             }
         } else if (service.equals("StaffConfirm")) {
-           String orderID_raw = request.getParameter("orderID");
+            String orderID_raw = request.getParameter("orderID");
             String status_raw = request.getParameter("status");
 
             if (orderID_raw == null || status_raw == null || orderID_raw.trim().isEmpty() || status_raw.trim().isEmpty()) {
@@ -132,32 +132,23 @@ public class OrderBuildPC extends HttpServlet {
                 HttpSession session = request.getSession(false);
                 User currentUser = (User) session.getAttribute("user");
 
-                if (currentUser == null || currentUser.getRole().getRoleID() != 1) {
+                if (currentUser == null || currentUser.getRole().getRoleID() != 2) {
                     response.sendRedirect(request.getContextPath() + "/Logout");
                     return;
                 }
 
                 dao.updateOrderStatus(orderID, status);
-                if(status ==1 || status ==0){
-                List<BuildPCAdmin> items= dao.getAllOrderBuildPCItemsByOrderID(orderID);
-                for(BuildPCAdmin item :items){
-                    int orderedQty = 1;
-                    int inventory = item.getInventory();
-                    int categoryId = item.getCateID();
-                    if(inventory > orderedQty){
-                        dao.updateQueueForBuildPCOrder(orderID);
-                    }
-                    
-                }
-                dao.insertOrderPreparement(currentUser.getUserId(), orderID);
-                }
-                   response.sendRedirect("OrderBuildPC?service=listWaitingStaff");
+                dao.insertOrderPreparementForBuildPC(currentUser.getUserId(), orderID); // đổi tên hàm nếu bạn dùng riêng
+                
+
+                response.sendRedirect("OrderBuildPC?service=listWaitingStaff");
 
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID or status format");
             }
-    }
+        }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
