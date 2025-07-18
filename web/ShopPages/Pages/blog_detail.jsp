@@ -290,14 +290,42 @@
                                 <c:forEach var="comment" items="${comments}">
                                     <div class="comment">
                                         <div class="comment-meta">
-                                            <strong>${comment.fullName}</strong>  |  ${comment.createdAt}
-
+                                            <strong>${comment.fullName}</strong> | ${comment.createdAt}
                                         </div>
                                         <div class="comment-content">
                                             ${comment.commentText}
                                         </div>
+
+                                        <div class="comment-actions" style="margin-top: 8px;">
+                                            <!-- Like form -->
+                                            <form action="${ctx}/likeComment" method="post" style="display: inline;">
+                                                <input type="hidden" name="comment_id" value="${comment.commentID}" />
+                                                <button type="submit" style="border: none; background: none; color: #fe980f;">❤️ Like</button>
+                                            </form>
+
+                                            <!-- Reply toggle button -->
+                                            <button onclick="toggleReplyForm(${comment.commentID})" style="border: none; background: none; color: #fe980f;">💬 Reply</button>
+                                        </div>
+
+                                        <!-- Reply form (hidden by default) -->
+                                        <div id="reply-form-${comment.commentID}" style="display: none; margin-top: 10px;">
+                                            <form action="${ctx}/blogdetail" method="post">
+                                                <input type="hidden" name="Post_id" value="${post.post_id}" />
+                                                <input type="hidden" name="ParentCommentID" value="${comment.commentID}" />
+                                                <textarea name="comment_text" placeholder="Trả lời bình luận này" rows="2" required></textarea>
+                                                <button type="submit">Submit Reply</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </c:forEach>
+
+                                <script>
+                                    function toggleReplyForm(commentID) {
+                                        const form = document.getElementById("reply-form-" + commentID);
+                                        form.style.display = form.style.display === "none" ? "block" : "none";
+                                    }
+                                </script>
+
 
                                 <!-- Comment Form -->
                                 <div class="comment-form">

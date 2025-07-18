@@ -43,9 +43,12 @@ public class BlogDetailServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             System.out.println(e);
         }
+List<Comment> flatList = commentDAO.getCommentsByPostId(Post_id);
+List<Comment> nestedComments = buildNestedComments(flatList);
 
         request.setAttribute("post", postDetail);
-        request.setAttribute("comments", comments);
+        request.setAttribute("comments", nestedComments);  
+
         List<Blog_Cate> categories = dao.getAllBlogCategory();
         List<Post> top5Posts = dao.getTop5NewestPosts();
 

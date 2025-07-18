@@ -194,6 +194,14 @@
         <servlet-name>OrderDetailAdminServlet</servlet-name>
         <servlet-class>controllerAdmin.OrderDetailAdminServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ApproveSaleServlet</servlet-name>
+        <servlet-class>controllerAdmin.ApproveSaleServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>LikeCommentServlet</servlet-name>
+        <servlet-class>controller.LikeCommentServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
         <url-pattern>/Demo</url-pattern>
@@ -385,5 +393,13 @@
     <servlet-mapping>
         <servlet-name>OrderDetailAdminServlet</servlet-name>
         <url-pattern>/OrderDetailAdmin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ApproveSaleServlet</servlet-name>
+        <url-pattern>/approvesale</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LikeCommentServlet</servlet-name>
+        <url-pattern>/likeComment</url-pattern>
     </servlet-mapping>
 </web-app>

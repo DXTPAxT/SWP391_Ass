@@ -14,7 +14,8 @@ import models.Comment;
 import models.Post;
 import models.SaleEvents;
 import java.sql.Types;
-
+import java.util.HashMap;
+import java.util.Map;
 
 public class Blog_CateDAO extends DBContext {
 
@@ -152,8 +153,49 @@ public class Blog_CateDAO extends DBContext {
             e.printStackTrace();
         }
 
-        return list;
+        return buildNestedComments(list);
     }
+    private List<Comment> buildNestedComments(List<Comment> flatList) {
+    Map<Integer, Comment> commentMap = new HashMap<>();
+    List<Comment> rootComments = new ArrayList<>();
+
+    for (Comment c : flatList) {
+        commentMap.put(c.getCommentID(), c);
+    }
+
+    for (Comment c : flatList) {
+        Integer parentId = c.getParentCommentID();
+        if (parentId == null) {
+            rootComments.add(c); 
+        } else {
+            Comment parent = commentMap.get(parentId);
+            if (parent != null) {
+                parent.addReply(c); 
+            }
+        }
+    }
+
+    return rootComments;
+}
+
+public void likeComment(int CommentID, int UserID) {
+    String query = "INSERT INTO Comment_Likes (CommentID, UserID)\n" +
+"SELECT * FROM (SELECT ? AS CommentID, ? AS UserID) AS tmp\n" +
+"WHERE NOT EXISTS (\n" +
+"    SELECT 1 FROM comment_likes WHERE CommentID = ? AND UserID = ?\n" +
+") LIMIT 1;";
+
+    try (PreparedStatement ps = connection.prepareStatement(query)) {
+         
+        ps.setInt(1, CommentID);
+        ps.setInt(2, UserID);
+        ps.setInt(3, CommentID);
+        ps.setInt(4, UserID);
+        ps.executeUpdate();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 
     public void addComment(Comment c) {
         String query = "INSERT INTO comments (Post_id, UserID, CommentText, ParentCommentID)\n"
@@ -452,11 +494,13 @@ public class Blog_CateDAO extends DBContext {
         return list;
     }
 
-   public List<SaleEvents> getAllSaleEvents() {
+     public List<SaleEvents> getAllSaleEvents() {
         List<SaleEvents> list = new ArrayList<>();
-        String sql = "SELECT * FROM SaleEvents";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        String sql = "SELECT se.*, u1.FullName AS createdByName, u2.FullName AS approvedByName "
+                   + "FROM SaleEvents se "
+                   + "JOIN Users u1 ON se.CreatedBy = u1.UserID "
+                   + "LEFT JOIN Users u2 ON se.ApprovedBy = u2.UserID";
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(parseSaleEvent(rs));
             }
@@ -465,32 +509,27 @@ public class Blog_CateDAO extends DBContext {
         }
         return list;
     }
-   public SaleEvents getSaleEventByID(int eventID) {
-    SaleEvents event = null;
-    String sql = "SELECT * FROM SaleEvents WHERE EventID = ?";
-    try {
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setInt(1, eventID);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            event = new SaleEvents();
-            event.setEventID(rs.getInt("EventID"));
-            event.setCategoryID(rs.getInt("CategoryID"));
-            event.setPost_id(rs.getInt("Post_id"));
-            event.setStartDate(rs.getDate("StartDate"));
-            event.setEndDate(rs.getDate("EndDate"));
-            event.setDiscountPercent(rs.getDouble("DiscountPercent"));
-            event.setStatus(rs.getInt("Status"));
-            event.setCreatedBy(rs.getInt("CreatedBy"));
-            event.setApprovedBy(rs.getObject("ApprovedBy") != null ? rs.getInt("ApprovedBy") : null);
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return event;
-}
 
-public List<SaleEvents> getSaleEventsByCategory(int categoryID) {
+    public SaleEvents getSaleEventByID(int eventID) {
+        SaleEvents event = null;
+        String sql = "SELECT se.*, u1.FullName AS createdByName, u2.FullName AS approvedByName "
+                   + "FROM SaleEvents se "
+                   + "JOIN Users u1 ON se.CreatedBy = u1.UserID "
+                   + "LEFT JOIN Users u2 ON se.ApprovedBy = u2.UserID "
+                   + "WHERE se.EventID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, eventID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                event = parseSaleEvent(rs);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return event;
+    }
+
+    public List<SaleEvents> getSaleEventsByCategory(int categoryID) {
         List<SaleEvents> list = new ArrayList<>();
         String sql = "SELECT * FROM SaleEvents WHERE CategoryID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -504,6 +543,7 @@ public List<SaleEvents> getSaleEventsByCategory(int categoryID) {
         }
         return list;
     }
+
     public void addSaleEvent(SaleEvents event) {
         String sql = "INSERT INTO SaleEvents (CategoryID, Post_id, StartDate, EndDate, DiscountPercent, Status, CreatedBy, ApprovedBy) "
                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -513,8 +553,9 @@ public List<SaleEvents> getSaleEventsByCategory(int categoryID) {
             ps.setDate(3, new java.sql.Date(event.getStartDate().getTime()));
             ps.setDate(4, new java.sql.Date(event.getEndDate().getTime()));
             ps.setDouble(5, event.getDiscountPercent());
-            ps.setInt(6, event.getStatus()); // thường là 2 (chờ duyệt)
+            ps.setInt(6, event.getStatus());
             ps.setInt(7, event.getCreatedBy());
+
             if (event.getApprovedBy() != null) {
                 ps.setInt(8, event.getApprovedBy());
             } else {
@@ -525,7 +566,7 @@ public List<SaleEvents> getSaleEventsByCategory(int categoryID) {
             e.printStackTrace();
         }
     }
-// Duyệt sale event (admin)
+
     public void approveSaleEvent(int eventID, int adminID) {
         int newStatus = determineStatusFromInventory(eventID);
         String sql = "UPDATE SaleEvents SET Status = ?, ApprovedBy = ? WHERE EventID = ?";
@@ -538,7 +579,7 @@ public List<SaleEvents> getSaleEventsByCategory(int categoryID) {
             e.printStackTrace();
         }
     }
-    // Xác định status dựa vào tồn kho
+
     private int determineStatusFromInventory(int eventID) {
         String sql = "SELECT i.Quantity, i.IsRestocking "
                    + "FROM SaleEvents se JOIN Inventory i ON se.CategoryID = i.CategoryID "
@@ -550,15 +591,16 @@ public List<SaleEvents> getSaleEventsByCategory(int categoryID) {
                 int quantity = rs.getInt("Quantity");
                 boolean isRestocking = rs.getBoolean("IsRestocking");
 
-                if (quantity > 0) return 1;       // Còn hàng
-                else if (isRestocking) return 0;  // Hết hàng sẽ nhập
-                else return 3;                    // Hết hàng không nhập
+                if (quantity > 0) return 1;            // Còn hàng
+                else if (isRestocking) return 0;       // Hết hàng nhưng đang nhập
+                else return 3;                         // Hết hàng không nhập
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return 2; // fallback nếu lỗi
+        return 2; // fallback: chờ duyệt
     }
+
     public void updateSaleEvent(SaleEvents event) {
         String sql = "UPDATE SaleEvents SET CategoryID = ?, Post_id = ?, StartDate = ?, EndDate = ?, "
                    + "DiscountPercent = ?, Status = ?, CreatedBy = ?, ApprovedBy = ? WHERE EventID = ?";
@@ -583,6 +625,7 @@ public List<SaleEvents> getSaleEventsByCategory(int categoryID) {
             e.printStackTrace();
         }
     }
+
     private SaleEvents parseSaleEvent(ResultSet rs) throws SQLException {
         SaleEvents event = new SaleEvents();
         event.setEventID(rs.getInt("EventID"));
@@ -594,8 +637,23 @@ public List<SaleEvents> getSaleEventsByCategory(int categoryID) {
         event.setStatus(rs.getInt("Status"));
         event.setCreatedBy(rs.getInt("CreatedBy"));
         event.setApprovedBy(rs.getObject("ApprovedBy") != null ? rs.getInt("ApprovedBy") : null);
+
+        // Nếu join Users => lấy thêm tên
+        try {
+            event.setCreatedByName(rs.getString("createdByName"));
+        } catch (SQLException e) {
+            event.setCreatedByName(null);
+        }
+
+        try {
+            event.setApprovedByName(rs.getString("approvedByName"));
+        } catch (SQLException e) {
+            event.setApprovedByName(null);
+        }
+
         return event;
     }
+
 
     public static void main(String[] args) {
         Blog_CateDAO dao = new Blog_CateDAO();
