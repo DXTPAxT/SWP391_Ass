@@ -776,30 +776,4 @@ public List<BuildPCAdmin> getBuildPCItemsByBuildPCID(int buildPCID) {
     }
     return "";
 }
-
-public static void main(String[] args) {
-    try {
-        BuildPCAdminDAO dao = new BuildPCAdminDAO();
-
-        // Dữ liệu giả định để test update
-        int buildPCID = 1; // ID của Build PC cần update (phải tồn tại trong DB)
-        List<Integer> categoryIDs = Arrays.asList(3, 10, 5, 42, 1, 2); // Các CategoryID hợp lệ
-        List<Integer> warrantyIDs = Arrays.asList(5, 0, 29, 0, 23, 0); // Có thể để 0 nếu không chọn bảo hành
-        int status = 2; // Trạng thái cập nhật (1: Đang bán, 2: Ngừng bán, v.v)
-        String role = "Admin"; // Role của người thực hiện ("Admin" hoặc "Customer")
-
-        boolean result = dao.updateBuildPC(buildPCID, categoryIDs, warrantyIDs, status, role);
-
-        if (result) {
-            System.out.println("Cập nhật Build PC thành công!");
-        } else {
-            System.out.println("Cập nhật Build PC thất bại hoặc dữ liệu không hợp lệ!");
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return "";
-}
-
-
 }
