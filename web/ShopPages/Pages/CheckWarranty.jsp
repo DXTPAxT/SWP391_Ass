@@ -11,8 +11,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <fmt:setLocale value="vi_VN" />
 <c:set var="sessionUser" value="${sessionScope.user}" />
-<jsp:useBean id="now" class="java.util.Date" />
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -212,20 +210,20 @@
                                                 </tr>
                                             </tbody>
                                         </table>
-                                    </div>                                   
-                                    <!-- ✅ Show 'Send to Warranty' button if user is owner -->
-                                    <c:if test="${not empty sessionUser 
-                                                  && orderInfo.customerID == sessionUser.userId 
-                                                  && orderInfo.end.time > now.time}">
+                                    </div>
+                                    <p>customerID: ${orderInfo.customerID}</p>
+                                    <p>session userId: ${sessionUser.userId}</p>
 
-                                          <form action="Product" method="post" class="mt-3">
-                                              <input type="hidden" name="service" value="updateWarrantyStatus" />
-                                              <input type="hidden" name="orderCode" value="${orderInfo.orderCode}" />
-                                              <input type="hidden" name="productCode" value="${orderInfo.productCode}" />
-                                              <button type="submit" class="btn btn-danger w-100">
-                                                  🛠 Send this product to warranty
-                                              </button>
-                                          </form>
+                                    <!-- ✅ Show 'Send to Warranty' button if user is owner -->
+                                    <c:if test="${not empty sessionUser && orderInfo.customerID == sessionUser.userId}">
+                                        <form action="Product" method="post" class="mt-3">
+                                            <input type="hidden" name="service" value="updateWarrantyStatus" />
+                                            <input type="hidden" name="orderCode" value="${orderInfo.orderCode}" />
+                                            <input type="hidden" name="productCode" value="${orderInfo.productCode}" />
+                                            <button type="submit" class="btn btn-danger w-100">
+                                                🛠 Send this product to warranty
+                                            </button>
+                                        </form>
                                     </c:if>
                                 </div>
                             </c:if>

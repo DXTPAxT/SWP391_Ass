@@ -53,12 +53,12 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Order Warranty
+                        Order Pending Warranty
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
                         <li><a href="#">Order</a></li>
-                        <li class="activ21e">view Order Warranty</li>
+                        <li class="activ21e">view Order Rejected</li>
                     </ol>
                 </section>
 
@@ -70,9 +70,6 @@
 
                                 <!-- /.box-header -->
                                 <div class="box-body">
-                                    <c:if test="${not empty error}">
-                                        <div class="alert alert-danger" style="font-weight:bold;">${error}</div>
-                                    </c:if>
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
@@ -83,7 +80,7 @@
                                                 <th>Product Type</th>
                                                 <th>Total Amount</th>
                                                 <th>View Product Warranty</th>
-                                                <th>Complete</th>
+
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -102,19 +99,8 @@
                                                         </td>
                                                         <td>${order.totalAmount}</td>
                                                         <td>
-                                                            <a href="OrderAdminCate?service=warrantyActionFinish&orderID=${order.orderID}" 
+                                                            <a href="OrderAdminCate?service=warrantyAction&orderID=${order.orderID}" 
                                                                class="btn btn-warning btn-sm">View</a>
-                                                        </td>
-                                                        <td>
-                                                            <div class="text-center" >
-                                                                <form action="OrderAdminCate" method="post" style="display: inline;">
-                                                                    <input type="hidden" name="service" value="completeWarranty">
-                                                                    <input type="hidden" name="orderID" value="${order.orderID}">
-                                                                    <button type="submit" class="btn btn-success btn-sm">
-                                                                        Complete
-                                                                    </button>
-                                                                </form>
-                                                            </div>
                                                         </td>
 
                                                     </tr>
@@ -134,7 +120,7 @@
                     <div class="box box-warning mt-4">
                         <div class="box-header with-border">
                             <h3 class="box-title">
-                                <i class="fa fa-wrench"></i> Warranty Products
+                                <i class="fa fa-wrench"></i> Pending Warranty Products
                             </h3>
                         </div>
                         <div class="box-body">
@@ -145,34 +131,47 @@
                                         <th class="text-center" style="width: 30%">Action</th>
                                     </tr>
                                 </thead>
-
                                 <tbody>
-                                    <c:forEach var="code" items="${selectPendingWarranty}">
+                                    <c:forEach var="productCode" items="${selectPendingWarranty}">
                                         <tr>
-                                            <td>${code.productCode}</td>
+                                            <td>${productCode}</td>
                                             <td class="text-center">
-                                                <form action="OrderAdminCate" method="post" style="display: inline;">
-                                                    <input type="hidden" name="service" value="warrantyActionFinish">
-                                                    <input type="hidden" name="productCode" value="${code.productCode}">
-                                                    <input type="hidden" name="orderID" value="${orderID}">
-                                                    <button type="submit" class="btn btn-warning btn-sm">
-                                                        Finish
-                                                    </button>
-                                                </form>
+                                                <c:if test="${product.status == 3}">
+                                                    <form action="OrderAdminCate" method="post" style="display: inline-block;">
+                                                        <input type="hidden" name="service" value="warrantyAction" />
+                                                        <input type="hidden" name="productCode" value="${product.productCode}" />
+                                                        <input type="hidden" name="action" value="agree" />
+                                                        <input type="hidden" name="orderID" value="${orderID}" />
+                                                        <button type="submit" class="btn btn-success btn-sm">
+                                                            <i class="fa fa-check"></i> Agree
+                                                        </button>
+                                                    </form>
+
+                                                    <form action="OrderAdminCate" method="post" style="display: inline-block; margin-left: 5px;">
+                                                        <input type="hidden" name="service" value="warrantyAction" />
+                                                        <input type="hidden" name="productCode" value="${product.productCode}" />
+                                                        <input type="hidden" name="action" value="reject" />
+                                                        <input type="hidden" name="orderID" value="${orderID}" />
+                                                        <button type="submit" class="btn btn-danger btn-sm">
+                                                            <i class="fa fa-times"></i> Reject
+                                                        </button>
+                                                    </form>
+                                                </c:if>
                                             </td>
+
                                         </tr>
                                     </c:forEach>
                                 </tbody>
-
-
                             </table>
                         </div>
                     </div>
-
-
-
-
-
+                    <form action="OrderAdminCate" method="post" style="display: inline; margin-left: 10px;">
+                        <input type="hidden" name="service" value="finishWarranty">
+                        <input type="hidden" name="orderID" value="${param.orderID}">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fa fa-flag-success"></i> Finish
+                        </button>
+                    </form>
                 </c:if>
                 <!-- END -->
 

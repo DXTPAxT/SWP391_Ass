@@ -188,7 +188,6 @@ public class OrderCateAdminDAO extends DBAdminContext {
             e.printStackTrace();
         }
     }
-
     public boolean insertShipping(int shipperID, int orderID, java.sql.Date shipTime) {
         String sql = "INSERT INTO Shipping (OrderID, ShipperID, ShipTime) VALUES (?, ?, ?)";
 
@@ -394,7 +393,6 @@ public class OrderCateAdminDAO extends DBAdminContext {
             e.printStackTrace();
         }
     }
-
     public boolean isShippingHandledByUser(int userID, int orderID) {
         String sql = "SELECT 1 FROM Shipping WHERE OrderID = ? AND ShipperID = ?";
         try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -547,14 +545,14 @@ public class OrderCateAdminDAO extends DBAdminContext {
         }
     }
 
-    public List<Products> getPendingWarrantyProductsByOrderId(int orderId) {
-        List<Products> productList = new ArrayList<>();
+    public List<String> getPendingWarrantyProductsByOrderId(int orderId) {
+        List<String> productCodes = new ArrayList<>();
         String sql = """
-        SELECT p.ProductCode, p.Status
+        SELECT p.ProductCode
         FROM Products p
         JOIN OrderDetails od ON p.ProductID = od.ProductID
         JOIN OrderItems oi ON od.OrderItemID = oi.OrderItemID
-        WHERE (p.Status = 3 OR p.Status = 4) AND oi.OrderID = ?
+        WHERE p.Status = 3 Or p.Status = 4 AND oi.OrderID = ?
     """;
 
         try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -563,10 +561,7 @@ public class OrderCateAdminDAO extends DBAdminContext {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Products product = new Products(); // sử dụng constructor rỗng
-                    product.setProductCode(rs.getString("ProductCode"));
-                    product.setStatus(rs.getInt("Status"));
-                    productList.add(product);
+                    productCodes.add(rs.getString("ProductCode"));
                 }
             }
 
@@ -574,7 +569,7 @@ public class OrderCateAdminDAO extends DBAdminContext {
             e.printStackTrace();
         }
 
-        return productList;
+        return productCodes;
     }
 
     public boolean updateProductStatusByCode(String productCode, int status) {
@@ -609,37 +604,7 @@ public class OrderCateAdminDAO extends DBAdminContext {
         return false;
     }
 
-    public void increaseQueueByCategoryId(int categoryId, int quantity) {
-        String sql = "UPDATE Categories SET Queue = Queue + ? WHERE CategoryID = ?";
-        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, quantity);
-            ps.setInt(2, categoryId);
-            ps.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public boolean hasUnassignedProducts(int orderID) {
-        String sql = """
-        SELECT 1
-        FROM OrderItems oi
-        JOIN OrderDetails od ON oi.OrderItemID = od.OrderItemID
-        WHERE oi.OrderID = ? AND od.ProductID IS NULL
-        LIMIT 1
-    """;
-
-        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, orderID);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next(); // true nếu còn dòng chưa gán ProductID
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
+   
     public static void main(String[] args) {
         OrderCateAdminDAO dao = new OrderCateAdminDAO();
         List<OrderItems> orders = dao.getAllOrderCateItemsByOrderID(4);

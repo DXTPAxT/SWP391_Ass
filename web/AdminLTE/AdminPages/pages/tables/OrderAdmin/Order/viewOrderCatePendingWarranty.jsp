@@ -132,15 +132,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tbody>
-                                    <c:forEach var="code" items="${selectPendingWarranty}">
+                                    <c:forEach var="productCode" items="${selectPendingWarranty}">
                                         <tr>
-                                            <td>${code.productCode}</td>
+                                            <td>${productCode}</td>
                                             <td class="text-center">
-                                                <c:if test="${code.status == 3}">
+                                                <c:if test="${product.status == 3}">
                                                     <form action="OrderAdminCate" method="post" style="display: inline-block;">
                                                         <input type="hidden" name="service" value="warrantyAction" />
-                                                        <input type="hidden" name="productCode" value="${code.productCode}" />
+                                                        <input type="hidden" name="productCode" value="${product.productCode}" />
                                                         <input type="hidden" name="action" value="agree" />
                                                         <input type="hidden" name="orderID" value="${orderID}" />
                                                         <button type="submit" class="btn btn-success btn-sm">
@@ -150,7 +149,7 @@
 
                                                     <form action="OrderAdminCate" method="post" style="display: inline-block; margin-left: 5px;">
                                                         <input type="hidden" name="service" value="warrantyAction" />
-                                                        <input type="hidden" name="productCode" value="${code.productCode}" />
+                                                        <input type="hidden" name="productCode" value="${product.productCode}" />
                                                         <input type="hidden" name="action" value="reject" />
                                                         <input type="hidden" name="orderID" value="${orderID}" />
                                                         <button type="submit" class="btn btn-danger btn-sm">
@@ -159,9 +158,9 @@
                                                     </form>
                                                 </c:if>
                                             </td>
+
                                         </tr>
                                     </c:forEach>
-                                </tbody>
                                 </tbody>
                             </table>
                         </div>
