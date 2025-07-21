@@ -14,7 +14,7 @@ public class CategoriesDAO extends DBContext {
 
     private static final Logger LOGGER = Logger.getLogger(CategoriesDAO.class.getName());
 
-   private Categories extractCategory(ResultSet rs) throws SQLException {
+    private Categories extractCategory(ResultSet rs) throws SQLException {
         Categories category = new Categories(
                 rs.getInt("CategoryID"),
                 rs.getString("CategoryName"),
@@ -28,15 +28,17 @@ public class CategoriesDAO extends DBContext {
         );
         try {
             category.setComponentName(rs.getString("ComponentName"));
-        } catch (SQLException ignored) {}
+        } catch (SQLException ignored) {
+        }
         try {
             category.setImgURL(rs.getString("ImageURL"));
-        } catch (SQLException ignored) {}
+        } catch (SQLException ignored) {
+        }
         return category;
     }
 
-   private List<Object> buildFilter(StringBuilder sql, String componentName, String brandName,
-                                     Integer minPrice, Integer maxPrice, String keyword) {
+    private List<Object> buildFilter(StringBuilder sql, String componentName, String brandName,
+            Integer minPrice, Integer maxPrice, String keyword) {
         List<Object> params = new ArrayList<>();
         if (componentName != null && !componentName.isEmpty()) {
             sql.append(" AND comp.ComponentName = ?");
@@ -154,7 +156,7 @@ public class CategoriesDAO extends DBContext {
     }
 
     // 5. Phân trang theo component
- public List<Categories> getCategoriesByComponent(int componentId, int start, int size) {
+    public List<Categories> getCategoriesByComponent(int componentId, int start, int size) {
         String sql = """
                 SELECT c.*, bc.ComponentID, bc.BrandID, b.BrandName, comp.ComponentName
                 FROM Categories c
@@ -171,7 +173,9 @@ public class CategoriesDAO extends DBContext {
             ps.setInt(2, size);
             ps.setInt(3, start);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(extractCategory(rs));
+                while (rs.next()) {
+                    list.add(extractCategory(rs));
+                }
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
@@ -180,7 +184,7 @@ public class CategoriesDAO extends DBContext {
     }
 
     // 6. Phân trang tất cả categories
-     public List<Categories> getAllCategoriesPaginated(int page, int size) {
+    public List<Categories> getAllCategoriesPaginated(int page, int size) {
         String sql = """
                 SELECT c.*, bc.ComponentID, bc.BrandID, b.BrandName, comp.ComponentName
                 FROM Categories c
@@ -195,7 +199,9 @@ public class CategoriesDAO extends DBContext {
             ps.setInt(1, size);
             ps.setInt(2, (page - 1) * size);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(extractCategory(rs));
+                while (rs.next()) {
+                    list.add(extractCategory(rs));
+                }
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
@@ -238,9 +244,9 @@ public class CategoriesDAO extends DBContext {
     }
 
     // 9. Lọc nâng cao với phân trang
-     public List<Categories> getCategoriesFiltered(String componentName, String brandName,
-                                                  Integer minPrice, Integer maxPrice,
-                                                  String keyword, int start, int size) {
+    public List<Categories> getCategoriesFiltered(String componentName, String brandName,
+            Integer minPrice, Integer maxPrice,
+            String keyword, int start, int size) {
 
         StringBuilder sql = new StringBuilder("""
                 SELECT c.*, bc.ComponentID, bc.BrandID, b.BrandName, comp.ComponentName
@@ -248,7 +254,7 @@ public class CategoriesDAO extends DBContext {
                 JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
                 JOIN Brands b ON bc.BrandID = b.BrandID
                 JOIN Components comp ON bc.ComponentID = comp.ComponentID
-                WHERE c.Status IN (1, 2)
+               
                 """);
 
         List<Object> params = buildFilter(sql, componentName, brandName, minPrice, maxPrice, keyword);
@@ -261,7 +267,9 @@ public class CategoriesDAO extends DBContext {
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             setParams(ps, params);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(extractCategory(rs));
+                while (rs.next()) {
+                    list.add(extractCategory(rs));
+                }
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
@@ -298,15 +306,15 @@ public class CategoriesDAO extends DBContext {
         return 0;
     }
 
-     private void setParams(PreparedStatement ps, List<Object> params) throws SQLException {
+    private void setParams(PreparedStatement ps, List<Object> params) throws SQLException {
         for (int i = 0; i < params.size(); i++) {
             ps.setObject(i + 1, params.get(i));
         }
     }
 
     // BuilDPC_ListCate
-     public List<Categories> getCategoriesFiltered2(int componentID, String brand, String keyword,
-                                                   int minPrice, int maxPrice, int start, int size) {
+    public List<Categories> getCategoriesFiltered2(int componentID, String brand, String keyword,
+            int minPrice, int maxPrice, int start, int size) {
 
         StringBuilder sql = new StringBuilder("""
                 SELECT c.*, bc.ComponentID, bc.BrandID, b.BrandName, comp.ComponentID
@@ -345,13 +353,16 @@ public class CategoriesDAO extends DBContext {
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             setParams(ps, params);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(extractCategory(rs));
+                while (rs.next()) {
+                    list.add(extractCategory(rs));
+                }
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
         return list;
     }
+
     public int countFilteredByComponent(int componentID, String brand, int minPrice, int maxPrice, String keyword) {
         StringBuilder sql = new StringBuilder("""
             SELECT COUNT(*)
@@ -420,10 +431,11 @@ public class CategoriesDAO extends DBContext {
         }
         return list;
     }
-public Map<Integer, List<WarrantyDetails>> getWarrantyMapForBuildPC(int buildPCID) {
-    Map<Integer, List<WarrantyDetails>> map = new HashMap<>();
 
-    String sql = """
+    public Map<Integer, List<WarrantyDetails>> getWarrantyMapForBuildPC(int buildPCID) {
+        Map<Integer, List<WarrantyDetails>> map = new HashMap<>();
+
+        String sql = """
         SELECT 
             c.CategoryID, 
             wd.WarrantyDetailID,
@@ -438,41 +450,41 @@ public Map<Integer, List<WarrantyDetails>> getWarrantyMapForBuildPC(int buildPCI
         WHERE bi.BuildPCID = ?
     """;
 
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, buildPCID);
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                int categoryID = rs.getInt("CategoryID");
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, buildPCID);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int categoryID = rs.getInt("CategoryID");
 
-                // Lấy danh sách hiện có, nếu chưa có thì khởi tạo rỗng
-                List<WarrantyDetails> warranties = map.getOrDefault(categoryID, new ArrayList<>());
+                    // Lấy danh sách hiện có, nếu chưa có thì khởi tạo rỗng
+                    List<WarrantyDetails> warranties = map.getOrDefault(categoryID, new ArrayList<>());
 
-                int warrantyDetailID = rs.getInt("WarrantyDetailID");
+                    int warrantyDetailID = rs.getInt("WarrantyDetailID");
 
-                if (!rs.wasNull() && warrantyDetailID > 0) {
-                    WarrantyDetails w = new WarrantyDetails();
-                    w.setWarrantyDetailID(warrantyDetailID);
-                    w.setWarrantyID(rs.getInt("WarrantyID"));
-                    w.setPrice(rs.getInt("WarrantyPrice"));
-                    w.setStatus(rs.getInt("WarrantyStatus"));
-                    w.setDescription(rs.getString("WarrantyDesc"));
-                    warranties.add(w);
+                    if (!rs.wasNull() && warrantyDetailID > 0) {
+                        WarrantyDetails w = new WarrantyDetails();
+                        w.setWarrantyDetailID(warrantyDetailID);
+                        w.setWarrantyID(rs.getInt("WarrantyID"));
+                        w.setPrice(rs.getInt("WarrantyPrice"));
+                        w.setStatus(rs.getInt("WarrantyStatus"));
+                        w.setDescription(rs.getString("WarrantyDesc"));
+                        warranties.add(w);
+                    }
+
+                    map.put(categoryID, warranties); // Luôn put vào map, kể cả khi list rỗng
                 }
-
-                map.put(categoryID, warranties); // Luôn put vào map, kể cả khi list rỗng
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+
+        return map;
     }
 
-    return map;
-}
+    public List<BuildPCView> getBuiltPCsForCustomer() {
+        List<BuildPCView> list = new ArrayList<>();
 
-  public List<BuildPCView> getBuiltPCsForCustomer() {
-    List<BuildPCView> list = new ArrayList<>();
-
-    String sql = """
+        String sql = """
         SELECT 
             bp.BuildPCID,
 
@@ -533,62 +545,58 @@ public Map<Integer, List<WarrantyDetails>> getWarrantyMapForBuildPC(int buildPCI
         ORDER BY bp.BuildPCID
     """;
 
-    try (PreparedStatement ps = connection.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
-        while (rs.next()) {
-            BuildPCView b = new BuildPCView();
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                BuildPCView b = new BuildPCView();
 
-            b.setBuildPCID(rs.getInt("BuildPCID"));
-            b.setMainBoard(rs.getString("MainBoard"));
-            b.setCpu(rs.getString("CPU"));
-            b.setGpu(rs.getString("GPU"));
-            b.setRam(rs.getString("RAM"));
-            b.setSsd(rs.getString("SSD"));
-            b.setPcCase(rs.getString("PCCase"));
+                b.setBuildPCID(rs.getInt("BuildPCID"));
+                b.setMainBoard(rs.getString("MainBoard"));
+                b.setCpu(rs.getString("CPU"));
+                b.setGpu(rs.getString("GPU"));
+                b.setRam(rs.getString("RAM"));
+                b.setSsd(rs.getString("SSD"));
+                b.setPcCase(rs.getString("PCCase"));
 
-            b.setMainBoardID(rs.getInt("MainBoardID"));
-            b.setCpuID(rs.getInt("CpuID"));
-            b.setGpuID(rs.getInt("GpuID"));
-            b.setRamID(rs.getInt("RamID"));
-            b.setSsdID(rs.getInt("SsdID"));
-            b.setCaseID(rs.getInt("CaseID"));
+                b.setMainBoardID(rs.getInt("MainBoardID"));
+                b.setCpuID(rs.getInt("CpuID"));
+                b.setGpuID(rs.getInt("GpuID"));
+                b.setRamID(rs.getInt("RamID"));
+                b.setSsdID(rs.getInt("SsdID"));
+                b.setCaseID(rs.getInt("CaseID"));
 
-            b.setImgMain(rs.getString("ImgMain"));
-            b.setImgCPU(rs.getString("ImgCPU"));
-            b.setImgGPU(rs.getString("ImgGPU"));
-            b.setImgRAM(rs.getString("ImgRAM"));
-            b.setImgSSD(rs.getString("ImgSSD"));
-            b.setImgCase(rs.getString("ImgCase"));
+                b.setImgMain(rs.getString("ImgMain"));
+                b.setImgCPU(rs.getString("ImgCPU"));
+                b.setImgGPU(rs.getString("ImgGPU"));
+                b.setImgRAM(rs.getString("ImgRAM"));
+                b.setImgSSD(rs.getString("ImgSSD"));
+                b.setImgCase(rs.getString("ImgCase"));
 
-            b.setMainWarranty(rs.getInt("MainWarranty"));
-            b.setCpuWarranty(rs.getInt("CpuWarranty"));
-            b.setGpuWarranty(rs.getInt("GpuWarranty"));
-            b.setRamWarranty(rs.getInt("RamWarranty"));
-            b.setSsdWarranty(rs.getInt("SsdWarranty"));
-            b.setCaseWarranty(rs.getInt("CaseWarranty"));
+                b.setMainWarranty(rs.getInt("MainWarranty"));
+                b.setCpuWarranty(rs.getInt("CpuWarranty"));
+                b.setGpuWarranty(rs.getInt("GpuWarranty"));
+                b.setRamWarranty(rs.getInt("RamWarranty"));
+                b.setSsdWarranty(rs.getInt("SsdWarranty"));
+                b.setCaseWarranty(rs.getInt("CaseWarranty"));
 
-            b.setPrice(rs.getInt("Price"));
-            b.setStatus(rs.getInt("Status"));
-            b.setUserID(rs.getInt("UserID"));
-            b.setFullName(rs.getString("FullName"));
-            b.setRole(rs.getString("RoleName"));
+                b.setPrice(rs.getInt("Price"));
+                b.setStatus(rs.getInt("Status"));
+                b.setUserID(rs.getInt("UserID"));
+                b.setFullName(rs.getString("FullName"));
+                b.setRole(rs.getString("RoleName"));
 
-            list.add(b);
+                list.add(b);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+
+        return list;
     }
 
-    return list;
-}
+    public List<Categories> getCategoriesInBuildPC(int buildPCID) {
+        List<Categories> list = new ArrayList<>();
 
-
-
-
- public List<Categories> getCategoriesInBuildPC(int buildPCID) {
-    List<Categories> list = new ArrayList<>();
-
-   String sql = """
+        String sql = """
    SELECT 
         c.CategoryID, 
         c.CategoryName, 
@@ -609,40 +617,39 @@ public Map<Integer, List<WarrantyDetails>> getWarrantyMapForBuildPC(int buildPCI
     WHERE bi.BuildPCID = ?
 """;
 
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, buildPCID);
+            ResultSet rs = ps.executeQuery();
 
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, buildPCID);
-        ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Categories c = new Categories();
+                c.setCategoryID(rs.getInt("CategoryID"));
+                c.setCategoryName(rs.getString("CategoryName"));
+                c.setBrandName(rs.getString("BrandName"));
+                c.setPrice(rs.getInt("Price"));
+                c.setImgURL(rs.getString("ImageURL"));
+                c.setComponentID(rs.getInt("ComponentID"));
 
-        while (rs.next()) {
-            Categories c = new Categories();
-            c.setCategoryID(rs.getInt("CategoryID"));
-            c.setCategoryName(rs.getString("CategoryName"));
-            c.setBrandName(rs.getString("BrandName"));
-            c.setPrice(rs.getInt("Price"));
-            c.setImgURL(rs.getString("ImageURL"));
-            c.setComponentID(rs.getInt("ComponentID"));
+                int warrantyDetailID = rs.getInt("WarrantyDetailID");
+                c.setWarrantyDetailID(warrantyDetailID);
 
-            int warrantyDetailID = rs.getInt("WarrantyDetailID");
-            c.setWarrantyDetailID(warrantyDetailID);
+                if (warrantyDetailID > 0) {
+                    c.setWarrantyDesc(rs.getString("WarrantyDesc") != null ? rs.getString("WarrantyDesc") : "Không rõ");
+                    c.setWarrantyPrice(rs.getInt("WarrantyPrice"));
+                } else {
+                    c.setWarrantyDesc("Không chọn");
+                    c.setWarrantyPrice(0);
+                }
 
-            if (warrantyDetailID > 0) {
-                c.setWarrantyDesc(rs.getString("WarrantyDesc") != null ? rs.getString("WarrantyDesc") : "Không rõ");
-                c.setWarrantyPrice(rs.getInt("WarrantyPrice"));
-            } else {
-                c.setWarrantyDesc("Không chọn");
-                c.setWarrantyPrice(0);
+                list.add(c);
             }
 
-            list.add(c);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-    } catch (Exception e) {
-        e.printStackTrace();
+        return list;
     }
-
-    return list;
-}
 
     public boolean insertBuildPCToCart(List<Integer> categoryIDs, List<Integer> warrantyIDs, int userID) {
         if (categoryIDs == null || warrantyIDs == null || categoryIDs.size() != 6 || warrantyIDs.size() != 6) {
@@ -823,25 +830,25 @@ public Map<Integer, List<WarrantyDetails>> getWarrantyMapForBuildPC(int buildPCI
 
         return list;
     }
-public List<Categories> getAllCategories() {
-    String sql = """
+
+    public List<Categories> getAllCategories() {
+        String sql = """
         SELECT c.*, bc.ComponentID, bc.BrandID, b.BrandName, comp.ComponentName
         FROM Categories c
         JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
         JOIN Brands b ON bc.BrandID = b.BrandID
         JOIN Components comp ON bc.ComponentID = comp.ComponentID
     """;
-    List<Categories> list = new ArrayList<>();
-    try (PreparedStatement ps = connection.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
-        while (rs.next()) {
-            list.add(extractCategory(rs));
+        List<Categories> list = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(extractCategory(rs));
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, null, e);
         }
-    } catch (SQLException e) {
-        LOGGER.log(Level.SEVERE, null, e);
+        return list;
     }
-    return list;
-}
 
     /* public static void main(String[] args) {
     CategoriesDAO dao = new CategoriesDAO();
@@ -862,34 +869,32 @@ public List<Categories> getAllCategories() {
     System.out.println("Kết quả thêm giỏ hàng: " + success);
 }
      */
-  public static void main(String[] args) {
-    CategoriesDAO dao = new CategoriesDAO();
+    public static void main(String[] args) {
+        CategoriesDAO dao = new CategoriesDAO();
 
-    int buildPCID = 6; // ✅ Bạn có thể đổi ID khác để test nhiều cấu hình hơn
+        int buildPCID = 6; // ✅ Bạn có thể đổi ID khác để test nhiều cấu hình hơn
 
-    List<Categories> categories = dao.getCategoriesInBuildPC(buildPCID);
+        List<Categories> categories = dao.getCategoriesInBuildPC(buildPCID);
 
-    if (categories == null || categories.isEmpty()) {
-        System.out.println("⚠️ Không có linh kiện nào trong Build PC #" + buildPCID);
-        return;
+        if (categories == null || categories.isEmpty()) {
+            System.out.println("⚠️ Không có linh kiện nào trong Build PC #" + buildPCID);
+            return;
+        }
+
+        System.out.println("=== 🔧 Danh sách linh kiện cho Build PC ID = " + buildPCID + " ===");
+
+        for (Categories c : categories) {
+            System.out.println("🧩 " + c.getCategoryName()
+                    + " | Hãng: " + c.getBrandName()
+                    + " | Giá: " + c.getPrice() + "₫"
+                    + " | Ảnh: " + c.getImgURL()
+                    + " | ComponentID: " + c.getComponentID());
+
+            System.out.println("🛡️  Bảo hành: " + c.getWarrantyDesc()
+                    + " | Giá bảo hành: " + c.getWarrantyPrice() + "₫");
+
+            System.out.println("----------------------------------");
+        }
     }
-
-    System.out.println("=== 🔧 Danh sách linh kiện cho Build PC ID = " + buildPCID + " ===");
-
-    for (Categories c : categories) {
-        System.out.println("🧩 " + c.getCategoryName()
-                + " | Hãng: " + c.getBrandName()
-                + " | Giá: " + c.getPrice() + "₫"
-                + " | Ảnh: " + c.getImgURL()
-                + " | ComponentID: " + c.getComponentID());
-
-        System.out.println("🛡️  Bảo hành: " + c.getWarrantyDesc()
-                + " | Giá bảo hành: " + c.getWarrantyPrice() + "₫");
-
-        System.out.println("----------------------------------");
-    }
-}
-
-
 
 }

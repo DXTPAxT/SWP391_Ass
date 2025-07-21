@@ -85,15 +85,15 @@ public class BuildPC extends HttpServlet {
                 StringBuilder sb = new StringBuilder();
 
                 for (Categories c : items) {
-                    sb.append(c.getCategoryID()).append("|") // 0
-                            .append(c.getCategoryName()).append("|") // 1
-                            .append(c.getBrandName()).append("|") // 2
-                            .append(c.getPrice()).append("|") // 3
-                            .append(c.getImgURL() == null ? "" : c.getImgURL()).append("|") // 4
-                            .append(c.getComponentID()).append("|") // 5
-                            .append(c.getWarrantyDesc()).append("|") // 6
-                            .append(c.getWarrantyPrice()).append("|") // 7
-                            .append(c.getWarrantyDetailID()).append(";");             // 8
+                    sb.append(c.getCategoryID()).append("|") 
+                            .append(c.getCategoryName()).append("|") 
+                            .append(c.getBrandName()).append("|") 
+                            .append(c.getPrice()).append("|") 
+                            .append(c.getImgURL() == null ? "" : c.getImgURL()).append("|") 
+                            .append(c.getComponentID()).append("|") 
+                            .append(c.getWarrantyDesc()).append("|") 
+                            .append(c.getWarrantyPrice()).append("|") 
+                            .append(c.getWarrantyDetailID()).append(";");           
                 }
 
                 out.print(sb.toString());

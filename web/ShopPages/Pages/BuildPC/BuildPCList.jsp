@@ -3,6 +3,42 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
+<style>
+    .card-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        background-color: #fff;
+        min-height:700px;
+    }
+
+    .card-wrapper img {
+        width: 100%;
+        height: 380px; 
+        object-fit: cover;
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+    }
+
+    .product-description {
+        font-size: 90%;
+        max-height: 54px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        margin-bottom: 10px;
+    }
+
+    .card-footer {
+        margin-top: auto;
+    }
+</style>
 
 <form id="filterForm" method="get" action="${ctx}/BuildPC" onsubmit="return false;"
       style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
@@ -10,13 +46,13 @@
     <input type="hidden" name="ajax" value="true" />
     <input type="hidden" name="componentID" value="${componentID}" />
 
-    <input type="text" name="keyword" value="${param.keyword}" placeholder="Tìm theo tên..." class="form-control" />
+    <input type="text" name="keyword" value="${param.keyword}" placeholder="Search by name..." class="form-control" />
 
-    <label for="brandSelect"><strong>Hãng:</strong></label>
+    <label for="brandSelect"><strong>Brand:</strong></label>
     <select id="brandSelect" name="brand" class="form-control">
-        <option value="">-- Tất cả hãng --</option>
+        <option value="">-- All brands --</option>
         <c:forEach var="b" items="${brands}">
-            <option value="${b.brandName}" <c:if test="${param.brand == b.brandName}">selected</c:if>>
+            <option value="${b.brandName}" <c:if test="${paDram.brand == b.brandName}">selected</c:if>>
                 ${b.brandName}
             </option>
         </c:forEach>
@@ -34,60 +70,56 @@
 <div class="container-fluid">
     <div class="row">
         <c:forEach var="p" items="${products}" varStatus="loop">
-            <div class="col-md-6 mb-3">
-                <div class="product-item border p-2 d-flex gap-3 align-items-center">
-                    <img src="${ctx}/ShopPages/Pages/images/anhproduct/${p.imgURL}" alt="${p.categoryName}" style="width: 80px; height: 80px; object-fit: cover; border: 1px solid #ccc;" />
+            <div class="col-md-6 mb-3 d-flex">
+                <div class="card-wrapper w-100">
+                    <img src="${ctx}/ShopPages/Pages/images/CatePicture/${p.imgURL}" alt="${p.categoryName}"  "/>
+
                     <div>
-                        <div>
-                            <div><strong>${p.categoryName}</strong> - ${p.brandName}</div>
-                            <div>Mô tả: <span style="font-size: 90%;">${p.description}</span></div>
-                            <div>Giá: <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫</div>
-                            <c:if test="${not empty warrantyMap[p.categoryID]}">
-                                <div style="margin-top: 5px;">
-                                    <strong>Chọn bảo hành:</strong>
-                                    <c:forEach var="w" items="${warrantyMap[p.categoryID]}" varStatus="status">
-                                        <div style="margin-left: 10px;">
-                                            <input type="radio"
-                                                   name="warranty-${p.categoryID}"
-                                                   id="w-${p.categoryID}-${status.index}"
-                                                   value="${w.warrantyDetailID}"
-                                                   <c:if test="${w.status != 1}">disabled</c:if> />
-                                            <label for="w-${p.categoryID}-${status.index}">
-                                                ${w.description} - ${w.warrantyPeriod} tháng - <fmt:formatNumber value="${w.price}" type="number" groupingUsed="true"/>₫
-                                                <c:if test="${w.status != 1}">
-                                                    <span style="color:red;">(Ngừng áp dụng)</span>
-                                                </c:if>
-                                            </label>
+                        <strong>${p.categoryName}</strong> - ${p.brandName}
+                        <div><strong>Description:</strong></div>
+                        <div class="product-description" title="${p.description}">${p.description}</div>
 
-
-                                        </div>
-                                    </c:forEach>
-
-                                </div>
-                            </c:if>
-
-                            <div style="margin-top: 5px;">
-                                <a href="${ctx}/CategoriesController?service=detail&categoryID=${p.categoryID}" class="btn btn-info btn-xs" target="_blank">
-                                    View Detail
-                                </a>
-
-                            </div>
+                        <div>Price:
+                            <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫
                         </div>
-                        <button class="btn btn-sm btn-success mt-2"
+
+                        <c:if test="${not empty warrantyMap[p.categoryID]}">
+                            <div style="margin-top: 5px;">
+                                <strong>Choose Warranty:</strong>
+                                <c:forEach var="w" items="${warrantyMap[p.categoryID]}" varStatus="status">
+                                    <div style="margin-left: 10px;">
+                                        <input type="radio"
+                                               name="warranty-${p.categoryID}"
+                                               id="w-${p.categoryID}-${status.index}"
+                                               value="${w.warrantyDetailID}"
+                                               <c:if test="${w.status != 1}">disabled</c:if> />
+                                        <label for="w-${p.categoryID}-${status.index}">
+                                            ${w.warrantyPeriod} month -
+                                            <fmt:formatNumber value="${w.price}" type="number" groupingUsed="true"/>₫
+                                            <c:if test="${w.status != 1}">
+                                                <span style="color:red;">(Inactive)</span>
+                                            </c:if>
+                                        </label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </c:if>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between mt-3">
+                        <a href="${ctx}/CategoriesController?service=detail&categoryID=${p.categoryID}"
+                           class="btn btn-info btn-sm" target="_blank">View Detail</a>
+                        <button class="btn btn-success btn-sm"
                                 onclick="chooseProductWithWarranty(${componentID}, ${p.categoryID}, '${fn:escapeXml(p.categoryName)}', '${fn:escapeXml(p.brandName)}', ${p.price}, '${fn:escapeXml(p.imgURL)}', ${p.categoryID})">
                             Chọn
                         </button>
-
                     </div>
                 </div>
             </div>
+
+
         </c:forEach>
-
-
     </div>
-
-
-
 </div>
 
 

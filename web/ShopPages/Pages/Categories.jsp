@@ -30,7 +30,43 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="${ctx}/ShopPages/Pages/images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="${ctx}/ShopPages/Pages/images/ico/apple-touch-icon-57-precomposed.png">
         <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/custom.css?v=1.0.15" rel="stylesheet">
-        
+        <style>
+            .product-card {
+                height: 400px;                /* 👈 chỉnh chiều cao khung sản phẩm */
+                border: 1px solid #eee;
+                border-radius: 6px;
+                padding: 10px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                transition: box-shadow 0.3s;
+                background: #fff;
+            }
+
+            .product-card:hover {
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            }
+
+            .product-card img {
+                width: 100%;
+                height: 240px;              
+                object-fit: cover;
+                margin-bottom: 10px;
+            }
+
+            .product-card h2 {
+                font-size: 18px;
+                color: #FE980F;
+                margin-bottom: 8px;
+            }
+
+            .product-card p {
+                font-size: 14px;
+                color: #333;
+                min-height: 60px;          
+                overflow: hidden;
+            }
+        </style>
     </head><!--/head-->
 
     <body>
@@ -160,21 +196,18 @@
                             <h2 class="title text-center">Products </h2>
 
                             <c:forEach var="product" items="${requestScope.data}">
-                                <div class="col-sm-4">
-                                    <div class="product-image-wrapper">
-                                        <div class="single-products">
-                                            <div class="productinfo text-center">
-                                                <a href="${ctx}/CategoriesController?service=detail&categoryID=${product.categoryID}">
-                                                    <img src="${ctx}/ShopPages/Pages/images/shop/product12.jpg" alt="" />
-                                                    <h2>
-                                                        <fmt:formatNumber value="${product.price}" type="number" groupingUsed="true" /> VND
-                                                    </h2>
-                                                    <p>${product.categoryName}</p>
-                                                </a>
-                                            </div>
-                                        </div>
+                                <div class="col-sm-4 mb-4">
+                                    <div class="product-card text-center">
+                                        <a href="${ctx}/CategoriesController?service=detail&categoryID=${product.categoryID}">
+                                            <img src="${ctx}/ShopPages/Pages/images/CatePicture/${product.imgURL}" alt="${product.categoryName}" />
+                                            <h2>
+                                                <fmt:formatNumber value="${product.price}" type="number" groupingUsed="true" /> VND
+                                            </h2>
+                                            <p>${product.categoryName}</p>
+                                        </a>
                                     </div>
                                 </div>
+
                             </c:forEach>
 
                             <c:if test="${empty requestScope.data}">

@@ -37,42 +37,42 @@
             <h4>Build PC #${pc.buildPCID}</h4>
 
             <p><strong>MainBoard:</strong> ${pc.mainBoard}<br/>
-                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgMain}" alt="MainBoard" /><br/>
-                <small><strong>Bảo hành:</strong> ${pc.mainWarranty} tháng</small>
+                <img src="${ctx}/ShopPages/Pages/images/CatePicture/${pc.imgMain}" alt="MainBoard" /><br/>
+                <small><strong>Warranty:</strong> ${pc.mainWarranty} month</small>
             </p>
 
             <p><strong>CPU:</strong> ${pc.cpu}<br/>
-                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgCPU}" alt="CPU" /><br/>
-                <small><strong>Bảo hành:</strong> ${pc.cpuWarranty} tháng</small>
+                <img src="${ctx}/ShopPages/Pages/images/CatePicture/${pc.imgCPU}" alt="CPU" /><br/>
+                <small><strong>Warranty:</strong> ${pc.cpuWarranty} month</small>
             </p>
 
             <p><strong>GPU:</strong> ${pc.gpu}<br/>
-                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgGPU}" alt="GPU" /><br/>
-                <small><strong>Bảo hành:</strong> ${pc.gpuWarranty} tháng</small>
+                <img src="${ctx}/ShopPages/Pages/images/CatePicture/${pc.imgGPU}" alt="GPU" /><br/>
+                <small><strong>Warranty:</strong> ${pc.gpuWarranty} month</small>
             </p>
 
             <p><strong>RAM:</strong> ${pc.ram}<br/>
-                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgRAM}" alt="RAM" /><br/>
-                <small><strong>Bảo hành:</strong> ${pc.ramWarranty} tháng</small>
+                <img src="${ctx}/ShopPages/Pages/images/CatePicture/${pc.imgRAM}" alt="RAM" /><br/>
+                <small><strong>Warranty:</strong> ${pc.ramWarranty} month</small>
             </p>
 
             <p><strong>SSD:</strong> ${pc.ssd}<br/>
-                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgSSD}" alt="SSD" /><br/>
-                <small><strong>Bảo hành:</strong> ${pc.ssdWarranty} tháng</small>
+                <img src="${ctx}/ShopPages/Pages/images/CatePicture/${pc.imgSSD}" alt="SSD" /><br/>
+                <small><strong>Warranty:</strong> ${pc.ssdWarranty} month</small>
             </p>
 
             <p><strong>Case:</strong> ${pc.pcCase}<br/>
-                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgCase}" alt="Case" /><br/>
-                <small><strong>Bảo hành:</strong> ${pc.caseWarranty} tháng</small>
+                <img src="${ctx}/ShopPages/Pages/images/CatePicture/${pc.imgCase}" alt="Case" /><br/>
+                <small><strong>Warranty:</strong> ${pc.caseWarranty} month</small>
             </p>
 
-            <p><strong>Tổng giá:</strong> <span style="color:green;">${pc.price}₫</span></p>
+            <p><strong>Total Price:</strong> <span style="color:green;">${pc.price}₫</span></p>
 
             <button class="btn btn-sm btn-warning"
                     onclick="loadPC(${pc.buildPCID},
                         '${pc.imgMain}', '${pc.imgCPU}', '${pc.imgGPU}',
                         '${pc.imgRAM}', '${pc.imgSSD}', '${pc.imgCase}')">
-                Chọn cấu hình này
+                Choose this PC
             </button>
         </div>
     </c:forEach>

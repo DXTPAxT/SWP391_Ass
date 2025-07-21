@@ -56,12 +56,14 @@
                 overflow: hidden;
             }
             .modal-content {
-                background: white;
-                padding: 20px;
-                border-radius: 8px;
-                width: 80%;
-                max-width: 800px;
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                padding: 30px;
+                overflow-y: auto;
             }
+
+
             .close-btn {
                 float: right;
                 cursor: pointer;
@@ -366,7 +368,7 @@
         function attachFilterFormHandler(componentID, componentName) {
             const filterForm = modalBody.querySelector('#filterForm');
             if (filterForm) {
-                attachPriceValidation(); //  Gắn validate cho form vừa được load
+                attachPriceValidation();
 
                 filterForm.addEventListener('submit', function (e) {
                     e.preventDefault();
@@ -446,7 +448,7 @@
         }
 // reset All choose
         function resetAllComponents() {
-            if (!confirm("Bạn có chắc chắn muốn reset tất cả các linh kiện đã chọn không?"))
+            if (!confirm("Are you want to delete all choosed ?"))
                 return;
 
             // delete localStorage
@@ -484,13 +486,13 @@
             warrantyDetailID = parseInt(warrantyDetailID) || 0;
 
             document.getElementById(`meta-${componentID}`).innerText = `${categoryName} - ${brandName}`;
-            document.getElementById(`price-${componentID}`).innerText = `Sản phẩm: ${price.toLocaleString()}₫`;
+            document.getElementById(`price-${componentID}`).innerText = `Product: ${price.toLocaleString()}₫`;
 
-            const warrantyText = warrantyDesc ? `Bảo hành: ${warrantyDesc} - ${warrantyPrice.toLocaleString()}₫` : "Bảo hành: Không chọn";
+            const warrantyText = warrantyDesc ? `Warranty: ${warrantyDesc} - ${warrantyPrice.toLocaleString()}₫` : "Warranty: Not Choose";
             document.getElementById(`warranty-${componentID}`).innerText = warrantyText;
 
             const totalItem = price + warrantyPrice;
-            document.getElementById(`total-${componentID}`).innerText = `Tổng: ${totalItem.toLocaleString()}₫`;
+            document.getElementById(`total-${componentID}`).innerText = `Total: ${totalItem.toLocaleString()}₫`;
 
             document.getElementById(`remove-${componentID}`).style.display = 'inline-block';
 
@@ -566,8 +568,8 @@
                     .then(res => res.text())
                     .then(html => {
                         document.getElementById("modalBody").innerHTML = html;
-                        attachFilterFormHandler(); // để có thể tiếp tục lọc
-                        attachPaginationHandler(); // bắt lại sự kiện click trang
+                        attachFilterFormHandler();
+                        attachPaginationHandler();
                     });
         }
 
@@ -616,7 +618,7 @@
             const modal = document.getElementById("pcListModal");
             const body = document.getElementById("pcListBody");
             modal.style.display = "flex";
-            body.innerHTML = "Đang tải...";
+            body.innerHTML = "Loading...";
 
             fetch(ctx + "/BuildPC?service=pc", {
                 method: "POST"
@@ -640,7 +642,7 @@
                         items.forEach(line => {
                             const parts = line.split('|');
                             if (parts.length !== 9) {
-                                console.error("Thiếu dữ liệu bảo hành:", line);
+                                console.error("Missing Warranty information:", line);
                                 return;
                             }
 
@@ -672,11 +674,11 @@
                             const comp = components[id];
                             if (comp) {
                                 document.getElementById(`meta-${id}`).innerText = `${comp.categoryName} - ${comp.brandName}`;
-                                document.getElementById(`price-${id}`).innerText = `Sản phẩm: ${comp.price.toLocaleString()}₫`;
+                                document.getElementById(`price-${id}`).innerText = `Category: ${comp.price.toLocaleString()}₫`;
 
-                                const warrantyText = comp.warrantyDesc && comp.warrantyDesc !== "Không chọn"
-                                        ? `Bảo hành: ${comp.warrantyDesc} - ${comp.warrantyPrice.toLocaleString()}₫`
-                                        : "Bảo hành: Không chọn";
+                                const warrantyText = comp.warrantyDesc && comp.warrantyDesc !== "Non-Warranty"
+                                        ? `Warranty: ${comp.warrantyDesc} - ${comp.warrantyPrice.toLocaleString()}₫`
+                                        : "Non-Warranty: Not Choose";
 
                                 document.getElementById(`warranty-${id}`).innerText = warrantyText;
 
@@ -701,7 +703,7 @@
                         restoreSelections();
                         document.getElementById("pcListModal").style.display = 'none';
                     })
-                    .catch(() => alert("❌ Lỗi khi tải cấu hình"));
+                    .catch(() => alert("Fail in dowload PC Category"));
         }
     </script>
     <!-- Add to cart -->
@@ -711,7 +713,7 @@
 
             const isComplete = requiredIDs.every(id => selectedComponents.hasOwnProperty(id));
             if (!isComplete) {
-                alert("Bạn cần chọn đầy đủ 6 linh kiện để thêm vào giỏ hàng.");
+                alert("You need to choose correct 6 product.");
                 return;
             }
 
@@ -746,7 +748,7 @@
                             alert("Can't add to card( have some problem.");
                         }
                     })
-                    .catch(() => alert("Lỗi kết nối tới server!"));
+                    .catch(() => alert("Cant't connect to server!"));
         });
 
     </script>
@@ -756,7 +758,7 @@
             const selectedRadio = document.querySelector(`input[name="warranty-${radioCategoryID}"]:checked`);
 
             let warrantyDetailID = 0;
-            let warrantyDesc = "Không chọn";
+            let warrantyDesc = "Not choose";
             let warrantyPrice = 0;
 
             if (selectedRadio) {
@@ -767,7 +769,7 @@
 
                 // Lấy mô tả trước dấu '-'
                 const descParts = labelText.split("-");
-                warrantyDesc = descParts[0]?.trim() || "Không rõ";
+                warrantyDesc = descParts[0]?.trim() || "Unclear";
 
                 // Bóc phần giá
                 const priceMatch = labelText.match(/([\d.,]+)₫/);
