@@ -97,9 +97,6 @@
                 max-height: 80vh;
                 overflow-y: auto;
             }
-
-
-
         </style>
     </head>
     <body><!-- comment -->
@@ -206,7 +203,7 @@
         <div class="modal-overlay" id="pcListModal" style="display:none;">
             <div class="modal-content">
                 <span class="close-btn" onclick="document.getElementById('pcListModal').style.display = 'none'">&times;</span>
-                <h4>Danh sách PC đã build</h4>
+                <h4>ListPC</h4>
                 <div id="pcListBody">Đang tải...</div>
             </div>
         </div>
@@ -328,12 +325,12 @@
                 </div>
                 <div class="col-md-3">
                     <div class="card border p-3 mt-3">
-                        <h4 class="text-center mb-3" style="">Tổng tiền</h4>
+                        <h4 class="text-center mb-3" style="">Total Price</h4>
                         <h3 class="text-center text-success"><span id="totalPrice">0</span>₫</h3>
                     </div>
                 </div>
                 <button class="btn btn-sm btn-success add-to-cart-btn">
-                    Thêm vào giỏ Build PC
+                    Add to cart
                 </button>
 
             </div>
@@ -419,13 +416,13 @@
 
                     if (meta && price && removeBtn && img) {
                         meta.innerText = `${data.categoryName} - ${data.brandName}`;
-                        price.innerText = `Sản phẩm: ${data.price.toLocaleString()}₫`;
+                        price.innerText = `Price: ${data.price.toLocaleString()}₫`;
 
-                        const warrantyText = data.warrantyDesc ? `Bảo hành: ${data.warrantyDesc} - ${data.warrantyPrice.toLocaleString()}₫` : "Bảo hành: Không chọn";
+                        const warrantyText = data.warrantyDesc ? `warranty: ${data.warrantyDesc} - ${data.warrantyPrice.toLocaleString()}₫` : "Bảo hành: Không chọn";
                         document.getElementById(`warranty-${key}`).innerText = warrantyText;
 
                         const totalItem = data.price + (data.warrantyPrice || 0);
-                        document.getElementById(`total-${key}`).innerText = `Tổng: ${totalItem.toLocaleString()}₫`;
+                        document.getElementById(`total-${key}`).innerText = `Total Money: ${totalItem.toLocaleString()}₫`;
 
                         removeBtn.style.display = 'inline-block';
                         img.src = `${ctx}/ShopPages/Pages/images/anhproduct/${data.imgURL}`;
@@ -434,6 +431,8 @@
                 }
                 updateTotal();
             }
+
+
         }
         window.addEventListener('load', restoreSelections);
 
@@ -508,7 +507,7 @@
                 imgURL,
                 warrantyDesc,
                 warrantyPrice,
-                warrantyDetailID 
+                warrantyDetailID
             };
 
             localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
@@ -568,7 +567,7 @@
                     .then(html => {
                         document.getElementById("modalBody").innerHTML = html;
                         attachFilterFormHandler(); // để có thể tiếp tục lọc
-                        attachPaginationHandler(); // ⚠️ bắt lại sự kiện click trang mới
+                        attachPaginationHandler(); // bắt lại sự kiện click trang
                     });
         }
 
@@ -612,6 +611,7 @@
     </script>
 
     <script>
+        //load buildpc of admin
         function openPCList() {
             const modal = document.getElementById("pcListModal");
             const body = document.getElementById("pcListBody");
@@ -629,6 +629,7 @@
                         body.innerHTML = "<p style='color:red;'>Lỗi khi tải danh sách PC</p>";
                     });
         }
+        // update cate when chose PC
         function loadPC(buildPCID, imgMain, imgCPU, imgGPU, imgRAM, imgSSD, imgCase) {
             fetch(`${ctx}/BuildPC?service=loadBuildPC&buildPCID=${buildPCID}`)
                     .then(res => res.text())
@@ -638,57 +639,66 @@
 
                         items.forEach(line => {
                             const parts = line.split('|');
-                            if (parts.length !== 6) {
-                                console.error("Lỗi dữ liệu thiếu thông tin:", line);
+                            if (parts.length !== 9) {
+                                console.error("Thiếu dữ liệu bảo hành:", line);
                                 return;
                             }
 
-                            const [categoryID, categoryName, brandName, price, imageURL, componentID] = parts;
-
-                            let img = imageURL || "default.jpg";
-                            if (componentID == 2 && imgMain)
-                                img = imgMain;
-                            if (componentID == 3 && imgCPU)
-                                img = imgCPU;
-                            if (componentID == 4 && imgGPU)
-                                img = imgGPU;
-                            if (componentID == 5 && imgRAM)
-                                img = imgRAM;
-                            if (componentID == 6 && imgSSD)
-                                img = imgSSD;
-                            if (componentID == 7 && imgCase)
-                                img = imgCase;
+                            const [categoryID, categoryName, brandName, price, imageURL, rawComponentID, warrantyDesc, warrantyPrice, warrantyDetailID] = parts;
+                            const componentID = parseInt(rawComponentID);
+                            const img = imageURL || "default.jpg";
 
                             components[componentID] = {
                                 categoryID,
                                 categoryName,
                                 brandName,
                                 price: parseInt(price),
-                                imgURL: img
+                                imgURL: (
+                                        (componentID === 2 && imgMain) ? imgMain :
+                                        (componentID === 3 && imgCPU) ? imgCPU :
+                                        (componentID === 4 && imgGPU) ? imgGPU :
+                                        (componentID === 5 && imgRAM) ? imgRAM :
+                                        (componentID === 6 && imgSSD) ? imgSSD :
+                                        (componentID === 7 && imgCase) ? imgCase :
+                                        img
+                                        ),
+                                warrantyDesc,
+                                warrantyPrice: parseInt(warrantyPrice) || 0,
+                                warrantyDetailID: parseInt(warrantyDetailID) || 0
                             };
                         });
 
-                        // Lưu vào selectedComponents
                         for (let id = 2; id <= 7; id++) {
                             const comp = components[id];
                             if (comp) {
                                 document.getElementById(`meta-${id}`).innerText = `${comp.categoryName} - ${comp.brandName}`;
-                                document.getElementById(`price-${id}`).innerText = `${comp.price.toLocaleString()}₫`;
+                                document.getElementById(`price-${id}`).innerText = `Sản phẩm: ${comp.price.toLocaleString()}₫`;
+
+                                const warrantyText = comp.warrantyDesc && comp.warrantyDesc !== "Không chọn"
+                                        ? `Bảo hành: ${comp.warrantyDesc} - ${comp.warrantyPrice.toLocaleString()}₫`
+                                        : "Bảo hành: Không chọn";
+
+                                document.getElementById(`warranty-${id}`).innerText = warrantyText;
+
                                 document.getElementById(`remove-${id}`).style.display = 'inline-block';
-                                const img = document.getElementById(`img-${id}`);
-                                img.src = `${ctx}/ShopPages/Pages/images/anhproduct/${comp.imgURL}`;
+                                document.getElementById(`img-${id}`).src = `${ctx}/ShopPages/Pages/images/anhproduct/${comp.imgURL}`;
+
                                 selectedComponents[id] = {
                                     categoryID: comp.categoryID,
                                     categoryName: comp.categoryName,
                                     brandName: comp.brandName,
                                     price: comp.price,
-                                    imgURL: comp.imgURL
+                                    imgURL: comp.imgURL,
+                                    warrantyDesc: comp.warrantyDesc,
+                                    warrantyPrice: comp.warrantyPrice,
+                                    warrantyDetailID: comp.warrantyDetailID
                                 };
                             }
                         }
 
                         localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
                         updateTotal();
+                        restoreSelections();
                         document.getElementById("pcListModal").style.display = 'none';
                     })
                     .catch(() => alert("❌ Lỗi khi tải cấu hình"));
@@ -712,7 +722,6 @@
                 const comp = selectedComponents[id];
                 params.append("categories[]", comp.categoryID);
 
-                // Sửa đúng tên là warrantyDetailIDs[]
                 if (comp.warrantyDetailID && comp.warrantyDetailID > 0) {
                     params.append("warrantyDetailIDs[]", comp.warrantyDetailID);
                 } else {
@@ -728,13 +737,13 @@
                     .then(res => res.text())
                     .then(msg => {
                         if (msg === "NOT_LOGGED_IN") {
-                            alert("Vui lòng đăng nhập để thực hiện chức năng này.");
+                            alert("Please login to add to cart .");
                             window.location.href = ctx + "/Login";
                         } else if (msg === "SUCCESS") {
-                            alert("Đã thêm vào giỏ hàng thành công!");
+                            alert("ADD to cart successfuly!");
                             resetAllComponents();
                         } else {
-                            alert("Có lỗi xảy ra khi thêm vào giỏ hàng.");
+                            alert("Can't add to card( have some problem.");
                         }
                     })
                     .catch(() => alert("Lỗi kết nối tới server!"));
@@ -743,32 +752,32 @@
     </script>
     <!-- Choose Warranty -->
     <script>
-function chooseProductWithWarranty(componentID, realCategoryID, categoryName, brandName, price, imgURL, radioCategoryID) {
-    const selectedRadio = document.querySelector(`input[name="warranty-${radioCategoryID}"]:checked`);
-    
-    let warrantyDetailID = 0;
-    let warrantyDesc = "Không chọn";
-    let warrantyPrice = 0;
+        function chooseProductWithWarranty(componentID, realCategoryID, categoryName, brandName, price, imgURL, radioCategoryID) {
+            const selectedRadio = document.querySelector(`input[name="warranty-${radioCategoryID}"]:checked`);
 
-    if (selectedRadio) {
-        warrantyDetailID = parseInt(selectedRadio.value);
+            let warrantyDetailID = 0;
+            let warrantyDesc = "Không chọn";
+            let warrantyPrice = 0;
 
-        const label = selectedRadio.nextElementSibling;
-        const labelText = label.innerText || "";
+            if (selectedRadio) {
+                warrantyDetailID = parseInt(selectedRadio.value);
 
-        // Lấy mô tả trước dấu '-'
-        const descParts = labelText.split("-");
-        warrantyDesc = descParts[0]?.trim() || "Không rõ";
+                const label = selectedRadio.nextElementSibling;
+                const labelText = label.innerText || "";
 
-        // Bóc phần giá
-        const priceMatch = labelText.match(/([\d.,]+)₫/);
-        if (priceMatch) {
-            warrantyPrice = parseInt(priceMatch[1].replace(/[,\.]/g, ""));
+                // Lấy mô tả trước dấu '-'
+                const descParts = labelText.split("-");
+                warrantyDesc = descParts[0]?.trim() || "Không rõ";
+
+                // Bóc phần giá
+                const priceMatch = labelText.match(/([\d.,]+)₫/);
+                if (priceMatch) {
+                    warrantyPrice = parseInt(priceMatch[1].replace(/[,\.]/g, ""));
+                }
+            }
+
+            selectProduct(componentID, realCategoryID, categoryName, brandName, price, imgURL, warrantyDesc, warrantyPrice, warrantyDetailID);
         }
-    }
-
-    selectProduct(componentID, realCategoryID, categoryName, brandName, price, imgURL, warrantyDesc, warrantyPrice, warrantyDetailID);
-}
 
     </script>
 </body>

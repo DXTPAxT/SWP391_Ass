@@ -469,134 +469,146 @@ public Map<Integer, List<WarrantyDetails>> getWarrantyMapForBuildPC(int buildPCI
     return map;
 }
 
-    public List<BuildPCView> getBuiltPCsForCustomer() {
-        List<BuildPCView> list = new ArrayList<>();
+  public List<BuildPCView> getBuiltPCsForCustomer() {
+    List<BuildPCView> list = new ArrayList<>();
 
-String sql = """
-    SELECT 
-        bp.BuildPCID,
+    String sql = """
+        SELECT 
+            bp.BuildPCID,
 
-        -- Tên linh kiện
-        MAX(CAST(CASE WHEN bc.ComponentID = 2 THEN c.CategoryName END AS NVARCHAR(MAX))) AS MainBoard,
-        MAX(CAST(CASE WHEN bc.ComponentID = 3 THEN c.CategoryName END AS NVARCHAR(MAX))) AS CPU,
-        MAX(CAST(CASE WHEN bc.ComponentID = 4 THEN c.CategoryName END AS NVARCHAR(MAX))) AS GPU,
-        MAX(CAST(CASE WHEN bc.ComponentID = 5 THEN c.CategoryName END AS NVARCHAR(MAX))) AS RAM,
-        MAX(CAST(CASE WHEN bc.ComponentID = 6 THEN c.CategoryName END AS NVARCHAR(MAX))) AS SSD,
-        MAX(CAST(CASE WHEN bc.ComponentID = 7 THEN c.CategoryName END AS NVARCHAR(MAX))) AS PCCase,
+            -- Tên linh kiện
+            MAX(CASE WHEN bc.ComponentID = 2 THEN c.CategoryName END) AS MainBoard,
+            MAX(CASE WHEN bc.ComponentID = 3 THEN c.CategoryName END) AS CPU,
+            MAX(CASE WHEN bc.ComponentID = 4 THEN c.CategoryName END) AS GPU,
+            MAX(CASE WHEN bc.ComponentID = 5 THEN c.CategoryName END) AS RAM,
+            MAX(CASE WHEN bc.ComponentID = 6 THEN c.CategoryName END) AS SSD,
+            MAX(CASE WHEN bc.ComponentID = 7 THEN c.CategoryName END) AS PCCase,
 
-        -- CategoryID từng linh kiện
-        MAX(CASE WHEN bc.ComponentID = 2 THEN c.CategoryID END) AS MainBoardID,
-        MAX(CASE WHEN bc.ComponentID = 3 THEN c.CategoryID END) AS CpuID,
-        MAX(CASE WHEN bc.ComponentID = 4 THEN c.CategoryID END) AS GpuID,
-        MAX(CASE WHEN bc.ComponentID = 5 THEN c.CategoryID END) AS RamID,
-        MAX(CASE WHEN bc.ComponentID = 6 THEN c.CategoryID END) AS SsdID,
-        MAX(CASE WHEN bc.ComponentID = 7 THEN c.CategoryID END) AS CaseID,
+            -- ID linh kiện
+            MAX(CASE WHEN bc.ComponentID = 2 THEN c.CategoryID END) AS MainBoardID,
+            MAX(CASE WHEN bc.ComponentID = 3 THEN c.CategoryID END) AS CpuID,
+            MAX(CASE WHEN bc.ComponentID = 4 THEN c.CategoryID END) AS GpuID,
+            MAX(CASE WHEN bc.ComponentID = 5 THEN c.CategoryID END) AS RamID,
+            MAX(CASE WHEN bc.ComponentID = 6 THEN c.CategoryID END) AS SsdID,
+            MAX(CASE WHEN bc.ComponentID = 7 THEN c.CategoryID END) AS CaseID,
 
-        -- Ảnh từng linh kiện
-        MAX(CAST(CASE WHEN bc.ComponentID = 2 THEN c.ImageURL END AS NVARCHAR(MAX))) AS ImgMain,
-        MAX(CAST(CASE WHEN bc.ComponentID = 3 THEN c.ImageURL END AS NVARCHAR(MAX))) AS ImgCPU,
-        MAX(CAST(CASE WHEN bc.ComponentID = 4 THEN c.ImageURL END AS NVARCHAR(MAX))) AS ImgGPU,
-        MAX(CAST(CASE WHEN bc.ComponentID = 5 THEN c.ImageURL END AS NVARCHAR(MAX))) AS ImgRAM,
-        MAX(CAST(CASE WHEN bc.ComponentID = 6 THEN c.ImageURL END AS NVARCHAR(MAX))) AS ImgSSD,
-        MAX(CAST(CASE WHEN bc.ComponentID = 7 THEN c.ImageURL END AS NVARCHAR(MAX))) AS ImgCase,
+            -- Ảnh
+            MAX(CASE WHEN bc.ComponentID = 2 THEN c.ImageURL END) AS ImgMain,
+            MAX(CASE WHEN bc.ComponentID = 3 THEN c.ImageURL END) AS ImgCPU,
+            MAX(CASE WHEN bc.ComponentID = 4 THEN c.ImageURL END) AS ImgGPU,
+            MAX(CASE WHEN bc.ComponentID = 5 THEN c.ImageURL END) AS ImgRAM,
+            MAX(CASE WHEN bc.ComponentID = 6 THEN c.ImageURL END) AS ImgSSD,
+            MAX(CASE WHEN bc.ComponentID = 7 THEN c.ImageURL END) AS ImgCase,
 
-        -- Bảo hành từng linh kiện
-        MAX(CASE WHEN bc.ComponentID = 2 THEN bpi.WarrantyDetailID END) AS MainWarrantyID,
-        MAX(CASE WHEN bc.ComponentID = 3 THEN bpi.WarrantyDetailID END) AS CpuWarrantyID,
-        MAX(CASE WHEN bc.ComponentID = 4 THEN bpi.WarrantyDetailID END) AS GpuWarrantyID,
-        MAX(CASE WHEN bc.ComponentID = 5 THEN bpi.WarrantyDetailID END) AS RamWarrantyID,
-        MAX(CASE WHEN bc.ComponentID = 6 THEN bpi.WarrantyDetailID END) AS SsdWarrantyID,
-        MAX(CASE WHEN bc.ComponentID = 7 THEN bpi.WarrantyDetailID END) AS CaseWarrantyID,
+            -- Thời gian bảo hành (tháng)
+            MAX(CASE WHEN bc.ComponentID = 2 THEN w.WarrantyPeriod END) AS MainWarranty,
+            MAX(CASE WHEN bc.ComponentID = 3 THEN w.WarrantyPeriod END) AS CpuWarranty,
+            MAX(CASE WHEN bc.ComponentID = 4 THEN w.WarrantyPeriod END) AS GpuWarranty,
+            MAX(CASE WHEN bc.ComponentID = 5 THEN w.WarrantyPeriod END) AS RamWarranty,
+            MAX(CASE WHEN bc.ComponentID = 6 THEN w.WarrantyPeriod END) AS SsdWarranty,
+            MAX(CASE WHEN bc.ComponentID = 7 THEN w.WarrantyPeriod END) AS CaseWarranty,
 
-        SUM(bpi.Price) AS Price,
-        MAX(bp.Status) AS Status,
-        u.UserID,
-        u.FullName,
-        r.RoleName
+            -- Tổng giá
+            SUM(bpi.Price) AS Price,
+            MAX(bp.Status) AS Status,
 
-    FROM Build_PC bp
-    JOIN Build_PC_Items bpi ON bp.BuildPCID = bpi.BuildPCID
-    JOIN Categories c ON bpi.CategoryID = c.CategoryID
-    JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-    JOIN Users u ON bp.UserID = u.UserID
-    JOIN Roles r ON u.RoleID = r.RoleID
-    WHERE bc.ComponentID BETWEEN 2 AND 7
-      AND r.RoleID = 1
-    GROUP BY bp.BuildPCID, u.UserID, u.FullName, r.RoleName
-    ORDER BY bp.BuildPCID
-""";
+            -- Thông tin người dùng
+            u.UserID,
+            u.FullName,
+            r.RoleName
 
+        FROM Build_PC bp
+        JOIN Build_PC_Items bpi ON bp.BuildPCID = bpi.BuildPCID
+        JOIN Categories c ON bpi.CategoryID = c.CategoryID
+        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+        LEFT JOIN WarrantyDetails wd ON bpi.WarrantyDetailID = wd.WarrantyDetailID
+        LEFT JOIN Warranties w ON wd.WarrantyID = w.WarrantyID
+        JOIN Users u ON bp.UserID = u.UserID
+        JOIN Roles r ON u.RoleID = r.RoleID
 
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                BuildPCView b = new BuildPCView();
+        WHERE bc.ComponentID BETWEEN 2 AND 7
+          AND r.RoleID = 1
 
-                b.setBuildPCID(rs.getInt("BuildPCID"));
-                b.setMainBoard(rs.getString("MainBoard"));
-                b.setCpu(rs.getString("CPU"));
-                b.setGpu(rs.getString("GPU"));
-                b.setRam(rs.getString("RAM"));
-                b.setSsd(rs.getString("SSD"));
-                b.setPcCase(rs.getString("PCCase"));
+        GROUP BY bp.BuildPCID, u.UserID, u.FullName, r.RoleName
+        ORDER BY bp.BuildPCID
+    """;
 
-                b.setMainBoardID(rs.getInt("MainBoardID"));
-                b.setCpuID(rs.getInt("CpuID"));
-                b.setGpuID(rs.getInt("GpuID"));
-                b.setRamID(rs.getInt("RamID"));
-                b.setSsdID(rs.getInt("SsdID"));
-                b.setCaseID(rs.getInt("CaseID"));
+    try (PreparedStatement ps = connection.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            BuildPCView b = new BuildPCView();
 
-                b.setImgMain(rs.getString("ImgMain"));
-                b.setImgCPU(rs.getString("ImgCPU"));
-                b.setImgGPU(rs.getString("ImgGPU"));
-                b.setImgRAM(rs.getString("ImgRAM"));
-                b.setImgSSD(rs.getString("ImgSSD"));
-                b.setImgCase(rs.getString("ImgCase"));
+            b.setBuildPCID(rs.getInt("BuildPCID"));
+            b.setMainBoard(rs.getString("MainBoard"));
+            b.setCpu(rs.getString("CPU"));
+            b.setGpu(rs.getString("GPU"));
+            b.setRam(rs.getString("RAM"));
+            b.setSsd(rs.getString("SSD"));
+            b.setPcCase(rs.getString("PCCase"));
 
-                b.setMainWarrantyID(rs.getInt("MainWarrantyID"));
-                b.setCpuWarrantyID(rs.getInt("CpuWarrantyID"));
-                b.setGpuWarrantyID(rs.getInt("GpuWarrantyID"));
-                b.setRamWarrantyID(rs.getInt("RamWarrantyID"));
-                b.setSsdWarrantyID(rs.getInt("SsdWarrantyID"));
-                b.setCaseWarrantyID(rs.getInt("CaseWarrantyID"));
+            b.setMainBoardID(rs.getInt("MainBoardID"));
+            b.setCpuID(rs.getInt("CpuID"));
+            b.setGpuID(rs.getInt("GpuID"));
+            b.setRamID(rs.getInt("RamID"));
+            b.setSsdID(rs.getInt("SsdID"));
+            b.setCaseID(rs.getInt("CaseID"));
 
-                b.setPrice(rs.getInt("Price"));
-                b.setStatus(rs.getInt("Status"));
-                b.setUserID(rs.getInt("UserID"));
-                b.setFullName(rs.getString("FullName"));
-                b.setRole(rs.getString("RoleName"));
+            b.setImgMain(rs.getString("ImgMain"));
+            b.setImgCPU(rs.getString("ImgCPU"));
+            b.setImgGPU(rs.getString("ImgGPU"));
+            b.setImgRAM(rs.getString("ImgRAM"));
+            b.setImgSSD(rs.getString("ImgSSD"));
+            b.setImgCase(rs.getString("ImgCase"));
 
-                list.add(b);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            b.setMainWarranty(rs.getInt("MainWarranty"));
+            b.setCpuWarranty(rs.getInt("CpuWarranty"));
+            b.setGpuWarranty(rs.getInt("GpuWarranty"));
+            b.setRamWarranty(rs.getInt("RamWarranty"));
+            b.setSsdWarranty(rs.getInt("SsdWarranty"));
+            b.setCaseWarranty(rs.getInt("CaseWarranty"));
+
+            b.setPrice(rs.getInt("Price"));
+            b.setStatus(rs.getInt("Status"));
+            b.setUserID(rs.getInt("UserID"));
+            b.setFullName(rs.getString("FullName"));
+            b.setRole(rs.getString("RoleName"));
+
+            list.add(b);
         }
-
-        return list;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+
+    return list;
+}
+
+
+
 
  public List<Categories> getCategoriesInBuildPC(int buildPCID) {
     List<Categories> list = new ArrayList<>();
 
-    String sql = """
-        SELECT 
-            c.CategoryID, 
-            c.CategoryName, 
-            b.BrandName, 
-            c.Price, 
-            c.ImageURL, 
-            comp.ComponentID,
-            ISNULL(bi.WarrantyDetailID, 0) AS WarrantyDetailID,
-            wd.Description AS WarrantyDesc,
-            wd.Price AS WarrantyPrice
-        FROM Build_PC_Items bi
-        JOIN Categories c ON bi.CategoryID = c.CategoryID
-        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-        JOIN Brands b ON bc.BrandID = b.BrandID
-        JOIN Components comp ON bc.ComponentID = comp.ComponentID
-        LEFT JOIN WarrantyDetails wd ON bi.WarrantyDetailID = wd.WarrantyDetailID
-        WHERE bi.BuildPCID = ?
-    """;
+   String sql = """
+   SELECT 
+        c.CategoryID, 
+        c.CategoryName, 
+        b.BrandName, 
+        c.Price, 
+        c.ImageURL, 
+        comp.ComponentID,
+        IFNULL(bi.WarrantyDetailID, 0) AS WarrantyDetailID,
+        IFNULL(w.Description, 'Không có') AS WarrantyDesc,
+        IFNULL(wd.Price, 0) AS WarrantyPrice
+    FROM Build_PC_Items bi
+    JOIN Categories c ON bi.CategoryID = c.CategoryID
+    JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+    JOIN Brands b ON bc.BrandID = b.BrandID
+    JOIN Components comp ON bc.ComponentID = comp.ComponentID
+    LEFT JOIN WarrantyDetails wd ON bi.WarrantyDetailID = wd.WarrantyDetailID
+    LEFT JOIN Warranties w ON wd.WarrantyID = w.WarrantyID
+    WHERE bi.BuildPCID = ?
+""";
+
 
     try (PreparedStatement ps = connection.prepareStatement(sql)) {
         ps.setInt(1, buildPCID);
@@ -853,47 +865,31 @@ public List<Categories> getAllCategories() {
   public static void main(String[] args) {
     CategoriesDAO dao = new CategoriesDAO();
 
-    List<BuildPCView> pcs = dao.getBuiltPCsForCustomer();
+    int buildPCID = 6; // ✅ Bạn có thể đổi ID khác để test nhiều cấu hình hơn
 
-    if (pcs.isEmpty()) {
-        System.out.println("⚠️ Không có cấu hình PC nào được build.");
+    List<Categories> categories = dao.getCategoriesInBuildPC(buildPCID);
+
+    if (categories == null || categories.isEmpty()) {
+        System.out.println("⚠️ Không có linh kiện nào trong Build PC #" + buildPCID);
         return;
     }
 
-    for (BuildPCView pc : pcs) {
-        System.out.println("\n==============================");
-        System.out.println("🆔 Build PC #" + pc.getBuildPCID());
-        System.out.println("👤 Người dùng: " + pc.getFullName() + " (" + pc.getRole() + ")");
-        System.out.println("💰 Tổng giá: " + pc.getPrice() + "₫");
-        System.out.println("📦 Trạng thái: " + (pc.getStatus() == 1 ? "Hoạt động" : "Khác"));
+    System.out.println("=== 🔧 Danh sách linh kiện cho Build PC ID = " + buildPCID + " ===");
 
-        System.out.println("\n--- Thông tin từng linh kiện ---");
+    for (Categories c : categories) {
+        System.out.println("🧩 " + c.getCategoryName()
+                + " | Hãng: " + c.getBrandName()
+                + " | Giá: " + c.getPrice() + "₫"
+                + " | Ảnh: " + c.getImgURL()
+                + " | ComponentID: " + c.getComponentID());
 
-        printComponent("MainBoard", pc.getMainBoard(), pc.getMainBoardID(), pc.getMainWarrantyID(), pc.getImgMain(), dao, pc.getBuildPCID());
-        printComponent("CPU", pc.getCpu(), pc.getCpuID(), pc.getCpuWarrantyID(), pc.getImgCPU(), dao, pc.getBuildPCID());
-        printComponent("GPU", pc.getGpu(), pc.getGpuID(), pc.getGpuWarrantyID(), pc.getImgGPU(), dao, pc.getBuildPCID());
-        printComponent("RAM", pc.getRam(), pc.getRamID(), pc.getRamWarrantyID(), pc.getImgRAM(), dao, pc.getBuildPCID());
-        printComponent("SSD", pc.getSsd(), pc.getSsdID(), pc.getSsdWarrantyID(), pc.getImgSSD(), dao, pc.getBuildPCID());
-        printComponent("Case", pc.getPcCase(), pc.getCaseID(), pc.getCaseWarrantyID(), pc.getImgCase(), dao, pc.getBuildPCID());
+        System.out.println("🛡️  Bảo hành: " + c.getWarrantyDesc()
+                + " | Giá bảo hành: " + c.getWarrantyPrice() + "₫");
+
+        System.out.println("----------------------------------");
     }
 }
-private static void printComponent(String componentName, String categoryName, int categoryID, int warrantyID, String img, CategoriesDAO dao, int buildPCID) {
-    System.out.printf("%s: %s (CategoryID: %d) | WarrantyID: %d | Ảnh: %s%n",
-            componentName, categoryName, categoryID, warrantyID, img);
 
-    // Lấy toàn bộ gói bảo hành của linh kiện này
-    List<WarrantyDetails> warranties = dao.getWarrantyByCategory(categoryID);
 
-    if (warranties == null || warranties.isEmpty()) {
-        System.out.println("⚠️ Không có gói bảo hành nào.");
-        return;
-    }
-
-    for (WarrantyDetails w : warranties) {
-        String active = w.getStatus() == 1 ? "Còn bán" : "Ngừng bán";
-        String highlight = (w.getWarrantyDetailID() == warrantyID) ? " (Đã chọn)" : "";
-        System.out.printf("- %s | %d₫ | %s%s%n", w.getDescription(), w.getPrice(), active, highlight);
-    }
-}
 
 }

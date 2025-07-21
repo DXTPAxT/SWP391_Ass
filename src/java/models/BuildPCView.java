@@ -35,6 +35,13 @@ public class BuildPCView {
     private int ramWarrantyID;
     private int ssdWarrantyID;
     private int caseWarrantyID;
+    
+private int mainWarranty; // tháng
+private int cpuWarranty;
+private int gpuWarranty;
+private int ramWarranty;
+private int ssdWarranty;
+private int caseWarranty;
 
     public BuildPCView() {
     }
@@ -123,6 +130,54 @@ public BuildPCView(int buildPCID, String mainBoard, String cpu, String gpu, Stri
     this.ssdWarrantyID = ssdWarrantyID;
     this.caseWarrantyID = caseWarrantyID;
 }
+
+    public int getMainWarranty() {
+        return mainWarranty;
+    }
+
+    public void setMainWarranty(int mainWarranty) {
+        this.mainWarranty = mainWarranty;
+    }
+
+    public int getCpuWarranty() {
+        return cpuWarranty;
+    }
+
+    public void setCpuWarranty(int cpuWarranty) {
+        this.cpuWarranty = cpuWarranty;
+    }
+
+    public int getGpuWarranty() {
+        return gpuWarranty;
+    }
+
+    public void setGpuWarranty(int gpuWarranty) {
+        this.gpuWarranty = gpuWarranty;
+    }
+
+    public int getRamWarranty() {
+        return ramWarranty;
+    }
+
+    public void setRamWarranty(int ramWarranty) {
+        this.ramWarranty = ramWarranty;
+    }
+
+    public int getSsdWarranty() {
+        return ssdWarranty;
+    }
+
+    public void setSsdWarranty(int ssdWarranty) {
+        this.ssdWarranty = ssdWarranty;
+    }
+
+    public int getCaseWarranty() {
+        return caseWarranty;
+    }
+
+    public void setCaseWarranty(int caseWarranty) {
+        this.caseWarranty = caseWarranty;
+    }
 
     public int getMainWarrantyID() {
         return mainWarrantyID;
