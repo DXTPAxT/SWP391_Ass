@@ -36,7 +36,7 @@
         <c:forEach var="p" items="${products}" varStatus="loop">
             <div class="col-md-6 mb-3">
                 <div class="product-item border p-2 d-flex gap-3 align-items-center">
-                    <img src="${ctx}/ShopPages/Pages/images/anhproduct/${p.imgURL}" alt="${p.categoryName}" style="width: 80px; height: 80px; object-fit: cover; border: 1px solid #ccc;" />
+                    <img src="${ctx}/ShopPages/Pages/images/CatePicture/${p.imgURL}" alt="${p.categoryName}" style="width: 80px; height: 80px; object-fit: cover; border: 1px solid #ccc;" />
                     <div>
                         <div><strong>${p.categoryName}</strong> - ${p.brandName}</div>
                         <div>Giá: <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫</div>
