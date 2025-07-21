@@ -6,3 +6,7 @@ test.jsp
 /src/java/config/mail.properties
 
 .fake
+/mysql/solution/Q1_HE182335/build/
+/mysql/solution/Q1_HE182335/nbproject/private/
+/mysql/solution/Q2_HE182335/build/
+/mysql/solution/Q2_HE182335/nbproject/private/

@@ -24,7 +24,7 @@ public class Categories {
     private int warrantyDetailID;
     private String warrantyDesc;
     private int warrantyPrice;
-
+private int warrantyPeriod;
     // Constructors
     public Categories() {
     }
@@ -78,6 +78,14 @@ public class Categories {
         this.description = description;
         this.status = status;
         this.imgURL = imgURL;
+    }
+
+    public int getWarrantyPeriod() {
+        return warrantyPeriod;
+    }
+
+    public void setWarrantyPeriod(int warrantyPeriod) {
+        this.warrantyPeriod = warrantyPeriod;
     }
 
     // Getters and Setters

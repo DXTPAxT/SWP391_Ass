@@ -78,21 +78,22 @@ public class BuildPC extends HttpServlet {
         }
         if ("loadBuildPC".equals(service)) {
             int buildPCID = parseIntOrDefault(request.getParameter("buildPCID"), -1);
-
             response.setContentType("text/plain;charset=UTF-8");
 
             try (PrintWriter out = response.getWriter()) {
-                List<Categories> items = dao.getCategoriesInBuildPC(buildPCID);
+                List<Categories> items = dao.getCategoriesInBuildPC(buildPCID); // Lấy danh sách category trong buildPC
                 StringBuilder sb = new StringBuilder();
 
                 for (Categories c : items) {
-                    sb.append(c.getCategoryID()).append("|")
-                            .append(c.getCategoryName()).append("|")
-                            .append(c.getBrandName()).append("|")
-                            .append(c.getPrice()).append("|")
-                            .append(c.getImgURL() == null ? "" : c.getImgURL()).append("|") // xử lý null
-                            .append(c.getComponentID()).append(";");
-
+                    sb.append(c.getCategoryID()).append("|") // 0
+                            .append(c.getCategoryName()).append("|") // 1
+                            .append(c.getBrandName()).append("|") // 2
+                            .append(c.getPrice()).append("|") // 3
+                            .append(c.getImgURL() == null ? "" : c.getImgURL()).append("|") // 4
+                            .append(c.getComponentID()).append("|") // 5
+                            .append(c.getWarrantyDesc()).append("|") // 6
+                            .append(c.getWarrantyPrice()).append("|") // 7
+                            .append(c.getWarrantyDetailID()).append(";");             // 8
                 }
 
                 out.print(sb.toString());
@@ -164,4 +165,5 @@ public class BuildPC extends HttpServlet {
 
         processRequest(request, response);
     }
+
 }

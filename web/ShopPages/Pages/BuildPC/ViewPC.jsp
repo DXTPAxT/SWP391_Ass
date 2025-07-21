@@ -31,34 +31,39 @@
     }
 </style>
 
-
 <div class="scroll-container">
     <c:forEach var="pc" items="${pcList}">
         <div class="build-pc-card" id="pc-card-${pc.buildPCID}">
             <h4>Build PC #${pc.buildPCID}</h4>
 
             <p><strong>MainBoard:</strong> ${pc.mainBoard}<br/>
-                <img src="${ctx}/ShopPages/Pages/images/anhproduct/1.jpg" alt="MainBoard" />
+                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgMain}" alt="MainBoard" /><br/>
+                <small><strong>Bảo hành:</strong> ${pc.mainWarranty} tháng</small>
             </p>
 
             <p><strong>CPU:</strong> ${pc.cpu}<br/>
-                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgCPU}" alt="CPU" />
+                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgCPU}" alt="CPU" /><br/>
+                <small><strong>Bảo hành:</strong> ${pc.cpuWarranty} tháng</small>
             </p>
 
             <p><strong>GPU:</strong> ${pc.gpu}<br/>
-                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgGPU}" alt="GPU" />
+                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgGPU}" alt="GPU" /><br/>
+                <small><strong>Bảo hành:</strong> ${pc.gpuWarranty} tháng</small>
             </p>
 
             <p><strong>RAM:</strong> ${pc.ram}<br/>
-                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgRAM}" alt="RAM" />
+                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgRAM}" alt="RAM" /><br/>
+                <small><strong>Bảo hành:</strong> ${pc.ramWarranty} tháng</small>
             </p>
 
             <p><strong>SSD:</strong> ${pc.ssd}<br/>
-                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgSSD}" alt="SSD" />
+                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgSSD}" alt="SSD" /><br/>
+                <small><strong>Bảo hành:</strong> ${pc.ssdWarranty} tháng</small>
             </p>
 
             <p><strong>Case:</strong> ${pc.pcCase}<br/>
-                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgCase}" alt="Case" />
+                <img src="${ctx}/ShopPages/Pages/images/anhproduct/${pc.imgCase}" alt="Case" /><br/>
+                <small><strong>Bảo hành:</strong> ${pc.caseWarranty} tháng</small>
             </p>
 
             <p><strong>Tổng giá:</strong> <span style="color:green;">${pc.price}₫</span></p>
@@ -72,6 +77,7 @@
         </div>
     </c:forEach>
 </div>
+
 <script>
     function sortPCs(order) {
         fetch(`${ctx}/BuildPC?service=pc&sort=` + order, {
