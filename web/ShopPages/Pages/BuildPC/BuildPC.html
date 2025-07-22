@@ -233,8 +233,8 @@
                     <!--CPU -->
                     <div class="component-block" id="component-3">
                         <div class="d-flex align-items-center">
-                            <img id="img-3" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg"
-                                 data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg"
+                            <img id="img-3" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/3.jpg"
+                                 data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/3.jpg"
                                  alt="MainBoard" class="component-image">
                             <div>
                                 <strong>CPU</strong>
@@ -250,8 +250,8 @@
                     <!--GPU -->
                     <div class="component-block" id="component-4">
                         <div class="d-flex align-items-center">
-                            <img id="img-4" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg"
-                                 data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg"
+                            <img id="img-4" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/4.jpg"
+                                 data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/4.jpg"
                                  alt="MainBoard" class="component-image">
                             <div>
                                 <strong>GPU</strong>
@@ -267,8 +267,8 @@
                     <!--RAM --> 
                     <div class="component-block" id="component-5">
                         <div class="d-flex align-items-center">
-                            <img id="img-5" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg"
-                                 data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg"
+                            <img id="img-5" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/5.jpg"
+                                 data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/5  .jpg"
                                  alt="MainBoard" class="component-image">
                             <div>
                                 <strong>RAM</strong>
@@ -284,8 +284,8 @@
                     <!--SSD--> 
                     <div class="component-block" id="component-6">
                         <div class="d-flex align-items-center">
-                            <img id="img-6" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg"
-                                 data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg"
+                            <img id="img-6" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/6.webp"
+                                 data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/6.webp "
                                  alt="MainBoard" class="component-image">
                             <div>
                                 <strong>SSD</strong>
@@ -301,8 +301,8 @@
                     <!--Case--> 
                     <div class="component-block" id="component-7">
                         <div class="d-flex align-items-center">
-                            <img id="img-7" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg"
-                                 data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg"
+                            <img id="img-7" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/7.jpg"
+                                 data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/7.jpg"
                                  alt="MainBoard" class="component-image">
                             <div>
                                 <strong>Case</strong>
@@ -427,7 +427,8 @@
                         document.getElementById(`total-${key}`).innerText = `Total Money: ${totalItem.toLocaleString()}₫`;
 
                         removeBtn.style.display = 'inline-block';
-                        img.src = `${ctx}/ShopPages/Pages/images/anhproduct/${data.imgURL}`;
+                        img.src = `${ctx}/ShopPages/Pages/images/CatePicture/${data.imgURL}`;
+
                     }
 
                 }
@@ -450,34 +451,31 @@
         function resetAllComponents() {
             if (!confirm("Are you want to delete all choosed ?"))
                 return;
-
-            // delete localStorage
             localStorage.removeItem("selectedComponents");
-
             for (let id = 2; id <= 7; id++) {
                 const meta = document.getElementById(`meta-${id}`);
                 const price = document.getElementById(`price-${id}`);
+                const warranty = document.getElementById(`warranty-${id}`);
+                const total = document.getElementById(`total-${id}`);
                 const removeBtn = document.getElementById(`remove-${id}`);
                 const img = document.getElementById(`img-${id}`);
-
                 if (meta)
                     meta.innerText = "";
                 if (price)
                     price.innerText = "";
+                if (warranty)
+                    warranty.innerText = "";
+                if (total)
+                    total.innerText = "";
                 if (removeBtn)
                     removeBtn.style.display = "none";
                 if (img)
                     img.src = img.getAttribute("data-default");
             }
-
-            // Reset mỏny
             totalDisplay.innerText = "0";
-
-            // Reset  JS
             for (let key in selectedComponents)
                 delete selectedComponents[key];
         }
-
     </script>
     <script>
         function selectProduct(componentID, realCategoryID, categoryName, brandName, price, imgURL, warrantyDesc = "", warrantyPrice = 0, warrantyDetailID = 0) {
@@ -498,7 +496,7 @@
 
             const image = document.getElementById(`img-${componentID}`);
             if (image) {
-                image.src = `${ctx}/ShopPages/Pages/images/anhproduct/${imgURL}`;
+                image.src = `${ctx}/ShopPages/Pages/images/CatePicture/${encodeURIComponent(imgURL || "default.jpg")}`;
             }
 
             selectedComponents[componentID] = {
@@ -544,14 +542,16 @@
 
             document.getElementById(`meta-${componentID}`).innerText = "";
             document.getElementById(`price-${componentID}`).innerText = "";
+            document.getElementById(`warranty-${componentID}`).innerText = "";
+            document.getElementById(`total-${componentID}`).innerText = "";
             document.getElementById(`remove-${componentID}`).style.display = 'none';
 
-            // auto resert
             const img = document.getElementById(`img-${componentID}`);
             img.src = img.getAttribute("data-default");
 
             updateTotal();
         }
+
 
 
 
@@ -648,26 +648,20 @@
 
                             const [categoryID, categoryName, brandName, price, imageURL, rawComponentID, warrantyDesc, warrantyPrice, warrantyDetailID] = parts;
                             const componentID = parseInt(rawComponentID);
-                            const img = imageURL || "default.jpg";
+                            const rawImageURL = imageURL || "default.jpg";
+                            const safeImageURL = rawImageURL.trim() === "" ? "default.jpg" : rawImageURL;
 
                             components[componentID] = {
                                 categoryID,
                                 categoryName,
                                 brandName,
                                 price: parseInt(price),
-                                imgURL: (
-                                        (componentID === 2 && imgMain) ? imgMain :
-                                        (componentID === 3 && imgCPU) ? imgCPU :
-                                        (componentID === 4 && imgGPU) ? imgGPU :
-                                        (componentID === 5 && imgRAM) ? imgRAM :
-                                        (componentID === 6 && imgSSD) ? imgSSD :
-                                        (componentID === 7 && imgCase) ? imgCase :
-                                        img
-                                        ),
+                                imgURL: safeImageURL, // ✅ đảm bảo ảnh không null
                                 warrantyDesc,
                                 warrantyPrice: parseInt(warrantyPrice) || 0,
                                 warrantyDetailID: parseInt(warrantyDetailID) || 0
                             };
+
                         });
 
                         for (let id = 2; id <= 7; id++) {
@@ -683,7 +677,7 @@
                                 document.getElementById(`warranty-${id}`).innerText = warrantyText;
 
                                 document.getElementById(`remove-${id}`).style.display = 'inline-block';
-                                document.getElementById(`img-${id}`).src = `${ctx}/ShopPages/Pages/images/anhproduct/${comp.imgURL}`;
+                                document.getElementById(`img-${id}`).src = `${ctx}/ShopPages/Pages/images/CatePicture/${encodeURIComponent(comp.imgURL || "default.jpg")}`;
 
                                 selectedComponents[id] = {
                                     categoryID: comp.categoryID,

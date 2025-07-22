@@ -189,7 +189,7 @@ public class BuildPC_ListCate extends HttpServlet {
             int minPrice = safeParseInt(request.getParameter("minPrice"), -1);
             int maxPrice = safeParseInt(request.getParameter("maxPrice"), Integer.MAX_VALUE);
             int page = safeParseInt(request.getParameter("page"), 1);
-            int pageSize = 5;
+            int pageSize = 6;
 
             if (componentID == -1) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "componentID không hợp lệ");
@@ -240,20 +240,20 @@ public class BuildPC_ListCate extends HttpServlet {
             response.setContentType("text/plain;charset=UTF-8");
             PrintWriter out = response.getWriter();
 
-            // Dòng đầu tiên là role của người tạo
+            //  đầu tiên là role của người tạo
             out.println("ROLE|" + creatorRole); 
 
-            // Sau đó là các dòng thành phần
+            //  các thành phần
             for (BuildPCAdmin item : items) {
-                String line = item.getComponentID() + "|"
-                        + item.getCateID() + "|"
+                String line = item.getComponentId() + "|"
+                        + item.getCateId() + "|"
                         + escape(item.getCateName()) + "|"
                         + escape(item.getBrandName()) + "|"
                         + item.getPrice() + "|"
-                        + escape(item.getImgURL()) + "|"
+                        + escape(item.getImgUrl()) + "|"
                         + escape(item.getWarrantyDesc()) + "|"
                         + item.getWarrantyPrice() + "|"
-                        + item.getWarrantyDetailID();
+                        + item.getWarrantyDetailId();
 
                 out.println(line);
             }

@@ -29,6 +29,7 @@ private int warrantyPeriod;
     public Categories() {
     }
 
+ 
     public Categories(int categoryID, String categoryName, int brandComID, int quantity, int price, String description, int status, String imgURL) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;

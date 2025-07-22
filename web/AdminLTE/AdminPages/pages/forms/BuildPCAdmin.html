@@ -289,7 +289,6 @@
                 <section class="content-header">
                     <h1 class="text-center">Build Your PC</h1>
                 </section>
-
                 <div id="statusWrapper" class="form-group mt-3" style="display: none;">
                     <label for="statusSelect">Status:</label>
                     <select class="form-control" id="statusSelect">
@@ -317,7 +316,7 @@
                                 <!-- CPU -->
                                 <div class="component-block" id="component-3">
                                     <div class="d-flex align-items-center">
-                                        <img id="img-3" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" alt="CPU" class="component-image">
+                                        <img id="img-3" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/3.jpg" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/3.jpg" alt="CPU" class="component-image">
                                         <div>
                                             <strong>CPU</strong>
                                             <div id="meta-3" class="component-meta"></div>
@@ -331,7 +330,7 @@
                                 <!-- GPU -->
                                 <div class="component-block" id="component-4">
                                     <div class="d-flex align-items-center">
-                                        <img id="img-4" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" alt="GPU" class="component-image">
+                                        <img id="img-4" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/4.jpg" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/4.jpg" alt="GPU" class="component-image">
                                         <div>
                                             <strong>GPU</strong>
                                             <div id="meta-4" class="component-meta"></div>
@@ -345,7 +344,7 @@
                                 <!-- RAM -->
                                 <div class="component-block" id="component-5">
                                     <div class="d-flex align-items-center">
-                                        <img id="img-5" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" alt="RAM" class="component-image">
+                                        <img id="img-5" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/5.jpg" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/5.jpg" alt="RAM" class="component-image">
                                         <div>
                                             <strong>RAM</strong>
                                             <div id="meta-5" class="component-meta"></div>
@@ -359,7 +358,7 @@
                                 <!-- SSD -->
                                 <div class="component-block" id="component-6">
                                     <div class="d-flex align-items-center">
-                                        <img id="img-6" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" alt="SSD" class="component-image">
+                                        <img id="img-6" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/6.webp" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/6.webp" alt="SSD" class="component-image">
                                         <div>
                                             <strong>SSD</strong>
                                             <div id="meta-6" class="component-meta"></div>
@@ -373,7 +372,7 @@
                                 <!-- Case -->
                                 <div class="component-block" id="component-7">
                                     <div class="d-flex align-items-center">
-                                        <img id="img-7" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/2.jpg" alt="Case" class="component-image">
+                                        <img id="img-7" src="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/7.jpg" data-default="/ComputerOnlineShop/ShopPages/Pages/images/anhproduct/7.jpg" alt="Case" class="component-image">
                                         <div>
                                             <strong>Case</strong>
                                             <div id="meta-7" class="component-meta"></div>
@@ -406,8 +405,6 @@
         <script src="../../plugins/jQuery/jquery-2.2.3.min.js"></script>
         <script src="../../bootstrap/js/bootstrap.min.js"></script>
         <script src="../../dist/js/app.min.js"></script>
-
-
         <script>
 
                                     const ctx = "/ComputerOnlineShop";
@@ -512,8 +509,6 @@
                                                                 isCustomerPC = true;
                                                             }
                                                         }
-
-
                                                         // Nếu là PC của Customer thì ẩn toàn bộ nút "Choose" và "Remove"
                                                         if (creatorRole === "Customer") {
                                                             // Ẩn các nút Choose
@@ -633,8 +628,7 @@
                                             document.getElementById(`remove-${componentID}`).style.display = 'inline-block';
                                         }
 
-                                        document.getElementById(`img-${componentID}`).src = `${ctx}/ShopPages/Pages/images/anhproduct/${imgURL}`;
-
+                                        document.getElementById(`img-${componentID}`).src = `${ctx}/ShopPages/Pages/images/CatePicture/${imgURL}`;
 
                                         selectedComponents[componentID] = {
                                             categoryID: parseInt(categoryID),
@@ -669,8 +663,6 @@
                                         });
                                         totalDisplay.innerText = total.toLocaleString();
                                     }
-
-
                                     function updateComponentUI(item) {
                                         selectProduct(
                                                 item.componentID,
@@ -684,7 +676,6 @@
                                                 item.warrantyDetailID || 0
                                                 );
                                     }
-
                                     function submitBuildPC() {
                                         const requiredComponents = [2, 3, 4, 5, 6, 7];
                                         const selectedIDs = Object.keys(selectedComponents).map(Number);
@@ -731,7 +722,6 @@
                                             alert("You need to choose 6 items: MainBoard, CPU, GPU, RAM, SSD, CASE.");
                                             return;
                                         }
-
                                         const categoryIDs = requiredComponents.map(id => {
                                             const value = parseInt(selectedComponents[id]?.categoryID);
                                             return isNaN(value) ? 0 : value;
@@ -749,13 +739,10 @@
                                         }
 
                                         if (isNaN(status)) {
-                                            alert("Vui lòng chọn trạng thái hợp lệ.");
+                                            alert("Choose correct categoty.");
                                             return;
                                         }
-
-                                        // Lấy role từ localStorage
                                         const role = localStorage.getItem("userRole") || "Customer";
-
                                         fetch(`${ctx}/BuildPC_ListCate?service=update`, {
                                             method: "POST",
                                             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -763,7 +750,7 @@
                                         })
                                                 .then(res => {
                                                     if (res.status === 409)
-                                                        throw new Error("Build PC với cấu hình này đã tồn tại.");
+                                                        throw new Error("This PC have Exist.");
                                                     if (!res.ok)
                                                         return res.text().then(msg => {
                                                             throw new Error(msg);
@@ -783,7 +770,6 @@
 
 
                                     function chooseProductWithWarranty(componentID, realCategoryID, categoryName, brandName, price, imgURL, radioCategoryID) {
-
                                         const selectedRadio = document.querySelector(`input[name="warranty-${radioCategoryID}"]:checked`);
 
                                         let warrantyDetailID = 0;
@@ -792,8 +778,8 @@
 
                                         if (selectedRadio) {
                                             warrantyDetailID = parseInt(selectedRadio.value);
-
                                             const label = selectedRadio.nextElementSibling;
+
                                             const descSpan = label.querySelector(".warranty-desc");
                                             const priceSpan = label.querySelector(".warranty-price");
 
@@ -809,8 +795,8 @@
 
                                         selectProduct(componentID, realCategoryID, categoryName, brandName, price, imgURL, warrantyDesc, warrantyPrice, warrantyDetailID);
                                     }
+
                                     function removeComponent(componentID) {
-                                        // Đặt lại giao diện về mặc định
                                         document.getElementById(`meta-${componentID}`).innerText = "";
                                         document.getElementById(`price-${componentID}`).innerText = "";
                                         const warrantyDiv = document.getElementById(`warranty-${componentID}`);
@@ -821,21 +807,11 @@
                                         if (totalDiv) {
                                             totalDiv.remove();
                                         }
-
-                                        // Đặt lại ảnh về mặc định
                                         const img = document.getElementById(`img-${componentID}`);
-                                        img.src = img.getAttribute("data-default");
-
-                                        // Ẩn nút remove
+                                        img.src = img.getAttribute("data-default")
                                         document.getElementById(`remove-${componentID}`).style.display = 'none';
-
-                                        // Xóa khỏi selectedComponents
                                         delete selectedComponents[componentID];
-
-                                        // Cập nhật lại localStorage
                                         localStorage.setItem("selectedComponents", JSON.stringify(selectedComponents));
-
-                                        // Cập nhật lại tổng tiền
                                         updateTotal();
                                     }
 
