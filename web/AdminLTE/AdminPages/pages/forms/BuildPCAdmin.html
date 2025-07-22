@@ -406,7 +406,6 @@
         <script src="../../bootstrap/js/bootstrap.min.js"></script>
         <script src="../../dist/js/app.min.js"></script>
         <script>
-
                                     const ctx = "/ComputerOnlineShop";
                                     const modal = document.getElementById('customModal');
                                     const modalTitle = document.getElementById('modalTitle');
@@ -414,7 +413,7 @@
                                     const totalDisplay = document.getElementById('totalPrice');
                                     let selectedComponents = JSON.parse(localStorage.getItem("selectedComponents")) || {};
                                     let isCustomerPC = false;
-
+                                    
                                     function openModal(componentid, componentName) {
                                         modal.style.display = 'flex';
                                         modalTitle.innerText = `Select ${componentName}`;
@@ -431,6 +430,7 @@
                                                     modalBody.innerHTML = "<p style='color:red;'>Failed to load data</p>";
                                                 });
                                     }
+                                    
                                     document.getElementById('closeModal').addEventListener('click', () => {
                                         modal.style.display = 'none';
                                         document.body.style.overflow = "";
@@ -441,24 +441,21 @@
                                             document.body.style.overflow = "";
                                         }
                                     });
+                                    
                                     window.addEventListener("DOMContentLoaded", function () {
                                         const urlParams = new URLSearchParams(window.location.search);
                                         const buildPCID = urlParams.get("buildPCID");
                                         const role = localStorage.getItem("userRole");
 
                                         if (!role || role.trim() === "") {
-                                            alert("Bạn cần đăng nhập để sử dụng chức năng này!");
+                                            alert("You need login to use this function!");
                                             window.location.href = `${ctx}/Login`;
                                             return;
                                         }
-
-
                                         const statusSelect = document.getElementById("statusSelect");
                                         const statusWrapper = document.getElementById("statusWrapper");
                                         const btn = document.getElementById("createPCBtn");
-
-
-                                        // Load các linh kiện đã chọn (nếu có)
+                                        // reload cate
                                         for (const compID of Object.keys(selectedComponents)) {
                                             const comp = selectedComponents[compID];
                                             selectProduct(
@@ -473,33 +470,21 @@
                                                     comp.warrantyDetailID || 0
                                                     );
                                         }
-
-
                                         if (buildPCID) {
-                                            btn.innerText = "Cập nhật Build PC";
+                                            btn.innerText = "Update Build PC";
                                             btn.setAttribute("onclick", `submitUpdateBuildPC(${buildPCID})`);
-
-                                            // Phân quyền hiển thị trạng thái dựa trên role
                                             if (role === "Admin") {
                                                 statusWrapper.style.display = "block";
                                                 statusSelect.innerHTML = `
                 <option value="1">On Sales</option>
                 <option value="2">Off</option>`;
-                                            } else if (role === "Customer" || role === "" || role == null) {
-                                                statusWrapper.style.display = "block";
-                                                statusSelect.innerHTML = `
-                <option value="0">Reject</option>
-                <option value="1">Waiting Confirm Order</option>
-                <option value="10">Confirm Order, send to Staff</option>`;
-                                            } else {
+                                            }  else {
                                                 statusWrapper.style.display = "none";  // Role không hợp lệ thì ẩn dropdown
                                             }
                                             fetch(`${ctx}/BuildPC_ListCate?service=loadBuildPC&buildPCID=${buildPCID}`)
                                                     .then(res => res.text())
                                                     .then(text => {
                                                         const lines = text.trim().split("\n");
-
-                                                        // Lấy dòng role đầu tiên
                                                         const firstLine = lines[0];
                                                         let creatorRole = "";
 
@@ -509,23 +494,23 @@
                                                                 isCustomerPC = true;
                                                             }
                                                         }
-                                                        // Nếu là PC của Customer thì ẩn toàn bộ nút "Choose" và "Remove"
+                                                      
                                                         if (creatorRole === "Customer") {
-                                                            // Ẩn các nút Choose
+                                                          
                                                             document.querySelectorAll(".component-block").forEach(block => {
                                                                 const chooseBtn = block.querySelector("button.btn-primary");
                                                                 if (chooseBtn)
                                                                     chooseBtn.style.display = "none";
                                                             });
 
-                                                            // Ẩn tất cả các nút Remove (id bắt đầu bằng remove-)
+                                                          
                                                             document.querySelectorAll('[id^="remove-"]').forEach(btn => {
                                                                 btn.style.display = "none";
                                                             });
                                                         }
 
 
-                                                        // Bỏ qua dòng đầu tiên (ROLE) => parse các dòng còn lại là component
+                                                        
                                                         for (let i = 1; i < lines.length; i++) {
                                                             const line = lines[i];
                                                             const [componentID, categoryID, categoryName, brandName, price, imgURL, warrantyDesc, warrantyPrice, warrantyDetailID] = line.split("|");
