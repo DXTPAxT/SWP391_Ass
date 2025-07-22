@@ -103,7 +103,7 @@ public class OrderBuildPC extends HttpServlet {
                     for (BuildPCAdmin item : items) {
                         int orderedQty = 1;
                         int inventory = item.getInventory();
-                        int categoryId = item.getCateID();
+                        int categoryId = item.getCateId();
                         if (inventory > orderedQty) {
                             dao.updateQueueForBuildPCOrder(orderID);
                         }

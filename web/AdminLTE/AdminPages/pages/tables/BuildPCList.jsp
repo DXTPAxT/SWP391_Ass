@@ -43,14 +43,20 @@
 
             <div class="content-wrapper">
                 <section class="content-header">
-                    <h1>Build PC List</h1>
+                    <h1>Build PC List</h1></br>
+                    <label class="radio-inline">
+                        <input type="radio" name="role-filter" value="All" checked> All
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="role-filter" value="Admin"> Admin
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="role-filter" value="Customer"> Customer
+                    </label>   
                 </section>
                 <section class="content">
                     <div class="box">
-                        <form id="deleteForm" action="${ctx}/BuildPC_ListCate" method="post">
-                            <input type="hidden" name="service" value="delete">
-                            <input type="hidden" name="buildPCID" id="deleteBuildPCID">
-                        </form>
+
 
                         <!-- ✅ Box Header in English -->
                         <div class="box-header with-border">
@@ -83,7 +89,7 @@
                                 </thead>
                                 <tbody>
                                     <c:forEach var="b" items="${buildPCList}">
-                                        <tr>
+                                        <tr class="${b.role eq 'Admin' ? 'role-admin' : 'role-customer'}">
                                             <td>${b.buildPCID}</td>
                                             <td><c:out value="${b.mainBoard}" default="N/A"/></td>
                                             <td><c:out value="${b.cpu}" default="N/A"/></td>
@@ -125,9 +131,9 @@
                                                             </c:when>
                                                             <c:when test="${b.status == 2}">
                                                                 <span class="label label-info"> Staff have confrim
-                                                                                                  In Process Order</span>
-                                                            </c:when>
-                                                            <c:when test="${b.status == 3}">
+                                                                    In Process Order</span>
+                                                                </c:when>
+                                                                <c:when test="${b.status == 3}">
                                                                 <span class="label label-success">Waiting Shipping Order</span>
                                                             </c:when>
                                                             <c:when test="${b.status == 4}">
@@ -143,7 +149,7 @@
                                                                 <span class="label label-success">Confirm Order, send to Staff</span>
                                                             </c:when>
                                                             <c:when test="${b.status == 7}">
-                                                                <span class="label label-success">Hoàn thành</span>
+                                                                <span class="label label-success">Completed</span>
                                                             </c:when>
                                                             <c:otherwise>
                                                                 <span class="label label-danger">Không xác định</span>
@@ -221,12 +227,37 @@
                 }
             }
 
+            const ctx = '${ctx}'; // lấy đúng contextPath từ JSP để dùng trong JS
+
             function goToUpdate(buildPCID, role, userID) {
                 localStorage.setItem("userRole", role);
                 localStorage.setItem("userID", userID);
-                window.location.href = '${ctx}/AdminLTE/AdminPages/pages/forms/BuildPCAdmin.html?buildPCID=' + buildPCID;
+                window.location.href = ctx + '/AdminLTE/AdminPages/pages/forms/BuildPCAdmin.html?buildPCID=' + buildPCID;
             }
 
+            // Filter by PC Roles
+            document.querySelectorAll('input[name="role-filter"]').forEach(radio => {
+                radio.addEventListener("change", applyRoleFilter);
+            });
+
+            function applyRoleFilter() {
+                const selectedRole = document.querySelector('input[name="role-filter"]:checked').value;
+
+                document.querySelectorAll("#example2 tbody tr").forEach(row => {
+                    const isAdmin = row.classList.contains("role-admin");
+                    const isCustomer = row.classList.contains("role-customer");
+
+                    if (selectedRole === "All") {
+                        row.style.display = "";
+                    } else if (selectedRole === "Admin" && isAdmin) {
+                        row.style.display = "";
+                    } else if (selectedRole === "Customer" && isCustomer) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            }
 
         </script>
     </body>

@@ -16,6 +16,18 @@ public class BuildPCAdmin {
     private int price;
     private int status;
     private String brandName;
+
+    public BuildPCAdmin(int cateId, String cateName, int componentId, Integer warrantyPrice, String warrantyDesc, Integer warrantyDetailId, int price, String brandName, String imgUrl) {
+        this.cateId = cateId;
+        this.cateName = cateName;
+        this.componentId = componentId;
+        this.warrantyPrice = warrantyPrice;
+        this.warrantyDesc = warrantyDesc;
+        this.warrantyDetailId = warrantyDetailId;
+        this.price = price;
+        this.brandName = brandName;
+        this.imgUrl = imgUrl;
+    }
     private String imgUrl;
     private int queue;
     private int orderBuildPcItemId;
@@ -73,7 +85,7 @@ public class BuildPCAdmin {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    // ==== Getter & Setter chuẩn hoá tên biến ====
+ 
 
     public int getBuildPcId() {
         return buildPcId;

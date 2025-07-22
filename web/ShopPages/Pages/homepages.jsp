@@ -55,15 +55,15 @@
                             <div class="row">
                                 <c:forEach var="product" items="${pcProducts}">
                                     <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="productinfo text-center">
-                                                <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/anhproduct/1.png" class="card-img-top" alt="${product.categoryName}">
-                                                <div class="card-body">
-                                                    <h5 class="card-title">${product.categoryName}</h5>
-                                                    <p class="card-text">Brand: ${product.brandName}</p>
-                                                    <p class="card-text">Price: <fmt:formatNumber value="${product.price}" type="currency"/></p>
-                                                </div>
+                                        <div class="card mb-4 shadow-sm">
+                                            <a href="${ctx}/CategoriesController?service=detail&categoryID=${product.categoryID}">
+                                            <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/CatePicture/${product.imgURL}" class="card-img-top img-fluid" alt="${product.categoryName}" style="height: 250px; object-fit: contain;">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">${product.categoryName}</h5>
+                                                <p class="card-text">Brand: ${product.brandName}</p>
+                                                <p class="card-text text-success">Price: <fmt:formatNumber value="${product.price}" type="currency"/></p>
                                             </div>
+                                            </a>
                                         </div>
                                     </div>
                                 </c:forEach>
@@ -73,19 +73,19 @@
                                 <p class="text-center">Không có sản phẩm nào!</p>
                             </c:if>
 
-                            <!-- Pagination for PC -->
-                            <div class="text-center">
-                                <ul class="pagination">
-                                    <c:forEach begin="1" end="${totalPagesPC}" var="i">
-                                        <li class="page-item ${i eq currentPagePC ? 'active' : ''}">
-                                     <a class="page-link" href="HomePages?pagePC=${i}&pageLaptop=${currentPageLaptop}#pc">${i}</a>
+                            <!-- Only show pagination if data exists -->
+                            <c:if test="${not empty pcProducts && totalPagesPC > 1}">
+                                <div class="text-center">
+                                    <ul class="pagination">
+                                        <c:forEach begin="1" end="${totalPagesPC}" var="i">
+                                            <li class="page-item ${i eq currentPagePC ? 'active' : ''}">
+                                                <a class="page-link" href="HomePages?pagePC=${i}&pageLaptop=${currentPageLaptop}#pc">${i}</a>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                </div>
+                            </c:if>
 
-                                        </li>
-                                    </c:forEach>
-                                </ul>
-                            </div>
-
-                            <!-- VIEW MORE Button -->
                             <div class="category-tab">
                                 <div class="col-sm-12 text-center">
                                     <a href="${pageContext.request.contextPath}/CategoriesController?service=filter&component=pc" class="btn btn-warning" style="margin-top: 20px;">VIEW MORE</a>
@@ -93,20 +93,19 @@
                             </div>
                         </div>
 
+
                         <!-- Laptop Section -->
                         <div class="features_items" id="laptop">
                             <h2 class="title text-center" style="margin-top: 30px">Build PC</h2>
                             <div class="row">
                                 <c:forEach var="product" items="${laptopProducts}">
                                     <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="productinfo text-center">
-                                                <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/anhproduct/1.png" class="card-img-top" alt="${product.categoryName}">
-                                                <div class="card-body">
-                                                    <h5 class="card-title">${product.categoryName}</h5>
-                                                    <p class="card-text">Brand: ${product.brandName}</p>
-                                                    <p class="card-text">Price: <fmt:formatNumber value="${product.price}" type="currency"/></p>
-                                                </div>
+                                        <div class="card mb-4 shadow-sm">
+                                            <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/CatePicture/${product.imgURL}" class="card-img-top img-fluid" alt="${product.categoryName}" style="height: 250px; object-fit: contain;">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">${product.categoryName}</h5>
+                                                <p class="card-text">Brand: ${product.brandName}</p>
+                                                <p class="card-text text-success">Price: <fmt:formatNumber value="${product.price}" type="currency"/></p>
                                             </div>
                                         </div>
                                     </div>
@@ -117,53 +116,54 @@
                                 <p class="text-center">Không có sản phẩm nào!</p>
                             </c:if>
 
-                            <!-- Pagination for Laptop -->
-                            <div class="text-center">
-                                <ul class="pagination">
-                                    <c:forEach begin="1" end="${totalPagesLaptop}" var="i">
-                                        <li class="page-item ${i eq currentPageLaptop ? 'active' : ''}">
-                                            <a class="page-link" href="HomePages?pageLaptop=${i}&pagePC=${currentPagePC}#laptop">${i}</a>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
-                            </div>
+                            <c:if test="${not empty laptopProducts && totalPagesLaptop > 1}">
+                                <div class="text-center">
+                                    <ul class="pagination">
+                                        <c:forEach begin="1" end="${totalPagesLaptop}" var="i">
+                                            <li class="page-item ${i eq currentPageLaptop ? 'active' : ''}">
+                                                <a class="page-link" href="HomePages?pageLaptop=${i}&pagePC=${currentPagePC}#laptop">${i}</a>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                </div>
+                            </c:if>
 
-                            <!-- VIEW MORE Button -->
                             <div class="category-tab">
                                 <div class="col-sm-12 text-center">
                                     <a href="${pageContext.request.contextPath}/CategoriesController?service=filter&component=laptop" class="btn btn-warning" style="margin-top: 20px;">VIEW MORE</a>
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
 
                 </div>
             </div>
-        
-    </section>
 
-    <%@ include file="components/footer.jsp" %>
-    <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
-    <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
-    <script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
-    <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
-    <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
-    <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
+        </section>
 
-    <!-- Kích hoạt carousel nếu cần -->
-    <script>
-        window.onload = function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('pagePC')) {
-                document.getElementById('pc').scrollIntoView({ behavior: 'smooth' });
-            } else if (urlParams.has('pageLaptop')) {
-                document.getElementById('laptop').scrollIntoView({ behavior: 'smooth' });
+        <%@ include file="components/footer.jsp" %>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/bootstrap.min.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/price-range.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
+        <script src="${ctx}/ShopPages/Pages/js/main.js"></script>
+
+        <!-- Kích hoạt carousel nếu cần -->
+        <script>
+            window.onload = function () {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('pagePC')) {
+                    document.getElementById('pc').scrollIntoView({behavior: 'smooth'});
+                } else if (urlParams.has('pageLaptop')) {
+                    document.getElementById('laptop').scrollIntoView({behavior: 'smooth'});
+                }
             }
-        }
-        $(document).ready(function () {
-            $('#slider-carousel').carousel(); // Khởi động carousel thủ công
-        });
-    </script>
-</body>
+            $(document).ready(function () {
+                $('#slider-carousel').carousel(); // Khởi động carousel thủ công
+            });
+        </script>
+    </body>
 </html>
