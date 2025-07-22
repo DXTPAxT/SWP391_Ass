@@ -201,6 +201,19 @@
             }
 
         </style>
+        <script>
+            function toggleReplyForm(commentID) {
+                const form = document.getElementById("reply-form-" + commentID);
+                if (form) {
+                    form.style.display = (form.style.display === "none") ? "block" : "none";
+                }
+            }
+
+            function likeComment(commentID) {
+                alert("You liked a comment" + commentID);
+
+            }
+        </script>
 
     </head>
     <body>
@@ -287,37 +300,45 @@
                             <div class="comments-section">
                                 <h3>Comments</h3>
 
+
+
+                                <!-- Hàm đệ quy hiển thị bình luận -->
                                 <c:forEach var="comment" items="${comments}">
-                                    <div class="comment">
-                                        <div class="comment-meta">
-                                            <strong>${comment.fullName}</strong> | ${comment.createdAt}
-                                        </div>
-                                        <div class="comment-content">
-                                            ${comment.commentText}
-                                        </div>
+                                    <div style="margin-left: ${comment.parentCommentID == null ? 0 : 40}px; border-left: 1px solid #ccc; padding-left: 10px; margin-top: 10px;">
 
-                                        <div class="comment-actions" style="margin-top: 8px;">
-                                            <!-- Like form -->
-                                            <form action="${ctx}/likeComment" method="post" style="display: inline;">
-                                                <input type="hidden" name="comment_id" value="${comment.commentID}" />
-                                                <button type="submit" style="border: none; background: none; color: #fe980f;">❤️ Like</button>
-                                            </form>
+                                        <p><strong>${comment.fullName}</strong> | ${comment.createdAt}</p>
+                                        <p>${comment.commentText}</p>
 
-                                            <!-- Reply toggle button -->
-                                            <button onclick="toggleReplyForm(${comment.commentID})" style="border: none; background: none; color: #fe980f;">💬 Reply</button>
+                                        <!-- Nút Like và Reply -->
+                                        <div style="margin-bottom: 10px;">
+                                            <button type="button" onclick="likeComment(${comment.commentID})">👍 Like</button>
+                                            <button type="button" onclick="toggleReplyForm(${comment.commentID})">💬 Reply</button>
                                         </div>
 
-                                        <!-- Reply form (hidden by default) -->
-                                        <div id="reply-form-${comment.commentID}" style="display: none; margin-top: 10px;">
+                                        <!-- Form trả lời, ẩn mặc định -->
+                                        <div id="reply-form-${comment.commentID}" style="display:none;">
                                             <form action="${ctx}/blogdetail" method="post">
                                                 <input type="hidden" name="Post_id" value="${post.post_id}" />
+                                                <input type="hidden" name="Bc_id" value="${param.Bc_id}" />
                                                 <input type="hidden" name="ParentCommentID" value="${comment.commentID}" />
-                                                <textarea name="comment_text" placeholder="Trả lời bình luận này" rows="2" required></textarea>
-                                                <button type="submit">Submit Reply</button>
+                                                <textarea name="comment_text" rows="2" cols="50" placeholder="Reply..."></textarea><br>
+                                                <button type="submit">Reply</button>
                                             </form>
                                         </div>
+
+
+                                        <!-- Đệ quy replies -->
+                                        <!-- Lặp lại reply con -->
+                                        <c:if test="${not empty comment.replies}">
+                                            <div class="replies" style="margin-left: 30px;">
+                                                <jsp:include page="nested_comment.jsp">
+                                                    <jsp:param name="comments" value="${comment.replies}" />
+                                                </jsp:include>
+                                            </div>
+                                        </c:if>
                                     </div>
                                 </c:forEach>
+
 
                                 <script>
                                     function toggleReplyForm(commentID) {

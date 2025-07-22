@@ -65,7 +65,7 @@
                                 <c:choose>
                                     <c:when test="${not empty sessionScope.user}">                                        
                                         <c:if test="${not empty sessionScope.user and sessionScope.user.role.roleID == 3}">    
-                                             <li class="cart-dropdown">
+                                            <li class="cart-dropdown">
                                                 <a href="#"><i class="fa fa-shopping-cart"></i> Warranty</a>
                                                 <div class="dropdown-content">
                                                     <div class="arrow-up"></div>
@@ -120,6 +120,13 @@
                         <form action="${ctx}/CategoriesController" method="get" style="display: flex;">
                             <input type="hidden" name="service" value="filter"/>
                             <input type="text" name="keyword" class="form-control" placeholder="Insert name product"
+                                   value="${not empty param.keyword ? param.keyword : ''}" style="width: 180px;" />
+                        </form>
+                    </div>
+                    <div class="search_box pull-right">
+                        <form action="${ctx}/blogc" method="get" style="display: flex;">
+                            <input type="hidden" name="service" value="filter"/>
+                            <input type="text" name="keyword" class="form-control" placeholder="Search by title...."
                                    value="${not empty param.keyword ? param.keyword : ''}" style="width: 180px;" />
                         </form>
                     </div>

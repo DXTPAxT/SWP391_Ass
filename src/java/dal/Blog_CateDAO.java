@@ -155,28 +155,28 @@ public class Blog_CateDAO extends DBContext {
 
         return buildNestedComments(list);
     }
-    private List<Comment> buildNestedComments(List<Comment> flatList) {
-    Map<Integer, Comment> commentMap = new HashMap<>();
+    public List<Comment> buildNestedComments(List<Comment> flatList) {
+    Map<Integer, Comment> map = new HashMap<>();
     List<Comment> rootComments = new ArrayList<>();
 
     for (Comment c : flatList) {
-        commentMap.put(c.getCommentID(), c);
+        c.setReplies(new ArrayList<>()); 
+        map.put(c.getCommentID(), c);
     }
 
     for (Comment c : flatList) {
-        Integer parentId = c.getParentCommentID();
-        if (parentId == null) {
-            rootComments.add(c); 
+        if (c.getParentCommentID() == null) {
+            rootComments.add(c);
         } else {
-            Comment parent = commentMap.get(parentId);
+            Comment parent = map.get(c.getParentCommentID());
             if (parent != null) {
-                parent.addReply(c); 
+                parent.getReplies().add(c);
             }
         }
     }
-
     return rootComments;
 }
+
 
 public void likeComment(int CommentID, int UserID) {
     String query = "INSERT INTO Comment_Likes (CommentID, UserID)\n" +
