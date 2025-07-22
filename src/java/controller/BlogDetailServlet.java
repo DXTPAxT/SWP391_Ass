@@ -28,7 +28,7 @@ public class BlogDetailServlet extends HttpServlet {
         List<Comment> nestedComments = null;
 
         try {
-            if (Bc_id_raw != null) {
+            if (Bc_id_raw != null && !Bc_id_raw.isEmpty()) {
                 int Bc_id = Integer.parseInt(Bc_id_raw);
                 List<Post> postList = dao.getPostsByCategoryId(Bc_id);
                 request.setAttribute("postList", postList);
@@ -88,7 +88,12 @@ public class BlogDetailServlet extends HttpServlet {
             Blog_CateDAO dao = new Blog_CateDAO();
             dao.addComment(comment);
 
-            response.sendRedirect("blogdetail?Post_id=" + Post_id + (Bc_idRaw != null ? "&Bc_id=" + Bc_idRaw : ""));
+            if (Bc_idRaw != null && !Bc_idRaw.isEmpty()) {
+                response.sendRedirect("blogdetail?Post_id=" + Post_id + "&Bc_id=" + Bc_idRaw);
+            } else {
+                response.sendRedirect("blogdetail?Post_id=" + Post_id);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("error.jsp");
