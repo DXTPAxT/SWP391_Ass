@@ -78,7 +78,7 @@
                             </div>
                         </c:if>
 
-                        <form method="post" action="${ctx}/CateAdmin">
+                        <form method="post" action="${ctx}/CateAdmin" enctype="multipart/form-data">
                             <input type="hidden" name="service" value="insert">
                             <input type="hidden" name="submit" value="submit">
 
@@ -144,20 +144,18 @@
                                     </select>
                                 </div>
 
-                                <!-- Image URL -->
+                                <!-- Image Upload -->
                                 <div class="form-group">
-                                    <label for="imageURL">Image URL</label>
-                                    <input type="text" id="imageURL" name="imageURL"
-                                           class="form-control"
-                                           placeholder="Enter image URL"
-                                           value="${param.imageURL}">
-                            </div>
+                                    <label for="imageFile">Category Image</label>
+                                    <input type="file" id="imageFile" name="imageFile" class="form-control" accept="">
+                                </div>
 
-                            <!-- Submit -->
-                            <button type="submit" class="btn btn-primary">Insert Category</button>
-                            <a href="${ctx}/CateAdmin?service=list" class="btn btn-default">Cancel</a>
+                                <!-- Submit -->
+                                <button type="submit" class="btn btn-primary">Insert Category</button>
+                                <a href="${ctx}/CateAdmin?service=list" class="btn btn-default">Cancel</a>
                         </form>
                     </div>
+
 
 
 

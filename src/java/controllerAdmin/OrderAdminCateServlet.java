@@ -4,6 +4,7 @@
  */
 package controllerAdmin;
 
+import dalAdmin.CategoryAdminDAO;
 import dalAdmin.OrderCateAdminDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,6 +35,7 @@ public class OrderAdminCateServlet extends HttpServlet {
         }
 
         OrderCateAdminDAO dao = new OrderCateAdminDAO();
+        CategoryAdminDAO c = new CategoryAdminDAO();
         if (service.equals("listCate")) {
             List<OrderCate> orders = dao.getOrdersByStatus(7);
             request.setAttribute("orders", orders);
@@ -91,26 +93,47 @@ public class OrderAdminCateServlet extends HttpServlet {
                     return;
                 }
 
-                dao.updateOrderStatus(orderID, status);
+                List<OrderItems> items = dao.getAllOrderCateItemsByOrderID(orderID);
+                boolean enoughInventory = true;
 
-                if (status == 2 || status == 0) {
-                    // Kiểm tra tồn kho và cập nhật Queue nếu cần
-                    List<OrderItems> items = dao.getAllOrderCateItemsByOrderID(orderID);
+                for (OrderItems item : items) {
+                    if (item.getQuantity() > item.getInventory()) {
+                        enoughInventory = false;
+                        break;
+                    }
+                }
+
+                if (enoughInventory) {
+                    // Đủ hàng – tự động xử lý
+
                     for (OrderItems item : items) {
-                        int orderedQty = item.getQuantity();
-                        int inventory = item.getInventory();
-                        int categoryId = item.getCategoryID();
+                        // Gán ProductID
+                        dao.fillProductsForOrderItem(item.getOrderItemID());
 
-                        if (orderedQty > inventory) {
-                            dao.increaseQueueByCategoryId(categoryId, orderedQty);
+                       c.updateCategoryInventory();
+                    }
+
+                    // Gán người xử lý
+                    dao.insertOrderPreparement(currentUser.getUserId(), orderID);
+
+                    // Cập nhật trạng thái sang “Wait to Ship”
+                    dao.updateOrderStatus(orderID, 3);
+
+                    response.sendRedirect("OrderAdminCate?service=listPending");
+
+                } else {
+                    // Không đủ hàng – giữ nguyên như cũ
+                    for (OrderItems item : items) {
+                        if (item.getQuantity() > item.getInventory()) {
+                            dao.increaseQueueByCategoryId(item.getCategoryID(), item.getQuantity());
                         }
                     }
 
-                    // Gán nhân viên chuẩn bị đơn
                     dao.insertOrderPreparement(currentUser.getUserId(), orderID);
-                }
+                    dao.updateOrderStatus(orderID, 2); // Giữ nguyên status gửi từ client (Pending)
 
-                response.sendRedirect("OrderAdminCate?service=listPending");
+                    response.sendRedirect("OrderAdminCate?service=listPending");
+                }
 
             } catch (IOException | NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order update request.");
