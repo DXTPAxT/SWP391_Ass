@@ -87,7 +87,6 @@
                                                 <th>View Product</th>
                                                 <th>View Import</th>
                                                 <th>Insert Product</th>
-                                                <th>View Feedback</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -136,10 +135,7 @@
                                                                 <a href="Import?service=insert&categoryID=${category.categoryID}" 
                                                                    class="btn btn-success btn-sm">Insert</a>
                                                             </td>
-                                                            <td>
-                                                                <a href="Import?service=listbycate&categoryID=${category.categoryID}" 
-                                                                   class="btn btn-warning btn-sm">View</a>
-                                                            </td>
+                                                            
                                                         </tr>
                                                     </c:forEach>
                                                 </c:when>
