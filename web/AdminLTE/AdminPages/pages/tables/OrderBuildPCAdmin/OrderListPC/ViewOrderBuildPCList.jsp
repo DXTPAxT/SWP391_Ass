@@ -4,7 +4,7 @@
     Author     : Admin
 --%>
 
-<%@page contentType="text/html" pageEncoding="windows-1252"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -77,14 +77,19 @@
                                                 <th>Customer Name</th>
                                                 <th>Consignee</th>
                                                 <th>Order Date</th>
-                                                <th>Product Type</th>
-                                                <th>Total Amount</th>
+                                                <th>Toal Amount</th>
+                                                <th>Full Price</th>
+                                                <th> Deposit </th>
+                                                <th>Remaining</th>
                                                 <th>View Order Items</th>
                                             </tr>
                                         </thead>
                                         <tbody>
+
                                             <c:if test="${not empty orders}">
                                                 <c:forEach var="order" items="${orders}">
+                                                    <c:set var="deposit" value="${order.totalAmount * 0.2}" />
+                                                    <c:set var="remaining" value="${order.totalAmount - deposit}" />
                                                     <tr>
                                                         <td>${order.orderID}</td>
                                                         <td>${order.customerName}</td>
@@ -96,7 +101,9 @@
                                                                 <c:otherwise>Build PC</c:otherwise>
                                                             </c:choose>
                                                         </td>
-                                                        <td>${order.totalAmount}</td>
+                                                        <td><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="₫" /></td>
+                                                        <td><fmt:formatNumber value="${deposit}" type="currency" currencySymbol="₫" /></td>
+                                                        <td><fmt:formatNumber value="${remaining}" type="currency" currencySymbol="₫" /></td>
                                                         <td>
                                                             <a href="${ctx}/OrderBuildPCDetails?service=listPending&orderID=${order.orderID}" 
                                                                class="btn btn-warning btn-sm">View</a>
