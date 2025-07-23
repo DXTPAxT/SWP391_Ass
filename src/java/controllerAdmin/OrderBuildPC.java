@@ -14,7 +14,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import models.BuildPCAdmin;
 import models.OrderCate;
 import models.User;
@@ -80,9 +82,27 @@ public class OrderBuildPC extends HttpServlet {
         if (service.equals("updateStatus")) {
             String orderID_raw = request.getParameter("orderID");
             String status_raw = request.getParameter("status");
+            String[] itemIDs_raw = request.getParameterValues("itemIds");
 
+            // Check if itemIds are missing
+            if (itemIDs_raw == null || itemIDs_raw.length == 0) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing itemIds for processing the order.");
+                return;
+            }
+
+            // ✅ Use Set to avoid duplicates
+            Set<Integer> uniqueItemIDs = new HashSet<>();
+            for (String idStr : itemIDs_raw) {
+                try {
+                    uniqueItemIDs.add(Integer.parseInt(idStr.trim()));
+                } catch (NumberFormatException e) {
+                    System.err.println("⚠️ Failed to parse itemID: " + idStr);
+                }
+            }
+
+            // Check for missing orderID or status
             if (orderID_raw == null || status_raw == null || orderID_raw.trim().isEmpty() || status_raw.trim().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing orderID or status");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing orderID or status.");
                 return;
             }
 
@@ -97,68 +117,50 @@ public class OrderBuildPC extends HttpServlet {
                 return;
             }
 
-            System.out.println("📥 Yêu cầu cập nhật trạng thái đơn hàng:");
+            System.out.println("📥 Request to update order status:");
             System.out.println("➡️ Order ID: " + orderID);
-            System.out.println("➡️ Trạng thái mới: " + status);
+            System.out.println("➡️ New Status: " + status);
 
             switch (status) {
                 case 0:
-                    System.out.println("❌ Đơn hàng bị từ chối.");
+                    System.out.println("❌ Order has been rejected.");
                     dao.updateOrderStatus(orderID, status);
                     response.sendRedirect("OrderBuildPC?service=listWaitingConfirm");
                     return;
 
                 case 3:
-                    System.out.println("✅ Đơn hàng được chấp nhận. Tiến hành xử lý...");
+                    System.out.println("✅ Order accepted. Processing...");
                     dao.updateOrderStatus(orderID, status);
-                    List<BuildPCAdmin> items = dao.getBuildPCItemsByOrderID(orderID);
-                    if (items == null || items.isEmpty()) {
-                        System.out.println("❌ Không tìm thấy bất kỳ BuildPCItem nào cho OrderID = " + orderID);
-                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Không có BuildPCItem");
-                        return;
+
+                    for (int itemID : uniqueItemIDs) {
+                        System.out.println("🔧 Assigning products for BuildPCItemID: " + itemID);
+                        try {
+                            dao.assignProductsToBuildPCItem(itemID);
+                        } catch (Exception e) {
+                            System.err.println("❌ Error assigning products for ItemID = " + itemID + ": " + e.getMessage());
+                            e.printStackTrace();
+                        }
                     }
 
                     int staffID = dao.getLeastBusyStaffLastMonth();
                     if (staffID == -1) {
-                        System.out.println("⚠️ Không tìm thấy nhân viên phù hợp để phân công.");
+                        System.out.println("⚠️ No suitable staff found for assignment.");
                     } else {
-                        System.out.println("Nhân viên được phân công: ID = " + staffID);
+                        System.out.println("📌 Assigned Staff ID = " + staffID);
                         try {
                             dao.insertOrderPreparementForBuildPC(staffID, orderID);
                         } catch (Exception e) {
-                            System.out.println("❌ Lỗi khi insert OrderPreparement: " + e.getMessage());
+                            System.err.println("❌ Error inserting OrderPreparement: " + e.getMessage());
                             e.printStackTrace();
                         }
-                    }
-                    List<BuildPCAdmin> buildPCItems = dao.getBuildPCItemsByOrderID(orderID);
-                    System.out.println("🔍 Số lượng BuildPCItems: " + (buildPCItems == null ? "null" : buildPCItems.size()));
-
-                    if (buildPCItems == null || buildPCItems.isEmpty()) {
-                        System.out.println("❌ Không tìm thấy bất kỳ BuildPCItem nào cho OrderID = " + orderID);
-                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Không có BuildPCItem");
-                        return;
-                    }
-
-                    for (BuildPCAdmin item : buildPCItems) {
-                        int itemID = item.getOrderBuildPcItemId(); // lấy ID
-                        System.out.println("⚙️ Đang gán sản phẩm cho BuildPCItemID = " + itemID);
-                        dao.fillProductsForBuildPC(itemID);
-                    }
-
-                    try {
-
-                        System.out.println("✅ Cập nhật trạng thái thành công.");
-                    } catch (Exception e) {
-                        System.out.println("❌ Lỗi khi cập nhật trạng thái đơn hàng: " + e.getMessage());
-                        e.printStackTrace();
                     }
 
                     response.sendRedirect("OrderBuildPC?service=listWaitingConfirm");
                     return;
 
                 default:
-                    System.out.println("⚠️ Trạng thái không xác định: " + status);
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Trạng thái không hợp lệ");
+                    System.out.println("⚠️ Unknown status value: " + status);
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid status value.");
                     return;
             }
         } else if (service.equals("StaffConfirm")) {

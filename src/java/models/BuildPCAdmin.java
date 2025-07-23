@@ -17,17 +17,7 @@ public class BuildPCAdmin {
     private int status;
     private String brandName;
 
-    public BuildPCAdmin(int cateId, String cateName, int componentId, Integer warrantyPrice, String warrantyDesc, Integer warrantyDetailId, int price, String brandName, String imgUrl) {
-        this.cateId = cateId;
-        this.cateName = cateName;
-        this.componentId = componentId;
-        this.warrantyPrice = warrantyPrice;
-        this.warrantyDesc = warrantyDesc;
-        this.warrantyDetailId = warrantyDetailId;
-        this.price = price;
-        this.brandName = brandName;
-        this.imgUrl = imgUrl;
-    }
+
     private String imgUrl;
     private int queue;
     private int orderBuildPcItemId;
@@ -80,7 +70,17 @@ public class BuildPCAdmin {
     private Date createdAt;
 
     public BuildPCAdmin() {}
-
+    public BuildPCAdmin(int cateId, String cateName, int componentId, Integer warrantyPrice, String warrantyDesc, Integer warrantyDetailId, int price, String brandName, String imgUrl) {
+        this.cateId = cateId;
+        this.cateName = cateName;
+        this.componentId = componentId;
+        this.warrantyPrice = warrantyPrice;
+        this.warrantyDesc = warrantyDesc;
+        this.warrantyDetailId = warrantyDetailId;
+        this.price = price;
+        this.brandName = brandName;
+        this.imgUrl = imgUrl;
+    }
     public BuildPCAdmin(int aInt, int aInt0, String string, String string0, int aInt1, String string1, int warrantyDetailID, int warrantyPrice, String warrantyDesc) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }

@@ -38,7 +38,6 @@ public class OrderBuildPCDetails extends HttpServlet {
             try {
                 int orderID = Integer.parseInt(request.getParameter("orderID"));
                 List<BuildPCAdmin> items = dao.getBuildPCItemsByOrderID(orderID);
-
                 request.setAttribute("items", items);
                 request.setAttribute("orderID", orderID);
                 request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderDoing/OrderPCDetail.jsp").forward(request, response);
