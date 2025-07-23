@@ -153,6 +153,7 @@ public class OrderBuildPCAdmin extends DBAdminContext {
                     }
 
                     BuildPCAdmin item = new BuildPCAdmin();
+                    item.setOrderBuildPcItemId(rs.getInt("OrderBuildPCItemID"));
                     item.setOrderBuildPcDetailId(rs.getInt("OrderBuildPCDetailID"));
                     item.setQuantity(rs.getInt("Quantity"));
                     item.setBuildPcItem(currentItemId);
@@ -222,7 +223,7 @@ public class OrderBuildPCAdmin extends DBAdminContext {
     // 4. Gán nhân viên chuẩn bị
     public void insertOrderPreparementForBuildPC(int userID, int orderID) {
         String sql = "INSERT INTO OrderPreparements (UserID, OrderID, PrepareTime) VALUES (?, ?, CURRENT_DATE)";
-        try (Connection conn = connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userID);
             ps.setInt(2, orderID);
             ps.executeUpdate();
@@ -341,47 +342,43 @@ public class OrderBuildPCAdmin extends DBAdminContext {
         }
     }
 
-  public List<BuildPCAdmin> getBuildPCItemsByOrderID2(int orderID) {
-    List<BuildPCAdmin> list = new ArrayList<>();
-    String sql = "SELECT * FROM Order_BuildPCItems WHERE OrderID = ?";
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, orderID);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            BuildPCAdmin item = new BuildPCAdmin();
-            item.setOrderBuildPcItemId(rs.getInt("OrderBuildPCItemID"));
-            item.setOrderId(rs.getInt("OrderID"));
-            // Gán thêm các field nếu cần
-            list.add(item);
+    public List<BuildPCAdmin> getBuildPCItemsByOrderID2(int orderID) {
+        List<BuildPCAdmin> list = new ArrayList<>();
+        String sql = "SELECT OrderBuildPCItemID, OrderID, BuildPCID, Price FROM Order_BuildPCItems WHERE OrderID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, orderID);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                BuildPCAdmin item = new BuildPCAdmin();
+                item.setOrderBuildPcItemId(rs.getInt("OrderBuildPCItemID"));
+                item.setOrderId(rs.getInt("OrderID"));
+                item.setBuildPcId(rs.getInt("BuildPCID"));
+                item.setPrice(rs.getInt("Price"));
+                list.add(item);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+        return list;
     }
-    return list;
-}
 
-
-    public void fillProductsForBuildPC(int itemID) {
+    public void assignProductsToBuildPCItem(int itemID) {
         String getDetailsSQL = "SELECT OrderBuildPCDetailID, CategoryID FROM Order_BuildPCDetails WHERE OrderBuildPCItemID = ?";
         String getUnassignedSQL = "SELECT OrderBuildPCProductID FROM Order_BuildPC_Products WHERE OrderBuildPCDetailID = ? AND ProductID IS NULL";
         String getProductsSQL = "SELECT p.ProductID FROM Products p JOIN Imports i ON p.ImportID = i.ImportID WHERE i.CategoryID = ? AND p.Status = 1 LIMIT ?";
         String updateSQL = "UPDATE Order_BuildPC_Products SET ProductID = ? WHERE OrderBuildPCProductID = ?";
         String markUsedSQL = "UPDATE Products SET Status = 0 WHERE ProductID = ?";
 
-        try {
-            if (connection == null || connection.isClosed()) {
-                System.err.println("❌ Kết nối CSDL chưa được thiết lập hoặc đã đóng.");
-                return;
-            }
+        try (Connection conn = new DBAdminContext().connection) {
+            conn.setAutoCommit(false); 
+            PreparedStatement psGetDetails = conn.prepareStatement(getDetailsSQL);
+            PreparedStatement psGetUnassigned = conn.prepareStatement(getUnassignedSQL);
+            PreparedStatement psGetProducts = conn.prepareStatement(getProductsSQL);
+            PreparedStatement psUpdate = conn.prepareStatement(updateSQL);
+            PreparedStatement psMarkUsed = conn.prepareStatement(markUsedSQL);
 
-            PreparedStatement psGetDetails = connection.prepareStatement(getDetailsSQL);
-            PreparedStatement psGetUnassigned = connection.prepareStatement(getUnassignedSQL);
-            PreparedStatement psGetProducts = connection.prepareStatement(getProductsSQL);
-            PreparedStatement psUpdate = connection.prepareStatement(updateSQL);
-            PreparedStatement psMarkUsed = connection.prepareStatement(markUsedSQL);
-
-            // 1. Lấy danh sách DetailID và CategoryID
             psGetDetails.setInt(1, itemID);
+
             List<Integer> detailIDs = new ArrayList<>();
             Map<Integer, Integer> detailToCategory = new HashMap<>();
 
@@ -395,15 +392,13 @@ public class OrderBuildPCAdmin extends DBAdminContext {
             }
 
             if (detailIDs.isEmpty()) {
-                System.out.println("❌ Không có OrderBuildPCDetail nào thuộc ItemID = " + itemID);
+                System.out.println(" Không có BuildPCDetail nào thuộc ItemID = " + itemID);
                 return;
             }
 
-            // 2. Gán sản phẩm
             for (int detailID : detailIDs) {
                 int categoryID = detailToCategory.get(detailID);
 
-                // 2.1 Lấy các dòng chưa gán
                 List<Integer> buildProductIDs = new ArrayList<>();
                 psGetUnassigned.setInt(1, detailID);
                 try (ResultSet rs = psGetUnassigned.executeQuery()) {
@@ -413,10 +408,10 @@ public class OrderBuildPCAdmin extends DBAdminContext {
                 }
 
                 if (buildProductIDs.isEmpty()) {
+                    System.out.println("️ Không có dòng nào cần gán cho DetailID = " + detailID);
                     continue;
                 }
 
-                // 2.2 Lấy danh sách sản phẩm đủ hàng
                 psGetProducts.setInt(1, categoryID);
                 psGetProducts.setInt(2, buildProductIDs.size());
 
@@ -428,11 +423,10 @@ public class OrderBuildPCAdmin extends DBAdminContext {
                 }
 
                 if (productIDs.size() < buildProductIDs.size()) {
-                    System.out.println("⚠️ Không đủ sản phẩm cho CategoryID = " + categoryID);
+                    System.out.println("️ Không đủ sản phẩm tồn kho cho CategoryID = " + categoryID);
                     continue;
                 }
 
-                // 2.3 Gán sản phẩm
                 for (int i = 0; i < buildProductIDs.size(); i++) {
                     int obpID = buildProductIDs.get(i);
                     int productID = productIDs.get(i);
@@ -447,13 +441,20 @@ public class OrderBuildPCAdmin extends DBAdminContext {
 
                 psUpdate.executeBatch();
                 psMarkUsed.executeBatch();
+
+                System.out.println("Đã gán sản phẩm thành công cho DetailID = " + detailID);
             }
 
-            System.out.println("✅ Hoàn tất gán sản phẩm cho BuildPCItemID = " + itemID);
-
+            conn.commit();
+            System.out.println(" Đã gán sản phẩm cho tất cả chi tiết trong BuildPCItemID = " + itemID);
         } catch (Exception e) {
-            System.err.println("❌ Lỗi khi gán sản phẩm:");
             e.printStackTrace();
+            System.err.println("Có lỗi xảy ra, rollback!");
+            try (Connection conn = new DBAdminContext().connection) {
+                conn.rollback();
+            } catch (Exception rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
         }
     }
 
@@ -763,46 +764,15 @@ public class OrderBuildPCAdmin extends DBAdminContext {
     }
 
     public static void main(String[] args) {
-        OrderBuildPCAdmin dao = new OrderBuildPCAdmin(); // DAO chỉ tạo 1 lần, dùng lại
-
-        int orderID = 13; // <-- Thay ID đơn hàng nếu cần
-
+        OrderBuildPCAdmin dao = new OrderBuildPCAdmin();
         try {
-            // ✅ Kiểm tra kết nối CSDL
-            if (!dao.isConnected()) {
-                System.err.println("❌ Không thể kết nối đến CSDL.");
-                return;
-            }
-
-            // ✅ Bước 1: Lấy danh sách các BuildPCItem từ orderID
-            List<BuildPCAdmin> items = dao.getBuildPCItemsByOrderID(orderID);
-            if (items == null || items.isEmpty()) {
-                System.out.println("❌ Không tìm thấy bất kỳ BuildPCItem nào cho OrderID = " + orderID);
-                return;
-            }
-
-            // ✅ In thông tin từng item và lưu lại ID
-            List<Integer> itemIDs = new ArrayList<>();
-            for (BuildPCAdmin item : items) {
-                System.out.println("🧩 BuildPC Item: ID = " + item.getOrderBuildPcItemId());
-
-                itemIDs.add(item.getOrderBuildPcItemId());
-
-            }
-
-            // ✅ Gán sản phẩm cho từng item ID (sau khi thoát khỏi ResultSet)
-            for (int itemID : itemIDs) {
-                System.out.println("🔁 Đang gán sản phẩm cho itemID = " + itemID);
-                dao.fillProductsForBuildPC(itemID);
-            }
-
-            System.out.println("✅ Hoàn tất xử lý tất cả các BuildPC Items cho OrderID = " + orderID);
+            int testItemID = 1; // hoặc bất kỳ ID nào bạn cần test
+            dao.assignProductsToBuildPCItem(testItemID);
 
         } catch (Exception e) {
-            System.err.println("❌ Lỗi trong quá trình xử lý main:");
+            System.err.println("❌ Lỗi khi chạy test:");
             e.printStackTrace();
-        } finally {
-            dao.close(); // ✅ Đảm bảo đóng kết nối sau khi xử lý xong
+
         }
     }
 

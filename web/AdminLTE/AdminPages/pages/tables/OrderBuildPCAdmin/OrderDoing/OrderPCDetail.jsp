@@ -20,7 +20,15 @@
         <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/dist/css/AdminLTE.min.css">
         <link rel="stylesheet" href="${ctx}/AdminLTE/AdminPages/dist/css/skins/_all-skins.min.css">
     </head>
-
+    <%
+        String orderIdParam = request.getParameter("orderID");
+        if (orderIdParam != null && !orderIdParam.isEmpty()) {
+            int orderId = Integer.parseInt(orderIdParam);
+            // tiếp tục xử lý
+        } else {
+            out.println("<h3 style='color:red;'>Thiếu hoặc sai tham số orderId!</h3>");
+        }
+    %>
     <body class="hold-transition skin-blue sidebar-mini">
         <div class="wrapper">
 
@@ -48,14 +56,13 @@
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Order Code</th>
-                                                <th>Category Name</th>
+                                                <th>Order Code</th>              
+                                               <th>Category Name</th>
                                                 <th>Quantity</th>
                                                 <th>Warranty</th>
                                                 <th>Price</th>
                                                 <th>Inventory</th>
                                                 <th>Queue</th>
-
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -70,13 +77,12 @@
                                                                 <c:when test="${not empty item.warrantyDesc}">
                                                                     ${item.warrantyDesc}
                                                                 </c:when>
-                                                                <c:otherwise>Không có</c:otherwise>
+                                                                <c:otherwise>No Have</c:otherwise>
                                                             </c:choose>
                                                         </td>
                                                         <td><fmt:formatNumber value="${item.price}" type="currency" currencySymbol="₫" /></td>
                                                         <td>${item.inventory}</td>
                                                         <td>${item.queue}</td>
-
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
@@ -87,12 +93,18 @@
                                             <input type="hidden" name="service" value="updateStatus">
                                             <input type="hidden" name="status" value="3">
                                             <input type="hidden" name="orderID" value="${orderID}">
+                                            <c:forEach var="item" items="${items}">
+                                                <input type="hidden" name="itemIds" value="${item.orderBuildPcItemId}">
+                                            </c:forEach>
                                             <button type="submit" class="btn btn-success" onclick="return confirm('Confirm accept this PC order?')">Receive</button>
                                         </form>
                                         <form action="OrderBuildPC" method="post" style="display: inline; margin-left: 10px;">
                                             <input type="hidden" name="service" value="updateStatus">
                                             <input type="hidden" name="status" value="0">
                                             <input type="hidden" name="orderID" value="${orderID}">
+                                            <c:forEach var="item" items="${items}">
+                                                <input type="hidden" name="itemIds" value="${item.orderBuildPcItemId}">
+                                            </c:forEach>
                                             <button type="submit" class="btn btn-danger" onclick="return confirm('Confirm reject this PC order?')">Reject</button>
                                         </form>
                                     </div>
