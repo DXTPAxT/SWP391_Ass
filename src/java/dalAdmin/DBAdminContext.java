@@ -46,7 +46,15 @@ public class DBAdminContext {
             return false;
         }
     }
-
+public void close() {
+    try {
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+}
     public static void main(String[] args) {
         try {
             DBAdminContext dbContext = new DBAdminContext();

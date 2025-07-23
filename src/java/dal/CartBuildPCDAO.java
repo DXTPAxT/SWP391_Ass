@@ -135,208 +135,212 @@ public class CartBuildPCDAO extends DBContext {
         return false;
     }
 
-  public int insertOrderFromCartAndReturnOrderID(int cartBuildPCID, int userID) {
-    String getUserSQL = "SELECT FullName, PhoneNumber FROM Users WHERE UserID = ?";
-    String getItemsSQL = """
+    public int insertOrderFromCartAndReturnOrderID(int cartBuildPCID, int userID) {
+        String getUserSQL = "SELECT FullName, PhoneNumber FROM Users WHERE UserID = ?";
+        String getItemsSQL = """
         SELECT cbi.CategoryID, cbi.WarrantyDetailID, cbi.Price
         FROM Cart_Build_PC_Items cbi
         WHERE cbi.CartBuildPCID = ?
     """;
-    String insertBuildPCSQL = "INSERT INTO Build_PC (Price, Status, UserID) VALUES (?, 1, ?)";
+        String insertBuildPCSQL = "INSERT INTO Build_PC (Price, Status, UserID) VALUES (?, 1, ?)";
 
-    String insertBuildPCItemSQL = """
+        String insertBuildPCItemSQL = """
         INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status)
         VALUES (?, ?, ?, ?, 1)
     """;
-    String insertOrderSQL = """
+        String insertOrderSQL = """
         INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, PhoneNumber, Fullname, PaymentStatusID, TotalAmount, Status)
-        VALUES (?, 1, ?, NOW(), '', ?, ?, 2, ?, 1)
+        VALUES (NULL, 1, ?, NOW(), '', ?, ?, 2, ?, 1)
     """;
-    String insertOrderItemSQL = "INSERT INTO Order_BuildPCItems (OrderID, BuildPCID, Price) VALUES (?, ?, ?)";
-    String insertDetailSQL = """
+        String insertOrderItemSQL = "INSERT INTO Order_BuildPCItems (OrderID, BuildPCID, Price) VALUES (?, ?, ?)";
+        String insertDetailSQL = """
         INSERT INTO Order_BuildPCDetails (OrderBuildPCItemID, CategoryID, Price, Status)
         VALUES (?, ?, ?, 1)
     """;
-    String insertProductSQL = """
+        String insertProductSQL = """
         INSERT INTO Order_BuildPC_Products (OrderBuildPCDetailID, ProductID, WarrantyDetailID)
         VALUES (?, NULL, ?)
     """;
-    String deleteCartItemsSQL = "DELETE FROM Cart_Build_PC_Items WHERE CartBuildPCID = ?";
-    String deleteCartSQL = "DELETE FROM Cart_Build_PC WHERE CartBuildPCID = ?";
-    try {
-        connection.setAutoCommit(false);
+        String deleteCartItemsSQL = "DELETE FROM Cart_Build_PC_Items WHERE CartBuildPCID = ?";
+        String deleteCartSQL = "DELETE FROM Cart_Build_PC WHERE CartBuildPCID = ?";
+        try {
+            connection.setAutoCommit(false);
 
-        PreparedStatement psUser = connection.prepareStatement(getUserSQL);
-        psUser.setInt(1, userID);
-        ResultSet rsUser = psUser.executeQuery();
-        if (!rsUser.next()) {
-            connection.rollback();
-            return -1;
-        }
-        String fullName = rsUser.getString("FullName");
-        String phone = rsUser.getString("PhoneNumber");
-
-        PreparedStatement psItems = connection.prepareStatement(getItemsSQL);
-        psItems.setInt(1, cartBuildPCID);
-        ResultSet rsItems = psItems.executeQuery();
-
-        List<Object[]> items = new ArrayList<>();
-        int totalPrice = 0;
-        while (rsItems.next()) {
-            int categoryID = rsItems.getInt("CategoryID");
-            int warrantyID = rsItems.getInt("WarrantyDetailID");
-            int price = rsItems.getInt("Price");
-            items.add(new Object[]{categoryID, warrantyID, price});
-            totalPrice += price;
-        }
-
-        if (items.size() != 6) {
-            connection.rollback();
-            return -1;
-        }
-
-        int finalPrice = (int) Math.round(totalPrice * 0.8);
-
-        PreparedStatement psBuildPC = connection.prepareStatement(insertBuildPCSQL, Statement.RETURN_GENERATED_KEYS);
-        psBuildPC.setInt(1, finalPrice);
-        psBuildPC.setInt(2, userID);
-        psBuildPC.executeUpdate();
-        ResultSet rsBuildPC = psBuildPC.getGeneratedKeys();
-        if (!rsBuildPC.next()) {
-            connection.rollback();
-            return -1;
-        }
-        int buildPCID = rsBuildPC.getInt(1);
-
-        PreparedStatement psInsertBuildPCItem = connection.prepareStatement(insertBuildPCItemSQL);
-        for (Object[] item : items) {
-            psInsertBuildPCItem.setInt(1, buildPCID);
-            psInsertBuildPCItem.setInt(2, (int) item[0]);
-            psInsertBuildPCItem.setInt(3, (int) item[2]);
-            if ((int) item[1] > 0)
-                psInsertBuildPCItem.setInt(4, (int) item[1]);
-            else
-                psInsertBuildPCItem.setNull(4, Types.INTEGER);
-            psInsertBuildPCItem.addBatch();
-        }
-        psInsertBuildPCItem.executeBatch();
-
-        PreparedStatement psOrder = connection.prepareStatement(insertOrderSQL, Statement.RETURN_GENERATED_KEYS);
-        psOrder.setString(1, "OD" + System.currentTimeMillis());
-        psOrder.setInt(2, userID);
-        psOrder.setString(3, phone);
-        psOrder.setString(4, fullName);
-        psOrder.setInt(5, finalPrice);
-        psOrder.executeUpdate();
-
-        ResultSet rsOrder = psOrder.getGeneratedKeys();
-        if (!rsOrder.next()) {
-            connection.rollback();
-            return -1;
-        }
-        int orderID = rsOrder.getInt(1);
-
-        PreparedStatement psInsertOrderItem = connection.prepareStatement(insertOrderItemSQL, Statement.RETURN_GENERATED_KEYS);
-        psInsertOrderItem.setInt(1, orderID);
-        psInsertOrderItem.setInt(2, buildPCID);
-        psInsertOrderItem.setInt(3, finalPrice);
-        psInsertOrderItem.executeUpdate();
-
-        ResultSet rsOrderItem = psInsertOrderItem.getGeneratedKeys();
-        if (!rsOrderItem.next()) {
-            connection.rollback();
-            return -1;
-        }
-        int orderBuildPCItemID = rsOrderItem.getInt(1);
-
-        PreparedStatement psInsertDetail = connection.prepareStatement(insertDetailSQL, Statement.RETURN_GENERATED_KEYS);
-        PreparedStatement psInsertProduct = connection.prepareStatement(insertProductSQL);
-
-        for (Object[] item : items) {
-            int categoryID = (int) item[0];
-            int warrantyID = (int) item[1];
-            int price = (int) item[2];
-
-            psInsertDetail.setInt(1, orderBuildPCItemID);
-            psInsertDetail.setInt(2, categoryID);
-            psInsertDetail.setInt(3, price);
-            psInsertDetail.executeUpdate();
-
-            ResultSet rsDetail = psInsertDetail.getGeneratedKeys();
-            if (!rsDetail.next()) {
+            PreparedStatement psUser = connection.prepareStatement(getUserSQL);
+            psUser.setInt(1, userID);
+            ResultSet rsUser = psUser.executeQuery();
+            if (!rsUser.next()) {
                 connection.rollback();
                 return -1;
             }
-            int orderBuildPCDetailID = rsDetail.getInt(1);
+            String fullName = rsUser.getString("FullName");
+            String phone = rsUser.getString("PhoneNumber");
 
-            psInsertProduct.setInt(1, orderBuildPCDetailID);
-            if (warrantyID > 0)
-                psInsertProduct.setInt(2, warrantyID);
-            else
-                psInsertProduct.setNull(2, Types.INTEGER);
-            psInsertProduct.executeUpdate();
+            PreparedStatement psItems = connection.prepareStatement(getItemsSQL);
+            psItems.setInt(1, cartBuildPCID);
+            ResultSet rsItems = psItems.executeQuery();
+
+            List<Object[]> items = new ArrayList<>();
+            int totalPrice = 0;
+            while (rsItems.next()) {
+                int categoryID = rsItems.getInt("CategoryID");
+                int warrantyID = rsItems.getInt("WarrantyDetailID");
+                int price = rsItems.getInt("Price");
+                items.add(new Object[]{categoryID, warrantyID, price});
+                totalPrice += price;
+            }
+
+            if (items.size() != 6) {
+                connection.rollback();
+                return -1;
+            }
+
+            int finalPrice = totalPrice;
+
+            PreparedStatement psBuildPC = connection.prepareStatement(insertBuildPCSQL, Statement.RETURN_GENERATED_KEYS);
+            psBuildPC.setInt(1, finalPrice);
+            psBuildPC.setInt(2, userID);
+            psBuildPC.executeUpdate();
+            ResultSet rsBuildPC = psBuildPC.getGeneratedKeys();
+            if (!rsBuildPC.next()) {
+                connection.rollback();
+                return -1;
+            }
+            int buildPCID = rsBuildPC.getInt(1);
+
+            PreparedStatement psInsertBuildPCItem = connection.prepareStatement(insertBuildPCItemSQL);
+            for (Object[] item : items) {
+                psInsertBuildPCItem.setInt(1, buildPCID);
+                psInsertBuildPCItem.setInt(2, (int) item[0]);
+                psInsertBuildPCItem.setInt(3, (int) item[2]);
+                if ((int) item[1] > 0) {
+                    psInsertBuildPCItem.setInt(4, (int) item[1]);
+                } else {
+                    psInsertBuildPCItem.setNull(4, Types.INTEGER);
+                }
+                psInsertBuildPCItem.addBatch();
+            }
+            psInsertBuildPCItem.executeBatch();
+
+            PreparedStatement psOrder = connection.prepareStatement(insertOrderSQL, Statement.RETURN_GENERATED_KEYS);
+            psOrder.setInt(1, userID);
+            psOrder.setString(2, phone);
+            psOrder.setString(3, fullName);
+            psOrder.setInt(4, finalPrice);
+            psOrder.executeUpdate();
+
+            ResultSet rsOrder = psOrder.getGeneratedKeys();
+            if (!rsOrder.next()) {
+                connection.rollback();
+                return -1;
+            }
+            int orderID = rsOrder.getInt(1);
+
+            String updateOrderCodeSQL = "UPDATE Orders SET OrderCode = ? WHERE OrderID = ?";
+            PreparedStatement psUpdateOrderCode = connection.prepareStatement(updateOrderCodeSQL);
+            psUpdateOrderCode.setString(1, "OD" + orderID);
+            psUpdateOrderCode.setInt(2, orderID);
+            psUpdateOrderCode.executeUpdate();
+            PreparedStatement psInsertOrderItem = connection.prepareStatement(insertOrderItemSQL, Statement.RETURN_GENERATED_KEYS);
+            psInsertOrderItem.setInt(1, orderID);
+            psInsertOrderItem.setInt(2, buildPCID);
+            psInsertOrderItem.setInt(3, finalPrice);
+            psInsertOrderItem.executeUpdate();
+
+            ResultSet rsOrderItem = psInsertOrderItem.getGeneratedKeys();
+            if (!rsOrderItem.next()) {
+                connection.rollback();
+                return -1;
+            }
+            int orderBuildPCItemID = rsOrderItem.getInt(1);
+
+            PreparedStatement psInsertDetail = connection.prepareStatement(insertDetailSQL, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement psInsertProduct = connection.prepareStatement(insertProductSQL);
+
+            for (Object[] item : items) {
+                int categoryID = (int) item[0];
+                int warrantyID = (int) item[1];
+                int price = (int) item[2];
+
+                psInsertDetail.setInt(1, orderBuildPCItemID);
+                psInsertDetail.setInt(2, categoryID);
+                psInsertDetail.setInt(3, price);
+                psInsertDetail.executeUpdate();
+
+                ResultSet rsDetail = psInsertDetail.getGeneratedKeys();
+                if (!rsDetail.next()) {
+                    connection.rollback();
+                    return -1;
+                }
+                int orderBuildPCDetailID = rsDetail.getInt(1);
+
+                psInsertProduct.setInt(1, orderBuildPCDetailID);
+                if (warrantyID > 0) {
+                    psInsertProduct.setInt(2, warrantyID);
+                } else {
+                    psInsertProduct.setNull(2, Types.INTEGER);
+                }
+                psInsertProduct.executeUpdate();
+            }
+
+            PreparedStatement psDeleteItems = connection.prepareStatement(deleteCartItemsSQL);
+            psDeleteItems.setInt(1, cartBuildPCID);
+            psDeleteItems.executeUpdate();
+
+            PreparedStatement psDeleteCart = connection.prepareStatement(deleteCartSQL);
+            psDeleteCart.setInt(1, cartBuildPCID);
+            psDeleteCart.executeUpdate();
+
+            connection.commit();
+            return orderID;
+
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
-
-        PreparedStatement psDeleteItems = connection.prepareStatement(deleteCartItemsSQL);
-        psDeleteItems.setInt(1, cartBuildPCID);
-        psDeleteItems.executeUpdate();
-
-        PreparedStatement psDeleteCart = connection.prepareStatement(deleteCartSQL);
-        psDeleteCart.setInt(1, cartBuildPCID);
-        psDeleteCart.executeUpdate();
-
-        connection.commit();
-        return orderID;
-
-    } catch (SQLException e) {
-        try {
-            connection.rollback();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        e.printStackTrace();
-    } finally {
-        try {
-            connection.setAutoCommit(true);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        return -1;
     }
-    return -1;
-}
 
+    public int getCartBuildPCPrice(int cartBuildPCID) {
+        String sql = "SELECT SUM(Price) AS TotalPrice FROM Cart_Build_PC_Items WHERE CartBuildPCID = ?";
 
-public int getCartBuildPCPrice(int cartBuildPCID) {
-    String sql = "SELECT SUM(Price) AS TotalPrice FROM Cart_Build_PC_Items WHERE CartBuildPCID = ?";
-    
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, cartBuildPCID);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            return rs.getInt("TotalPrice"); // Nếu null sẽ trả về 0
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, cartBuildPCID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("TotalPrice"); // Nếu null sẽ trả về 0
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return 0;
     }
-    return 0;
-}
 
 // Updated getDepositAmountByOrderID with 20% deposit
-public int getDepositAmountByOrderID(int orderID) {
-    String sql = "SELECT TotalAmount FROM Orders WHERE OrderID = ?";
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, orderID);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            int total = rs.getInt("TotalAmount");
-            return (int) (total * 0.2); // 20% đặt cọc
+    public int getDepositAmountByOrderID(int orderID) {
+        String sql = "SELECT TotalAmount FROM Orders WHERE OrderID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, orderID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int total = rs.getInt("TotalAmount");
+                return (int) (total * 0.2); // 20% đặt cọc
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return -1;
     }
-    return -1;
-}
-
 
     public boolean updatePaymentStatus(int orderID, int statusID) {
         String sql = "UPDATE Orders SET PaymentStatusID = ? WHERE OrderID = ?";
@@ -350,40 +354,38 @@ public int getDepositAmountByOrderID(int orderID) {
         }
     }
 
-  public boolean insertPayment(int orderID, double amount, String paymentMethod, String status) {
-    String sql = "INSERT INTO Payments (OrderID, PaymentMethod, PaidAmount, PaymentStatus) VALUES (?, ?, ?, ?)";
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, orderID);
-        ps.setString(2, paymentMethod);  // có thể là "VNPay" hoặc "COD"
-        ps.setDouble(3, amount);
-        ps.setString(4, status);         // ví dụ "paid" hoặc "pending"
-        return ps.executeUpdate() > 0;
-    } catch (SQLException e) {
-        e.printStackTrace();
-        return false;
+    public boolean insertPayment(int orderID, double amount, String paymentMethod, String status) {
+        String sql = "INSERT INTO Payments (OrderID, PaymentMethod, PaidAmount, PaymentStatus) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, orderID);
+            ps.setString(2, paymentMethod);  // có thể là "VNPay" hoặc "COD"
+            ps.setDouble(3, amount);
+            ps.setString(4, status);         // ví dụ "paid" hoặc "pending"
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
-}
 
+    public void updateOrderCustomerInfo(int orderID, String fullname, String phone, String address, String note, int paymentStatusID) {
+        String sql = "UPDATE Orders SET Fullname = ?, PhoneNumber = ?, Address = ?, Note = ?, PaymentStatusID = ? WHERE OrderID = ?";
 
-public void updateOrderCustomerInfo(int orderID, String fullname, String phone, String address, String note, int paymentStatusID) {
-    String sql = "UPDATE Orders SET Fullname = ?, PhoneNumber = ?, Address = ?, Note = ?, PaymentStatusID = ? WHERE OrderID = ?";
+        try (
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
-    try (
-         PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, fullname);
+            ps.setString(2, phone);
+            ps.setString(3, address);
+            ps.setString(4, note);
+            ps.setInt(5, paymentStatusID);
+            ps.setInt(6, orderID);
 
-        ps.setString(1, fullname);
-        ps.setString(2, phone);
-        ps.setString(3, address);
-        ps.setString(4, note);
-        ps.setInt(5, paymentStatusID);
-        ps.setInt(6, orderID);
+            ps.executeUpdate();
 
-        ps.executeUpdate();
-
-    } catch (Exception e) {
-        e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
-
 
 }

@@ -139,9 +139,10 @@
                 </a>
                 <ul class="treeview-menu" <% if ("orderbuildpc".equals(activeMenu)) { %>style="display:block;"<% } %>>                               
                     <li><a href="${param.ctx}/OrderBuildPC?service=listRejected" class="<% if ("orderbuildpc".equals(activeMenu)) { %>active<% } %>"><i class="fa fa-circle-o"></i>Reject</a></li>
-                    <li><a href="${param.ctx}/OrderBuildPC?service=listWaitingStaff"><i class="fa fa-circle-o"></i>Staff Mission</a></li>
                     <li><a href="${param.ctx}/OrderBuildPC?service=listInProcess"><i class="fa fa-circle-o"></i>In Process PC Order</a></li>
-                    <li><a href="${param.ctx}/OrderBuildPCAdmin"><i class="fa fa-circle-o"></i>Success PC Order</a></li>
+                    <li><a href="${param.ctx}/OrderBuildPC?service=listWaitingShipping"><i class="fa fa-circle-o"></i>Waiting Ship</a></li>
+                    <li><a href="${param.ctx}/OrderBuildPC?service=listOnShipping"><i class="fa fa-circle-o"></i>On Shipping Order</a></li>
+                    <li><a href="${param.ctx}/OrderBuildPCAdmin?service=listCompleted"><i class="fa fa-circle-o"></i>Success Order</a></li>
                     <!-- don thay the neu phai doi hang cho khach -->
                     <li><a href="${param.ctx}/OrderAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert Replacement Order </a></li> 
                 </ul>
