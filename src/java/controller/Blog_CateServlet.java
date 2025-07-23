@@ -25,7 +25,7 @@ public class Blog_CateServlet extends HttpServlet {
         Blog_CateDAO dao = new Blog_CateDAO();
         List<Blog_Cate> categories = dao.getAllBlogCategory();
         String Bc_id_raw = request.getParameter("Bc_id");
-        String searchKeyword = request.getParameter("search");
+        String searchKeyword = request.getParameter("searchKeyword");
         String sort = request.getParameter("sort");
         String page_raw = request.getParameter("page");
 
@@ -45,7 +45,9 @@ public class Blog_CateServlet extends HttpServlet {
             if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
                 postList = dao.searchPostsByTitle(searchKeyword);
                 count = postList.size();
-            } else if (Bc_id_raw != null) {
+            System.out.println("Keyword: " + searchKeyword);
+            System.out.println("Search result size: " + postList.size());
+            }else if (Bc_id_raw != null) {
                 int Bc_id = Integer.parseInt(Bc_id_raw);
                 postList = dao.getPostsByCategorySorted(Bc_id, sort);
                 count = postList.size();
