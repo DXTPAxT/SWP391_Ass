@@ -117,19 +117,16 @@
                         </div>
                     </div>
                     <div class="search_box pull-right">
+                       
                         <form action="${ctx}/CategoriesController" method="get" style="display: flex;">
                             <input type="hidden" name="service" value="filter"/>
-                            <input type="text" name="keyword" class="form-control" placeholder="Insert name product"
+                            <input type="text" name="keyword" class="form-control" placeholder="Insert product name"
                                    value="${not empty param.keyword ? param.keyword : ''}" style="width: 180px;" />
                         </form>
+
                     </div>
-                    <div class="search_box pull-right">
-                        <form action="${ctx}/blogc" method="get" style="display: flex;">
-                            <input type="hidden" name="service" value="filter"/>
-                            <input type="text" name="keyword" class="form-control" placeholder="Search by title...."
-                                   value="${not empty param.keyword ? param.keyword : ''}" style="width: 180px;" />
-                        </form>
-                    </div>
+
+
                 </div>
             </div>
         </div><!--/header-bottom-->
@@ -146,5 +143,5 @@
                 </a>
             </div>
         </div>
-    </c:if>
+    </c:if> 
 </header><!--/header-->

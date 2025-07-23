@@ -82,7 +82,11 @@
 
 
                             <h2 class="title text-center">Latest From our Blog</h2>
-
+                            <form action="${ctx}/blogc" method="get" style="display: flex; justify-content: center; margin-bottom: 20px;">
+                                <input type="text" name="searchKeyword" class="form-control" placeholder="Search by title..."
+                                       value="${not empty param.searchKeyword ? param.searchKeyword : ''}" style="width: 300px;" />
+                                <button type="submit" style="margin-left: 10px;">Search</button>
+                            </form>                           
                             <style>
                                 .brief-text {
                                     display: -webkit-box;

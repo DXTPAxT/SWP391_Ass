@@ -351,10 +351,11 @@ public void likeComment(int CommentID, int UserID) {
 
     public List<Post> getPostsByAuthorRole(String roleName) {
         List<Post> list = new ArrayList<>();
-        String query = "SELECT p.* FRSOM Post p "
-                + "JOIN Users u ON p.Add_id = u.UserID "
-                + "JOIN Roles r ON u.RoleID = r.RoleID "
-                + "WHERE r.RoleName = ?";
+        String query = "SELECT p.*, c.Bc_name FROM Post p "
+                 + "JOIN Users u ON p.Add_id = u.UserID "
+                 + "JOIN Roles r ON u.RoleID = r.RoleID "
+                 + "JOIN Blogs_category c ON p.Bc_id = c.Bc_id "
+                 + "WHERE r.RoleName = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, roleName);
@@ -431,7 +432,9 @@ public void likeComment(int CommentID, int UserID) {
 
     public List<Post> searchPostsByTitle(String keyword) throws SQLException {
         List<Post> result = new ArrayList<>();
-        String sql = "SELECT * FROM Post WHERE Title LIKE ?";
+        String sql = "SELECT p.*, c.Bc_name FROM Post p "
+           + "JOIN blogs_category c ON p.Bc_id = c.Bc_id "
+           + "WHERE p.Title LIKE ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, "%" + keyword + "%");

@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import models.Blog_Cate;
 import models.Post;
@@ -64,39 +65,56 @@ public class BlogAdminServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String selectedRole = request.getParameter("role");
+        String sort = request.getParameter("sort");
+        String searchKeyword = request.getParameter("q");
         Blog_CateDAO dao = new Blog_CateDAO();
         List<Blog_Cate> categories = dao.getAllBlogCategory();
-
-        String sort = request.getParameter("sort");
-        List<Post> post;
+        List<Post> post = new ArrayList<>();
+        
+        String roleName = null;
         if (selectedRole == null || selectedRole.equals("all")) {
-            post = dao.getAllPost();
+            roleName = null;
         } else {
-            // Convert to proper RoleName in DB
-            String roleName = switch (selectedRole) {
+            roleName = switch (selectedRole.toLowerCase()) {
                 case "admin" ->
                     "Admin";
-                case "staff" ->
-                    "Staff";
-                case "customer" ->
-                    "Customer";
+                case "sale", "staff" ->
+                    "Sale";
                 default ->
-                    "";
+                    null;
             };
-            post = dao.getPostsByAuthorRole(roleName);
-        }
-        if ("A to Z".equalsIgnoreCase(sort)) {
-            post = dao.getPostsSortedByTitle(true);  // ASC
-        } else if ("Z to A".equalsIgnoreCase(sort)) {
-            post = dao.getPostsSortedByTitle(false); // DESC
-        } else {
-            post = dao.getAllPost(); // default
+
         }
 
+        try {
+            if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
+                post = dao.searchPostsByTitle(searchKeyword.trim());
+            } else if (roleName == null) {
+                post = dao.getAllPost();
+            } else {
+                post = dao.getPostsByAuthorRole(roleName);
+            }
+//            System.out.println("===> Role selected: " + selectedRole);
+//            System.out.println("===> Role name used to filter: " + roleName);
+//            System.out.println("===> Post count after filter: " + post.size());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if ("A to Z".equalsIgnoreCase(sort)) {
+            post.sort((a, b) -> a.getTitle().compareToIgnoreCase(b.getTitle()));
+        } else if ("Z to A".equalsIgnoreCase(sort)) {
+            post.sort((a, b) -> b.getTitle().compareToIgnoreCase(a.getTitle()));
+        }
+
+        // Truyền dữ liệu qua JSP
         request.setAttribute("blog_categories", categories);
         request.setAttribute("postlist", post);
-        request.setAttribute("selectedSort", sort); // để giữ trạng thái dropdown 
+        request.setAttribute("selectedSort", sort);
         request.setAttribute("selectedRole", selectedRole);
+        request.setAttribute("keyword", searchKeyword);
+
         request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/blogAdmin.jsp").forward(request, response);
     }
 

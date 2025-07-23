@@ -53,7 +53,7 @@
         <div class="wrapper">
 
 
-          
+
 
             <jsp:include page="../../components/header.jsp" />
 
@@ -84,7 +84,7 @@
 
                                 </div>
                                 <div style="margin-left: 50px;">
-                                    <form action="bloga" method="get" class="form-inline"
+                                    <form action="${ctx}/bloga" method="get" class="form-inline"
                                           style="display: flex; gap: 20px; max-width: 900px; flex-wrap: wrap;">
 
                                         <select name="sort" class="form-control" onchange="this.form.submit()">
@@ -94,15 +94,17 @@
                                         </select>
 
 
-                                        <select name="role" class="form-control" style="min-width: 150px;">
-                                            <option value="all">All Roles</option>
-                                            <option value="admin">Admin</option>
-                                            <option value="staff">Staff</option>
+                                        <select name="role" class="form-control" style="min-width: 150px;" onchange="this.form.submit()">
+                                            <option value="all" ${selectedRole == null || selectedRole == 'all' ? 'selected' : ''}>All Roles</option>
+                                            <option value="admin" ${selectedRole == 'admin' ? 'selected' : ''}>Admin</option>
+                                            <option value="sale" ${selectedRole == 'sale' ? 'selected' : ''}>Sale</option>
                                         </select>
+
 
                                         <div style="display: flex; gap: 5px;">
                                             <input type="text" name="q" class="form-control" 
-                                                   placeholder="Search by title, content, or category..." style="min-width: 250px;" />
+                                                   placeholder="Search by title..." style="min-width: 250px;" 
+                                                   value="${param.q}" />
 
                                             <button type="submit" style="background-color: #367FA9; color: white; border: none; padding: 6px 12px;">
                                                 <i class="fa fa-search"></i> Search
