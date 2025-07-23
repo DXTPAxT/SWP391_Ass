@@ -84,13 +84,12 @@ public class OrderBuildPC extends HttpServlet {
             String status_raw = request.getParameter("status");
             String[] itemIDs_raw = request.getParameterValues("itemIds");
 
-            // Check if itemIds are missing
+            // Kiểm tra itemIds
             if (itemIDs_raw == null || itemIDs_raw.length == 0) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing itemIds for processing the order.");
                 return;
             }
 
-            // ✅ Use Set to avoid duplicates
             Set<Integer> uniqueItemIDs = new HashSet<>();
             for (String idStr : itemIDs_raw) {
                 try {
@@ -100,7 +99,7 @@ public class OrderBuildPC extends HttpServlet {
                 }
             }
 
-            // Check for missing orderID or status
+            // Kiểm tra orderID và status
             if (orderID_raw == null || status_raw == null || orderID_raw.trim().isEmpty() || status_raw.trim().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing orderID or status.");
                 return;
@@ -123,21 +122,46 @@ public class OrderBuildPC extends HttpServlet {
 
             switch (status) {
                 case 0:
-                    System.out.println("❌ Order has been rejected.");
+              
+                    System.out.println("Order has been rejected.");
                     dao.updateOrderStatus(orderID, status);
                     response.sendRedirect("OrderBuildPC?service=listWaitingConfirm");
                     return;
 
                 case 3:
-                    System.out.println("✅ Order accepted. Processing...");
+               
+                    List<BuildPCAdmin> details = dao.getBuildPCItemsByOrderID(orderID);
+                    boolean hasInventoryIssue = false;
+
+                    for (BuildPCAdmin detail : details) {
+                        int cateID = detail.getCateId();
+                        int quantityNeeded = 1; 
+                        int inventory = detail.getInventory(); 
+                        System.out.println("CategoryID: " + cateID + ", Inventory: " + inventory + ", Needed: " + quantityNeeded);
+
+                        if (inventory < quantityNeeded) {
+                            hasInventoryIssue = true;
+                            System.out.println("️ Không đủ hàng cho CategoryID: " + cateID);
+                            break;
+                        }
+                    }
+
+                    if (hasInventoryIssue) {
+                        dao.updateQueueForBuildPCOrder(orderID);
+                        dao.updateOrderStatus(orderID, 2); 
+                        response.sendRedirect("OrderBuildPC?service=listInProcess");
+                        return;
+                    }
+
+                
                     dao.updateOrderStatus(orderID, status);
 
                     for (int itemID : uniqueItemIDs) {
-                        System.out.println("🔧 Assigning products for BuildPCItemID: " + itemID);
+                        System.out.println("Assigning product for BuildPCItemID: " + itemID);
                         try {
                             dao.assignProductsToBuildPCItem(itemID);
                         } catch (Exception e) {
-                            System.err.println("❌ Error assigning products for ItemID = " + itemID + ": " + e.getMessage());
+                            System.err.println("Error assigning products for ItemID = " + itemID + ": " + e.getMessage());
                             e.printStackTrace();
                         }
                     }

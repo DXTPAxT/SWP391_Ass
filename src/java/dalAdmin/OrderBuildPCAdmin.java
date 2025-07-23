@@ -137,7 +137,8 @@ public class OrderBuildPCAdmin extends DBAdminContext {
         """;
 
         try (
-                PreparedStatement ps = connection.prepareStatement(sql)) {
+            Connection conn = new DBAdminContext().connection;
+            PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, orderID);
             try (ResultSet rs = ps.executeQuery()) {
@@ -191,6 +192,7 @@ public class OrderBuildPCAdmin extends DBAdminContext {
 
         return list;
     }
+
 
     // 3. Cập nhật trạng thái đơn hàng
     public void updateOrderStatus(int orderID, int status) {
@@ -763,17 +765,27 @@ public class OrderBuildPCAdmin extends DBAdminContext {
         return count;
     }
 
-    public static void main(String[] args) {
-        OrderBuildPCAdmin dao = new OrderBuildPCAdmin();
-        try {
-            int testItemID = 1; // hoặc bất kỳ ID nào bạn cần test
-            dao.assignProductsToBuildPCItem(testItemID);
+public static void main(String[] args) {
+    OrderBuildPCAdmin dao = new OrderBuildPCAdmin();
 
-        } catch (Exception e) {
-            System.err.println("❌ Lỗi khi chạy test:");
-            e.printStackTrace();
+    int testOrderID = 11; // 👈 thay bằng OrderID có dữ liệu thực trong DB của bạn
 
-        }
+    List<BuildPCAdmin> items = dao.getBuildPCItemsByOrderID(testOrderID);
+
+    System.out.println("📦 Danh sách linh kiện của đơn hàng ID = " + testOrderID);
+    for (BuildPCAdmin item : items) {
+        System.out.println("--------------------------------------------");
+        System.out.println("🆔 ItemID: " + item.getOrderBuildPcItemId());
+        System.out.println("🧩 DetailID: " + item.getOrderBuildPcDetailId());
+        System.out.println("📂 Category: " + item.getCateName());
+        System.out.println("📷 ImgURL: " + item.getImgUrl());
+        System.out.println("🏷 Product Code: " + item.getProductCode());
+        System.out.println("💰 Price: " + item.getPrice());
+        System.out.println("📦 Inventory: " + item.getInventory());
+        System.out.println("🏭 Brand: " + item.getBrandName());
+        System.out.println("🛡 Warranty: " + item.getWarrantyDesc() + " | " + item.getWarrantyPrice());
     }
-
 }
+}
+
+
