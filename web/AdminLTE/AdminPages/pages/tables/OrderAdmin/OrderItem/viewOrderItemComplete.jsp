@@ -54,11 +54,7 @@
                     <h1>
                         Order Items Tables
                     </h1>
-                    <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Order</a></li>
-                        <li class="activ21e">view Order Items</li>
-                    </ol>
+                    
                 </section>
 
                 <!-- Main content -->

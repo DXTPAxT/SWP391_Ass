@@ -56,9 +56,9 @@
                         Order Pending Warranty
                     </h1>
                     <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Order</a></li>
-                        <li class="activ21e">view Order Rejected</li>
+                        <li><i class="fa fa-dashboard"></i> Home/li>
+                        <li>Order</li>
+                        <li class="activ21e">view Order Pending Warranty</li>
                     </ol>
                 </section>
 

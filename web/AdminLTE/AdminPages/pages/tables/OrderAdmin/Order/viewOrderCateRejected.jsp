@@ -102,7 +102,7 @@
                                                         </td>
                                                         <td>${order.totalAmount}</td>
                                                         <td>
-                                                            <a href="OrderAdminCate?service=listPending&orderID=${order.orderID}" 
+                                                          <a href="${ctx}/OrderItemAdmin?service=listReject&orderID=${order.orderID}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                     </tr>

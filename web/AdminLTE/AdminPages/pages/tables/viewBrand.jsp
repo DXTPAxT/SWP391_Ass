@@ -53,8 +53,8 @@
                         Brand Tables
                     </h1>
                     <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Brand</a></li>
+                        <li><i class="fa fa-dashboard"></i> Home</li>
+                        <li>Brand</li>
                         <li class="activ21e">view Brand</li>
                     </ol>
                 </section>

@@ -53,8 +53,8 @@
                         Product Tables
                     </h1>
                     <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Product</a></li>
+                        <li><i class="fa fa-dashboard"></i> Home</li>
+                        <li>Product</li>
                         <li class="active">view Product</li>
                     </ol>
                 </section>

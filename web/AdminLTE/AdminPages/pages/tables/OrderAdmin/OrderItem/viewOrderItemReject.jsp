@@ -1,5 +1,5 @@
 <%-- 
-    Document   : insertCategory
+    Document   : insertProduct
     Created on : May 28, 2025, 9:48:28 PM
     Author     : Admin
 --%>
@@ -7,6 +7,8 @@
 <%@page contentType="text/html" pageEncoding="windows-1252"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -39,24 +41,20 @@
     <body class="hold-transition skin-blue sidebar-mini">
         <div class="wrapper">
 
-            <jsp:include page="../../components/header.jsp" />
-            <jsp:include page="../../components/sidebar.jsp">
-                <jsp:param name="activeMenu" value="warranty"/>
+            <jsp:include page="../../../../components/header.jsp" />
+            <jsp:include page="../../../../components/sidebar.jsp">
                 <jsp:param name="ctx" value="${ctx}" />
             </jsp:include>
+
 
             <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Warranty Tables
+                        Order Items Tables
                     </h1>
-                    <ol class="breadcrumb">
-                        <li><i class="fa fa-dashboard"></i> Home</li>
-                        <li>Warranty</li>
-                        <li class="active">view Warranty</li>
-                    </ol>
+                  
                 </section>
 
                 <!-- Main content -->
@@ -70,60 +68,44 @@
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Warranty ID</th>
-                                                <th>Warranty Period (months)</th>
-                                                <th>Description</th>
-                                                <th>Status</th>
-                                                <th>Update</th> 
+                                                <th>Order Code</th>
+                                                <th>Category Name</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Inventory</th>
+                                                <th>Queue</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:if test="${not empty requestScope.warranties}">
-                                                <c:forEach var="warranty" items="${requestScope.warranties}">
+                                            <c:if test="${not empty items}">
+                                                <c:forEach var="item" items="${items}">
                                                     <tr>
-                                                        <td>${warranty.warrantyID}</td>
-                                                        <td>${warranty.warrantyPeriod}</td>
-                                                        <td class="text-wrap" style="word-break: break-word; max-width: 300px;">
-                                                            ${warranty.description}
-                                                        </td>
-                                                        <td>
-                                                            <c:choose>
-                                                                <c:when test="${warranty.status == 1}">
-                                                                    <span class="label label-success">Active</span>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <span class="label label-danger">Inactive</span>
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                        </td>
-                                                        <td>
-                                                            <a href="WarrantyAdmin?service=update&warrantyID=${warranty.warrantyID}"
-                                                               class="btn btn-primary btn-sm">
-                                                                Update
-                                                            </a>
-                                                        </td>
+                                                        <td>${item.orderCode}</td>
+                                                        <td>${item.categoryName}</td>
+                                                        <td>${item.quantity}</td>
+                                                        <td>${item.price}</td>
+                                                        <td>${item.inventory}</td>
+                                                        <td>${item.queue}</td>
                                                     </tr>
                                                 </c:forEach>
                                             </c:if>
                                         </tbody>
                                     </table>
                                 </div>
-
+                               
                             </div>
-                            <!-- /.box-body -->
+                           
                         </div>
                     </div>
 
                     <!-- /.box-body -->
+                </section>
             </div>
             <!-- /.box -->
 
             <!-- /.content-wrapper -->
-            <jsp:include page="../../components/footer.jsp" />
-            <jsp:include page="../../components/control-sidebar.jsp" />
-            <!-- Add the sidebar's background. This div must be placed
-                 immediately after the control sidebar -->
-            <div class="control-sidebar-bg"></div>
+            <jsp:include page="../../../../components/footer.jsp" />
+            <jsp:include page="../../../../components/control-sidebar.jsp" />
         </div>
         <!-- ./wrapper -->
 

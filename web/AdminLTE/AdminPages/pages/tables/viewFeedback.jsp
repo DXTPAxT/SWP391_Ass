@@ -54,8 +54,8 @@
                         Feedback Tables
                     </h1>
                     <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Feedback</a></li>
+                        <li><i class="fa fa-dashboard"></i> Home/li>
+                        <li>Feedback</li>
                         <li class="active">Feedback Tables</li>
                     </ol>
                 </section>
@@ -154,10 +154,10 @@
                                                             </td>
                                                             <td>
                                                                 <c:if test="${feedback.status == 1}">
-                                                                    <a href="${pageContext.request.contextPath}/admin/replyFeedback?feedbackID=${feedback.feedbackID}" class="btn btn-xs btn-primary" onclick="return confirm('Bạn có chắc chắn muốn trả lời feedback này?');">Reply</a>
+                                                                    <a href="${pageContext.request.contextPath}/admin/replyFeedback?feedbackID=${feedback.feedbackID}" class="btn btn-xs btn-primary" onclick="return confirm('Bạn có chắc chắn muốn trả l�?i feedback này?');">Reply</a>
                                                                 </c:if>
                                                                 <c:if test="${feedback.status == 2}">
-                                                                    <a href="${pageContext.request.contextPath}/admin/replyFeedback?feedbackID=${feedback.feedbackID}&edit=true" class="btn btn-xs btn-info" onclick="return confirm('Bạn có chắc chắn muốn sửa trả lời này?');">Edit</a>
+                                                                    <a href="${pageContext.request.contextPath}/admin/replyFeedback?feedbackID=${feedback.feedbackID}&edit=true" class="btn btn-xs btn-info" onclick="return confirm('Bạn có chắc chắn muốn sửa trả l�?i này?');">Edit</a>
                                                                 </c:if>
                                                             </td>
                                                         </tr>
