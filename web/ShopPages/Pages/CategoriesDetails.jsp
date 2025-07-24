@@ -298,6 +298,11 @@
                                                         </span>
                                                     </p>
                                                     <p>${fb.content}</p>
+                                                    <c:if test="${not empty fb.reply}">
+                                                        <div style="margin-top:8px; padding:8px; background:#f0f4ff; border-left:4px solid #4f8cff; border-radius:4px;">
+                                                            <b>Phản hồi từ quản trị viên:</b> ${fb.reply}
+                                                        </div>
+                                                    </c:if>
                                                     <div>
                                                         <c:if test="${sessionScope.user != null && (sessionScope.user.userId == fb.userID || sessionScope.user.role.roleID == 1)}">
                                                             <a href="${pageContext.request.contextPath}/feedback?action=edit&id=${fb.feedbackID}&categoryID=${categoryID}" class="btn btn-primary btn-sm">Edit</a>
