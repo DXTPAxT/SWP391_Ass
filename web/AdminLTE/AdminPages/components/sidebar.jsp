@@ -143,6 +143,8 @@
                     <li><a href="${param.ctx}/OrderBuildPC?service=listWaitingShipping"><i class="fa fa-circle-o"></i>Waiting Ship</a></li>
                     <li><a href="${param.ctx}/OrderBuildPC?service=listOnShipping"><i class="fa fa-circle-o"></i>On Shipping Order</a></li>
                     <li><a href="${param.ctx}/OrderBuildPC?service=listCompleted"><i class="fa fa-circle-o"></i>Success Order</a></li>
+                    <li><a href="${param.ctx}/OrderBuildPC?service=listPendingWarranty"><i class="fa fa-circle-o"></i>Pending Warranty Order</a></li>
+                    <li><a href="${param.ctx}/OrderBuildPC?service=listWarranty"><i class="fa fa-circle-o"></i>Warranty Order</a></li>
                 </ul>
             </li>
             <li class="treeview <% if ("feedback".equals(activeMenu)) { %>menu-open active<% } %>">

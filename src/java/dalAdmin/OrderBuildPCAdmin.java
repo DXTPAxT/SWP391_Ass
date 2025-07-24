@@ -182,7 +182,6 @@ public class OrderBuildPCAdmin extends DBAdminContext {
                     item.setWarrantyPrice(warrantyPrice);
                     item.setWarrantyDesc(rs.getString("WarrantyDesc"));
 
-
                     list.add(item);
                 }
             }
@@ -386,6 +385,58 @@ public class OrderBuildPCAdmin extends DBAdminContext {
         return list;
     }
 // insert product code
+
+    public List<Products> getPendingWarrantyProductsByOrderId(int orderId) {
+        List<Products> productList = new ArrayList<>();
+        String sql = """
+        SELECT p.ProductCode, p.Status
+        FROM Products p
+        JOIN Order_BuildPC_Products obpp ON p.ProductID = obpp.ProductID
+        JOIN Order_BuildPCDetails obd ON obpp.OrderBuildPCDetailID = obd.OrderBuildPCDetailID
+        JOIN Order_BuildPCItems obpi ON obd.OrderBuildPCItemID = obpi.OrderBuildPCItemID
+        WHERE (p.Status = 3 OR p.Status = 4) AND obpi.OrderID = ?
+    """;
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, orderId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Products product = new Products();
+                    product.setProductCode(rs.getString("ProductCode"));
+                    product.setStatus(rs.getInt("Status"));
+                    productList.add(product);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return productList;
+    }
+
+    public boolean hasApprovedBuildPCProduct(int orderID) {
+        String sql = """
+        SELECT 1
+        FROM Order_BuildPC_Products obpp
+        JOIN Products p ON obpp.ProductID = p.ProductID
+        JOIN Order_BuildPCDetails obd ON obpp.OrderBuildPCDetailID = obd.OrderBuildPCDetailID
+        JOIN Order_BuildPCItems obi ON obd.OrderBuildPCItemID = obi.OrderBuildPCItemID
+        WHERE obi.OrderID = ? AND p.Status = 4
+        LIMIT 1
+    """;
+
+        try (Connection conn = connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderID);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public void assignProductsToBuildPCItem(int itemID) {
         String getDetailsSQL = "SELECT OrderBuildPCDetailID, CategoryID FROM Order_BuildPCDetails WHERE OrderBuildPCItemID = ?";
@@ -1006,6 +1057,37 @@ public class OrderBuildPCAdmin extends DBAdminContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Products> getPendingWarrantyBuildPCProductsByOrderId(int orderId) {
+        List<Products> productList = new ArrayList<>();
+        String sql = """
+        SELECT p.ProductCode, p.Status
+        FROM Products p
+        JOIN Order_BuildPC_Products obpp ON p.ProductID = obpp.ProductID
+        JOIN Order_BuildPCDetails obd ON obpp.OrderBuildPCDetailID = obd.OrderBuildPCDetailID
+        JOIN Order_BuildPCItems obi ON obd.OrderBuildPCItemID = obi.OrderBuildPCItemID
+        WHERE (p.Status = 3 OR p.Status = 4) AND obi.OrderID = ?
+    """;
+
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, orderId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Products product = new Products(); // Sử dụng constructor rỗng
+                    product.setProductCode(rs.getString("ProductCode"));
+                    product.setStatus(rs.getInt("Status"));
+                    productList.add(product);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return productList;
     }
 
     public static void main(String[] args) {

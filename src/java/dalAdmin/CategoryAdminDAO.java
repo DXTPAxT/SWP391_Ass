@@ -157,7 +157,7 @@ public class CategoryAdminDAO extends DBAdminContext {
                     // Gán thêm tên thương hiệu và thành phần
                     c.setBrandName(rs.getString("BrandName"));
                     c.setComponentName(rs.getString("ComponentName"));
-
+                    list.add(c);
                 }
             }
         } catch (SQLException e) {
@@ -334,7 +334,7 @@ public class CategoryAdminDAO extends DBAdminContext {
     public static void main(String[] args) {
         CategoryAdminDAO dao = new CategoryAdminDAO();
         int id = 1;
-        List<Categories> c = dao.getAllCategories();
+        List<Categories> c = dao.getAllCategoriesByBrandComID(1);
 
         System.out.printf("%-5s %-20s %-20s %-20s %-10s%n",
                 "ID", "Brand Name", "Component Name", "Category Name", "BrandComID", "inventory");
