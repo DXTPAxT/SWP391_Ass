@@ -40,29 +40,29 @@ public class ConfirmOrderBuildPCServlet extends HttpServlet {
                 throw new IllegalArgumentException("Không có cartID nào được chọn.");
             }
 
-            // Làm sạch dữ liệu
+            // Làm sạch cartIDs
             String[] cartIDs = cartIDsParam.trim().split(",");
-            int cartID = Integer.parseInt(cartIDs[0].trim());
-
             amountRaw = amountRaw.replaceAll("[^\\d]", "");
             int amount = Integer.parseInt(amountRaw);
 
+            CartBuildPCDAO dao = new CartBuildPCDAO();
+
             if ("cod".equalsIgnoreCase(paymentMethod)) {
-                // ✅ Xử lý thanh toán COD: tạo đơn hàng trực tiếp
-                CartBuildPCDAO dao = new CartBuildPCDAO();
-                int orderID = dao.insertOrderFromCartAndReturnOrderID(cartID, user.getUserId());
-                  
-                // Cập nhật thông tin người nhận và payment
-               dao.updateOrderCustomerInfo(orderID, fullname, phone, address, note, 1);
+                // ✅ Xử lý COD: tạo đơn hàng cho từng cartID
+                for (String idStr : cartIDs) {
+                    int cartID = Integer.parseInt(idStr.trim());
+                    int orderID = dao.insertOrderFromCartAndReturnOrderID(cartID, user.getUserId());
+                    dao.updateOrderCustomerInfo(orderID, fullname, phone, address, note, 1); // 1 = COD
+                }
 
-              
-
-                // Xoá cart nếu cần (hàm insertOrderFromCart... đã làm rồi)
+                // Sau khi xong hết
                 response.sendRedirect("ShopPages/Pages/order-success.jsp");
 
             } else {
-                // ✅ Nếu chọn thanh toán VNPAY thì redirect sang trang thanh toán
-                session.setAttribute("pendingCartID", cartID);
+                // ✅ Xử lý VNPay: lưu session và chuyển đến trang thanh toán
+
+                // Gộp cartIDs thành 1 chuỗi lưu lại cho VNPay callback
+                session.setAttribute("pendingCartIDs", cartIDsParam);
                 session.setAttribute("pendingAmount", amount);
                 session.setAttribute("pendingNote", note != null ? note : "");
                 session.setAttribute("pendingBankCode", bankCode != null ? bankCode : "");
