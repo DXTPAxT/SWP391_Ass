@@ -7,7 +7,7 @@ import models.*;
 
 public class BuildPCOrderDAO extends DBContext {
 
- public ArrayList<BuildPCAdmin> getBuildPCOrdersByCustomerID(int customerID) {
+public ArrayList<BuildPCAdmin> getBuildPCOrdersByCustomerID(int customerID) {
     ArrayList<BuildPCAdmin> orders = new ArrayList<>();
     String sql = """
         SELECT o.OrderID, o.OrderCode, o.OrderDate, o.Status AS OrderStatus, o.TotalAmount, o.Note,
@@ -20,6 +20,7 @@ public class BuildPCOrderDAO extends DBContext {
                c.CategoryName, c.Queue, c.Inventory, c.ImageURL,
                bc.BrandComID, bc.BrandID, b.BrandName,
                cp.ComponentID, cp.ComponentName,
+               COUNT(obpp.OrderBuildPCProductID) AS Quantity,
                obpp.OrderBuildPCProductID, obpp.ProductID, p.ProductCode, p.Note AS ProductNote, p.Status AS ProductStatus,
                obpp.StartDate, obpp.EndDate,
                obpp.WarrantyDetailID, wd.Price AS WarrantyPrice,
@@ -40,6 +41,19 @@ public class BuildPCOrderDAO extends DBContext {
         JOIN Users u ON o.CustomerID = u.UserID
         LEFT JOIN CustomerInfo ci ON ci.UserID = u.UserID
         WHERE o.CustomerID = ? AND o.Product_Type = 1
+        GROUP BY 
+            o.OrderID, o.OrderCode, o.OrderDate, o.Status, o.TotalAmount, o.Note, o.PaymentStatusID, os.StatusName,
+            u.UserID, u.FullName, u.Email, u.PhoneNumber, u.RoleID, u.Status, u.CreatedAt, ci.Address,
+            obpi.OrderBuildPCItemID, obpi.BuildPCID,
+            bpc.Status, bpc.Price, bpc.UserID,
+            obpd.OrderBuildPCDetailID, obpd.CategoryID, obpd.Price,
+            c.CategoryName, c.Queue, c.Inventory, c.ImageURL,
+            bc.BrandComID, bc.BrandID, b.BrandName,
+            cp.ComponentID, cp.ComponentName,
+            obpp.OrderBuildPCProductID, obpp.ProductID, p.ProductCode, p.Note, p.Status,
+            obpp.StartDate, obpp.EndDate,
+            obpp.WarrantyDetailID, wd.Price,
+            wd.WarrantyID, w.WarrantyPeriod, w.Description
         ORDER BY o.OrderID DESC
     """;
 
@@ -83,6 +97,7 @@ public class BuildPCOrderDAO extends DBContext {
             order.setQueue(rs.getInt("Queue"));
             order.setInventory(rs.getInt("Inventory"));
             order.setImgUrl(rs.getString("ImageURL"));
+            order.setQuantity(rs.getInt("Quantity")); // ✅ Số lượng mới
 
             // Brand & Component
             order.setBrandComId(rs.getInt("BrandComID"));
@@ -115,6 +130,7 @@ public class BuildPCOrderDAO extends DBContext {
 
     return orders;
 }
+
 
 
   public ArrayList<BuildPCAdmin> getBuildPCOrdersByCustomerAndStatus(int customerID, int statusID) {
@@ -215,7 +231,7 @@ public class BuildPCOrderDAO extends DBContext {
     return orders;
 }
 
-public ArrayList<BuildPCAdmin> getBuildPCOrderByID(int orderID) {
+public ArrayList<BuildPCAdmin> getBuildPCOrderByBuildPCItemID(int orderBuildPCItemID) {
     ArrayList<BuildPCAdmin> orderDetails = new ArrayList<>();
 
     String sql = """
@@ -248,17 +264,17 @@ public ArrayList<BuildPCAdmin> getBuildPCOrderByID(int orderID) {
         LEFT JOIN OrderStatus os ON o.Status = os.StatusID
         JOIN Users u ON o.CustomerID = u.UserID
         LEFT JOIN CustomerInfo ci ON ci.UserID = u.UserID
-        WHERE o.OrderID = ? AND o.Product_Type = 1
+        WHERE obpi.OrderBuildPCItemID = ? AND o.Product_Type = 1
     """;
 
     try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, orderID);
+        ps.setInt(1, orderBuildPCItemID);
         ResultSet rs = ps.executeQuery();
 
         while (rs.next()) {
             BuildPCAdmin order = new BuildPCAdmin();
 
-            // ===== Đơn hàng =====
+            // Đơn hàng
             order.setOrderId(rs.getInt("OrderID"));
             order.setOrderCode(rs.getString("OrderCode"));
             order.setOrderDate(rs.getTimestamp("OrderDate"));
@@ -267,7 +283,7 @@ public ArrayList<BuildPCAdmin> getBuildPCOrderByID(int orderID) {
             order.setNote(rs.getString("Note"));
             order.setPaymentStatusId(rs.getInt("PaymentStatusID"));
 
-            // ===== Người dùng =====
+            // Người dùng
             order.setUserId(rs.getInt("UserID"));
             order.setFullName(rs.getString("FullName"));
             order.setEmail(rs.getString("Email"));
@@ -277,14 +293,14 @@ public ArrayList<BuildPCAdmin> getBuildPCOrderByID(int orderID) {
             order.setCreatedAt(rs.getTimestamp("CreatedAt"));
             order.setAddress(rs.getString("Address"));
 
-            // ===== Build PC =====
+            // Build PC
             order.setOrderBuildPcItemId(rs.getInt("OrderBuildPCItemID"));
             order.setBuildPcId(rs.getInt("BuildPCID"));
             order.setBuildPcStatus(rs.getInt("BuildPCStatus"));
             order.setBuildPcPrice(rs.getInt("BuildPCPrice"));
             order.setBuildPcUserId(rs.getInt("BuildPCUserID"));
 
-            // ===== Chi tiết linh kiện =====
+            // Chi tiết linh kiện
             order.setOrderBuildPcDetailId(rs.getInt("OrderBuildPCDetailID"));
             order.setCateId(rs.getInt("CategoryID"));
             order.setPrice(rs.getInt("Price"));
@@ -293,14 +309,14 @@ public ArrayList<BuildPCAdmin> getBuildPCOrderByID(int orderID) {
             order.setInventory(rs.getInt("Inventory"));
             order.setImgUrl(rs.getString("ImageURL"));
 
-            // ===== Brand/Component =====
+            // Brand / Component
             order.setBrandComId(rs.getInt("BrandComID"));
             order.setBrandId(rs.getInt("BrandID"));
             order.setBrandName(rs.getString("BrandName"));
             order.setComponentId(rs.getInt("ComponentID"));
             order.setComponentName(rs.getString("ComponentName"));
 
-            // ===== Sản phẩm thực tế =====
+            // Sản phẩm thực tế
             order.setOrderBuildPcProductId(rs.getInt("OrderBuildPCProductID"));
             order.setProductId(rs.getInt("ProductID"));
             order.setProductCode(rs.getString("ProductCode"));
@@ -309,7 +325,7 @@ public ArrayList<BuildPCAdmin> getBuildPCOrderByID(int orderID) {
             order.setWarrantyStartDate(rs.getDate("StartDate"));
             order.setWarrantyEndDate(rs.getDate("EndDate"));
 
-            // ===== Bảo hành =====
+            // Bảo hành
             order.setWarrantyDetailId(rs.getInt("WarrantyDetailID"));
             order.setWarrantyPrice(rs.getInt("WarrantyPrice"));
             order.setWarrantyId(rs.getInt("WarrantyID"));
@@ -325,6 +341,24 @@ public ArrayList<BuildPCAdmin> getBuildPCOrderByID(int orderID) {
 
     return orderDetails;
 }
+public ArrayList<Integer> getOrderBuildPCItemIDsByOrderID(int orderId) {
+    ArrayList<Integer> itemIds = new ArrayList<>();
+    String sql = "SELECT OrderBuildPCItemID FROM Order_BuildPCItems WHERE OrderID = ?";
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, orderId);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            itemIds.add(rs.getInt("OrderBuildPCItemID"));
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return itemIds;
+}
+
 
 
 }

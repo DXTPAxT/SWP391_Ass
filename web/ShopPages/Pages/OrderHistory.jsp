@@ -1,6 +1,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -121,33 +123,40 @@
 
                 <h2 class="text-center" style="margin-bottom: 30px;">Order History</h2>
 
-                <div class="filter-container">
-                    <div class="select-wrapper" style="margin-bottom: 20px;">
-                        <select onchange="location.href = this.value;">
-                            <option value="${pageContext.request.contextPath}/OrderHistory" 
-                                    ${pageContext.request.requestURI.endsWith('OrderHistory') ? 'selected' : ''}>
-                                🛒 Normal Orders
-                            </option>
-                            <option value="${pageContext.request.contextPath}/OrderHistory2" 
-                                    ${pageContext.request.requestURI.endsWith('OrderHistory2') ? 'selected' : ''}>
-                                🖥️ Build PC Orders
-                            </option>
-                        </select>
-                    </div>
-                    <form method="get" action="OrderHistory">
-                        <div class="select-wrapper">
-                            <select name="status" onchange="this.form.submit()">
-                                <option value="-1" ${selectedStatus == -1 ? 'selected' : ''}>All</option>
-                                <option value="1" ${selectedStatus == 1 ? 'selected' : ''}>Pending</option>
-                                <option value="2" ${selectedStatus == 2 ? 'selected' : ''}>On-progress</option>
-                                <option value="3" ${selectedStatus == 3 ? 'selected' : ''}>Waiting for ship</option>
-                                <option value="4" ${selectedStatus == 4 ? 'selected' : ''}>On Ship</option>
-                                <option value="5" ${selectedStatus == 5 ? 'selected' : ''}>Complete</option>
-                                <option value="0" ${selectedStatus == 0 ? 'selected' : ''}>Rejected</option>
+                <!-- Bộ lọc phía trên -->
+                <div class="filter-container" style="text-align: center; margin-bottom: 30px;">
+                    <div class="row justify-content-center">
+                        <!-- Loại đơn hàng -->
+                        <div class="col-md-6 col-sm-12">
+                            <select class="form-control" onchange="location.href = this.value;">
+                                <option value="${pageContext.request.contextPath}/OrderHistory"
+                                        ${fn:endsWith(pageContext.request.requestURI, 'OrderHistory') ? 'selected' : ''}>
+                                    Normal Orders
+                                </option>
+                                <option value="${pageContext.request.contextPath}/OrderHistory2"
+                                        ${fn:endsWith(pageContext.request.requestURI, 'OrderHistory2') ? 'selected' : ''}>
+                                    ️ Build PC Orders
+                                </option>
                             </select>
                         </div>
-                    </form>
+
+                        <!-- Trạng thái đơn hàng -->
+                        <div class="col-md-6 col-sm-12">
+                            <form method="get" action="OrderHistory" class="mb-0">
+                                <select name="status" class="form-control" onchange="this.form.submit()" style="height: 35px;">                                        <option value="-1" ${selectedStatus == -1 ? 'selected' : ''}>All</option>
+                                    <option value="1" ${selectedStatus == 1 ? 'selected' : ''}>Pending</option>
+                                    <option value="2" ${selectedStatus == 2 ? 'selected' : ''}>On-progress</option>
+                                    <option value="3" ${selectedStatus == 3 ? 'selected' : ''}>Waiting for ship</option>
+                                    <option value="4" ${selectedStatus == 4 ? 'selected' : ''}>On Ship</option>
+                                    <option value="5" ${selectedStatus == 5 ? 'selected' : ''}>Complete</option>
+                                    <option value="0" ${selectedStatus == 0 ? 'selected' : ''}>Rejected</option>
+                                </select>
+                            </form>
+                        </div>
+
+                    </div>
                 </div>
+
 
                 <!-- Danh sách đơn hàng -->
                 <c:choose>
