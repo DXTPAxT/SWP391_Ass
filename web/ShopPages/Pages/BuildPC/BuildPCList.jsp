@@ -18,7 +18,7 @@
 
     .card-wrapper img {
         width: 100%;
-        height: 380px; 
+        height: 380px;
         object-fit: cover;
         border: 1px solid #ccc;
         margin-bottom: 10px;
@@ -86,12 +86,17 @@
                         <c:if test="${not empty warrantyMap[p.categoryID]}">
                             <div style="margin-top: 5px;">
                                 <strong>Choose Warranty:</strong>
+                                <c:set var="checkedSet" value="false"/>
                                 <c:forEach var="w" items="${warrantyMap[p.categoryID]}" varStatus="status">
                                     <div style="margin-left: 10px;">
                                         <input type="radio"
                                                name="warranty-${p.categoryID}"
                                                id="w-${p.categoryID}-${status.index}"
                                                value="${w.warrantyDetailID}"
+                                               <c:if test="${w.status == 1 && not checkedSet}">
+                                                   checked="checked"
+                                                   <c:set var="checkedSet" value="true"/>
+                                               </c:if>
                                                <c:if test="${w.status != 1}">disabled</c:if> />
                                         <label for="w-${p.categoryID}-${status.index}">
                                             ${w.warrantyPeriod} month -
