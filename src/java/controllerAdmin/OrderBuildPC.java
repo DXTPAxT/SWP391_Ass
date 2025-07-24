@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import models.BuildPCAdmin;
 import models.OrderCate;
+import models.Products;
 import models.User;
 
 /**
@@ -81,6 +82,14 @@ public class OrderBuildPC extends HttpServlet {
             List<OrderCate> orders = dao.getOrdersByStatus(5);
             request.setAttribute("orders", orders);
             request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderListPC/ListComplete.jsp").forward(request, response);
+        } else if (service.equals("listPendingWarranty")) {
+            List<OrderCate> orders = dao.getOrdersByStatus(6);
+            request.setAttribute("orders", orders);
+            request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderListPC/ListPendingWarranty.jsp").forward(request, response);
+        } else if (service.equals("listWarranty")) {
+            List<OrderCate> orders = dao.getOrdersByStatus(7);
+            request.setAttribute("orders", orders);
+            request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderListPC/ListWarranty.jsp").forward(request, response);
         } else if (service.equals("updateStatus")) {
 
             String orderID_raw = request.getParameter("orderID");
@@ -232,14 +241,12 @@ public class OrderBuildPC extends HttpServlet {
                 }
 
                 // ✅ Thêm đoạn này để set completed cho từng item
-                
-
                 dao.updateOrderStatus(orderID, status);
 
                 // ✅ Trừ Queue nếu đơn chuyển sang trạng thái 'Wait to Ship' (status = 3)
                 if (status == 3) {
                     List<BuildPCAdmin> items = dao.getBuildPCItemsByOrderID(orderID);
-                   
+
                     for (BuildPCAdmin item : items) {
                         int quantity = item.getQuantity();
                         int queue = item.getQueue();
@@ -417,6 +424,163 @@ public class OrderBuildPC extends HttpServlet {
             } catch (ServletException | IOException | NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
             }
+        } else if ("warrantyAction".equals(service)) {
+            String productCode = request.getParameter("productCode");
+            String action = request.getParameter("action");
+            String orderIdRaw = request.getParameter("orderID");
+
+            int orderID = -1;
+            if (orderIdRaw != null && !orderIdRaw.isEmpty()) {
+                try {
+                    orderID = Integer.parseInt(orderIdRaw);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (productCode != null && action != null) {
+                int newStatus = -1;
+                if (action.equals("agree")) {
+                    newStatus = 4; // Status 4: Approved
+                } else if (action.equals("reject")) {
+                    newStatus = 0; // Status 0: Rejected
+                }
+
+                if (newStatus != -1) {
+                    boolean success = dao.updateProductStatusByCode(productCode, newStatus);
+
+                    if (success) {
+                        request.setAttribute("success", "Build PC product " + productCode + " has been "
+                                + (newStatus == 4 ? "approved" : "rejected") + " for warranty.");
+                    } else {
+                        request.setAttribute("error", "Failed to update status for Build PC product: " + productCode);
+                    }
+                } else {
+                    request.setAttribute("error", "Invalid warranty action.");
+                }
+            }
+
+            // Tải lại danh sách order đang chờ bảo hành (Build PC)
+            List<OrderCate> orders = dao.getOrdersByStatus(6); // Status 6 = Pending warranty
+            request.setAttribute("orders", orders);
+
+            if (orderID != -1) {
+                List<Products> pendingItems = dao.getPendingWarrantyBuildPCProductsByOrderId(orderID);
+                request.setAttribute("selectPendingWarranty", pendingItems);
+                request.setAttribute("orderID", orderID);
+            }
+
+            request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderListPC/ListPendingWarranty.jsp")
+                    .forward(request, response);
+        } else if ("finishWarranty".equals(service)) {
+            String orderIdRaw = request.getParameter("orderID");
+
+            if (orderIdRaw != null) {
+                try {
+                    int orderID = Integer.parseInt(orderIdRaw);
+
+                    // Kiểm tra nếu có ít nhất 1 sản phẩm BuildPC được chấp nhận bảo hành
+                    boolean hasApprovedProduct = dao.hasApprovedBuildPCProduct(orderID);
+
+                    int newOrderStatus = hasApprovedProduct ? 7 : 5; // 7 = done, 5 = rejected
+                    dao.updateOrderStatus(orderID, newOrderStatus);
+
+                    // Load lại danh sách đơn đang xử lý bảo hành (status = 6)
+                    List<OrderCate> orders = dao.getOrdersByStatus(6);
+                    request.setAttribute("orders", orders);
+
+                    List<Products> pendingItems = dao.getPendingWarrantyBuildPCProductsByOrderId(orderID);
+                    request.setAttribute("selectPendingWarranty", pendingItems);
+                    request.setAttribute("orderID", orderID);
+
+                } catch (NumberFormatException e) {
+                    request.setAttribute("error", "Invalid Order ID.");
+                }
+            }
+
+            request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderListPC/ListPendingWarranty.jsp")
+                    .forward(request, response);
+        } else if ("finishProductWarranty".equals(service)) {
+            String productCode = request.getParameter("productCode");
+            String orderIdRaw = request.getParameter("orderID");
+
+            try {
+                int orderID = Integer.parseInt(orderIdRaw);
+                boolean success = dao.updateProductStatusByCode(productCode, 0); // 0 = Finished
+
+                if (success) {
+                    request.setAttribute("success", "Product " + productCode + " marked as finished.");
+                }
+
+                // Load lại
+                List<Products> selectPendingWarranty = dao.getPendingWarrantyProductsByOrderId(orderID);
+                request.setAttribute("selectPendingWarranty", selectPendingWarranty);
+                request.setAttribute("orderID", orderID);
+                List<OrderCate> orders = dao.getOrdersByStatus(7); // Warranty
+                request.setAttribute("orders", orders);
+
+            } catch (NumberFormatException e) {
+                request.setAttribute("error", "Invalid data.");
+            }
+
+            request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderListPC/ListWarranty.jsp").forward(request, response);
+        } else if ("warrantyActionFinish".equals(service)) {
+            String productCode = request.getParameter("productCode");
+            String orderIdRaw = request.getParameter("orderID");
+
+            try {
+                int orderID = Integer.parseInt(orderIdRaw);
+                boolean success = dao.updateProductStatusByCode(productCode, 0); // chuyển về đã hoàn thành
+
+                if (success) {
+                    request.setAttribute("success", "Product " + productCode + " marked as finished.");
+                }
+
+                List<Products> selectPendingWarranty = dao.getPendingWarrantyProductsByOrderId(orderID);
+                request.setAttribute("selectPendingWarranty", selectPendingWarranty);
+                request.setAttribute("orderID", orderID);
+                List<OrderCate> orders = dao.getOrdersByStatus(7); // Warranty
+                request.setAttribute("orders", orders);
+
+            } catch (NumberFormatException e) {
+                request.setAttribute("error", "Invalid data.");
+            }
+
+            request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderListPC/ListWarranty.jsp").forward(request, response);
+
+        } else if ("completeWarranty".equals(service)) {
+            String orderIdRaw = request.getParameter("orderID");
+            int orderID = -1;
+            boolean validOrderId = true;
+
+            try {
+                orderID = Integer.parseInt(orderIdRaw);
+            } catch (NumberFormatException e) {
+                request.setAttribute("error", "Invalid Order ID.");
+                validOrderId = false;
+            }
+
+            if (validOrderId) {
+                boolean stillHasApproved = dao.hasApprovedBuildPCProduct(orderID); // kiểm tra còn sản phẩm bảo hành hay không
+
+                if (!stillHasApproved) {
+                    dao.updateOrderStatus(orderID, 3); // 3 = Completed
+                    request.setAttribute("success", "Order marked as completed.");
+                } else {
+                    request.setAttribute("error", "Some products are still under warranty. Cannot complete the order.");
+                }
+
+                // Load sản phẩm của đơn đang thao tác
+                List<Products> selectPendingWarranty = dao.getPendingWarrantyProductsByOrderId(orderID);
+                request.setAttribute("selectPendingWarranty", selectPendingWarranty);
+                request.setAttribute("orderID", orderID);
+            }
+
+            List<OrderCate> orders = dao.getOrdersByStatus(7);
+            request.setAttribute("orders", orders);
+
+            request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderListPC/ListWarranty.jsp").forward(request, response);
+
         }
 
     }
