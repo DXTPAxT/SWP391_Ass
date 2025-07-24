@@ -639,6 +639,19 @@ public class OrderCateAdminDAO extends DBAdminContext {
         return false;
     }
 
+    public void decreaseQueueByCategoryId(int categoryId, int quantity) {
+        String sql = "UPDATE Categories SET Queue = GREATEST(Queue - ?, 0) WHERE CategoryID = ?";
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, quantity);
+            ps.setInt(2, categoryId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         OrderCateAdminDAO dao = new OrderCateAdminDAO();
         List<OrderItems> orders = dao.getAllOrderCateItemsByOrderID(4);

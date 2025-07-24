@@ -72,7 +72,6 @@
                             <div class="alert alert-danger" style="font-weight:bold;">${error}</div>
                         </c:if>
 
-                        <!-- IMPORTANT: must use enctype for file upload -->
                         <form method="post" action="${ctx}/Import" enctype="multipart/form-data">
                             <input type="hidden" name="service" value="insert">
                             <input type="hidden" name="submit" value="submit">
@@ -80,43 +79,31 @@
                             <!-- Import Code -->
                             <div class="form-group">
                                 <label for="importCode">Import Code</label>
-                                <input type="text" id="importCode" name="importCode" class="form-control" placeholder="Enter import code" value="${importCode}">
+                                <input type="text" id="importCode" name="importCode" class="form-control"
+                                       placeholder="Enter import code" value="${importCode}">
                             </div>
 
-                            <!-- Category Dropdown -->
-                            <c:choose>
-                                <c:when test="${not empty selectedCategory}">
-                                    <div class="form-group">
-                                        <label>Category Name</label>
-                                        <input type="text" class="form-control" value="${selectedCategory.categoryName}" readonly />
-                                        <input type="hidden" name="categoryID" value="${selectedCategory.categoryID}" />
-                                    </div>
-                                </c:when>
-                                <c:otherwise>
-                                    <div class="form-group">
-                                        <label>Choose Category</label>
-                                        <select name="categoryID" class="form-control">
-                                            <option>Choose an Category</option>
-                                            <c:forEach var="cate" items="${categories}">
-                                                <option value="${cate.categoryID}"
-                                                        <c:if test="${cate.categoryID == param.categoryID}">selected</c:if>>
-                                                    ${cate.categoryName}
-                                                </option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </c:otherwise>
-                            </c:choose>
+                            <!-- Category (readonly) -->
+                            <c:if test="${not empty selectedCategory}">
+                                <div class="form-group">
+                                    <label>Category Name</label>
+                                    <input type="text" class="form-control" value="${selectedCategory.categoryName}" readonly />
+                                    <input type="hidden" name="categoryID" value="${selectedCategory.categoryID}" />
+                                </div>
 
+                                <!-- Queue -->
+                                <div class="form-group">
+                                    <label>Current Queue</label>
+                                    <input type="text" class="form-control" value="${selectedCategory.queue}" readonly />
+                                </div>
+                            </c:if>
 
                             <!-- Price -->
                             <div class="form-group">
                                 <label for="price">Price</label>
-                                <input type="text" id="price" name="price"
-                                       class="form-control${error eq 'Price must be a valid positive number.' || error eq 'Price must be greater than 0.' ? ' is-invalid' : ''}"
-                                       placeholder="Enter price" value="${price}">
+                                <input type="text" id="price" name="price" class="form-control" placeholder="Enter price"
+                                       value="${price}">
                             </div>
-
 
                             <!-- Excel Upload -->
                             <div class="form-group">
@@ -126,8 +113,10 @@
 
                             <!-- Submit -->
                             <button type="submit" class="btn btn-success">Insert Import</button>
+                            <a href="${ctx}/CateAdmin?service=list" class="btn btn-default">Cancel</a>
                         </form>
                     </div>
+
 
                     <!-- /.box -->
                 </div>

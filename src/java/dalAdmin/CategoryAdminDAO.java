@@ -34,19 +34,21 @@ public class CategoryAdminDAO extends DBAdminContext {
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                Categories c = new Categories(
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"),
-                        rs.getInt("BrandComID"),
-                        rs.getString("BrandName"),
-                        rs.getString("ComponentName"),
-                        rs.getInt("Quantity"),
-                        rs.getInt("inventory"),
-                        rs.getInt("Price"),
-                        rs.getString("Description"),
-                        rs.getInt("Status"),
-                        rs.getString("ImageURL")
-                );
+                Categories c = new Categories(); // Constructor rỗng
+
+                c.setCategoryID(rs.getInt("CategoryID"));
+                c.setCategoryName(rs.getString("CategoryName"));
+                c.setBrandComID(rs.getInt("BrandComID"));
+                c.setQuantity(rs.getInt("Quantity"));
+                c.setInventory(rs.getInt("inventory"));
+                c.setQueue(rs.getInt("Queue"));
+                c.setPrice(rs.getInt("Price"));
+                c.setDescription(rs.getString("Description"));
+                c.setStatus(rs.getInt("Status"));
+                c.setImgURL(rs.getString("ImageURL"));
+                c.setBrandName(rs.getString("BrandName"));
+                c.setComponentName(rs.getString("ComponentName"));
+
                 list.add(c);
             }
 
@@ -61,42 +63,46 @@ public class CategoryAdminDAO extends DBAdminContext {
         List<Categories> list = new ArrayList<>();
 
         String sql = """
-    SELECT 
-        c.CategoryID,
-        c.CategoryName,
-        c.BrandComID,
-        c.Quantity,
-        c.inventory,
-        c.Price,
-        c.Queue,             
-        c.Description,
-        c.Status,
-        c.ImageURL,
-        b.BrandName,
-        com.ComponentName
-    FROM Categories c
-    JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-    JOIN Brands b ON bc.BrandID = b.BrandID
-    JOIN Components com ON bc.ComponentID = com.ComponentID
-    WHERE c.inventory = 0 AND c.Status = 0
-""";
+        SELECT 
+            c.CategoryID,
+            c.CategoryName,
+            c.BrandComID,
+            c.Quantity,
+            c.inventory,
+            c.Price,
+            c.Queue,             
+            c.Description,
+            c.Status,
+            c.ImageURL,
+            b.BrandName,
+            com.ComponentName
+        FROM Categories c
+        JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+        JOIN Brands b ON bc.BrandID = b.BrandID
+        JOIN Components com ON bc.ComponentID = com.ComponentID
+        WHERE c.inventory = 0 OR c.Queue != 0
+    """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                Categories c = new Categories(
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"),
-                        rs.getInt("BrandComID"),
-                        rs.getString("BrandName"),
-                        rs.getString("ComponentName"),
-                        rs.getInt("Quantity"),
-                        rs.getInt("inventory"),
-                        rs.getInt("Price"),
-                        rs.getString("Description"),
-                        rs.getInt("Status"),
-                        rs.getString("ImageURL")
-                );
+                Categories c = new Categories(); // dùng constructor rỗng
+
+                c.setCategoryID(rs.getInt("CategoryID"));
+                c.setCategoryName(rs.getString("CategoryName"));
+                c.setBrandComID(rs.getInt("BrandComID"));
+                c.setQuantity(rs.getInt("Quantity"));
+                c.setInventory(rs.getInt("inventory"));
+                c.setQueue(rs.getInt("Queue"));
+                c.setPrice(rs.getInt("Price"));
+                c.setDescription(rs.getString("Description"));
+                c.setStatus(rs.getInt("Status"));
+                c.setImgURL(rs.getString("ImageURL"));
+
+                // Gán thêm tên thương hiệu và thành phần
+                c.setBrandName(rs.getString("BrandName"));
+                c.setComponentName(rs.getString("ComponentName"));
+
                 list.add(c);
             }
 
@@ -135,20 +141,23 @@ public class CategoryAdminDAO extends DBAdminContext {
             ps.setInt(1, brandComID);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Categories c = new Categories(
-                            rs.getInt("CategoryID"),
-                            rs.getString("CategoryName"),
-                            rs.getInt("BrandComID"),
-                            rs.getString("BrandName"),
-                            rs.getString("ComponentName"),
-                            rs.getInt("Quantity"),
-                            rs.getInt("inventory"),
-                            rs.getInt("Price"),
-                            rs.getString("Description"),
-                            rs.getInt("Status"),
-                            rs.getString("ImageURL")
-                    );
-                    list.add(c);
+                    Categories c = new Categories(); // dùng constructor rỗng
+
+                    c.setCategoryID(rs.getInt("CategoryID"));
+                    c.setCategoryName(rs.getString("CategoryName"));
+                    c.setBrandComID(rs.getInt("BrandComID"));
+                    c.setQuantity(rs.getInt("Quantity"));
+                    c.setInventory(rs.getInt("inventory"));
+                    c.setQueue(rs.getInt("Queue"));
+                    c.setPrice(rs.getInt("Price"));
+                    c.setDescription(rs.getString("Description"));
+                    c.setStatus(rs.getInt("Status"));
+                    c.setImgURL(rs.getString("ImageURL"));
+
+                    // Gán thêm tên thương hiệu và thành phần
+                    c.setBrandName(rs.getString("BrandName"));
+                    c.setComponentName(rs.getString("ComponentName"));
+
                 }
             }
         } catch (SQLException e) {
@@ -166,25 +175,29 @@ public class CategoryAdminDAO extends DBAdminContext {
         JOIN Components comp ON bc.ComponentID = comp.ComponentID
         JOIN Brands b ON bc.BrandID = b.BrandID
         WHERE c.CategoryID = ?
-        """;
+    """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Categories cat = new Categories(
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"),
-                        rs.getInt("BrandComID"),
-                        rs.getInt("Quantity"),
-                        rs.getInt("Price"),
-                        rs.getString("Description"),
-                        rs.getInt("Status"),
-                        rs.getString("ImageURL")
-                );
-                // Gán thêm tên
+                Categories cat = new Categories(); // constructor rỗng
+
+                cat.setCategoryID(rs.getInt("CategoryID"));
+                cat.setCategoryName(rs.getString("CategoryName"));
+                cat.setBrandComID(rs.getInt("BrandComID"));
+                cat.setQuantity(rs.getInt("Quantity"));
+                cat.setInventory(rs.getInt("Inventory"));
+                cat.setQueue(rs.getInt("Queue"));
+                cat.setPrice(rs.getInt("Price"));
+                cat.setDescription(rs.getString("Description"));
+                cat.setStatus(rs.getInt("Status"));
+                cat.setImgURL(rs.getString("ImageURL"));
+
+                // Gán thêm tên thành phần và thương hiệu
                 cat.setComponentName(rs.getString("ComponentName"));
                 cat.setBrandName(rs.getString("BrandName"));
+
                 return cat;
             }
         } catch (SQLException e) {

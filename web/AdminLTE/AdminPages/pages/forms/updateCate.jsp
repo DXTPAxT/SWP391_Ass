@@ -44,10 +44,11 @@
                             </div>
                         </c:if>
 
-                        <form method="post" action="${ctx}/CateAdmin">
+                        <form method="post" action="${ctx}/CateAdmin" enctype="multipart/form-data">
                             <input type="hidden" name="service" value="update">
                             <input type="hidden" name="submit" value="submit">
                             <input type="hidden" name="categoryID" value="${category.categoryID}">
+                            <input type="hidden" name="imageURL" value="${category.imgURL}"> <!-- giữ ảnh cũ nếu không upload -->
 
                             <!-- Category Name -->
                             <div class="form-group">
@@ -87,22 +88,25 @@
                                 <select id="status" name="status" class="form-control">
                                     <option value="1" <c:if test="${param.status == '1' || (empty param.status and category.status == 1)}">selected</c:if>>Active</option>
                                     <option value="0" <c:if test="${param.status == '0' || (empty param.status and category.status == 0)}">selected</c:if>>Inactive</option>
-                                    <option value="2" <c:if test="${param.status == '3' || (empty param.status and category.status == 2)}">selected</c:if>>On Sale</option>
+                                    <option value="2" <c:if test="${param.status == '2' || (empty param.status and category.status == 2)}">selected</c:if>>On Sale</option>
                                     <option value="3" <c:if test="${param.status == '3' || (empty param.status and category.status == 3)}">selected</c:if>>Disable</option>
                                     </select>
                                 </div>
 
-                                <!-- Image URL -->
+                                <!-- Upload ảnh mới -->
                                 <div class="form-group">
-                                    <label for="imageURL">Image URL</label>
-                                    <input type="text" id="imageURL" name="imageURL" class="form-control" >
-                                </div>
+                                    <label for="imageFile">Upload New Image (optional)</label>
+                                    <input type="file" id="imageFile" name="imageFile" class="form-control">
+                                    <br>
+                               
+                            </div>
 
-                                <!-- Submit -->
-                                <button type="submit" class="btn btn-primary">Save Changes</button>
-                                <a href="${ctx}/CateAdmin?service=list" class="btn btn-default">Cancel</a>
+                            <!-- Submit -->
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <a href="${ctx}/CateAdmin?service=list" class="btn btn-default">Cancel</a>
                         </form>
                     </div>
+
 
 
                 </div>

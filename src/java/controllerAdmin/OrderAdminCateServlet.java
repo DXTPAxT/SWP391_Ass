@@ -110,7 +110,7 @@ public class OrderAdminCateServlet extends HttpServlet {
                         // Gán ProductID
                         dao.fillProductsForOrderItem(item.getOrderItemID());
 
-                       c.updateCategoryInventory();
+                        c.updateCategoryInventory();
                     }
 
                     // Gán người xử lý
@@ -138,7 +138,8 @@ public class OrderAdminCateServlet extends HttpServlet {
             } catch (IOException | NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order update request.");
             }
-        } else if (service.equals("updateStatusProcess")) {
+        } else if (service.equals(
+                "updateStatusProcess")) {
             try {
                 int orderID = Integer.parseInt(request.getParameter("orderID"));
                 int status = Integer.parseInt(request.getParameter("status"));
@@ -146,25 +147,34 @@ public class OrderAdminCateServlet extends HttpServlet {
                 HttpSession session = request.getSession(false);
                 User currentUser = (User) session.getAttribute("user");
 
-                if (currentUser == null || currentUser.getRole().getRoleID() != 2) { // 2 là Staff
+                if (currentUser == null || currentUser.getRole().getRoleID() != 2) {
                     response.sendRedirect(request.getContextPath() + "/Logout");
                     return;
                 }
 
-                // Trước khi xử lý, kiểm tra còn ProductID null không
                 if (dao.hasUnassignedProducts(orderID)) {
-                    // ✅ Gán lỗi vào session để chuyến trang vẫn nhận được
                     request.getSession().setAttribute("error", "Some products have not been assigned Product Codes yet.");
-
-                    // ✅ Redirect về đúng trang bạn chỉ định (trang danh sách sản phẩm cần xử lý của đơn hàng)
                     response.sendRedirect("OrderItemAdmin?service=listProcess&orderID=" + orderID);
                     return;
                 }
 
                 dao.updateOrderStatus(orderID, status);
+       
+                // ✅ Trừ Queue nếu đơn chuyển sang trạng thái 'Wait to Ship'
+                if (status == 3) {
+                    List<OrderItems> items = dao.getAllOrderCateItemsByOrderID(orderID);
+                    for (OrderItems item : items) {
+                        int quantity = item.getQuantity();
+                        int queue = item.getQueue();
+                        int categoryID = item.getCategoryID();
 
-                if (status == 2 || status == 0) {
-                    dao.insertOrderPreparement(currentUser.getUserId(), orderID);
+                        if (queue > 0) {
+                            int minus = Math.min(queue, quantity);
+                            dao.decreaseQueueByCategoryId(categoryID, minus);
+                        }
+
+                        c.updateCategoryInventory();
+                    }
                 }
 
                 response.sendRedirect("OrderAdminCate?service=listProcessing");
@@ -172,7 +182,8 @@ public class OrderAdminCateServlet extends HttpServlet {
             } catch (IOException | NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order update request.");
             }
-        } else if (service.equals("updateStatusShip")) {
+        } else if (service.equals(
+                "updateStatusShip")) {
             try {
                 int orderID = Integer.parseInt(request.getParameter("orderID"));
                 int status = Integer.parseInt(request.getParameter("status"));
@@ -198,7 +209,8 @@ public class OrderAdminCateServlet extends HttpServlet {
             } catch (ServletException | IOException | NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order update request.");
             }
-        } else if (service.equals("updateStatusShipFinish")) {
+        } else if (service.equals(
+                "updateStatusShipFinish")) {
             try {
                 int orderID = Integer.parseInt(request.getParameter("orderID"));
                 int status = Integer.parseInt(request.getParameter("status")); // ví dụ: 5 = Delivered
@@ -236,7 +248,8 @@ public class OrderAdminCateServlet extends HttpServlet {
             } catch (ServletException | IOException | NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order update request.");
             }
-        } else if (service.equals("viewConsignee")) {
+        } else if (service.equals(
+                "viewConsignee")) {
             try {
                 int orderID = Integer.parseInt(request.getParameter("orderID"));
 
@@ -257,7 +270,8 @@ public class OrderAdminCateServlet extends HttpServlet {
             } catch (ServletException | IOException | NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
             }
-        } else if (service.equals("viewShipping")) {
+        } else if (service.equals(
+                "viewShipping")) {
             try {
                 int orderID = Integer.parseInt(request.getParameter("orderID"));
 
