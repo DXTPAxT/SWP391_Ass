@@ -45,6 +45,8 @@ public class OrderBuildPC extends HttpServlet {
         if (service == null) {
             service = "listPC";
         }
+        CategoryAdminDAO ca = new CategoryAdminDAO();
+        ca.updateCategoryInventory();
         OrderBuildPCAdmin dao = new OrderBuildPCAdmin();
         if (service.equals("listRejected")) {
             List<OrderCate> orders = dao.getOrdersByStatus(0);
@@ -80,8 +82,7 @@ public class OrderBuildPC extends HttpServlet {
             request.setAttribute("orders", orders);
             request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderListPC/ListComplete.jsp").forward(request, response);
         } else if (service.equals("updateStatus")) {
-            CategoryAdminDAO ca = new CategoryAdminDAO();
-            ca.updateCategoryInventory();
+
             String orderID_raw = request.getParameter("orderID");
             String status_raw = request.getParameter("status");
             String[] itemIDs_raw = request.getParameterValues("itemIds");
@@ -156,7 +157,19 @@ public class OrderBuildPC extends HttpServlet {
                     if (hasInventoryIssue) {
                         dao.updateQueueForBuildPCOrder(orderID);
                         dao.updateOrderStatus(orderID, 2);
-                        response.sendRedirect("OrderBuildPC?service=listInProcess");
+                        int staffID = dao.getLeastBusyStaffLastMonth();
+                        if (staffID == -1) {
+                            System.out.println("⚠️ No suitable staff found for assignment.");
+                        } else {
+                            System.out.println("📌 Assigned Staff ID = " + staffID);
+                            try {
+                                dao.insertOrderPreparementForBuildPC(staffID, orderID);
+                            } catch (Exception e) {
+                                System.err.println("❌ Error inserting OrderPreparement: " + e.getMessage());
+                                e.printStackTrace();
+                            }
+                        }
+                        response.sendRedirect("OrderBuildPC?service=listWaitingConfirm");
                         return;
                     }
 
@@ -196,6 +209,55 @@ public class OrderBuildPC extends HttpServlet {
                     System.out.println("⚠️ Unknown status value: " + status);
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid status value.");
                     return;
+            }
+        } else if (service.equals("updateStatusProcess")) {
+
+            try {
+                int orderID = Integer.parseInt(request.getParameter("orderID"));
+                int status = Integer.parseInt(request.getParameter("status"));
+
+                HttpSession session = request.getSession(false);
+                User currentUser = (User) session.getAttribute("user");
+
+                if (currentUser == null || currentUser.getRole().getRoleID() != 2) {
+                    response.sendRedirect(request.getContextPath() + "/Logout");
+                    return;
+                }
+
+                // ✅ Kiểm tra sản phẩm đã gán ProductID chưa
+                if (dao.hasUnassignedBuildPCProducts(orderID)) {
+                    request.getSession().setAttribute("error", "Some Build PC items have not been assigned Product Codes yet.");
+                    response.sendRedirect("OrderBuildPCDetails?service=InProcessing&orderID=" + orderID);
+                    return;
+                }
+
+                // ✅ Thêm đoạn này để set completed cho từng item
+                
+
+                dao.updateOrderStatus(orderID, status);
+
+                // ✅ Trừ Queue nếu đơn chuyển sang trạng thái 'Wait to Ship' (status = 3)
+                if (status == 3) {
+                    List<BuildPCAdmin> items = dao.getBuildPCItemsByOrderID(orderID);
+                   
+                    for (BuildPCAdmin item : items) {
+                        int quantity = item.getQuantity();
+                        int queue = item.getQueue();
+                        int cateId = item.getCateId();
+
+                        if (queue > 0) {
+                            int minus = Math.min(queue, quantity);
+                            dao.decreaseQueueByCateId(cateId, minus);
+                        }
+
+                        ca.updateCategoryInventory(); // Hàm bạn đã có
+                    }
+                }
+
+                response.sendRedirect("OrderBuildPC?service=listInProcess");
+
+            } catch (IOException | NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Build PC order update request.");
             }
         } else if (service.equals("StaffConfirm")) {
             String orderID_raw = request.getParameter("orderID");

@@ -138,8 +138,7 @@ public class OrderAdminCateServlet extends HttpServlet {
             } catch (IOException | NumberFormatException e) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order update request.");
             }
-        } else if (service.equals(
-                "updateStatusProcess")) {
+        } else if (service.equals("updateStatusProcess")) {
             try {
                 int orderID = Integer.parseInt(request.getParameter("orderID"));
                 int status = Integer.parseInt(request.getParameter("status"));
@@ -152,17 +151,21 @@ public class OrderAdminCateServlet extends HttpServlet {
                     return;
                 }
 
+                // 🧠 Lấy lại danh sách để đánh giá completed
+                List<OrderItems> items = dao.getAllOrderCateItemsByOrderID(orderID);
+
+                // 🛑 Check nếu còn sản phẩm chưa gán
                 if (dao.hasUnassignedProducts(orderID)) {
                     request.getSession().setAttribute("error", "Some products have not been assigned Product Codes yet.");
                     response.sendRedirect("OrderItemAdmin?service=listProcess&orderID=" + orderID);
                     return;
                 }
 
+                // ✅ Update trạng thái đơn hàng
                 dao.updateOrderStatus(orderID, status);
-       
-                // ✅ Trừ Queue nếu đơn chuyển sang trạng thái 'Wait to Ship'
+
+                // ⬇️ Nếu chuyển sang trạng thái "Chờ giao", cập nhật tồn kho và hàng đợi
                 if (status == 3) {
-                    List<OrderItems> items = dao.getAllOrderCateItemsByOrderID(orderID);
                     for (OrderItems item : items) {
                         int quantity = item.getQuantity();
                         int queue = item.getQueue();
@@ -172,9 +175,10 @@ public class OrderAdminCateServlet extends HttpServlet {
                             int minus = Math.min(queue, quantity);
                             dao.decreaseQueueByCategoryId(categoryID, minus);
                         }
-
-                        c.updateCategoryInventory();
                     }
+
+                    // ✅ Cập nhật inventory
+                    c.updateCategoryInventory();
                 }
 
                 response.sendRedirect("OrderAdminCate?service=listProcessing");

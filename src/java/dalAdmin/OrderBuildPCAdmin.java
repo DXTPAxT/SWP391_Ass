@@ -114,6 +114,7 @@ public class OrderBuildPCAdmin extends DBAdminContext {
             bc.ComponentID,
             b.BrandName,
             c.Inventory,
+            c.queue,
             obp.WarrantyDetailID,
             wd.Price AS WarrantyPrice,
             w.Description AS WarrantyDesc,
@@ -156,6 +157,7 @@ public class OrderBuildPCAdmin extends DBAdminContext {
                     item.setOrderBuildPcItemId(rs.getInt("OrderBuildPCItemID"));
                     item.setOrderBuildPcDetailId(rs.getInt("OrderBuildPCDetailID"));
                     item.setQuantity(rs.getInt("Quantity"));
+                    item.setQueue(rs.getInt("queue"));
                     item.setBuildPcItem(currentItemId);
                     item.setBuildPcId(rs.getInt("BuildPCID"));
                     item.setOrderBuildPcItemId(currentItemId);
@@ -180,7 +182,6 @@ public class OrderBuildPCAdmin extends DBAdminContext {
                     item.setWarrantyPrice(warrantyPrice);
                     item.setWarrantyDesc(rs.getString("WarrantyDesc"));
 
-                    item.setQueue(currentQueue);
 
                     list.add(item);
                 }
@@ -193,9 +194,9 @@ public class OrderBuildPCAdmin extends DBAdminContext {
     }
 
     // 3. Cập nhật trạng thái đơn hàng
-   public void updateOrderStatus(int orderID, int status) {
-    String updateOrderSQL = "UPDATE Orders SET Status = ? WHERE OrderID = ?";
-    String updateBuildPCSQL = """
+    public void updateOrderStatus(int orderID, int status) {
+        String updateOrderSQL = "UPDATE Orders SET Status = ? WHERE OrderID = ?";
+        String updateBuildPCSQL = """
         UPDATE Build_PC 
         SET Status = ? 
         WHERE BuildPCID IN (
@@ -203,25 +204,23 @@ public class OrderBuildPCAdmin extends DBAdminContext {
         )
     """;
 
-    try (Connection conn = new DBAdminContext().connection;  // ✅ mở kết nối mới tại đây
-         PreparedStatement psOrder = conn.prepareStatement(updateOrderSQL);
-         PreparedStatement psBuildPC = conn.prepareStatement(updateBuildPCSQL)) {
+        try (Connection conn = new DBAdminContext().connection; // ✅ mở kết nối mới tại đây
+                 PreparedStatement psOrder = conn.prepareStatement(updateOrderSQL); PreparedStatement psBuildPC = conn.prepareStatement(updateBuildPCSQL)) {
 
-        // Cập nhật đơn hàng
-        psOrder.setInt(1, status);
-        psOrder.setInt(2, orderID);
-        psOrder.executeUpdate();
+            // Cập nhật đơn hàng
+            psOrder.setInt(1, status);
+            psOrder.setInt(2, orderID);
+            psOrder.executeUpdate();
 
-        // Cập nhật Build_PC tương ứng
-        psBuildPC.setInt(1, status);
-        psBuildPC.setInt(2, orderID);
-        psBuildPC.executeUpdate();
+            // Cập nhật Build_PC tương ứng
+            psBuildPC.setInt(1, status);
+            psBuildPC.setInt(2, orderID);
+            psBuildPC.executeUpdate();
 
-    } catch (Exception e) {
-        e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
-
 
     // 4. Gán nhân viên chuẩn bị
     public void insertOrderPreparementForBuildPC(int userID, int orderID) {
@@ -310,11 +309,11 @@ public class OrderBuildPCAdmin extends DBAdminContext {
     //update inventory
     public void updateQueueForBuildPCOrder(int orderID) {
         String sql = """
-        SELECT c.CategoryID, c.Inventory
+        SELECT bpi.CategoryID, COUNT(*) AS Quantity
         FROM Order_BuildPCItems obi
         JOIN Build_PC_Items bpi ON obi.BuildPCID = bpi.BuildPCID
-        JOIN Categories c ON bpi.CategoryID = c.CategoryID
         WHERE obi.OrderID = ?
+        GROUP BY bpi.CategoryID
     """;
 
         try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -322,28 +321,17 @@ public class OrderBuildPCAdmin extends DBAdminContext {
             ps.setInt(1, orderID);
             ResultSet rs = ps.executeQuery();
 
-            Map<Integer, Integer> queueMap = new HashMap<>();
-
             while (rs.next()) {
                 int categoryId = rs.getInt("CategoryID");
-                int inventory = rs.getInt("Inventory");
-
-                if (inventory < 1) {
-                    // Mặc định mỗi linh kiện 1 chiếc cho 1 BuildPC → tăng queue lên 1
-                    queueMap.put(categoryId, queueMap.getOrDefault(categoryId, 0) + 1);
-                }
-            }
-
-            // Cập nhật Queue cho từng Category thiếu hàng
-            for (Map.Entry<Integer, Integer> entry : queueMap.entrySet()) {
-                int categoryId = entry.getKey();
-                int missingQty = entry.getValue();
+                int quantity = rs.getInt("Quantity");
 
                 String updateSQL = "UPDATE Categories SET Queue = Queue + ? WHERE CategoryID = ?";
                 try (PreparedStatement psUpdate = conn.prepareStatement(updateSQL)) {
-                    psUpdate.setInt(1, missingQty);
+                    psUpdate.setInt(1, quantity);
                     psUpdate.setInt(2, categoryId);
                     psUpdate.executeUpdate();
+
+                    System.out.println("✅ Tăng Queue cho CategoryID " + categoryId + " thêm " + quantity);
                 }
             }
 
@@ -778,6 +766,59 @@ public class OrderBuildPCAdmin extends DBAdminContext {
         }
 
         return detailIDs;
+    }
+
+    public boolean hasUnassignedBuildPCProducts(int orderId) {
+        String sql = """
+    SELECT COUNT(*) 
+    FROM Order_BuildPC_Products p
+    JOIN Order_BuildPCDetails d ON p.OrderBuildPCDetailID = d.OrderBuildPCDetailID
+    JOIN Order_BuildPCItems i ON d.OrderBuildPCItemID = i.OrderBuildPCItemID
+    WHERE i.OrderID = ? AND p.ProductID IS NULL
+""";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return count > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void decreaseQueueByCateId(int cateId, int amount) {
+        String sql = "UPDATE Categories SET Queue = GREATEST(Queue - ?, 0) WHERE CategoryID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, amount);
+            ps.setInt(2, cateId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean checkIfItemCompleted(int orderBuildPcItemId) {
+        String sql = """
+        SELECT COUNT(*) 
+        FROM Order_BuildPCDetails d
+        JOIN Order_BuildPC_Products p ON d.OrderBuildPCDetailID = p.OrderBuildPCDetailID
+        WHERE d.OrderBuildPCItemID = ? AND p.ProductID IS NULL
+    """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, orderBuildPcItemId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) == 0;  // ✅ true nếu không còn dòng nào thiếu ProductID
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public int getInventoryByCategory(int cateID) {
