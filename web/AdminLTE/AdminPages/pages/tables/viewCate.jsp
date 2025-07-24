@@ -132,7 +132,7 @@
                                                                    class="btn btn-warning btn-sm">View</a>
                                                             </td>
                                                             <td>
-                                                                <a href="Import?service=insert&categoryID=${category.categoryID}" 
+                                                                <a href="Import?categoryID=${category.categoryID}" 
                                                                    class="btn btn-success btn-sm">Insert</a>
                                                             </td>
                                                             

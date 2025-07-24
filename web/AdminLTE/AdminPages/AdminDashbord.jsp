@@ -171,7 +171,7 @@
                                                     <td>${category.categoryName}</td>
                                                     <td>${category.queue}</td>
                                                     <td>
-                                                        <a href="${ctx}/Import?service=insert&categoryID=${category.categoryID}"
+                                                        <a href="${ctx}/Import?categoryID=${category.categoryID}"
                                                            class="btn btn-primary btn-sm">Import</a>
                                                     </td>
                                                 </tr>

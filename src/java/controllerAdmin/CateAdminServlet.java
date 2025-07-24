@@ -236,7 +236,25 @@ public class CateAdminServlet extends HttpServlet {
                     String categoryName = request.getParameter("categoryName");
                     String description = request.getParameter("description");
                     String statusRaw = request.getParameter("status");
-                    String imageURL = request.getParameter("imageURL");
+                    Part imagePart = request.getPart("imageFile");
+                    String currentImageURL = request.getParameter("imageURL"); // giữ ảnh cũ nếu không upload ảnh mới
+
+                    String imageURL = currentImageURL;
+                    if (imagePart != null && imagePart.getSize() > 0) {
+                        // Tạo thư mục lưu ảnh nếu chưa tồn tại
+                        String appPath = request.getServletContext().getRealPath("/ShopPages/Pages/images/CatePicture");
+                        File fileSaveDir = new File(appPath);
+                        if (!fileSaveDir.exists()) {
+                            fileSaveDir.mkdirs();
+                        }
+
+                        // Lấy tên file ảnh và ghi vào thư mục đích
+                        String fileName = Paths.get(imagePart.getSubmittedFileName()).getFileName().toString();
+                        String filePath = appPath + File.separator + fileName;
+                        imagePart.write(filePath);
+
+                        imageURL = fileName; // cập nhật ảnh mới
+                    }
 
                     List<String> errors = new ArrayList<>();
                     int categoryID = -1;

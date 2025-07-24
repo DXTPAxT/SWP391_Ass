@@ -39,7 +39,7 @@ public class AdminDashbordServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            CategoryAdminDAO dao = new CategoryAdminDAO();
+            CategoryAdminDAO cate = new CategoryAdminDAO();
             ComponentAdminDAO Com = new ComponentAdminDAO();
             BrandAdminDAO bra = new BrandAdminDAO();
             BrandComAdminDAO brc = new BrandComAdminDAO();
@@ -53,16 +53,15 @@ public class AdminDashbordServlet extends HttpServlet {
             int unreadCount = (userID > 0) ? notificationDAO.getUnreadCount(userID) : 0;
             request.setAttribute("unreadCount", unreadCount);
             im.updateImportQuantitiesFromProducts();
-            dao.updateCategoryQuantities();
-            dao.updateCategoryInventory();
-            dao.updateCategoryStatusIfInventoryZero();
+            cate.updateCategoryQuantities();
+            cate.updateCategoryInventory();
             brc.updateBrandComQuantitiesFromCategories();
             bra.updateBrandQuantitiesFromBrandComs();
             Com.updateComponentQuantitiesFromBrandComs();
 
             List<Components> com = Com.getAllComponent();
             request.setAttribute("com", com);
-            List<Categories> list = dao.getAllCategoriesByInvenory();
+            List<Categories> list = cate.getAllCategoriesByInvenory();
             request.setAttribute("list", list);
             request.getRequestDispatcher("AdminLTE/AdminPages/AdminDashbord.jsp").forward(request, response);
         }
