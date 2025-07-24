@@ -96,7 +96,7 @@
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <p><strong>Receiver:</strong> ${order.fullName}</p>
-                                                <p><strong>Phone:</strong> ${order.phoneNumber}</p>
+                                                <p><strong>Phone:</strong> ${order.userPhone}</p>
                                                 <p><strong>Address:</strong> ${order.address}</p>
                                                 <p><strong>Note:</strong> ${order.note}</p>
                                             </div>
