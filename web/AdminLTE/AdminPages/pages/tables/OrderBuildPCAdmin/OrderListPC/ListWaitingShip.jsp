@@ -53,7 +53,7 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Order Rejected Tables
+                        Order Build-PC Waiting Ship
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -117,7 +117,7 @@
                                                         </td>
 
                                                         <td>
-                                                            <a href="OrderItemAdmin?service=listItemWaitShip&orderID=${order.orderID}" 
+                                                            <a href="OrderBuildPCDetails?service=listItemWaitShip&orderID=${order.orderID}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                     </tr>

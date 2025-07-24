@@ -370,14 +370,15 @@ CREATE TABLE Order_BuildPCDetails (
 CREATE TABLE Order_BuildPC_Products (
     OrderBuildPCProductID INT PRIMARY KEY AUTO_INCREMENT,
     OrderBuildPCDetailID INT NOT NULL,
-    ProductID INT default NULL,
-	WarrantyDetailID INT NULL,
-    Start Date default null,
-    End Date default null,
+    ProductID INT DEFAULT NULL,
+    WarrantyDetailID INT DEFAULT NULL,
+    StartDate DATE DEFAULT NULL,
+    EndDate DATE DEFAULT NULL,
     FOREIGN KEY (OrderBuildPCDetailID) REFERENCES Order_BuildPCDetails(OrderBuildPCDetailID),
     FOREIGN KEY (WarrantyDetailID) REFERENCES WarrantyDetails(WarrantyDetailID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 -- 34. Notifications
 CREATE TABLE Notifications (

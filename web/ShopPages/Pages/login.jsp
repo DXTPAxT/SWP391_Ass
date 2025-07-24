@@ -46,6 +46,10 @@
                     <div class="col-sm-4 col-sm-offset-1 ml-0">
                         <div class="login-form form-modern"><!--login form-->
                             <h2>Login to your account</h2>
+                            <c:if test="${not empty sessionScope.error}">
+                                <div class="alert alert-danger text-center">${sessionScope.error}</div>
+                                <c:remove var="error" scope="session"/>
+                            </c:if>
                             <form action="Login" method="POST">
                                 <label class="form">Email</label>
                                 <input type="text" placeholder="Enter email address" class="form-control ${error == 'Email is required!' || error == 'Email does not exist!' ? 'input-modern-invalid' : ''}" name="email" required value="${not empty error ? email : ''}"/>

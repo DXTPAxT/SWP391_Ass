@@ -142,9 +142,7 @@
                     <li><a href="${param.ctx}/OrderBuildPC?service=listInProcess"><i class="fa fa-circle-o"></i>In Process PC Order</a></li>
                     <li><a href="${param.ctx}/OrderBuildPC?service=listWaitingShipping"><i class="fa fa-circle-o"></i>Waiting Ship</a></li>
                     <li><a href="${param.ctx}/OrderBuildPC?service=listOnShipping"><i class="fa fa-circle-o"></i>On Shipping Order</a></li>
-                    <li><a href="${param.ctx}/OrderBuildPCAdmin?service=listCompleted"><i class="fa fa-circle-o"></i>Success Order</a></li>
-                    <!-- don thay the neu phai doi hang cho khach -->
-                    <li><a href="${param.ctx}/OrderAdmin?service=insert"><i class="fa fa-circle-o"></i>Insert Replacement Order </a></li> 
+                    <li><a href="${param.ctx}/OrderBuildPC?service=listCompleted"><i class="fa fa-circle-o"></i>Success Order</a></li>
                 </ul>
             </li>
             <li class="treeview <% if ("feedback".equals(activeMenu)) { %>menu-open active<% } %>">
