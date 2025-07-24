@@ -4,6 +4,7 @@
  */
 package controllerAdmin;
 
+import dalAdmin.CategoryAdminDAO;
 import dalAdmin.OrderBuildPCAdmin;
 import dalAdmin.OrderCateAdminDAO;
 import java.io.IOException;
@@ -78,8 +79,9 @@ public class OrderBuildPC extends HttpServlet {
             List<OrderCate> orders = dao.getOrdersByStatus(5);
             request.setAttribute("orders", orders);
             request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderListPC/ListComplete.jsp").forward(request, response);
-        }
-        if (service.equals("updateStatus")) {
+        } else if (service.equals("updateStatus")) {
+            CategoryAdminDAO ca = new CategoryAdminDAO();
+            ca.updateCategoryInventory();
             String orderID_raw = request.getParameter("orderID");
             String status_raw = request.getParameter("status");
             String[] itemIDs_raw = request.getParameterValues("itemIds");
@@ -264,7 +266,7 @@ public class OrderBuildPC extends HttpServlet {
         } else if (service.equals("updateStatusShipFinish")) {
             try {
                 int orderID = Integer.parseInt(request.getParameter("orderID"));
-                int status = Integer.parseInt(request.getParameter("status")); 
+                int status = Integer.parseInt(request.getParameter("status"));
                 String note = request.getParameter("note");
                 String[] itemIDs_raw = request.getParameterValues("itemIds");
 
@@ -309,7 +311,7 @@ public class OrderBuildPC extends HttpServlet {
 
                     for (int itemID : uniqueItemIDs) {
                         dao.updateBuildPCProductsWarrantyDates(itemID);
-                    }       
+                    }
                     response.sendRedirect("OrderBuildPC?service=listOnShipping");
                 } else {
                     request.setAttribute("error", "❌ Cập nhật giao hàng thất bại. Vui lòng thử lại.");

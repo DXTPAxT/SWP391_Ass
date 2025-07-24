@@ -137,8 +137,7 @@ public class OrderBuildPCAdmin extends DBAdminContext {
         """;
 
         try (
-            Connection conn = new DBAdminContext().connection;
-            PreparedStatement ps = conn.prepareStatement(sql)) {
+                Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, orderID);
             try (ResultSet rs = ps.executeQuery()) {
@@ -193,11 +192,10 @@ public class OrderBuildPCAdmin extends DBAdminContext {
         return list;
     }
 
-
     // 3. Cập nhật trạng thái đơn hàng
-    public void updateOrderStatus(int orderID, int status) {
-        String updateOrderSQL = "UPDATE Orders SET Status = ? WHERE OrderID = ?";
-        String updateBuildPCSQL = """
+   public void updateOrderStatus(int orderID, int status) {
+    String updateOrderSQL = "UPDATE Orders SET Status = ? WHERE OrderID = ?";
+    String updateBuildPCSQL = """
         UPDATE Build_PC 
         SET Status = ? 
         WHERE BuildPCID IN (
@@ -205,22 +203,25 @@ public class OrderBuildPCAdmin extends DBAdminContext {
         )
     """;
 
-        try (Connection conn = connection; PreparedStatement psOrder = conn.prepareStatement(updateOrderSQL); PreparedStatement psBuildPC = conn.prepareStatement(updateBuildPCSQL)) {
+    try (Connection conn = new DBAdminContext().connection;  // ✅ mở kết nối mới tại đây
+         PreparedStatement psOrder = conn.prepareStatement(updateOrderSQL);
+         PreparedStatement psBuildPC = conn.prepareStatement(updateBuildPCSQL)) {
 
-            // Cập nhật đơn hàng
-            psOrder.setInt(1, status);
-            psOrder.setInt(2, orderID);
-            psOrder.executeUpdate();
+        // Cập nhật đơn hàng
+        psOrder.setInt(1, status);
+        psOrder.setInt(2, orderID);
+        psOrder.executeUpdate();
 
-            // Cập nhật Build_PC tương ứng
-            psBuildPC.setInt(1, status);
-            psBuildPC.setInt(2, orderID);
-            psBuildPC.executeUpdate();
+        // Cập nhật Build_PC tương ứng
+        psBuildPC.setInt(1, status);
+        psBuildPC.setInt(2, orderID);
+        psBuildPC.executeUpdate();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
+
 
     // 4. Gán nhân viên chuẩn bị
     public void insertOrderPreparementForBuildPC(int userID, int orderID) {
@@ -260,7 +261,6 @@ public class OrderBuildPCAdmin extends DBAdminContext {
     }
 
     // check inventory
-
     public List<BuildPCAdmin> getAllOrderBuildPCItemsByOrderID(int orderID) {
         List<BuildPCAdmin> list = new ArrayList<>();
 
@@ -353,8 +353,8 @@ public class OrderBuildPCAdmin extends DBAdminContext {
     }
 
     public List<BuildPCAdmin> getBuildPCProductsByOrderBuildPCItemID(int orderBuildPCItemID) {
-    List<BuildPCAdmin> list = new ArrayList<>();
-String sql = """
+        List<BuildPCAdmin> list = new ArrayList<>();
+        String sql = """
     SELECT 
         p.ProductID, 
         p.ProductCode,
@@ -373,33 +373,32 @@ String sql = """
     WHERE obpi.OrderBuildPCItemID = ?
 """;
 
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
 
-    try (Connection conn = new DBAdminContext().connection;
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderBuildPCItemID);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    BuildPCAdmin b = new BuildPCAdmin();
+                    b.setProductId(rs.getInt("ProductID"));
+                    b.setProductCode(rs.getString("ProductCode"));
+                    b.setProductNote(rs.getString("ProductNote"));
+                    b.setProductStatus(rs.getInt("ProductStatus"));
+                    b.setWarrantyPeriod(rs.getInt("WarrantyPeriod"));
+                    b.setWarrantyDesc(rs.getString("WarrantyDescription"));
+                    b.setOrderBuildPcProductId(rs.getInt("OrderBuildPCProductID"));
+                    b.setOrderBuildPcDetailId(rs.getInt("OrderBuildPCDetailID"));
 
-        ps.setInt(1, orderBuildPCItemID);
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                BuildPCAdmin b = new BuildPCAdmin();
-                b.setProductId(rs.getInt("ProductID"));
-                b.setProductCode(rs.getString("ProductCode"));
-                b.setProductNote(rs.getString("ProductNote"));
-                b.setProductStatus(rs.getInt("ProductStatus"));
-                b.setWarrantyPeriod(rs.getInt("WarrantyPeriod"));
-                b.setWarrantyDesc(rs.getString("WarrantyDescription"));
-                b.setOrderBuildPcProductId(rs.getInt("OrderBuildPCProductID"));
-                b.setOrderBuildPcDetailId(rs.getInt("OrderBuildPCDetailID"));
-
-                list.add(b);
+                    list.add(b);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
 
-    return list;
-}
+        return list;
+    }
 // insert product code
+
     public void assignProductsToBuildPCItem(int itemID) {
         String getDetailsSQL = "SELECT OrderBuildPCDetailID, CategoryID FROM Order_BuildPCDetails WHERE OrderBuildPCItemID = ?";
         String getUnassignedSQL = "SELECT OrderBuildPCProductID FROM Order_BuildPC_Products WHERE OrderBuildPCDetailID = ? AND ProductID IS NULL";
@@ -408,7 +407,7 @@ String sql = """
         String markUsedSQL = "UPDATE Products SET Status = 0 WHERE ProductID = ?";
 
         try (Connection conn = new DBAdminContext().connection) {
-            conn.setAutoCommit(false); 
+            conn.setAutoCommit(false);
             PreparedStatement psGetDetails = conn.prepareStatement(getDetailsSQL);
             PreparedStatement psGetUnassigned = conn.prepareStatement(getUnassignedSQL);
             PreparedStatement psGetProducts = conn.prepareStatement(getProductsSQL);
@@ -800,6 +799,7 @@ String sql = """
 
         return count;
     }
+
     public boolean isShippingHandledByUser(int userID, int orderID) {
         String sql = "SELECT 1 FROM Shipping WHERE OrderID = ? AND ShipperID = ?";
         try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -813,7 +813,8 @@ String sql = """
         }
         return false;
     }
- public boolean completeShipping(int userID, int orderID, String note) {
+
+    public boolean completeShipping(int userID, int orderID, String note) {
         String sql = "UPDATE Shipping SET ShippingStatus = 1, ShipTime = CURRENT_DATE, Note = ? WHERE OrderID = ? AND ShipperID = ?";
         try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, note);
@@ -825,8 +826,9 @@ String sql = """
         }
         return false;
     }
-public void updateBuildPCProductsWarrantyDates(int orderBuildPCItemID) {
-    String sql = """
+
+    public void updateBuildPCProductsWarrantyDates(int orderBuildPCItemID) {
+        String sql = """
         UPDATE Order_BuildPC_Products obpp
         JOIN Order_BuildPCDetails obpd ON obpp.OrderBuildPCDetailID = obpd.OrderBuildPCDetailID
         JOIN Order_BuildPCItems obpi ON obpd.OrderBuildPCItemID = obpi.OrderBuildPCItemID
@@ -843,29 +845,23 @@ public void updateBuildPCProductsWarrantyDates(int orderBuildPCItemID) {
             AND obpi.OrderBuildPCItemID = ?
     """;
 
-    try (Connection conn = new DBAdminContext().connection;
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
 
-        ps.setInt(1, orderBuildPCItemID);
+            ps.setInt(1, orderBuildPCItemID);
 
-        int rows = ps.executeUpdate();
-        System.out.println("✅ Đã cập nhật " + rows + " dòng trong Order_BuildPC_Products theo OrderBuildPCItemID " + orderBuildPCItemID);
+            int rows = ps.executeUpdate();
+            System.out.println("✅ Đã cập nhật " + rows + " dòng trong Order_BuildPC_Products theo OrderBuildPCItemID " + orderBuildPCItemID);
 
-    } catch (SQLException e) {
-        System.err.println("❌ Lỗi khi cập nhật ngày bảo hành theo OrderBuildPCItemID " + orderBuildPCItemID + ":");
-        e.printStackTrace();
+        } catch (SQLException e) {
+            System.err.println("❌ Lỗi khi cập nhật ngày bảo hành theo OrderBuildPCItemID " + orderBuildPCItemID + ":");
+            e.printStackTrace();
+        }
     }
-}
 
+    public OrderCate getBuildPCOrderByID(int orderID) {
+        OrderCate order = null;
 
-
-
-
-
-public OrderCate getBuildPCOrderByID(int orderID) {
-    OrderCate order = null;
-
-    String sql = """
+        String sql = """
         SELECT 
             o.OrderID,
             o.OrderCode,
@@ -911,61 +907,70 @@ public OrderCate getBuildPCOrderByID(int orderID) {
         WHERE o.Product_Type = 2 AND o.OrderID = ?
     """;
 
-    try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setInt(1, orderID);
+        try (Connection conn = new DBAdminContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderID);
 
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                order = new OrderCate();
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    order = new OrderCate();
 
-                // Order Info
-                order.setOrderID(rs.getInt("OrderID"));
-                order.setOrderCode(rs.getString("OrderCode"));
-                order.setProduct_Type((Integer) rs.getObject("Product_Type"));
-                order.setFullName(rs.getNString("Consignee"));
-                order.setPhoneNumber(rs.getNString("PhoneNumber"));
-                order.setNote(rs.getNString("Note"));
-                order.setOrderDate(rs.getTimestamp("OrderDate"));
-                order.setAddress(rs.getString("OrderAddress"));
-                order.setTotalAmount(rs.getInt("TotalAmount"));
-                order.setStatus(rs.getInt("Status"));
-                order.setPaymentStatusID(rs.getInt("PaymentStatusID"));
+                    // Order Info
+                    order.setOrderID(rs.getInt("OrderID"));
+                    order.setOrderCode(rs.getString("OrderCode"));
+                    order.setProduct_Type((Integer) rs.getObject("Product_Type"));
+                    order.setFullName(rs.getNString("Consignee"));
+                    order.setPhoneNumber(rs.getNString("PhoneNumber"));
+                    order.setNote(rs.getNString("Note"));
+                    order.setOrderDate(rs.getTimestamp("OrderDate"));
+                    order.setAddress(rs.getString("OrderAddress"));
+                    order.setTotalAmount(rs.getInt("TotalAmount"));
+                    order.setStatus(rs.getInt("Status"));
+                    order.setPaymentStatusID(rs.getInt("PaymentStatusID"));
 
-                // Customer
-                order.setCustomerID(rs.getInt("CustomerUserID"));
-                order.setCustomerName(rs.getString("CustomerName"));
+                    // Customer
+                    order.setCustomerID(rs.getInt("CustomerUserID"));
+                    order.setCustomerName(rs.getString("CustomerName"));
 
-                // Prepare Staff
-                order.setStaffID(rs.getInt("PrepareStaffID"));
-                order.setStaffName(rs.getString("PrepareStaffName"));
-                order.setPrepareTime(rs.getTimestamp("PrepareTime"));
+                    // Prepare Staff
+                    order.setStaffID(rs.getInt("PrepareStaffID"));
+                    order.setStaffName(rs.getString("PrepareStaffName"));
+                    order.setPrepareTime(rs.getTimestamp("PrepareTime"));
 
-                // Shipping
-                order.setShipperID(rs.getInt("ShipperID"));
-                order.setShipperName(rs.getString("ShipperName"));
-                order.setShipperPhone(rs.getString("ShipperPhone"));
-                order.setShipTime(rs.getDate("ShipTime"));
-                order.setShipNote(rs.getNString("ShipNote"));
+                    // Shipping
+                    order.setShipperID(rs.getInt("ShipperID"));
+                    order.setShipperName(rs.getString("ShipperName"));
+                    order.setShipperPhone(rs.getString("ShipperPhone"));
+                    order.setShipTime(rs.getDate("ShipTime"));
+                    order.setShipNote(rs.getNString("ShipNote"));
 
-                // Warranty Staff
-                order.setWarrantyStaffID(rs.getInt("WarrantyStaffID"));
-                order.setWarrantyStaffName(rs.getString("WarrantyStaffName"));
-                order.setWarrantyAssignedDate(rs.getTimestamp("AssignedDate"));
+                    // Warranty Staff
+                    order.setWarrantyStaffID(rs.getInt("WarrantyStaffID"));
+                    order.setWarrantyStaffName(rs.getString("WarrantyStaffName"));
+                    order.setWarrantyAssignedDate(rs.getTimestamp("AssignedDate"));
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+
+        return order;
     }
 
-    return order;
-}
+    public void increaseQueueByCategoryId(int categoryId, int amount) {
+        String sql = "UPDATE Categories SET Queue = Queue + ? WHERE CategoryID = ?";
+        try (Connection conn = connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, amount);
+            ps.setInt(2, categoryId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
         OrderBuildPCAdmin dao = new OrderBuildPCAdmin();
-        int orderBuildPCItemID = 1; 
+        int orderBuildPCItemID = 1;
         dao.updateBuildPCProductsWarrantyDates(orderBuildPCItemID);
     }
 
 }
-
-
