@@ -63,9 +63,14 @@
                                         <td>${pc.pcCase}</td>
                                         <td><fmt:formatNumber value="${pc.price}" type="number" /> VND</td>
                                         <td>
-                                            <button onclick="confirmDelete(this, ${pc.cartBuildPCID})">
-                                                <i class="fa fa-times"></i>
-                                            </button>
+                                            <form method="post" action="${pageContext.request.contextPath}/CardBuildPc" onsubmit="return confirm('Bạn có chắc chắn muốn xóa cấu hình PC này không?');">
+                                                <input type="hidden" name="service" value="deleteCartBuildPC" />
+                                                <input type="hidden" name="id" value="${pc.cartBuildPCID}" />
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </form>
+
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -133,7 +138,6 @@
                     return;
                 }
 
-                // Tính tổng tiền và deposit (không để dấu phẩy!)
                 let total = 0;
                 selected.forEach(cb => {
                     const row = cb.closest("tr");
@@ -141,7 +145,8 @@
                     if (priceText)
                         total += parseInt(priceText);
                 });
-                const deposit = Math.floor(total * 0.2); 
+
+                const deposit = Math.floor(total * 0.2);
                 const ids = Array.from(selected).map(cb => cb.value);
 
                 const form = document.createElement("form");
@@ -150,23 +155,20 @@
 
                 const idsInput = document.createElement("input");
                 idsInput.name = "ids";
-                idsInput.value = ids;
+                idsInput.value = ids.join(","); // CHÍNH XÁC: biến thành chuỗi "1,2,3"
                 form.appendChild(idsInput);
 
                 const amountInput = document.createElement("input");
                 amountInput.name = "amount";
                 amountInput.value = deposit.toString().replace(/[^\d]/g, "");
-
                 form.appendChild(amountInput);
 
                 document.body.appendChild(form);
                 form.submit();
                 document.body.removeChild(form);
             }
+
         </script>
-
-
-
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.js"></script>
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/bootstrap.min.js"></script>
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>

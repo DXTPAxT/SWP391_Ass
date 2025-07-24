@@ -58,7 +58,7 @@ public class CardBuildPcController extends HttpServlet {
 
         try {
             switch (service) {
-                case "deleteCartBuildPC" -> handleDelete(request, out, dao);
+                case "deleteCartBuildPC" -> handleDelete(request, response, dao);
               case "depositBuildPC" -> handleDeposit(request, response, dao, user.getUserId());
 
                 default -> out.print("FAIL");
@@ -69,18 +69,29 @@ public class CardBuildPcController extends HttpServlet {
         }
     }
 
-    private void handleDelete(HttpServletRequest request, PrintWriter out, CartBuildPCDAO dao) {
-        try {
-            int cartID = Integer.parseInt(request.getParameter("id"));
-            boolean success = dao.deleteCartBuildPC(cartID);
-            out.print(success ? "SUCCESS" : "FAIL");
-        } catch (Exception e) {
-            e.printStackTrace();
-            out.print("FAIL");
-        }
-    }
+private void handleDelete(HttpServletRequest request, HttpServletResponse response, CartBuildPCDAO dao)
+        throws IOException {
+    try {
+        int cartID = Integer.parseInt(request.getParameter("id"));
+        boolean success = dao.deleteCartBuildPC(cartID);
 
- private void handleDeposit(HttpServletRequest request, HttpServletResponse response, CartBuildPCDAO dao, int userID)
+        if (success) {
+            response.sendRedirect("CardBuildPc"); // Load lại giỏ hàng sau khi xóa
+        } else {
+            response.setContentType("text/plain;charset=UTF-8");
+            response.getWriter().print("FAIL");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.setContentType("text/plain;charset=UTF-8");
+        response.getWriter().print("FAIL");
+    }
+}
+
+
+
+
+private void handleDeposit(HttpServletRequest request, HttpServletResponse response, CartBuildPCDAO dao, int userID)
         throws IOException, ServletException {
     String idsRaw = request.getParameter("ids");
     if (idsRaw == null || idsRaw.trim().isEmpty()) {
@@ -94,21 +105,21 @@ public class CardBuildPcController extends HttpServlet {
     for (String idStr : idArr) {
         try {
             int cartBuildPCID = Integer.parseInt(idStr.trim());
-            int price = dao.getCartBuildPCPrice(cartBuildPCID);  // ← bạn đã có hàm này
+            int price = dao.getCartBuildPCPrice(cartBuildPCID); // đảm bảo hàm này không trả -1 khi lỗi
             total += price;
         } catch (NumberFormatException e) {
             response.getWriter().print("FAIL");
             return;
         }
+    }
 
     int depositAmount = (int) (total * 0.2);
 
     // Đẩy sang trang xác nhận đặt cọc
-    request.setAttribute("cartIDs", idsRaw); // danh sách ID sẽ dùng ở bước sau
+    request.setAttribute("cartIDs", idsRaw); // danh sách ID sẽ dùng ở confirmVnPayOrder.jsp
     request.setAttribute("amount", depositAmount);
     request.getRequestDispatcher("ShopPages/Pages/confirmVnPayOrder.jsp").forward(request, response);
 }
- }
 
     @Override
     public String getServletInfo() {

@@ -387,5 +387,18 @@ public class CartBuildPCDAO extends DBContext {
             e.printStackTrace();
         }
     }
+ public static void main(String[] args) {
+        // Giả sử cartBuildPCID bạn muốn xóa là 5
+        int cartID = 3;
 
+        CartBuildPCDAO dao = new CartBuildPCDAO();
+
+        boolean result = dao.deleteCartBuildPC(cartID);
+
+        if (result) {
+            System.out.println("✅ Xóa thành công cartBuildPCID = " + cartID);
+        } else {
+            System.out.println("❌ Xóa thất bại hoặc không tồn tại cartBuildPCID = " + cartID);
+        }
+    }
 }
