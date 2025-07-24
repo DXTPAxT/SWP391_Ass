@@ -17,7 +17,6 @@ public class BuildPCAdmin {
     private int status;
     private String brandName;
 
-
     private String imgUrl;
     private int queue;
     private int orderBuildPcItemId;
@@ -68,8 +67,38 @@ public class BuildPCAdmin {
     private int roleId;
     private int userStatus;
     private Date createdAt;
+    private boolean completed;
 
-    public BuildPCAdmin() {}
+    public BuildPCAdmin(int orderBuildPcItemId, int orderBuildPcDetailId, int quantity, int queue, int buildPcItem,
+            int buildPcId, String orderCode, String fullName, Integer productId, String productCode,
+            int cateId, String cateName, String imgUrl, int price, int status, int componentId,
+            String brandName, int inventory, Integer warrantyDetailId, Integer warrantyPrice, String warrantyDesc) {
+        this.orderBuildPcItemId = orderBuildPcItemId;
+        this.orderBuildPcDetailId = orderBuildPcDetailId;
+        this.quantity = quantity;
+        this.queue = queue;
+        this.buildPcItem = buildPcItem;
+        this.buildPcId = buildPcId;
+        this.orderCode = orderCode;
+        this.fullName = fullName;
+        this.productId = productId;
+        this.productCode = productCode;
+        this.cateId = cateId;
+        this.cateName = cateName;
+        this.imgUrl = imgUrl;
+        this.price = price;
+        this.status = status;
+        this.componentId = componentId;
+        this.brandName = brandName;
+        this.inventory = inventory;
+        this.warrantyDetailId = warrantyDetailId;
+        this.warrantyPrice = warrantyPrice;
+        this.warrantyDesc = warrantyDesc;
+    }
+
+    public BuildPCAdmin() {
+    }
+
     public BuildPCAdmin(int cateId, String cateName, int componentId, Integer warrantyPrice, String warrantyDesc, Integer warrantyDetailId, int price, String brandName, String imgUrl) {
         this.cateId = cateId;
         this.cateName = cateName;
@@ -81,11 +110,18 @@ public class BuildPCAdmin {
         this.brandName = brandName;
         this.imgUrl = imgUrl;
     }
+
     public BuildPCAdmin(int aInt, int aInt0, String string, String string0, int aInt1, String string1, int warrantyDetailID, int warrantyPrice, String warrantyDesc) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
- 
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
 
     public int getBuildPcId() {
         return buildPcId;

@@ -68,13 +68,54 @@ public class OrderBuildPCDetails extends HttpServlet {
 
                 request.setAttribute("items", items);
                 request.setAttribute("orderID", orderID);
-                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderDoing/OrderPCDetail.jsp").forward(request, response);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderDoing/InProcessing.jsp").forward(request, response);
 
             } catch (Exception e) {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
             }
-        } else if (service.equals("listItemWaitShip")) {
+        } else if (service.equals("insertProduct")) {
+            try {
+                int orderID = Integer.parseInt(request.getParameter("orderID"));
+                int orderItemID = Integer.parseInt(request.getParameter("orderBuildPcItemId"));
+
+                // Gán sản phẩm
+                dao.assignProductsToBuildPCItem(orderItemID);
+
+                // Set thông báo thành công vào session
+                request.getSession().setAttribute("success", "Insert Complete ");
+
+                // Redirect lại trang xử lý
+                response.sendRedirect("OrderBuildPCDetails?service=InProcessing&orderID=" + orderID);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Lỗi khi insert sản phẩm cho BuildPC item");
+            }
+        } else if (service.equals("viewProducts")) {
+            try {
+                int orderItemID = Integer.parseInt(request.getParameter("orderBuildPcItemId"));
+                int orderID = Integer.parseInt(request.getParameter("orderID"));
+
+                // Lấy danh sách sản phẩm đã gán cho 1 Build PC item
+                List<BuildPCAdmin> products = dao.getBuildPCProductsByOrderBuildPCItemID(orderItemID);
+
+                // Lấy toàn bộ item của đơn để hiển thị danh sách bên trái
+                List<BuildPCAdmin> items = dao.getBuildPCItemsByOrderID(orderID);
+
+                request.setAttribute("products", products);
+                request.setAttribute("items", items);
+                request.setAttribute("selectedOrderItemID", orderItemID);
+                request.setAttribute("orderID", orderID);
+
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderDoing/InProcessing.jsp")
+                        .forward(request, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Lỗi khi xem sản phẩm Build PC item");
+            }
+        } else if (service.equals(
+                "listItemWaitShip")) {
             try {
                 int orderID = Integer.parseInt(request.getParameter("orderID"));
                 List<BuildPCAdmin> items = dao.getBuildPCItemsByOrderID(orderID);
@@ -87,7 +128,8 @@ public class OrderBuildPCDetails extends HttpServlet {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
             }
-        } else if (service.equals("viewProductsWait")) {
+        } else if (service.equals(
+                "viewProductsWait")) {
             try {
                 int orderID = Integer.parseInt(request.getParameter("orderID"));
                 int orderBuildPCitemid = Integer.parseInt(request.getParameter("orderItemID"));
@@ -106,7 +148,8 @@ public class OrderBuildPCDetails extends HttpServlet {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
             }
-        } else if (service.equals("listItemOnShip")) {
+        } else if (service.equals(
+                "listItemOnShip")) {
             try {
                 int orderID = Integer.parseInt(request.getParameter("orderID"));
                 List<BuildPCAdmin> items = dao.getBuildPCItemsByOrderID(orderID);
@@ -119,7 +162,8 @@ public class OrderBuildPCDetails extends HttpServlet {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
             }
-        }else if (service.equals("listItemComplete")) {
+        } else if (service.equals(
+                "listItemComplete")) {
             try {
                 int orderID = Integer.parseInt(request.getParameter("orderID"));
                 List<BuildPCAdmin> items = dao.getBuildPCItemsByOrderID(orderID);
@@ -133,10 +177,10 @@ public class OrderBuildPCDetails extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
             }
         }
-          
+
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -148,7 +192,7 @@ public class OrderBuildPCDetails extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         processRequest(request, response);
+        processRequest(request, response);
     }
 
     /**

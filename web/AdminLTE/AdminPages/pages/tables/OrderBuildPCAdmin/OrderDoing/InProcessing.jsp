@@ -49,11 +49,7 @@
                     <h1>
                         Order Items Tables
                     </h1>
-                    <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Order</a></li>
-                        <li class="activ21e">view Order Items</li>
-                    </ol>
+
                 </section>
 
                 <!-- Main content -->
@@ -66,12 +62,18 @@
                                         ${error}
                                     </div>
                                 </c:if>
-
+                                <c:if test="${not empty sessionScope.success}">
+                                    <div class="alert alert-success text-center" style="font-weight: bold;">
+                                        ${sessionScope.success}
+                                    </div>
+                                    <c:remove var="success" scope="session" />
+                                </c:if>
                                 <!-- /.box-header -->
                                 <div class="box-body">
                                     <table id="example2" class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
+                                               
                                                 <th>Order Code</th>
                                                 <th>Category Name</th>
                                                 <th>Quantity</th>
@@ -86,7 +88,7 @@
                                                 <c:forEach var="item" items="${items}">
                                                     <tr>
                                                         <td>${item.orderCode}</td>
-                                                        <td>${item.categoryName}</td>
+                                                        <td>${item.cateName}</td>
                                                         <td>${item.quantity}</td>
                                                         <td>${item.price}</td>
                                                         <td>${item.inventory}</td>
@@ -95,18 +97,17 @@
                                                             <c:if test="${item.quantity <= item.inventory}">
                                                                 <c:choose>
                                                                     <c:when test="${item.completed}">
-                                                                        <form action="OrderItemAdmin" method="get" style="display:inline;">
+                                                                        <form action="OrderBuildPCDetails" method="get" style="display:inline;">
                                                                             <input type="hidden" name="service" value="viewProducts" />
-                                                                            <input type="hidden" name="orderItemID" value="${item.orderItemID}" />
+                                                                            <input type="hidden" name="orderBuildPcItemId" value="${item.orderBuildPcItemId}" />
                                                                             <input type="hidden" name="orderID" value="${param.orderID}" />
                                                                             <button type="submit" class="btn btn-info btn-sm">View</button>
                                                                         </form>
-
                                                                     </c:when>
                                                                     <c:otherwise>
-                                                                        <form action="OrderItemAdmin" method="post" style="display:inline;">
+                                                                        <form action="OrderBuildPCDetails" method="post" style="display:inline;">
                                                                             <input type="hidden" name="service" value="insertProduct" />
-                                                                            <input type="hidden" name="orderItemID" value="${item.orderItemID}" />
+                                                                            <input type="hidden" name="orderBuildPcItemId" value="${item.orderBuildPcItemId}" />
                                                                             <input type="hidden" name="orderID" value="${param.orderID}" />
                                                                             <button type="submit" class="btn btn-success btn-sm">Insert</button>
                                                                         </form>
@@ -120,18 +121,18 @@
                                         </tbody>
                                     </table>                                    
                                 </div>
-                                </table>
+
 
                                 <!-- Action buttons -->
                                 <div class="text-center" style="margin-top: 20px;">
                                     <!-- Back button -->
-                                    <form action="OrderAdminCate" method="get" style="display:inline;">
-                                        <input type="hidden" name="service" value="listProcessing" />
+                                    <form action="OrderBuildPC" method="get" style="display:inline;">
+                                        <input type="hidden" name="service" value="listInProcess" />
                                         <button type="submit" class="btn btn-default">Back</button>
                                     </form>
 
                                     <!-- Finish button -->
-                                    <form action="OrderAdminCate" method="post" style="display: inline; margin-left: 10px;">
+                                    <form action="OrderBuildPC" method="post" style="display: inline; margin-left: 10px;">
                                         <input type="hidden" name="service" value="updateStatusProcess">
                                         <input type="hidden" name="status" value="3">
                                         <input type="hidden" name="orderID" value="${param.orderID}">
@@ -140,7 +141,7 @@
                                 </div>
 
                                 <!-- Error message -->
-                                
+
 
 
                             </div>
@@ -185,43 +186,43 @@
         <!-- /.content-wrapper -->
         <jsp:include page="../../../../components/footer.jsp" />
         <jsp:include page="../../../../components/control-sidebar.jsp" />
-    </div>
-    <!-- ./wrapper -->
 
-    <!-- jQuery 2.2.3 -->
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
-    <!-- Bootstrap 3.3.6 -->
-    <script src="${ctx}/AdminLTE/AdminPages/bootstrap/js/bootstrap.min.js"></script>
-    <!-- DataTables -->
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/datatables/dataTables.bootstrap.min.js"></script>
-    <!-- SlimScroll -->
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-    <!-- FastClick -->
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/fastclick/fastclick.js"></script>
-    <!-- AdminLTE App -->
-    <script src="${ctx}/AdminLTE/AdminPages/dist/js/app.min.js"></script>
-    <!-- AdminLTE for demo purposes -->
-    <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
-    <!-- page script -->
-    <script>
-        $(function () {
-            $("#example1").DataTable();
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "autoWidth": true
+        <!-- ./wrapper -->
+
+        <!-- jQuery 2.2.3 -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
+        <!-- Bootstrap 3.3.6 -->
+        <script src="${ctx}/AdminLTE/AdminPages/bootstrap/js/bootstrap.min.js"></script>
+        <!-- DataTables -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/datatables/jquery.dataTables.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/datatables/dataTables.bootstrap.min.js"></script>
+        <!-- SlimScroll -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+        <!-- FastClick -->
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/fastclick/fastclick.js"></script>
+        <!-- AdminLTE App -->
+        <script src="${ctx}/AdminLTE/AdminPages/dist/js/app.min.js"></script>
+        <!-- AdminLTE for demo purposes -->
+        <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
+        <!-- page script -->
+        <script>
+            $(function () {
+                $("#example1").DataTable();
+                $('#example2').DataTable({
+                    "paging": true,
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": true
+                });
             });
-        });
-    </script>
-    <script>
-        $(function () {
-            $('.sidebar-menu').tree();
-        });
-    </script>
-</body>
+        </script>
+        <script>
+            $(function () {
+                $('.sidebar-menu').tree();
+            });
+        </script>
+    </body>
 </html>
 

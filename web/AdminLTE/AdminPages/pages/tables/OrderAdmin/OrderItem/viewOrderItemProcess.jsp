@@ -116,7 +116,7 @@
                                         </tbody>
                                     </table>                                    
                                 </div>
-                                </table>
+                                
 
                                 <!-- Action buttons -->
                                 <div class="text-center" style="margin-top: 20px;">
