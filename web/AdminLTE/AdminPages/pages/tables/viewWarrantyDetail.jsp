@@ -53,8 +53,8 @@
                         Warranty Detail Tables
                     </h1>
                     <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Warranty Detail</a></li>
+                        <li><i class="fa fa-dashboard"></i> Home</li>
+                        <li>Warranty Detail</li>
                         <li class="active">view Warranty Detail</li>
                     </ol>
                 </section>

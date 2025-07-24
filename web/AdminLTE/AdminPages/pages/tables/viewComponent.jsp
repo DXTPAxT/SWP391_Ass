@@ -56,8 +56,8 @@
                         Component Tables
                     </h1>
                     <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Component</a></li>
+                        <li><i class="fa fa-dashboard"></i> Home</li>
+                        <li>Component/li>
                         <li class="active">view Component</li>
                     </ol>
                 </section>

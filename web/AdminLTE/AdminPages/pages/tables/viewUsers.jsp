@@ -54,8 +54,8 @@
                         ${users.get(0).role.roleName} Management
                     </h1>
                     <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li>Users</a</li>
+                        <li><i class="fa fa-dashboard"></i> Home</li>
+                        <li>Users</li>
                     </ol>
                 </section>
 

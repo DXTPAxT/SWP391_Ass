@@ -48,6 +48,19 @@ public class OrderItemAdminServlet extends HttpServlet {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
             }
+        } else if (service.equals("listReject")) {
+            try {
+                int orderID = Integer.parseInt(request.getParameter("orderID"));
+                List<OrderItems> items = dao.getAllOrderCateItemsByOrderID(orderID);
+
+                request.setAttribute("items", items);
+                request.setAttribute("orderID", orderID); // nếu cần truyền về JSP
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderAdmin/OrderItem/viewOrderItemReject.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
+            }
         } else if (service.equals("listProcess")) {
             try {
                 int orderID = Integer.parseInt(request.getParameter("orderID"));

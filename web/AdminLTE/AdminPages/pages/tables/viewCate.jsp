@@ -50,12 +50,12 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Data Tables
+                        Category Table
                     </h1>
                     <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Component</a></li>
-                        <li class="active"></li>
+                        <li><i class="fa fa-dashboard"></i> Home</a></li>
+                        <li>Category</li>
+                        <li class="active">view Category</li>
                     </ol>
                 </section>
 
