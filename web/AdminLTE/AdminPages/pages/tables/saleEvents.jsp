@@ -138,10 +138,7 @@
                                         Add Sale Events
                                     </a>
                                 </div>
-                                <c:if test="${empty saleEvents}">
-                                    <tr><td colspan="8">No sale events available.</td></tr>
-                                </c:if>
-
+                                
                                 <div class="form-container">
                                     <form action="saleevents" method="get">
                                         <label for="categoryID"></label>
@@ -170,66 +167,72 @@
                                             <th>Action</th>
                                             <th>Approval</th>
                                         </tr>
+                                        <c:choose>
+                                            <c:when test="${empty saleEvents}">
+                                                <tr><td colspan="9" style="text-align:center; font-style:italic;">No sale events available.</td></tr>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <c:forEach var="event" items="${saleEvents}">
+                                                    <tr>
+                                                        <td>${event.eventID}</td>
+                                                        <td>
+                                                            <c:forEach var="category" items="${categories}">
+                                                                <c:if test="${category.categoryID == event.categoryID}">
+                                                                    ${category.categoryName}
+                                                                </c:if>
+                                                            </c:forEach>
+                                                        </td>
+                                                        <td>
+                                                            <c:forEach var="post" items="${activePosts}">
+                                                                <c:if test="${post.post_id == event.post_id}">
+                                                                    ${post.title}
+                                                                </c:if>
+                                                            </c:forEach>
+                                                        </td>
+                                                        <td><fmt:formatDate value="${event.startDate}" pattern="yyyy-MM-dd"/></td>
+                                                        <td><fmt:formatDate value="${event.endDate}" pattern="yyyy-MM-dd"/></td>
+                                                        <td>${event.discountPercent}</td>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${event.status == 0}">Out of Stock</c:when>
+                                                                <c:when test="${event.status == 1}">Active</c:when>
+                                                                <c:when test="${event.status == 2}">Pending</c:when>
+                                                                <c:when test="${event.status == 3}">Ended</c:when>
+                                                                <c:otherwise>Unknown</c:otherwise>
+                                                            </c:choose>
+                                                        </td>
 
-                                        <c:forEach var="event" items="${saleEvents}">
-                                            <tr>
-                                                <td>${event.eventID}</td>
-                                                <td>
-                                                    <c:forEach var="category" items="${categories}">
-                                                        <c:if test="${category.categoryID == event.categoryID}">
-                                                            ${category.categoryName}
-                                                        </c:if>
-                                                    </c:forEach>
-                                                </td>
-                                                <td>
-                                                    <c:forEach var="post" items="${activePosts}">
-                                                        <c:if test="${post.post_id == event.post_id}">
-                                                            ${post.title}
-                                                        </c:if>
-                                                    </c:forEach>
-                                                </td>
-                                                <td><fmt:formatDate value="${event.startDate}" pattern="yyyy-MM-dd"/></td>
-                                                <td><fmt:formatDate value="${event.endDate}" pattern="yyyy-MM-dd"/></td>
-                                                <td>${event.discountPercent}</td>
-                                                <td>
-                                                    <c:choose>
-                                                        <c:when test="${event.status == 0}">Out of Stock</c:when>
-                                                        <c:when test="${event.status == 1}">Active</c:when>
-                                                        <c:when test="${event.status == 2}">Pending</c:when>
-                                                        <c:when test="${event.status == 3}">Ended</c:when>
-                                                        <c:otherwise>Unknown</c:otherwise>
-                                                    </c:choose>
-                                                </td>
-
-                                                <!-- New Action column -->
-                                                <td>
-                                                    <a href="${ctx}/viewUser?userID=${event.createdBy}" style="color:#337ab7; display:block;">
-                                                        ${event.createdByName}
-                                                    </a>
-                                                    <a href="${ctx}/updatesale?eventID=${event.eventID}" class="btn btn-sm btn-info">Update</a>
-                                                    <c:if test="${event.status == 2}">
-                                                        <form action="${ctx}/approveSaleEvent" method="post" style="display:inline;">
-                                                            <input type="hidden" name="eventID" value="${event.eventID}" />
-                                                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
-                                                        </form>
-                                                    </c:if>
-                                                </td>
-
-                                                <td>
-                                                    <c:choose>
-                                                        <c:when test="${event.approvedBy != null}">
-                                                            <a href="${ctx}/viewUser?userID=${event.approvedBy}" style="color:#337ab7;">
-                                                                ${event.approvedByName}
+                                                        <!-- New Action column -->
+                                                        <td>
+                                                            <a href="${ctx}/viewUser?userID=${event.createdBy}" style="color:#337ab7; display:block;">
+                                                                ${event.createdByName}
                                                             </a>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <span style="color:gray;">Waiting Approval</span>
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </td>
+                                                            <a href="${ctx}/updatesale?eventID=${event.eventID}" class="btn btn-sm btn-info">Update</a>
+                                                            <c:if test="${event.status == 2}">
+                                                                <form action="${ctx}/approveSaleEvent" method="post" style="display:inline;">
+                                                                    <input type="hidden" name="eventID" value="${event.eventID}" />
+                                                                    <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                                                </form>
+                                                            </c:if>
+                                                        </td>
 
-                                            </tr>
-                                        </c:forEach>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${event.approvedBy != null}">
+                                                                    <a href="${ctx}/viewUser?userID=${event.approvedBy}" style="color:#337ab7;">
+                                                                        ${event.approvedByName}
+                                                                    </a>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <span style="color:gray;">Waiting Approval</span>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+
+                                                    </tr>
+                                                </c:forEach>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </table>
 
 

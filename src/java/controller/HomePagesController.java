@@ -1,5 +1,6 @@
 package controller;
 
+import dal.Blog_CateDAO;
 import dal.CategoriesDAO;
 import models.BrandByComponentName;
 import models.Brands;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.util.List;
+import models.SaleEvents;
 
 @WebServlet(name = "HomePagesController", urlPatterns = {"/HomePages"})
 public class HomePagesController extends HttpServlet {
@@ -41,6 +43,9 @@ public class HomePagesController extends HttpServlet {
         List<Categories> laptopProducts = dao.getCategoriesByComponent(COMPONENT_LAPTOP, startLaptop, PAGE_SIZE);
         int totalLaptop = dao.countTotalProducts(COMPONENT_LAPTOP);
         int totalPagesLaptop = (int) Math.ceil(totalLaptop * 1.0 / PAGE_SIZE);
+        Blog_CateDAO daos = new Blog_CateDAO();
+        List<SaleEvents> sale = daos.getAllSaleEvents();
+        request.setAttribute("sale", sale);
 
         // slide bar
         request.setAttribute("Components", dao.getAllComponents());
@@ -72,13 +77,14 @@ public class HomePagesController extends HttpServlet {
       @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+       //processRequest(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        //processRequest(request, response);
+        
     }
 
     @Override
