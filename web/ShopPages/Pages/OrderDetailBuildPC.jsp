@@ -131,7 +131,7 @@
                 font-weight: bold;
             }
 
-            /* ===== REJECT STATUS ===== */
+    
             .reject-step {
                 text-align: center;
                 color: #dc3545;
@@ -241,24 +241,43 @@
 
                 <ul class="order-steps">
                     <c:set var="currentStatus" value="${orderDetail[0].buildPcStatus}" />
-                    <c:forEach var="step" begin="0" end="4">
-                        <c:set var="stepClass" value="" />
-                        <c:choose>
-                            <c:when test="${step < currentStatus}"><c:set var="stepClass" value="completed"/></c:when>
-                            <c:when test="${step == currentStatus}"><c:set var="stepClass" value="current"/></c:when>
-                        </c:choose>
-                        <li class="${stepClass}">
+
+                   <c:if test="${currentStatus == 0}">
+                        <li class="reject-step">Rejected</li>
+                        </c:if>
+
+                    <c:if test="${currentStatus != 0}">
+                        <c:forEach var="step" begin="1" end="5">
+                            <c:set var="stepClass" value="" />
                             <c:choose>
-                                <c:when test="${step == 0}">Reject</c:when>
-                                <c:when test="${step == 1}">Waiting Confirm</c:when>
-                                <c:when test="${step == 2}">Out of stock, waiting for shipment </c:when>
-                                <c:when test="${step == 3}">Waiting Ship</c:when>
-                                <c:when test="${step == 4}">On Ship</c:when>
-                                <c:when test="${step == 5}">Complete</c:when>
+      
+                                <c:when test="${step < currentStatus}">
+                                    <c:set var="stepClass" value="completed" />
+                                </c:when>
+
+                                <c:when test="${step == currentStatus && currentStatus == 5}">
+                                    <c:set var="stepClass" value="completed" />
+                                </c:when>
+
+                                <c:when test="${step == currentStatus}">
+                                    <c:set var="stepClass" value="current" />
+                                </c:when>
                             </c:choose>
-                        </li>
-                    </c:forEach>
+
+                            <li class="${stepClass}">
+                                <c:choose>
+                                    <c:when test="${step == 1}">Pending</c:when>
+                                    <c:when test="${step == 2}">On-progress</c:when>
+                                    <c:when test="${step == 3}">Waiting for ship</c:when>
+                                    <c:when test="${step == 4}">On Ship</c:when>
+                                    <c:when test="${step == 5}">Complete</c:when>
+                                </c:choose>
+                            </li>
+                        </c:forEach>
+                    </c:if>
                 </ul>
+
+
 
                 <div class="review-payment">
                     <h2>Order Details</h2>
