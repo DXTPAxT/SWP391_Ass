@@ -155,47 +155,47 @@ public class Blog_CateDAO extends DBContext {
 
         return buildNestedComments(list);
     }
+
     public List<Comment> buildNestedComments(List<Comment> flatList) {
-    Map<Integer, Comment> map = new HashMap<>();
-    List<Comment> rootComments = new ArrayList<>();
+        Map<Integer, Comment> map = new HashMap<>();
+        List<Comment> rootComments = new ArrayList<>();
 
-    for (Comment c : flatList) {
-        c.setReplies(new ArrayList<>()); 
-        map.put(c.getCommentID(), c);
-    }
+        for (Comment c : flatList) {
+            c.setReplies(new ArrayList<>());
+            map.put(c.getCommentID(), c);
+        }
 
-    for (Comment c : flatList) {
-        if (c.getParentCommentID() == null) {
-            rootComments.add(c);
-        } else {
-            Comment parent = map.get(c.getParentCommentID());
-            if (parent != null) {
-                parent.getReplies().add(c);
+        for (Comment c : flatList) {
+            if (c.getParentCommentID() == null) {
+                rootComments.add(c);
+            } else {
+                Comment parent = map.get(c.getParentCommentID());
+                if (parent != null) {
+                    parent.getReplies().add(c);
+                }
             }
         }
+        return rootComments;
     }
-    return rootComments;
-}
 
+    public void likeComment(int CommentID, int UserID) {
+        String query = "INSERT INTO Comment_Likes (CommentID, UserID)\n"
+                + "SELECT * FROM (SELECT ? AS CommentID, ? AS UserID) AS tmp\n"
+                + "WHERE NOT EXISTS (\n"
+                + "    SELECT 1 FROM comment_likes WHERE CommentID = ? AND UserID = ?\n"
+                + ") LIMIT 1;";
 
-public void likeComment(int CommentID, int UserID) {
-    String query = "INSERT INTO Comment_Likes (CommentID, UserID)\n" +
-"SELECT * FROM (SELECT ? AS CommentID, ? AS UserID) AS tmp\n" +
-"WHERE NOT EXISTS (\n" +
-"    SELECT 1 FROM comment_likes WHERE CommentID = ? AND UserID = ?\n" +
-") LIMIT 1;";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
 
-    try (PreparedStatement ps = connection.prepareStatement(query)) {
-         
-        ps.setInt(1, CommentID);
-        ps.setInt(2, UserID);
-        ps.setInt(3, CommentID);
-        ps.setInt(4, UserID);
-        ps.executeUpdate();
-    } catch (Exception e) {
-        e.printStackTrace();
+            ps.setInt(1, CommentID);
+            ps.setInt(2, UserID);
+            ps.setInt(3, CommentID);
+            ps.setInt(4, UserID);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
 
     public void addComment(Comment c) {
         String query = "INSERT INTO comments (Post_id, UserID, CommentText, ParentCommentID)\n"
@@ -352,10 +352,10 @@ public void likeComment(int CommentID, int UserID) {
     public List<Post> getPostsByAuthorRole(String roleName) {
         List<Post> list = new ArrayList<>();
         String query = "SELECT p.*, c.Bc_name FROM Post p "
-                 + "JOIN Users u ON p.Add_id = u.UserID "
-                 + "JOIN Roles r ON u.RoleID = r.RoleID "
-                 + "JOIN Blogs_category c ON p.Bc_id = c.Bc_id "
-                 + "WHERE r.RoleName = ?";
+                + "JOIN Users u ON p.Add_id = u.UserID "
+                + "JOIN Roles r ON u.RoleID = r.RoleID "
+                + "JOIN Blogs_category c ON p.Bc_id = c.Bc_id "
+                + "WHERE r.RoleName = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, roleName);
@@ -433,8 +433,8 @@ public void likeComment(int CommentID, int UserID) {
     public List<Post> searchPostsByTitle(String keyword) throws SQLException {
         List<Post> result = new ArrayList<>();
         String sql = "SELECT p.*, c.Bc_name FROM Post p "
-           + "JOIN blogs_category c ON p.Bc_id = c.Bc_id "
-           + "WHERE p.Title LIKE ?";
+                + "JOIN blogs_category c ON p.Bc_id = c.Bc_id "
+                + "WHERE p.Title LIKE ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, "%" + keyword + "%");
@@ -497,12 +497,12 @@ public void likeComment(int CommentID, int UserID) {
         return list;
     }
 
-     public List<SaleEvents> getAllSaleEvents() {
+    public List<SaleEvents> getAllSaleEvents() {
         List<SaleEvents> list = new ArrayList<>();
         String sql = "SELECT se.*, u1.FullName AS createdByName, u2.FullName AS approvedByName "
-                   + "FROM SaleEvents se "
-                   + "JOIN Users u1 ON se.CreatedBy = u1.UserID "
-                   + "LEFT JOIN Users u2 ON se.ApprovedBy = u2.UserID";
+                + "FROM SaleEvents se "
+                + "JOIN Users u1 ON se.CreatedBy = u1.UserID "
+                + "LEFT JOIN Users u2 ON se.ApprovedBy = u2.UserID";
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(parseSaleEvent(rs));
@@ -516,10 +516,10 @@ public void likeComment(int CommentID, int UserID) {
     public SaleEvents getSaleEventByID(int eventID) {
         SaleEvents event = null;
         String sql = "SELECT se.*, u1.FullName AS createdByName, u2.FullName AS approvedByName "
-                   + "FROM SaleEvents se "
-                   + "JOIN Users u1 ON se.CreatedBy = u1.UserID "
-                   + "LEFT JOIN Users u2 ON se.ApprovedBy = u2.UserID "
-                   + "WHERE se.EventID = ?";
+                + "FROM SaleEvents se "
+                + "JOIN Users u1 ON se.CreatedBy = u1.UserID "
+                + "LEFT JOIN Users u2 ON se.ApprovedBy = u2.UserID "
+                + "WHERE se.EventID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, eventID);
             ResultSet rs = ps.executeQuery();
@@ -534,7 +534,11 @@ public void likeComment(int CommentID, int UserID) {
 
     public List<SaleEvents> getSaleEventsByCategory(int categoryID) {
         List<SaleEvents> list = new ArrayList<>();
-        String sql = "SELECT * FROM SaleEvents WHERE CategoryID = ?";
+        String sql = "SELECT se.*, u1.FullName AS createdByName, u2.FullName AS approvedByName "
+                + "FROM SaleEvents se "
+                + "JOIN Users u1 ON se.CreatedBy = u1.UserID "
+                + "LEFT JOIN Users u2 ON se.ApprovedBy = u2.UserID "
+                + "WHERE se.CategoryID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, categoryID);
             ResultSet rs = ps.executeQuery();
@@ -549,7 +553,7 @@ public void likeComment(int CommentID, int UserID) {
 
     public void addSaleEvent(SaleEvents event) {
         String sql = "INSERT INTO SaleEvents (CategoryID, Post_id, StartDate, EndDate, DiscountPercent, Status, CreatedBy, ApprovedBy) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, event.getCategoryID());
             ps.setInt(2, event.getPost_id());
@@ -585,8 +589,8 @@ public void likeComment(int CommentID, int UserID) {
 
     private int determineStatusFromInventory(int eventID) {
         String sql = "SELECT i.Quantity, i.IsRestocking "
-                   + "FROM SaleEvents se JOIN Inventory i ON se.CategoryID = i.CategoryID "
-                   + "WHERE se.EventID = ?";
+                + "FROM SaleEvents se JOIN Inventory i ON se.CategoryID = i.CategoryID "
+                + "WHERE se.EventID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, eventID);
             ResultSet rs = ps.executeQuery();
@@ -594,9 +598,13 @@ public void likeComment(int CommentID, int UserID) {
                 int quantity = rs.getInt("Quantity");
                 boolean isRestocking = rs.getBoolean("IsRestocking");
 
-                if (quantity > 0) return 1;            // Còn hàng
-                else if (isRestocking) return 0;       // Hết hàng nhưng đang nhập
-                else return 3;                         // Hết hàng không nhập
+                if (quantity > 0) {
+                    return 1;            // Còn hàng
+                } else if (isRestocking) {
+                    return 0;       // Hết hàng nhưng đang nhập
+                } else {
+                    return 3;                         // Hết hàng không nhập
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -606,7 +614,7 @@ public void likeComment(int CommentID, int UserID) {
 
     public void updateSaleEvent(SaleEvents event) {
         String sql = "UPDATE SaleEvents SET CategoryID = ?, Post_id = ?, StartDate = ?, EndDate = ?, "
-                   + "DiscountPercent = ?, Status = ?, CreatedBy = ?, ApprovedBy = ? WHERE EventID = ?";
+                + "DiscountPercent = ?, Status = ?, CreatedBy = ?, ApprovedBy = ? WHERE EventID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, event.getCategoryID());
             ps.setInt(2, event.getPost_id());
@@ -656,7 +664,6 @@ public void likeComment(int CommentID, int UserID) {
 
         return event;
     }
-
 
     public static void main(String[] args) {
         Blog_CateDAO dao = new Blog_CateDAO();

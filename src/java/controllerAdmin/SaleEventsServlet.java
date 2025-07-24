@@ -6,7 +6,7 @@ package controllerAdmin;
 
 import dal.Blog_CateDAO;
 import dal.CategoriesDAO;
-import dal.RoleDAO; 
+import dal.RoleDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -66,19 +66,27 @@ public class SaleEventsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String categoryParam = request.getParameter("categoryID");
-    int selectedCategoryID = categoryParam != null ? Integer.parseInt(categoryParam) : -1;
+        int selectedCategoryID = categoryParam != null ? Integer.parseInt(categoryParam) : -1;
 
-    Blog_CateDAO dao = new Blog_CateDAO();
-    CategoriesDAO cdao = new CategoriesDAO();
+        Blog_CateDAO dao = new Blog_CateDAO();
+        CategoriesDAO cdao = new CategoriesDAO();
 
-    
-    List<SaleEvents> saleEvents = (selectedCategoryID != -1)
-            ? dao.getSaleEventsByCategory(selectedCategoryID)
-            : dao.getAllSaleEvents();
+        List<SaleEvents> saleEvents = (selectedCategoryID != -1)
+                ? dao.getSaleEventsByCategory(selectedCategoryID)
+                : dao.getAllSaleEvents();
+        System.out.println("Tổng số Sale Events: " + saleEvents.size());
+        for (SaleEvents s : saleEvents) {
+            System.out.println("EventID: " + s.getEventID()
+                    + ", CategoryID: " + s.getCategoryID()
+                    + ", Status: " + s.getStatus()
+                    + ", CreatedBy: " + s.getCreatedBy()
+                    + ", CreatedByName: " + s.getCreatedByName());
+        }
+        System.out.println("selectedCategoryID = " + selectedCategoryID);
 
-    List<Categories> categories = cdao.getAllCategories();
+        List<Categories> categories = cdao.getAllCategories();
 
-    List<Post> activePosts = dao.getAllPost();
+        List<Post> activePosts = dao.getAllPost();
 
         request.setAttribute("saleEvents", saleEvents);
         request.setAttribute("categories", categories);

@@ -67,7 +67,7 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Post</label>
                         <div class="col-sm-10">
-                            <select name="Post_id" class="form-control" required>
+                            <select name="post_id" class="form-control" required>
                                 <c:forEach var="post" items="${postList}">
                                     <option value="${post.post_id}">${post.title}</option>
                                 </c:forEach>
