@@ -95,7 +95,7 @@ public class OrderBuildPC extends HttpServlet {
                 try {
                     uniqueItemIDs.add(Integer.parseInt(idStr.trim()));
                 } catch (NumberFormatException e) {
-                    System.err.println("⚠️ Failed to parse itemID: " + idStr);
+                    System.err.println(" Failed to parse itemID: " + idStr);
                 }
             }
 
@@ -112,31 +112,36 @@ public class OrderBuildPC extends HttpServlet {
             User currentUser = (User) session.getAttribute("user");
 
             if (currentUser == null || currentUser.getRole().getRoleID() != 1) {
-                response.sendRedirect(request.getContextPath() + "/Logout");
+                if (session != null) {
+                    session.invalidate();
+                }
+                HttpSession newSession = request.getSession(true);
+                newSession.setAttribute("error", "You do not have permission to access this task.");
+                response.sendRedirect(request.getContextPath() + "/Login");
                 return;
             }
 
-            System.out.println("📥 Request to update order status:");
-            System.out.println("➡️ Order ID: " + orderID);
-            System.out.println("➡️ New Status: " + status);
+            System.out.println("Request to update order status:");
+            System.out.println(" Order ID: " + orderID);
+            System.out.println("️ New Status: " + status);
 
             switch (status) {
                 case 0:
-              
+
                     System.out.println("Order has been rejected.");
                     dao.updateOrderStatus(orderID, status);
                     response.sendRedirect("OrderBuildPC?service=listWaitingConfirm");
                     return;
 
                 case 3:
-               
+
                     List<BuildPCAdmin> details = dao.getBuildPCItemsByOrderID(orderID);
                     boolean hasInventoryIssue = false;
 
                     for (BuildPCAdmin detail : details) {
                         int cateID = detail.getCateId();
-                        int quantityNeeded = 1; 
-                        int inventory = detail.getInventory(); 
+                        int quantityNeeded = 1;
+                        int inventory = detail.getInventory();
                         System.out.println("CategoryID: " + cateID + ", Inventory: " + inventory + ", Needed: " + quantityNeeded);
 
                         if (inventory < quantityNeeded) {
@@ -148,18 +153,21 @@ public class OrderBuildPC extends HttpServlet {
 
                     if (hasInventoryIssue) {
                         dao.updateQueueForBuildPCOrder(orderID);
-                        dao.updateOrderStatus(orderID, 2); 
+                        dao.updateOrderStatus(orderID, 2);
                         response.sendRedirect("OrderBuildPC?service=listInProcess");
                         return;
                     }
 
-                
                     dao.updateOrderStatus(orderID, status);
 
                     for (int itemID : uniqueItemIDs) {
                         System.out.println("Assigning product for BuildPCItemID: " + itemID);
                         try {
                             dao.assignProductsToBuildPCItem(itemID);
+                            for (BuildPCAdmin detail : details) {
+                                int cateID = detail.getCateId();
+                                dao.updateInventoryAfterAssign(cateID, 1);
+                            }
                         } catch (Exception e) {
                             System.err.println("Error assigning products for ItemID = " + itemID + ": " + e.getMessage());
                             e.printStackTrace();
@@ -204,7 +212,12 @@ public class OrderBuildPC extends HttpServlet {
                 User currentUser = (User) session.getAttribute("user");
 
                 if (currentUser == null || currentUser.getRole().getRoleID() != 2) {
-                    response.sendRedirect(request.getContextPath() + "/Logout");
+                    if (session != null) {
+                        session.invalidate();
+                    }
+                    HttpSession newSession = request.getSession(true);
+                    newSession.setAttribute("error", "You do not have permission to access this task.");
+                    response.sendRedirect(request.getContextPath() + "/Login");
                     return;
                 }
 
@@ -217,8 +230,129 @@ public class OrderBuildPC extends HttpServlet {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID or status format");
             }
-        } else if (service.equals("waitingShip")) {
+        } else if (service.equals("updateStatusShip")) {
+            try {
+                int orderID = Integer.parseInt(request.getParameter("orderID"));
+                int status = Integer.parseInt(request.getParameter("status"));
 
+                HttpSession session = request.getSession(false);
+                User currentUser = (User) session.getAttribute("user");
+
+                if (currentUser == null || currentUser.getRole().getRoleID() != 4) { // 4 là Shipper
+                    if (session != null) {
+                        session.invalidate();
+                    }
+                    HttpSession newSession = request.getSession(true);
+                    newSession.setAttribute("error", "You do not have permission to access this task.");
+                    response.sendRedirect(request.getContextPath() + "/Login");
+                    return;
+                }
+
+                // Chỉ cập nhật trạng thái nếu insert shipping thành công
+                boolean success = dao.insertShipping(currentUser.getUserId(), orderID, null);
+                if (success) {
+                    dao.updateOrderStatus(orderID, 4);
+                    response.sendRedirect("OrderBuildPC?service=listWaitingShipping");
+                } else {
+                    request.setAttribute("error", "Không thể nhận đơn. Đã có lỗi xảy ra khi gán shipper.");
+                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderDoing/OrderItemWaitShip.jsp").forward(request, response);
+                }
+
+            } catch (ServletException | IOException | NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order update request.");
+            }
+        } else if (service.equals("updateStatusShipFinish")) {
+            try {
+                int orderID = Integer.parseInt(request.getParameter("orderID"));
+                int status = Integer.parseInt(request.getParameter("status")); 
+                String note = request.getParameter("note");
+                String[] itemIDs_raw = request.getParameterValues("itemIds");
+
+                if (itemIDs_raw == null || itemIDs_raw.length == 0) {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Thiếu danh sách item cần xử lý.");
+                    return;
+                }
+
+                Set<Integer> uniqueItemIDs = new HashSet<>();
+                for (String idStr : itemIDs_raw) {
+                    try {
+                        uniqueItemIDs.add(Integer.parseInt(idStr.trim()));
+                    } catch (NumberFormatException e) {
+                        System.err.println("⚠️ Không thể parse itemID: " + idStr);
+                    }
+                }
+
+                HttpSession session = request.getSession(false);
+                User currentUser = (User) session.getAttribute("user");
+
+                if (currentUser == null || currentUser.getRole().getRoleID() != 4) {
+                    if (session != null) {
+                        session.invalidate();
+                    }
+                    HttpSession newSession = request.getSession(true);
+                    newSession.setAttribute("error", "Bạn không có quyền truy cập chức năng này.");
+                    response.sendRedirect(request.getContextPath() + "/Login");
+                    return;
+                }
+
+                boolean isCorrectShipper = dao.isShippingHandledByUser(currentUser.getUserId(), orderID);
+                if (!isCorrectShipper) {
+                    request.setAttribute("error", "Bạn không có quyền hoàn thành đơn này.");
+                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderDoing/ListItermOnGoing.jsp").forward(request, response);
+                    return;
+                }
+
+                boolean success = dao.completeShipping(currentUser.getUserId(), orderID, note);
+
+                if (success) {
+                    dao.updateOrderStatus(orderID, status);
+
+                    for (int itemID : uniqueItemIDs) {
+                        dao.updateBuildPCProductsWarrantyDates(itemID);
+                    }       
+                    response.sendRedirect("OrderBuildPC?service=listOnShipping");
+                } else {
+                    request.setAttribute("error", "❌ Cập nhật giao hàng thất bại. Vui lòng thử lại.");
+                    request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderDoing/ListItermOnGoing.jsp").forward(request, response);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "❌ Dữ liệu không hợp lệ.");
+            }
+        } else if (service.equals("viewConsignee")) {
+            try {
+                int orderID = Integer.parseInt(request.getParameter("orderID"));
+                OrderCate order = dao.getOrderByID(orderID);
+
+                int currentStatus = order.getStatus();
+                List<OrderCate> orders = dao.getOrdersByStatus(currentStatus);
+
+                request.setAttribute("orders", orders);
+                request.setAttribute("selectedOrder", order);
+
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderListPC/ListComplete.jsp").forward(request, response);
+
+            } catch (ServletException | IOException | NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
+            }
+
+        } else if (service.equals("viewShipping")) {
+            try {
+                int orderID = Integer.parseInt(request.getParameter("orderID"));
+                OrderCate order = dao.getOrderByID(orderID);
+                int currentStatus = order.getStatus(); // hoặc bạn có thể truyền từ param
+                List<OrderCate> orders = dao.getOrdersByStatus(currentStatus);
+
+                request.setAttribute("orders", orders);
+                request.setAttribute("selectedShipping", order); // dùng để hiển thị phần bên dưới
+                request.setAttribute("orderID", orderID);
+
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/OrderBuildPCAdmin/OrderListPC/ListComplete.jsp").forward(request, response);
+
+            } catch (ServletException | IOException | NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID");
+            }
         }
 
     }

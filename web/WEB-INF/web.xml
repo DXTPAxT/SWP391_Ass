@@ -191,10 +191,6 @@
         <servlet-class>controller.OrderHistoryServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>OrderDetailAdminServlet</servlet-name>
-        <servlet-class>controllerAdmin.OrderDetailAdminServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ApproveSaleServlet</servlet-name>
         <servlet-class>controllerAdmin.ApproveSaleServlet</servlet-class>
     </servlet>
@@ -394,11 +390,6 @@
         <servlet-name>OrderHistoryServlet</servlet-name>
         <url-pattern>/OrderHistory</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>OrderDetailAdminServlet</servlet-name>
-        <url-pattern>/OrderDetailAdmin</url-pattern>
-    </servlet-mapping>
-    
     <servlet-mapping>
         <servlet-name>ApproveSaleServlet</servlet-name>
         <url-pattern>/approvesale</url-pattern>
