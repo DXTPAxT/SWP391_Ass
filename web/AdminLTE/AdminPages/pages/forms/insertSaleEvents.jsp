@@ -55,80 +55,142 @@
                             <!-- Category -->
                             <div class="form-group">
                                 <label>Category:</label>
-                                <select name="categoryID" class="form-control" required>
+                                <select name="categoryID" id="categoryID" class="form-control" onchange="fetchProductInfo()" required>
                                     <c:forEach var="cat" items="${categoryList}">
                                         <option value="${cat.categoryID}">${cat.categoryName}</option>
                                     </c:forEach>
                                 </select>
+
                             </div>
-                   
 
-                    <!-- Post -->
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Post</label>
-                        <div class="col-sm-10">
-                            <select name="post_id" class="form-control" required>
-                                <c:forEach var="post" items="${postList}">
-                                    <option value="${post.post_id}">${post.title}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </div>
 
-                    <!-- Start Date -->
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Start Date</label>
-                        <div class="col-sm-10">
-                            <input type="date" name="startDate" class="form-control" required />
-                        </div>
-                    </div>
+                            <!-- Post -->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Post</label>
+                                <div class="col-sm-10">
+                                    <select name="post_id" class="form-control" required>
+                                        <c:forEach var="post" items="${postList}">
+                                            <option value="${post.post_id}">${post.title}</option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                            </div>
 
-                    <!-- End Date -->
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">End Date</label>
-                        <div class="col-sm-10">
-                            <input type="date" name="endDate" class="form-control" required />
-                        </div>
-                    </div>
+                            <!-- Start Date -->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Start Date</label>
+                                <div class="col-sm-10">
+                                    <input type="date" name="startDate" class="form-control" required />
+                                </div>
+                            </div>
 
-                    <!-- Discount -->
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Discount (%)</label>
-                        <div class="col-sm-10">
-                            <input type="number" step="0.01" name="discountPercent" class="form-control" placeholder="Enter discount percent" required />
-                        </div>
-                    </div>
+                            <!-- End Date -->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">End Date</label>
+                                <div class="col-sm-10">
+                                    <input type="date" name="endDate" class="form-control" required />
+                                </div>
+                            </div>
 
-                    
-                    <div class="box-footer">
-                        <a href="${ctx}/saleevents" class="btn btn-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-primary pull-right">Add Sale Event</button>
+                            <div class="form-group">
+                                <label>Brand Name:</label>
+                                <input type="text" name="brandName" id="brandName" class="form-control" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label>Image URL:</label>
+                                <input type="text" name="imgURL" id="imgURL" class="form-control" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label>Original Price:</label>
+                                <input type="text" name="originalPrice" id="originalPrice" class="form-control" readonly />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Discount (%)</label>
+                                <input type="number" step="0.01" name="discountPercent" id="discountPercent" class="form-control" onchange="updateDiscountedPrice()" required />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Discounted Price</label>
+                                <input type="text" name="discountedPrice" id="discountedPrice" class="form-control" readonly />
+                            </div>
+
+
+
+                            <div class="box-footer">
+                                <a href="${ctx}/saleevents" class="btn btn-secondary">Cancel</a>
+                                <button type="submit" class="btn btn-primary pull-right">Add Sale Event</button>
+                            </div>
+                        </form>
                     </div>
-                    </form>
                 </div>
+
+                <jsp:include page="../../components/footer.jsp" />
+                <jsp:include page="../../components/control-sidebar.jsp" />
             </div>
-
-            <jsp:include page="../../components/footer.jsp" />
-            <jsp:include page="../../components/control-sidebar.jsp" />
         </div>
-    </div>
 
-    <!-- Scripts -->
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
-    <script src="${ctx}/AdminLTE/AdminPages/bootstrap/js/bootstrap.min.js"></script>
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/select2/select2.full.min.js"></script>
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/input-mask/jquery.inputmask.js"></script>
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/input-mask/jquery.inputmask.extensions.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/daterangepicker/daterangepicker.js"></script>
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/datepicker/bootstrap-datepicker.js"></script>
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/timepicker/bootstrap-timepicker.min.js"></script>
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/iCheck/icheck.min.js"></script>
-    <script src="${ctx}/AdminLTE/AdminPages/plugins/fastclick/fastclick.js"></script>
-    <script src="${ctx}/AdminLTE/AdminPages/dist/js/app.min.js"></script>
-    <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
-</body>
+        <!-- Scripts -->
+        <script>
+            function fetchProductInfo() {
+                var categoryID = document.getElementById("categoryID").value;
+
+                fetch('${ctx}/getProductInfo?categoryID=' + categoryID)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById("brandName").value = data.brandName;
+                            document.getElementById("imgURL").value = data.imgURL;
+                            document.getElementById("originalPrice").value = data.originalPrice;
+                            updateDiscountedPrice();
+                        })
+                        .catch(error => console.error('Error:', error));
+            }
+
+        </script>
+        <script>
+            function fetchProductInfo() {
+                var categoryID = document.getElementById("categoryID").value;
+
+                fetch('${ctx}/getProductInfo?categoryID=' + categoryID)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById("brandName").value = data.brandName;
+                            document.getElementById("imgURL").value = data.imgURL;
+                            document.getElementById("originalPrice").value = data.originalPrice;
+                            updateDiscountedPrice(); // Tính luôn giá sau khi fetch
+                        })
+                        .catch(error => console.error('Error:', error));
+            }
+
+            function updateDiscountedPrice() {
+                const originalPrice = parseFloat(document.getElementById("originalPrice").value);
+                const discountPercent = parseFloat(document.getElementById("discountPercent").value);
+
+                if (!isNaN(originalPrice) && !isNaN(discountPercent)) {
+                    const discountedPrice = originalPrice * (1 - discountPercent / 100);
+                    document.getElementById("discountedPrice").value = discountedPrice.toFixed(2);
+                } else {
+                    document.getElementById("discountedPrice").value = "";
+                }
+            }
+        </script>
+
+
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/bootstrap/js/bootstrap.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/select2/select2.full.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/input-mask/jquery.inputmask.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/daterangepicker/daterangepicker.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/datepicker/bootstrap-datepicker.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/timepicker/bootstrap-timepicker.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/iCheck/icheck.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/plugins/fastclick/fastclick.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/dist/js/app.min.js"></script>
+        <script src="${ctx}/AdminLTE/AdminPages/dist/js/demo.js"></script>
+    </body>
 </html>
