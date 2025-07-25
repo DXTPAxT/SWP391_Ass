@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import models.User;
+import utils.PasswordUtils;
 
 /**
  *
@@ -75,36 +76,47 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            UserDAO userDAO = new UserDAO();
             String email = request.getParameter("email");
-            String password = request.getParameter("password");
+            String password = request.getParameter("hashedPassword");
 
-            if (utils.Validator.isNullOrEmpty(email)) {
-                setLoginAttributes(request, "Email is required!", email, password);
-                forwardToLogin(request, response);
-                return;
-            } else if (utils.Validator.isNullOrEmpty(password)) {
-                setLoginAttributes(request, "Password is required!", email, password);
-                forwardToLogin(request, response);
-                return;
-            }
+            HttpSession session = request.getSession();
 
-            boolean isEmailExist = userDAO.isEmailExist(email);
-            if (!isEmailExist) {
-                setLoginAttributes(request, "Email does not exist!", email, password);
+            // Kiểm tra rỗng
+            if (email == null || email.trim().isEmpty()) {
+                setLoginAttributes(request, "Email is required!", "");
                 forwardToLogin(request, response);
                 return;
             }
 
-            User user = userDAO.getUserByEmailAndPassword(email, password);
+            if (password == null || password.trim().isEmpty()) {
+                setLoginAttributes(request, "Password is required!", email);
+                forwardToLogin(request, response);
+                return;
+            }
+
+            UserDAO dao = new UserDAO();
+            User user = dao.getUserByEmail(email);
+
+            if (user == null) {
+//                setLoginAttributes(request, "Email does not exist!", email);
+                forwardToLogin(request, response);
+                return;
+            }
+
+            // So sánh mật khẩu đã mã hóa
+            if (!user.getPassword().equals(password)) {
+                setLoginAttributes(request, "Incorrect password!", email);
+                forwardToLogin(request, response);
+                return;
+            }
+            
             if (user != null) {
                 if (user.getStatus() != 1) {
-                    setLoginAttributes(request, "Your account has been disabled!", email, password);
+//                    setLoginAttributes(request, "Your account has been disabled!", email);
                     forwardToLogin(request, response);
                     return;
                 }
-
-                HttpSession session = request.getSession();
+                
                 session.setAttribute("user", user);
                 session.setAttribute("id", user.getUserId());
 
@@ -124,7 +136,7 @@ public class LoginServlet extends HttpServlet {
                     response.sendRedirect("OrderAdminCate?service=listWaitShip");
                 }
             } else {
-                setLoginAttributes(request, "Incorrect password!", email, password);
+                setLoginAttributes(request, "Incorrect password1!", email);
                 forwardToLogin(request, response);
             }
         } catch (Exception e) {
@@ -134,10 +146,9 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    private void setLoginAttributes(HttpServletRequest request, String error, String email, String password) {
+    private void setLoginAttributes(HttpServletRequest request, String error, String email) {
         request.setAttribute("error", error);
         request.setAttribute("email", email);
-        request.setAttribute("password", password);
     }
 
     private void forwardToLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

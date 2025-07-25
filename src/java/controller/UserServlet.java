@@ -60,7 +60,7 @@ public class UserServlet extends HttpServlet {
                 if (ok) {
                     boolean mailSent = MailUtils.send(user.getEmail(),
                             "Your password has been reset",
-                            "Hello " + user.getFullname() + ",\n\nYour new password is: " + newPassword + "\n\nPlease log in and change it immediately.");
+                            "Hello " + user.getFullname() + ",\n\nYour new password is: " + newPassword + "\n\nPlease log in and change it.");
                     if (mailSent) {
                         request.setAttribute("toast", "Reset password successfully!");
                         request.setAttribute("toastType", "success");
@@ -112,6 +112,15 @@ public class UserServlet extends HttpServlet {
             }
         } else if ("forgotPassword".equals(service)) {
             request.getRequestDispatcher("/ShopPages/Pages/forgotPassword.jsp").forward(request, response);
+        } else if ("changePassword".equals(service)) {
+            HttpSession session = request.getSession();
+            User user = (User) session.getAttribute("user");
+            if (user != null) {
+                request.setAttribute("email", user.getEmail());
+                request.getRequestDispatcher("/ShopPages/Pages/changePassword.jsp").forward(request, response);
+            } else {
+                response.sendRedirect("/Login");
+            }
         } else {
             response.sendRedirect("Homepages");
         }
@@ -301,26 +310,16 @@ public class UserServlet extends HttpServlet {
             }
         } else if ("changePassword".equals(service)) {
             String email = request.getParameter("email");
-            String password = request.getParameter("password");
-            String confirmPassword = request.getParameter("confirmPassword");
+            String password = request.getParameter("hashedPassword");
             String error = null;
             boolean hasError = false;
-            if (password == null || password.length() < 6) {
-                error = "Password must be at least 6 characters.";
-                hasError = true;
-            }
-            if ((confirmPassword == null || !confirmPassword.equals(password))&&  error == null) {
-                error = "Passwords do not match.";
-                hasError = true;
-            }
             if (hasError) {
                 request.setAttribute("error", error);
                 request.setAttribute("email", email);
                 request.getRequestDispatcher("/ShopPages/Pages/changePassword.jsp").forward(request, response);
             } else {
                 UserDAO dao = new UserDAO();
-                String hashedPassword = utils.PasswordUtils.hashPassword(password);
-                boolean updated = dao.updatePasswordByEmail(email, hashedPassword);
+                boolean updated = dao.updatePasswordByEmail(email, password);
                 if (updated) {
                     request.setAttribute("message", "Password changed successfully. Please login.");
                     request.getRequestDispatcher("/ShopPages/Pages/login.jsp").forward(request, response);

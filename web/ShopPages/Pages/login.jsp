@@ -40,51 +40,67 @@
             <jsp:param name="activeHeader" value="no"/>
         </jsp:include>
 
-        <section id="login-section" class="position-container"><!--form-->
+        <section id="login-section" class="position-container">
             <div class="container form-wrapper">
                 <div class="row custom-center">
                     <div class="col-sm-4 col-sm-offset-1 ml-0">
-                        <div class="login-form form-modern"><!--login form-->
+                        <div class="login-form form-modern">
                             <h2>Login to your account</h2>
+
                             <c:if test="${not empty sessionScope.error}">
                                 <div class="alert alert-danger text-center">${sessionScope.error}</div>
                                 <c:remove var="error" scope="session"/>
                             </c:if>
-                            <form action="Login" method="POST">
+
+                            <form action="Login" method="POST" id="loginForm">
                                 <label class="form">Email</label>
-                                <input type="text" placeholder="Enter email address" class="form-control ${error == 'Email is required!' || error == 'Email does not exist!' ? 'input-modern-invalid' : ''}" name="email" required value="${not empty error ? email : ''}"/>
+                                <input type="text" name="email"
+                                       placeholder="Enter email address"
+                                       class="form-control ${error == 'Email is required!' || error == 'Email does not exist!' ? 'input-modern-invalid' : ''}"
+                                       value="${not empty email ? email : ''}" required />
+
                                 <c:if test="${error == 'Email is required!' || error == 'Email does not exist!'}">
                                     <p class="text-danger error-message">${error}</p>
                                 </c:if>
+
+                                <!-- Hidden field để chứa mật khẩu đã băm -->
+                                <input type="hidden" name="hashedPassword" id="hashedPassword">
+
                                 <label class="form">Password</label>
-                                <input type="password" placeholder="Password" class="form-control ${error == 'Password is required!' || error == 'Incorrect password!' ? 'input-modern-invalid' : ''}" name="password" required value="${not empty error ? password : ''}"/>
+                                <input type="password"
+                                       id="password"
+                                       placeholder="Password"
+                                       class="form-control ${error == 'Password is required!' || error == 'Incorrect password!' ? 'input-modern-invalid' : ''}"
+                                       required value="${not empty password ? password : ''}" />
+
                                 <c:if test="${error == 'Password is required!' || error == 'Incorrect password!'}">
                                     <p class="text-danger error-message">${error}</p>
                                 </c:if>
+
                                 <div class="d-flex justify-content-between align-items-end">
                                     <a href="${pageContext.request.contextPath}/User?service=forgotPassword" class="forgot-password-link">Forgot Password?</a>
                                 </div>
+
                                 <div class="custom-between mt-3">
                                     <button type="submit" id="loginButton" class="btn-modern">Login</button>
                                     <a href="SignUp">SignUp</a>
                                 </div>
                             </form>
-                        </div><!--/login form-->
+                        </div>
                     </div>
                 </div>
             </div>
-        </section><!--/form-->
+        </section>
+
 
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 // Chọn tất cả input có class is-invalid
                 const invalidInputs = document.querySelectorAll("input.is-invalid");
-
                 invalidInputs.forEach(function (input) {
                     input.addEventListener("input", function () {
                         // Xóa class is-invalid khỏi input
                         input.classList.remove("is-invalid");
-
                         // Ẩn tất cả phần tử có class .error-message (nếu có)
                         const errorMessages = document.querySelectorAll(".error-message");
                         errorMessages.forEach(function (el) {
@@ -92,7 +108,6 @@
                         });
                     });
                 });
-
                 // Chọn tất cả input có class input-modern-invalid
                 const modernInvalidInputs = document.querySelectorAll("input.input-modern-invalid");
                 modernInvalidInputs.forEach(function (input) {
@@ -108,12 +123,40 @@
                 });
             });
         </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const form = document.getElementById("loginForm");
+                const passwordInput = document.getElementById("password");
+                const hashedInput = document.getElementById("hashedPassword");
 
-        <script src="js/jquery.js"></script>
-        <script src="js/price-range.js"></script>
-        <script src="js/jquery.scrollUp.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/jquery.prettyPhoto.js"></script>
-        <script src="js/main.js"></script>
+                form.addEventListener("submit", async function (e) {
+                    e.preventDefault(); // chặn submit mặc định
+
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(passwordInput.value);
+                    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+                    hashedInput.value = hashHex;
+                    passwordInput.value = ""; // tránh gửi mật khẩu gốc
+
+                    form.submit(); // submit lại form sau khi đã hash
+                });
+            });
+        </script>
+
+<!--        <script>
+            const password = '<%= request.getAttribute("password") %>';
+            const userPassword = '<%= request.getAttribute("userPassword") %>';
+            console.log("Password:", password);
+            console.log("userPassword", userPassword);
+        </script>-->
+        <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.js"></script>
+        <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/price-range.js"></script>
+        <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.scrollUp.min.js"></script>
+        <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/bootstrap.min.js"></script>
+        <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.prettyPhoto.js"></script>
+        <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/main.js"></script>
     </body>
 </html>
