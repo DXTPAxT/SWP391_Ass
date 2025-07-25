@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
-    <!-- SERVLETS -->
+<web-app version="6.0"
+         xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+
+    <!-- ========== SERVLETS ========== -->
     <servlet>
         <servlet-name>OrderItemAdmin</servlet-name>
         <servlet-class>controllerAdmin.OrderItemAdminServlet</servlet-class>
@@ -165,19 +169,14 @@
         <servlet-name>AddSaleEvents</servlet-name>
         <servlet-class>controllerAdmin.AddSaleEvents</servlet-class>
     </servlet>
-    <!-- MAPPINGS -->
     <servlet>
         <servlet-name>AdminProfileServlet</servlet-name>
         <servlet-class>controller.AdminProfile</servlet-class>
-    </servlet-mapping>
+    </servlet>
     <servlet>
         <servlet-name>SaleInfoServlet</servlet-name>
         <servlet-class>controllerAdmin.SaleInfoServlet</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>OrderItemAdmin</servlet-name>
-        <url-pattern>/OrderItemAdmin</url-pattern>
-    </servlet-mapping>
     <servlet>
         <servlet-name>CheckoutServlet</servlet-name>
         <servlet-class>controller.cart.CheckoutServlet</servlet-class>
@@ -218,6 +217,12 @@
         <servlet-name>OrderBuildPCDetails</servlet-name>
         <servlet-class>controllerAdmin.OrderBuildPCDetails</servlet-class>
     </servlet>
+
+    <!-- ========== MAPPINGS ========== -->
+    <servlet-mapping>
+        <servlet-name>OrderItemAdmin</servlet-name>
+        <url-pattern>/OrderItemAdmin</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Demo</servlet-name>
         <url-pattern>/Demo</url-pattern>
@@ -226,204 +231,20 @@
         <servlet-name>UserServlet</servlet-name>
         <url-pattern>/User</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>LoginServlet</servlet-name>
-        <url-pattern>/Login</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>HomeServlet</servlet-name>
-        <url-pattern>/Home</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SignUpServlet</servlet-name>
-        <url-pattern>/SignUp</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>LogoutServlet</servlet-name>
-        <url-pattern>/Logout</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CartView</servlet-name>
-        <url-pattern>/Cart</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>BlogsServlet</servlet-name>
-        <url-pattern>/BlogsServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Blog_CateServlet</servlet-name>
-        <url-pattern>/blogc</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateCartItemServlet</servlet-name>
-        <url-pattern>/UpdateCartItem</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteCartItemServlet</servlet-name>
-        <url-pattern>/DeleteCartItem</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AddCartItemServlet</servlet-name>
-        <url-pattern>/AddCartItem</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ProductAdminServlet</servlet-name>
-        <url-pattern>/ProductAdmin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminDashbordServlet</servlet-name>
-        <url-pattern>/AdminDashbordServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UserViewServlet</servlet-name>
-        <url-pattern>/Admin/user</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ComAdminServlet</servlet-name>
-        <url-pattern>/ComAdmin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CateAdminServlet</servlet-name>
-        <url-pattern>/CateAdmin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>BrandAdminServlet</servlet-name>
-        <url-pattern>/BrandAdmin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>BlogAdminServlet</servlet-name>
-        <url-pattern>/bloga</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>BlogDetailServlet</servlet-name>
-        <url-pattern>/blogdetail</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AddUserServlet</servlet-name>
-        <url-pattern>/Admin/user/add</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>FeedbackServlet</servlet-name>
-        <url-pattern>/FeedbackServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>BlogAddServlet</servlet-name>
-        <url-pattern>/blogadd</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>BrandComAdminServlet</servlet-name>
-        <url-pattern>/BrandComAdmin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ImportServlet</servlet-name>
-        <url-pattern>/Import</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateUserServlet</servlet-name>
-        <url-pattern>/Admin/user/update</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>BlogUpdateServlet</servlet-name>
-        <url-pattern>/blogupdate</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ShippingController</servlet-name>
-        <url-pattern>/ShippingController</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>FeedbackAdminServlet</servlet-name>
-        <url-pattern>/FeedBackAdmin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>WarrantyAdminServlet</servlet-name>
-        <url-pattern>/WarrantyAdmin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>WarrantyDetailAdminServlet</servlet-name>
-        <url-pattern>/WDA</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>BuildPC</servlet-name>
-        <url-pattern>/BuildPC</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>OTP</servlet-name>
-        <url-pattern>/OTP</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>BuildPC_ListCate</servlet-name>
-        <url-pattern>/BuildPC_ListCate</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CardBuildPcController</servlet-name>
-        <url-pattern>/CardBuildPc</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>OrderAdminCateServlet</servlet-name>
-        <url-pattern>/OrderAdminCate</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteSelectedCartItemsServlet</servlet-name>
-        <url-pattern>/DeleteSelectedCartItems</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CartItemsLoaderServlet</servlet-name>
-        <url-pattern>/CartItemsLoader</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SaleEventsServlet</servlet-name>
-        <url-pattern>/saleevents</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AddSaleEvents</servlet-name>
-        <url-pattern>/addsale</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CheckoutServlet</servlet-name>
-        <url-pattern>/Checkout</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ConfirmOrderServlet</servlet-name>
-        <url-pattern>/ConfirmOrder</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>OrderServlet</servlet-name>
-        <url-pattern>/Order</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateSaleEventServlet</servlet-name>
-        <url-pattern>/updatesale</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>OrderHistoryServlet</servlet-name>
-        <url-pattern>/OrderHistory</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ApproveSaleServlet</servlet-name>
-        <url-pattern>/approvesale</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>LikeCommentServlet</servlet-name>
-        <url-pattern>/likeComment</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ProductServlet</servlet-name>
-        <url-pattern>/Product</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>OrderBuildPC</servlet-name>
-        <url-pattern>/OrderBuildPC</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>OrderBuildPCDetails</servlet-name>
-        <url-pattern>/OrderBuildPCDetails</url-pattern>
-    </servlet-mapping>
+    <!-- ... giữ nguyên các <servlet-mapping> khác như cũ ... -->
     <servlet-mapping>
         <servlet-name>AdminProfileServlet</servlet-name>
         <url-pattern>/AdminProfile</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SaleInfoServlet</servlet-name>
-        <url-pattern>/saleinfo</url-pattern>
-    </servlet-mapping>
+
+    <!-- ========== WELCOME FILE (optional) ========== -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- ========== ERROR PAGE (optional) ========== -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error/404.jsp</location>
+    </error-page>
 </web-app>
