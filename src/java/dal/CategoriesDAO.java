@@ -127,33 +127,33 @@ public class CategoriesDAO extends DBContext {
     }
 
     // 4. Lấy category theo ID (kèm thông tin brand & component)
-    public Categories getCategoryByID(int id) {
+     public List<Categories> getCategoryByID(int id) {
         String sql = """
-            SELECT
-              c.*,
-              bc.ComponentID,
-              bc.BrandID,
-              b.BrandName,
-              comp.ComponentName
-            FROM Categories c
-            JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
-            JOIN Brands b ON bc.BrandID = b.BrandID
-            JOIN Components comp ON bc.ComponentID = comp.ComponentID
-            WHERE c.CategoryID = ?
-            """;
+                SELECT
+                  c.*,
+                  bc.ComponentID,
+                  bc.BrandID,
+                  b.BrandName,
+                  comp.ComponentName
+                FROM Categories c
+                JOIN BrandComs bc ON c.BrandComID   = bc.BrandComID
+                JOIN Brands b ON bc.BrandID = b.BrandID
+                JOIN Components comp ON bc.ComponentID = comp.ComponentID
+                WHERE c.CategoryID = ?
+                """;
+        List<Categories> list = new ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return extractCategory(rs);
+                while (rs.next()) {
+                    list.add(extractCategory(rs));
                 }
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
-        return null;
+        return list;
     }
-
     // 5. Phân trang theo component
     public List<Categories> getCategoriesByComponent(int componentId, int start, int size) {
         String sql = """
