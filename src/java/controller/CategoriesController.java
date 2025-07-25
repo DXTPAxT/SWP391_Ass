@@ -30,17 +30,14 @@ public class CategoriesController extends HttpServlet {
         // --- Chi tiết sản phẩm ---
         if ("detail".equals(service)) {
             int categoryId = parseIntegerOrDefault(request.getParameter("categoryID"), -1);
-            Categories category = dao.getCategoryByID(categoryId);
-
-            if (category != null) {
-                List<WarrantyDetails> warrantyDetailList = new WarrantyDetailDAO().getWarrantyDetailsByCategoryId(categoryId);
-
+            ArrayList<Categories> detailList = new ArrayList<>(dao.getCategoryByID(categoryId));
+            List<WarrantyDetails> warrantyDetailList = (new WarrantyDetailDAO()).getWarrantyDetailsByCategoryId(categoryId);
+            if (!detailList.isEmpty()) {
+                request.setAttribute("product", detailList.get(0));
+                request.setAttribute("warrantyList", warrantyDetailList);
                 // Lấy feedbackList
                 dal.FeedbackDAO feedbackDAO = new dal.FeedbackDAO();
                 ArrayList<models.Feedback> feedbackList = new ArrayList<>(feedbackDAO.getFeedbackByCategoryId(categoryId));
-
-                request.setAttribute("product", category);
-                request.setAttribute("warrantyList", warrantyDetailList);
                 request.setAttribute("feedbackList", feedbackList);
                 request.setAttribute("categoryID", categoryId);
                 request.getRequestDispatcher("/ShopPages/Pages/CategoriesDetails.jsp").forward(request, response);
