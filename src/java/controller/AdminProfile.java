@@ -61,8 +61,8 @@ public class AdminProfile extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         if (user != null) {
-            RequestDispatcher rd = request.getRequestDispatcher(request.getContextPath() + "/AdminLTE/AdminPages/pages/examples/profileSetting.jsp");
-            rd.forward(request, response);
+           RequestDispatcher rd = request.getRequestDispatcher("/AdminLTE/AdminPages/pages/examples/profileSetting.jsp");
+rd.forward(request, response);
         } else {
             response.sendRedirect(request.getContextPath() + "/Login");
         }
