@@ -299,18 +299,20 @@
                         <div class="cart-card clearfix">
                             <div class="cart-card-header d-flex">
                                 <div class="card-left">
-                                    <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/cart/two.png" alt="Product">
+                                    <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/CatePicture/${item.category.imgURL}" alt="Product">
                                     <h4 class="category-name">${item.category.categoryName}</h4>
                                     <a href="${pageContext.request.contextPath}/CategoriesController?service=detail&categoryID=${item.category.categoryID}"
                                        class="btn btn-success"
                                        >
                                         Buy new one
-                                    </a>                                    
-                                    <a href="${pageContext.request.contextPath}/feedback?orderItemID=${item.orderItemID}"
-                                       class="btn btn-success"
-                                       >
-                                        Feedback
-                                    </a>
+                                    </a>        
+                                    <c:if test="${currentStatus == 5}">
+                                        <a href="${pageContext.request.contextPath}/feedback?orderItemID=${item.orderItemID}"
+                                           class="btn btn-success"
+                                           >
+                                            Feedback
+                                        </a>
+                                    </c:if>
                                 </div>
 
                                 <div class="card-right">

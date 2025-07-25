@@ -61,6 +61,7 @@
                                     <div class="alert alert-danger text-center" style="font-weight: bold;">
                                         ${error}
                                     </div>
+                                    <c:remove var="error" scope="session" />
                                 </c:if>
                                 <c:if test="${not empty sessionScope.success}">
                                     <div class="alert alert-success text-center" style="font-weight: bold;">
