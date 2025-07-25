@@ -52,6 +52,7 @@
         <div class="wrapper">
             <jsp:include page="../../components/header.jsp" />
             <jsp:include page="../../components/sidebar.jsp">
+                <jsp:param name="activeMenu" value="warrantydetail"/>
                 <jsp:param name="ctx" value="${ctx}" />
             </jsp:include>
             <!-- Content Wrapper. Contains page content -->

@@ -98,14 +98,14 @@ public class VnPayReturnServlet extends HttpServlet {
             return;
         }
 
-        if ("00".equals(responseCode)) {
-            dao.insertPayment(orderID, amount, "Success");
-            dao.updatePaymentStatus(orderID, 2); // Chuyển khoản
-            out.println("<h3 style='color:green'>Thanh toán thành công cho đơn hàng #" + orderID + "!</h3>");
-        } else {
-            dao.insertPayment(orderID, amount, "Failed");
-            out.println("<h3 style='color:red'>Thanh toán thất bại. Mã lỗi: " + responseCode + "</h3>");
-        }
+//        if ("00".equals(responseCode)) {
+//            dao.insertPayment(orderID, amount, "Success");
+//            dao.updatePaymentStatus(orderID, 2); // Chuyển khoản
+//            out.println("<h3 style='color:green'>Thanh toán thành công cho đơn hàng #" + orderID + "!</h3>");
+//        } else {
+//            dao.insertPayment(orderID, amount, "Failed");
+//            out.println("<h3 style='color:red'>Thanh toán thất bại. Mã lỗi: " + responseCode + "</h3>");
+//        }
     }
 
     private String buildData(Map<String, String> fields) throws UnsupportedEncodingException {
