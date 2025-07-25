@@ -31,7 +31,6 @@
                             <li>
                                  inner menu: contains the actual data 
                                 <ul class="menu" id="notification-list">
-                                     JS s? render các thông báo ? ?ây 
                                     <li><a href="#"><i class="fa fa-info-circle text-aqua"></i> No notifications</a></li>
                                 </ul>
                             </li>
@@ -102,7 +101,6 @@
         <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
         <script>
             $(document).ready(function () {
-                // ??m s? l??ng thông báo ch?a ??c
                 $.ajax({
                     url: "${ctx}/NotificationServlet?service=getUnreadCount",
                     type: "GET",
@@ -134,7 +132,7 @@
                             // Hi?n th? t?ng s? ch?a ??c
                             $('.dropdown-menu .header').html('You have <span id="notification-count-header">' + data.totalUnread + '</span> notifications');
                             $('#notification-list').html(html);
-                            // ??ng b? l?i s? trên icon chuông n?u c?n
+                            // ??ng b? l?i s? trÃªn icon chuÃ´ng n?u c?n
                             $('#notification-count').text(data.totalUnread);
                         }
                     });
