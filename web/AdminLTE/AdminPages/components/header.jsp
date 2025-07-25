@@ -31,7 +31,6 @@
                             <li>
                                  inner menu: contains the actual data 
                                 <ul class="menu" id="notification-list">
-                                     JS sẽ render các thông báo ở đây 
                                     <li><a href="#"><i class="fa fa-info-circle text-aqua"></i> No notifications</a></li>
                                 </ul>
                             </li>
@@ -102,7 +101,6 @@
         <script src="${ctx}/AdminLTE/AdminPages/plugins/jQuery/jquery-2.2.3.min.js"></script>
         <script>
             $(document).ready(function () {
-                // Đếm số lượng thông báo chưa đọc
                 $.ajax({
                     url: "${ctx}/NotificationServlet?service=getUnreadCount",
                     type: "GET",
@@ -113,7 +111,6 @@
                     }
                 });
 
-                // Khi click vào chuông, load danh sách thông báo
                 $('.notifications-menu > a').on('click', function (e) {
                     $.ajax({
                         url: "${ctx}/NotificationServlet?service=ajaxList",
@@ -132,10 +129,10 @@
                                             + '</a></li>';
                                 });
                             }
-                            // Hiển thị tổng số chưa đọc
+                            // Hi?n th? t?ng s? ch?a ??c
                             $('.dropdown-menu .header').html('You have <span id="notification-count-header">' + data.totalUnread + '</span> notifications');
                             $('#notification-list').html(html);
-                            // Đồng bộ lại số trên icon chuông nếu cần
+                            // ??ng b? l?i s? trên icon chuông n?u c?n
                             $('#notification-count').text(data.totalUnread);
                         }
                     });

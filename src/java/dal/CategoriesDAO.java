@@ -127,32 +127,31 @@ public class CategoriesDAO extends DBContext {
     }
 
     // 4. Lấy category theo ID (kèm thông tin brand & component)
-    public List<Categories> getCategoryByID(int id) {
+    public Categories getCategoryByID(int id) {
         String sql = """
-                SELECT
-                  c.*,
-                  bc.ComponentID,
-                  bc.BrandID,
-                  b.BrandName,
-                  comp.ComponentName
-                FROM Categories c
-                JOIN BrandComs bc ON c.BrandComID   = bc.BrandComID
-                JOIN Brands b ON bc.BrandID = b.BrandID
-                JOIN Components comp ON bc.ComponentID = comp.ComponentID
-                WHERE c.CategoryID = ?
-                """;
-        List<Categories> list = new ArrayList<>();
+            SELECT
+              c.*,
+              bc.ComponentID,
+              bc.BrandID,
+              b.BrandName,
+              comp.ComponentName
+            FROM Categories c
+            JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
+            JOIN Brands b ON bc.BrandID = b.BrandID
+            JOIN Components comp ON bc.ComponentID = comp.ComponentID
+            WHERE c.CategoryID = ?
+            """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    list.add(extractCategory(rs));
+                if (rs.next()) {
+                    return extractCategory(rs);
                 }
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
-        return list;
+        return null;
     }
 
     // 5. Phân trang theo component
@@ -869,32 +868,32 @@ public class CategoriesDAO extends DBContext {
     System.out.println("Kết quả thêm giỏ hàng: " + success);
 }
      */
-public static void main(String[] args) {
-    CategoriesDAO dao = new CategoriesDAO();
+    public static void main(String[] args) {
+        CategoriesDAO dao = new CategoriesDAO();
 
-    int buildPCID = 1; // ✅ Thay đổi ID này để test các cấu hình khác
+        int buildPCID = 1; // ✅ Thay đổi ID này để test các cấu hình khác
 
-    List<Categories> categories = dao.getCategoriesInBuildPC(buildPCID);
+        List<Categories> categories = dao.getCategoriesInBuildPC(buildPCID);
 
-    if (categories == null || categories.isEmpty()) {
-        System.out.println("⚠️ Không có linh kiện nào trong Build PC #" + buildPCID);
-        return;
+        if (categories == null || categories.isEmpty()) {
+            System.out.println("⚠️ Không có linh kiện nào trong Build PC #" + buildPCID);
+            return;
+        }
+
+        System.out.println("=== 🔧 Danh sách linh kiện cho Build PC ID = " + buildPCID + " ===");
+
+        for (Categories c : categories) {
+            System.out.println("🧩 " + c.getCategoryName()
+                    + " | Hãng: " + c.getBrandName()
+                    + " | Giá: " + c.getPrice() + "₫"
+                    + " | Ảnh: " + c.getImgURL()
+                    + " | ComponentID: " + c.getComponentID());
+
+            System.out.println("🛡️  Bảo hành: " + c.getWarrantyDesc()
+                    + " | Giá bảo hành: " + c.getWarrantyPrice() + "₫");
+
+            System.out.println("----------------------------------");
+        }
     }
-
-    System.out.println("=== 🔧 Danh sách linh kiện cho Build PC ID = " + buildPCID + " ===");
-
-    for (Categories c : categories) {
-        System.out.println("🧩 " + c.getCategoryName()
-                + " | Hãng: " + c.getBrandName()
-                + " | Giá: " + c.getPrice() + "₫"
-                + " | Ảnh: " + c.getImgURL()
-                + " | ComponentID: " + c.getComponentID());
-
-        System.out.println("🛡️  Bảo hành: " + c.getWarrantyDesc()
-                + " | Giá bảo hành: " + c.getWarrantyPrice() + "₫");
-
-        System.out.println("----------------------------------");
-    }
-}
 
 }

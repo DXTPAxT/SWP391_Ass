@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.Date;
+import models.BuildPCAdmin;
 import models.OrderInfo;
 import models.User;
 
@@ -60,8 +62,7 @@ public class ProductServlet extends HttpServlet {
             }
 
             request.getRequestDispatcher("ShopPages/Pages/CheckWarranty.jsp").forward(request, response);
-        }
-        if (service.equals("updateWarrantyStatus")) {
+        } else if (service.equals("updateWarrantyStatus")) {
             String orderCode = request.getParameter("orderCode");
             String productCode = request.getParameter("productCode");
 
@@ -81,6 +82,50 @@ public class ProductServlet extends HttpServlet {
             }
 
             request.getRequestDispatcher("ShopPages/Pages/CheckWarranty.jsp").forward(request, response);
+        } else if (service.equals("checkWarrantyBuildPC")) {
+            String productCode = request.getParameter("productCode");
+            if (productCode != null && !productCode.isEmpty()) {
+                ProductDAO dao = new ProductDAO();
+
+                BuildPCAdmin orderInfo = dao.getBuildPCWarrantyInfoByProductCode(productCode);
+                if (orderInfo != null) {
+                    request.setAttribute("orderInfo", orderInfo);
+                } else {
+                    request.setAttribute("error", "Product code not found or no warranty information available.");
+                }
+            } else {
+                request.setAttribute("error", "Please enter a valid product code.");
+            }
+
+            // Lấy người dùng để kiểm tra quyền gửi bảo hành
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                User sessionUser = (User) session.getAttribute("user");
+                request.setAttribute("sessionUser", sessionUser);
+                request.setAttribute("now", new Date());
+            }
+
+            request.getRequestDispatcher("ShopPages/Pages/CheckWarrantyBuildPC.jsp").forward(request, response);
+        } else if (service.equals("updateWarrantyStatusBPC")) {
+            String orderCode = request.getParameter("orderCode");
+            String productCode = request.getParameter("productCode");
+
+            if (orderCode != null && productCode != null
+                    && !orderCode.trim().isEmpty() && !productCode.trim().isEmpty()) {
+
+                ProductDAO dao = new ProductDAO();
+                boolean success = dao.updateOrderAndProductToWarranty(orderCode.trim(), productCode.trim());
+
+                if (success) {
+                    request.setAttribute("success", "✔ Order and product have been sent to warranty.");
+                } else {
+                    request.setAttribute("error", "❌ Failed to update warranty status.");
+                }
+            } else {
+                request.setAttribute("error", "❌ Missing order code or product code.");
+            }
+
+            request.getRequestDispatcher("ShopPages/Pages/CheckWarrantyBuildPC.jsp").forward(request, response);
         }
 
     }

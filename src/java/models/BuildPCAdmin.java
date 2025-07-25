@@ -34,6 +34,7 @@ public class BuildPCAdmin {
     private String address;
     private String phoneNumber;
     private String customerName;
+    
 
     // ===== Thông tin sản phẩm thực tế trong đơn =====
     private int orderBuildPcDetailId;

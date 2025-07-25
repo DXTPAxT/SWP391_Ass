@@ -169,6 +169,10 @@
     <servlet>
         <servlet-name>AdminProfileServlet</servlet-name>
         <servlet-class>controller.AdminProfile</servlet-class>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>SaleInfoServlet</servlet-name>
+        <servlet-class>controllerAdmin.SaleInfoServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>OrderItemAdmin</servlet-name>
@@ -417,5 +421,9 @@
     <servlet-mapping>
         <servlet-name>AdminProfileServlet</servlet-name>
         <url-pattern>/AdminProfile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SaleInfoServlet</servlet-name>
+        <url-pattern>/saleinfo</url-pattern>
     </servlet-mapping>
 </web-app>

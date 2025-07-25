@@ -534,16 +534,28 @@ public class Blog_CateDAO extends DBContext {
 
     public List<SaleEvents> getSaleEventsByCategory(int categoryID) {
         List<SaleEvents> list = new ArrayList<>();
-        String sql = "SELECT se.*, u1.FullName AS createdByName, u2.FullName AS approvedByName "
+        String sql = "SELECT se.*, u1.FullName AS createdByName, u2.FullName AS approvedByName, "
+                + "p.imgURL, p.brandName, p.originalPrice "
                 + "FROM SaleEvents se "
                 + "JOIN Users u1 ON se.CreatedBy = u1.UserID "
                 + "LEFT JOIN Users u2 ON se.ApprovedBy = u2.UserID "
+                + "JOIN Post p ON se.Post_id = p.Post_id "
                 + "WHERE se.CategoryID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, categoryID);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                list.add(parseSaleEvent(rs));
+                SaleEvents event = parseSaleEvent(rs);
+                event.setImgURL(rs.getString("imgURL"));
+                event.setBrandName(rs.getString("brandName"));
+                event.setOriginalPrice(rs.getDouble("originalPrice"));
+
+                // Tự động tính discountedPrice nếu discountPercent có giá trị
+                double discount = event.getDiscountPercent();
+                double discounted = event.getOriginalPrice() * (1 - discount / 100);
+                event.setDiscountedPrice(discounted);
+
+                list.add(event);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -552,8 +564,9 @@ public class Blog_CateDAO extends DBContext {
     }
 
     public void addSaleEvent(SaleEvents event) {
-        String sql = "INSERT INTO SaleEvents (CategoryID, Post_id, StartDate, EndDate, DiscountPercent, Status, CreatedBy, ApprovedBy) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO SaleEvents (CategoryID, Post_id, StartDate, EndDate, DiscountPercent, Status, CreatedBy, ApprovedBy,imgURL, BrandName, OriginalPrice, DiscountedPrice) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, event.getCategoryID());
             ps.setInt(2, event.getPost_id());
@@ -568,6 +581,10 @@ public class Blog_CateDAO extends DBContext {
             } else {
                 ps.setNull(8, Types.INTEGER);
             }
+            ps.setString(9, event.getImgURL());
+            ps.setString(10, event.getBrandName());
+            ps.setDouble(11, event.getOriginalPrice());
+            ps.setDouble(12, event.getDiscountedPrice());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -614,7 +631,9 @@ public class Blog_CateDAO extends DBContext {
 
     public void updateSaleEvent(SaleEvents event) {
         String sql = "UPDATE SaleEvents SET CategoryID = ?, Post_id = ?, StartDate = ?, EndDate = ?, "
-                + "DiscountPercent = ?, Status = ?, CreatedBy = ?, ApprovedBy = ? WHERE EventID = ?";
+                + "DiscountPercent = ?, Status = ?, CreatedBy = ?, ApprovedBy = ?, ImgURL = ?, BrandName = ?, "
+                + "OriginalPrice = ?, DiscountedPrice = ? WHERE EventID = ?";
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, event.getCategoryID());
             ps.setInt(2, event.getPost_id());
@@ -629,8 +648,11 @@ public class Blog_CateDAO extends DBContext {
             } else {
                 ps.setNull(8, Types.INTEGER);
             }
-
-            ps.setInt(9, event.getEventID());
+            ps.setString(9, event.getImgURL());
+            ps.setString(10, event.getBrandName());
+            ps.setDouble(11, event.getOriginalPrice());
+            ps.setDouble(12, event.getDiscountedPrice());
+            ps.setInt(13, event.getEventID());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -649,7 +671,10 @@ public class Blog_CateDAO extends DBContext {
         event.setCreatedBy(rs.getInt("CreatedBy"));
         event.setApprovedBy(rs.getObject("ApprovedBy") != null ? rs.getInt("ApprovedBy") : null);
 
-        // Nếu join Users => lấy thêm tên
+        // Gán giá trị đã lưu trong DB nếu có
+        event.setDiscountedPrice(rs.getDouble("DiscountedPrice"));
+
+        // Nếu đã join bảng Users => lấy tên
         try {
             event.setCreatedByName(rs.getString("createdByName"));
         } catch (SQLException e) {
@@ -660,6 +685,31 @@ public class Blog_CateDAO extends DBContext {
             event.setApprovedByName(rs.getString("approvedByName"));
         } catch (SQLException e) {
             event.setApprovedByName(null);
+        }
+
+        // Nếu đã join bảng Post => lấy thêm 3 thông tin
+        try {
+            event.setImgURL(rs.getString("imgURL"));
+        } catch (SQLException e) {
+            event.setImgURL(null);
+        }
+
+        try {
+            event.setBrandName(rs.getString("brandName"));
+        } catch (SQLException e) {
+            event.setBrandName(null);
+        }
+
+        try {
+            event.setOriginalPrice(rs.getDouble("originalPrice"));
+        } catch (SQLException e) {
+            event.setOriginalPrice(0.0);
+        }
+
+        // Tự tính discounted price nếu discount > 0
+        if (event.getDiscountedPrice() == 0 && event.getDiscountPercent() > 0 && event.getOriginalPrice() > 0) {
+            double discounted = event.getOriginalPrice() * (1 - event.getDiscountPercent() / 100);
+            event.setDiscountedPrice(discounted);
         }
 
         return event;

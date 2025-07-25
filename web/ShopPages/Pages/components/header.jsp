@@ -70,7 +70,7 @@
                                                 <div class="dropdown-content">
                                                     <div class="arrow-up"></div>
                                                     <a href="${pageContext.request.contextPath}/Product?service=checkWarranty">Warranty Item</a>
-                                                    <a href="CardBuildPc">Warranty Build PC</a>
+                                                    <a href="${pageContext.request.contextPath}/Product?service=checkWarrantyBuildPC">Warranty Build PC</a>
                                                 </div>
                                             </li>
                                             <li class="cart-dropdown">

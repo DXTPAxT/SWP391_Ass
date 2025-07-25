@@ -4,6 +4,7 @@ import dalAdmin.OrderCateAdminDAO;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.*;
+import models.BuildPCAdmin;
 import models.OrderCate;
 import models.OrderInfo;
 import models.Products;
@@ -167,6 +168,53 @@ public class ProductDAO extends DBContext {
         return false;
     }
 
+    public BuildPCAdmin getBuildPCWarrantyInfoByProductCode(String productCode) {
+        String sql = """
+        SELECT 
+            o.OrderCode,
+            o.Fullname,
+            o.CustomerID,
+            c.CategoryName,
+            p.ProductCode,
+            w.WarrantyPeriod,
+            w.Description AS WarrantyDescription,
+            obpp.StartDate,
+            obpp.EndDate
+        FROM Order_BuildPC_Products obpp
+        JOIN Order_BuildPCDetails obd ON obpp.OrderBuildPCDetailID = obd.OrderBuildPCDetailID
+        JOIN Order_BuildPCItems obpi ON obd.OrderBuildPCItemID = obpi.OrderBuildPCItemID
+        JOIN Orders o ON obpi.OrderID = o.OrderID
+        JOIN Categories c ON obd.CategoryID = c.CategoryID
+        JOIN Products p ON obpp.ProductID = p.ProductID
+        LEFT JOIN WarrantyDetails wd ON obpp.WarrantyDetailID = wd.WarrantyDetailID
+        LEFT JOIN Warranties w ON wd.WarrantyID = w.WarrantyID
+        WHERE p.ProductCode = ?
+    """;
+
+        try (Connection conn = new DBContext().connection; PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, productCode);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    BuildPCAdmin b = new BuildPCAdmin();
+                    b.setOrderCode(rs.getString("OrderCode"));
+                    b.setFullName(rs.getString("Fullname"));
+                    b.setUserId(rs.getInt("CustomerID"));
+                    b.setCateName(rs.getString("CategoryName"));
+                    b.setProductCode(productCode);
+                    b.setWarrantyPeriod(rs.getInt("WarrantyPeriod"));
+                    b.setWarrantyDesc(rs.getString("WarrantyDescription"));
+                    b.setWarrantyStartDate(rs.getDate("StartDate"));
+                    b.setWarrantyEndDate(rs.getDate("EndDate"));
+                    return b;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
 
         int userID = 5;
@@ -261,8 +309,10 @@ public class ProductDAO extends DBContext {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
+
         } catch (SQLException e) {
-            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ProductDAO.class
+                    .getName()).log(Level.SEVERE, null, e);
         }
     }
 
