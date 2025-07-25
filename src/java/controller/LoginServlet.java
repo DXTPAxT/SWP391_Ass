@@ -46,11 +46,14 @@ public class LoginServlet extends HttpServlet {
                     if (redirectURL == null || redirectURL.trim().isEmpty() || "null".equalsIgnoreCase(redirectURL)) {
                         redirectURL = request.getContextPath() + "/HomePages";
                     }
-
                     session.removeAttribute(REDIRECT_AFTER_LOGIN);
                     response.sendRedirect(redirectURL);
-                } else {
+                } else if (user.getRole().getRoleID() == 1) {
                     response.sendRedirect("AdminDashbordServlet");
+                } else if (user.getRole().getRoleID() == 2) {
+                    response.sendRedirect("OrderAdminCate?service=listPending");
+                } else if (user.getRole().getRoleID() == 4) {
+                    response.sendRedirect("OrderAdminCate?service=listWaitShip");
                 }
             }
         } catch (Exception e) {
@@ -105,17 +108,20 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("user", user);
                 session.setAttribute("id", user.getUserId());
 
-                if (user.getRole().getRoleID() != 3) {
-                    response.sendRedirect("AdminDashbordServlet");
-                } else {
+                if (user.getRole().getRoleID() == 3) {
                     String redirectURL = (String) session.getAttribute(REDIRECT_AFTER_LOGIN);
 
                     if (redirectURL == null || redirectURL.trim().isEmpty() || "null".equalsIgnoreCase(redirectURL)) {
                         redirectURL = request.getContextPath() + "/HomePages";
                     }
-
                     session.removeAttribute(REDIRECT_AFTER_LOGIN);
                     response.sendRedirect(redirectURL);
+                } else if (user.getRole().getRoleID() == 1) {
+                    response.sendRedirect("AdminDashbordServlet");
+                } else if (user.getRole().getRoleID() == 2) {
+                    response.sendRedirect("OrderAdminCate?service=listPending");
+                } else if (user.getRole().getRoleID() == 4) {
+                    response.sendRedirect("OrderAdminCate?service=listWaitShip");
                 }
             } else {
                 setLoginAttributes(request, "Incorrect password!", email, password);

@@ -2,12 +2,22 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <header class="main-header">
     <!-- Logo -->
-    <a href="${ctx}/AdminDashbordServlet" class="logo">
-        <!-- mini logo for sidebar mini 50x50 pixels -->
-        <span class="logo-mini"><b>A</b>LT</span>
-        <!-- logo for regular state and mobile devices -->
-        <span class="logo-lg"><b>Admin</b>LTE</span>
-    </a>
+    <c:if test="${user.role.roleID == 1}">
+        <a href="${ctx}/AdminDashbordServlet" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini"><b>A</b>LT</span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg"><b>Admin</b>LTE</span>
+        </a>
+    </c:if>
+    <c:if test="${user.role.roleID != 1}">
+        <a href="#" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini"><b>A</b>LT</span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg"><b>Admin</b>LTE</span>
+        </a>
+    </c:if>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
         <!-- Sidebar toggle button-->
@@ -21,24 +31,24 @@
                 </li>
                 <!-- Notifications: style can be found in dropdown.less -->
                 <c:if test="${not empty sessionScope.user}">
-<!--                    <li class="dropdown notifications-menu">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                            <i class="fa fa-bell-o"></i>
-                            <span class="label label-warning" id="notification-count">0</span>
-                        </a>
-                        <ul class="dropdown-menu" id="notification-dropdown">
-                            <li class="header">You have <span id="notification-count-header">0</span> notifications</li>
-                            <li>
-                                 inner menu: contains the actual data 
-                                <ul class="menu" id="notification-list">
-                                    <li><a href="#"><i class="fa fa-info-circle text-aqua"></i> No notifications</a></li>
-                                </ul>
-                            </li>
-                            <li class="footer"><a href="${ctx}/NotificationServlet?service=list">View All</a></li>
-                        </ul>
-                    </li>-->
+                    <!--                    <li class="dropdown notifications-menu">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa fa-bell-o"></i>
+                                                <span class="label label-warning" id="notification-count">0</span>
+                                            </a>
+                                            <ul class="dropdown-menu" id="notification-dropdown">
+                                                <li class="header">You have <span id="notification-count-header">0</span> notifications</li>
+                                                <li>
+                                                     inner menu: contains the actual data 
+                                                    <ul class="menu" id="notification-list">
+                                                        <li><a href="#"><i class="fa fa-info-circle text-aqua"></i> No notifications</a></li>
+                                                    </ul>
+                                                </li>
+                                                <li class="footer"><a href="${ctx}/NotificationServlet?service=list">View All</a></li>
+                                            </ul>
+                                        </li>-->
                 </c:if>
-                    
+
                 <c:if test="${user != null}">
                     <li class="dropdown user user-menu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -48,27 +58,27 @@
                         <ul class="dropdown-menu">
                             <!-- User image -->
                             <li class="user-header">
-                                <img src="${ctx}/AdminLTE/AdminPages/dist/img/user2-160x160.jpg" class="img-circle" alt="User">
+                                <img src="${ctx}/AdminLTE/AdminPages/dist/img/ProdileIcon.png" class="img-circle" alt="User">
                                 <p>
                                     ${user.fullname}
                                     <small>${user.role.roleName}</small>
                                 </p>
                             </li>
                             <!-- Menu Bodya -->
-<!--                            <li class="user-body">
-                                <div class="row">
-                                    <div class="col-xs-4 text-center">
-                                        <a href="#">Followers</a>
-                                    </div>
-                                    <div class="col-xs-4 text-center">
-                                        <a href="#">Sales</a>
-                                    </div>
-                                    <div class="col-xs-4 text-center">
-                                        <a href="#">Friends</a>
-                                    </div>
-                                </div>
-                                 /.row 
-                            </li>-->
+                            <!--                            <li class="user-body">
+                                                            <div class="row">
+                                                                <div class="col-xs-4 text-center">
+                                                                    <a href="#">Followers</a>
+                                                                </div>
+                                                                <div class="col-xs-4 text-center">
+                                                                    <a href="#">Sales</a>
+                                                                </div>
+                                                                <div class="col-xs-4 text-center">
+                                                                    <a href="#">Friends</a>
+                                                                </div>
+                                                            </div>
+                                                             /.row 
+                                                        </li>-->
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-left">
