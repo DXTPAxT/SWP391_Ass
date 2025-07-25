@@ -61,26 +61,25 @@ public class SaleInfoServlet extends HttpServlet {
             throws ServletException, IOException {
         //processRequest(request, response);
         int categoryID = Integer.parseInt(request.getParameter("categoryID"));
-
        
-        CategoriesDAO cdao = new CategoriesDAO();
-        Categories category = cdao.getCategoryByID(categoryID);
-
-       
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
-
-        if (category != null) {
-            out.println("{");
-            out.println("\"brandName\": \"" + category.getBrandName() + "\",");
-            out.println("\"imgURL\": \"" + category.getImgURL() + "\",");
-            out.println("\"originalPrice\": " + category.getPrice());
-            out.println("}");
-
-        } else {
-            out.println("{}");
-        }
-        out.close();
+//        CategoriesDAO cdao = new CategoriesDAO();
+//        Categories category = cdao.getCategoryByID(categoryID);
+//
+//       
+//        response.setContentType("application/json");
+//        PrintWriter out = response.getWriter();
+//
+//        if (category != null) {
+//            out.println("{");
+//            out.println("\"brandName\": \"" + category.getBrandName() + "\",");
+//            out.println("\"imgURL\": \"" + category.getImgURL() + "\",");
+//            out.println("\"originalPrice\": " + category.getPrice());
+//            out.println("}");
+//
+//        } else {
+//            out.println("{}");
+//        }
+//        out.close();
     }
 
 
