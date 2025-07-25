@@ -82,19 +82,13 @@
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-left">
-                                    <a href="${ctx}/AdminProfile" class="btn btn-default btn-flat">Settings</a>
+                                    <a href="${ctx}/AdminProfile" class="btn btn-default btn-flat"><i  class="fa fa-cog"></i> Settings</a>
                                 </div>
                                 <div class="pull-right">
-                                    <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                                    <a href="${ctx}/Logout" class="btn btn-default btn-flat"><i  class="fa fa-sign-in"></i>  Logout</a>
                                 </div>
                             </li>
                         </ul>
-                    </li>
-                </c:if>
-                <!-- Control Sidebar Toggle Button -->
-                <c:if test="${user !=null}">
-                    <li>
-                        <a href="${ctx}/Logout"><i  class="fa fa-sign-in"></i>  Logout</a>
                     </li>
                 </c:if>
                 <c:if test="${user == null}">
