@@ -84,7 +84,9 @@
                                             <li><a href="${pageContext.request.contextPath}/OrderHistory"><i class="fa fa-list-alt"></i> Order history</a></li>
                                             <li><a href="${pageContext.request.contextPath}/User?service=myAccount"><i class="fa fa-user"></i> Account</a></li>
                                             </c:if>
-
+                                            <c:if test="${not empty sessionScope.user and sessionScope.user.role.roleID != 3}">
+                                            <li><a href="Login"><i class="fa fa-home"></i>Back to admin pages</a></li>
+                                            </c:if>
                                         <li><a href="Logout"><i class="fa fa-sign-out"></i> Logout</a></li>
                                         </c:when>
                                         <c:otherwise>
@@ -117,7 +119,7 @@
                         </div>
                     </div>
                     <div class="search_box pull-right">
-                       
+
                         <form action="${ctx}/CategoriesController" method="get" style="display: flex;">
                             <input type="hidden" name="service" value="filter"/>
                             <input type="text" name="keyword" class="form-control" placeholder="Insert product name"
@@ -135,12 +137,46 @@
     <c:if test="${activeHeader == 'no'}">
         <div class="header-no-active" style="padding: 10px; background: #f8f8f8;">
             <div style="display: flex; align-items: center;">
-                <a href="${ctx}/HomePages">
-                    <img src="${ctx}/ShopPages/Pages/images/home/CyberBeast2.png" alt="Logo" style="height: 100px; width: auto;"/>
-                </a>
-                <a href="${ctx}/HomePages" class="back-home-btn">
-                    Back to Homepage
-                </a>
+                <c:if test="${user == null}">
+                    <a href="${ctx}/HomePages">
+                        <img src="${ctx}/ShopPages/Pages/images/home/CyberBeast2.png" alt="Logo" style="height: 100px; width: auto;"/>
+                    </a>
+                    <a href="${ctx}/HomePages" class="back-home-btn">
+                        Back to Homepage
+                    </a>
+                </c:if>
+                <c:if test="${user != null && user.role.roleID == 3}">
+                    <a href="${ctx}/HomePages">
+                        <img src="${ctx}/ShopPages/Pages/images/home/CyberBeast2.png" alt="Logo" style="height: 100px; width: auto;"/>
+                    </a>
+                    <a href="${ctx}/User?service=myAccount" class="back-home-btn">
+                        Back to my account
+                    </a>
+                </c:if>
+                <c:if test="${user != null && user.role.roleID == 1}">
+                    <a href="${ctx}/HomePages">
+                        <img src="${ctx}/ShopPages/Pages/images/home/CyberBeast2.png" alt="Logo" style="height: 100px; width: auto;"/>
+                    </a>
+                    <a href="${ctx}/AdminDashbordServlet" class="back-home-btn">
+                        Back to dashboard
+                    </a>
+                </c:if>
+                <c:if test="${user != null && user.role.roleID == 2}">
+                    <a href="${ctx}/HomePages">
+                        <img src="${ctx}/ShopPages/Pages/images/home/CyberBeast2.png" alt="Logo" style="height: 100px; width: auto;"/>
+                    </a>
+                    <a href="${ctx}/OrderAdminCate?service=listPending" class="back-home-btn">
+                        Back to Order
+                    </a>
+                </c:if>
+                <c:if test="${user != null && user.role.roleID == 4}">
+                    <a href="${ctx}/HomePages">
+                        <img src="${ctx}/ShopPages/Pages/images/home/CyberBeast2.png" alt="Logo" style="height: 100px; width: auto;"/>
+                    </a>
+                    <a href="${ctx}/OrderAdminCate?service=listWaitShip" class="back-home-btn">
+                        Back to Order
+                    </a>
+                </c:if>
             </div>
         </div>
     </c:if> 

@@ -47,11 +47,11 @@
         <![endif]-->
     </head>
     <body class="hold-transition skin-blue sidebar-mini">
-        
-            <jsp:include page="../../components/header.jsp" />
-            <jsp:include page="../../components/sidebar.jsp">
-                <jsp:param name="ctx" value="${ctx}" />
-            </jsp:include>
+
+        <jsp:include page="../../components/header.jsp" />
+        <jsp:include page="../../components/sidebar.jsp">
+            <jsp:param name="ctx" value="${ctx}" />
+        </jsp:include>
         <div class="wrapper">
 
             <div class="content-wrapper">
@@ -89,6 +89,10 @@
                                                 </div>
                                             </div>
                                         </form>
+                                        <a href="${pageContext.request.contextPath}/User?service=changePassword"
+                                           class="btn btn-primary">
+                                            Change password
+                                        </a>
                                     </div>
                                 </div>
                             </div>

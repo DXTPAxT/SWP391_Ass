@@ -321,8 +321,17 @@ public class UserServlet extends HttpServlet {
                 UserDAO dao = new UserDAO();
                 boolean updated = dao.updatePasswordByEmail(email, password);
                 if (updated) {
-                    request.setAttribute("message", "Password changed successfully. Please login.");
-                    request.getRequestDispatcher("/ShopPages/Pages/login.jsp").forward(request, response);
+                    HttpSession session = request.getSession();
+                    User user = (User) session.getAttribute("user");
+                    if (user != null) {
+                        if (user.getRole().getRoleID() == 3) {
+                            response.sendRedirect(request.getContextPath() +"/User?service=myAccount");
+                        } else {
+                            response.sendRedirect(request.getContextPath() +"/AdminProfile");
+                        }
+                    } else {
+                        response.sendRedirect(request.getContextPath() +"/Login");
+                    }
                 } else {
                     request.setAttribute("errorPassword", "Failed to update password. Please try again.");
                     request.setAttribute("email", email);
