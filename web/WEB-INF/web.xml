@@ -166,6 +166,10 @@
         <servlet-class>controllerAdmin.AddSaleEvents</servlet-class>
     </servlet>
     <!-- MAPPINGS -->
+    <servlet>
+        <servlet-name>SaleInfoServlet</servlet-name>
+        <servlet-class>controllerAdmin.SaleInfoServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>OrderItemAdmin</servlet-name>
         <url-pattern>/OrderItemAdmin</url-pattern>
@@ -409,5 +413,9 @@
     <servlet-mapping>
         <servlet-name>OrderBuildPCDetails</servlet-name>
         <url-pattern>/OrderBuildPCDetails</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SaleInfoServlet</servlet-name>
+        <url-pattern>/saleinfo</url-pattern>
     </servlet-mapping>
 </web-app>
