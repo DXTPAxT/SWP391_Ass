@@ -15,8 +15,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import models.User;
 import models.WarrantyDetails;
 
 /**
@@ -40,6 +42,18 @@ public class WarrantyDetailAdminServlet extends HttpServlet {
 
         /* TODO output your page here. You may use following sample code. */
         String service = request.getParameter("service");
+        HttpSession session = request.getSession(false);
+        User currentUser = (User) session.getAttribute("user");
+
+        if (currentUser == null || currentUser.getRole().getRoleID() != 1) {
+            if (session != null) {
+                session.invalidate();
+            }
+            HttpSession newSession = request.getSession(true);
+            newSession.setAttribute("error", "You do not have permission to access this task.");
+            response.sendRedirect(request.getContextPath() + "/Login");
+            return;
+        }
         if (service == null) {
             service = "list";
         }
@@ -261,13 +275,14 @@ public class WarrantyDetailAdminServlet extends HttpServlet {
                 int brandComID = Integer.parseInt(brandComIDRaw);
                 List<WarrantyDetails> list = dao.getAllWarrantyDetailsByBrandComID(brandComID);
 
-               request.setAttribute("warrantyDetails", list);
-            request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewWarrantyDetail.jsp")
-                    .forward(request, response);
+                request.setAttribute("warrantyDetails", list);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewWarrantyDetail.jsp")
+                        .forward(request, response);
             } catch (NumberFormatException e) {
                 request.setAttribute("error", "Invalid brandComID.");
-            request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewWarrantyDetail.jsp")
-                    .forward(request, response);            }
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewWarrantyDetail.jsp")
+                        .forward(request, response);
+            }
         }
 
     }

@@ -11,9 +11,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import models.OrderItems;
 import models.Products;
+import models.User;
 
 /**
  *
@@ -33,7 +35,18 @@ public class OrderItemAdminServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String service = request.getParameter("service");
+        HttpSession session1 = request.getSession(false);
+        User currentUser1 = (User) session1.getAttribute("user");
 
+        if (currentUser1 == null || currentUser1.getRole().getRoleID() == 3) {
+            if (session1 != null) {
+                session1.invalidate();
+            }
+            HttpSession newSession = request.getSession(true);
+            newSession.setAttribute("error", "You do not have permission to access this task.");
+            response.sendRedirect(request.getContextPath() + "/Login");
+            return;
+        }
         OrderCateAdminDAO dao = new OrderCateAdminDAO();
         if (service.equals("listPending")) {
             try {
