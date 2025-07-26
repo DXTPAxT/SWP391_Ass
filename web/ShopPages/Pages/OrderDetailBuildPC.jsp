@@ -295,7 +295,7 @@
                                 </a>
 
                                 <c:if test="${item.buildPcStatus == 5}">
-                                    <a href="${pageContext.request.contextPath}/feedbackBuildPC?orderBuildPCDetailID=${item.orderBuildPcDetailId}" class="btn btn-success">
+                                    <a href="${pageContext.request.contextPath}/feedback?orderBuildPCDetailID=${item.orderBuildPcItemId}" class="btn btn-success">
                                         Feedback
                                     </a>
                                 </c:if>

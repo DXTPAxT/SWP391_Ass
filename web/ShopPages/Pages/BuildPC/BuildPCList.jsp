@@ -86,17 +86,19 @@
                         <c:if test="${not empty warrantyMap[p.categoryID]}">
                             <div style="margin-top: 5px;">
                                 <strong>Choose Warranty:</strong>
-                                <c:set var="checkedSet" value="false"/>
+                                <c:set var="minPeriod" value="999" />
+                                <c:forEach var="w" items="${warrantyMap[p.categoryID]}">
+                                    <c:if test="${w.status == 1 && w.warrantyPeriod lt minPeriod}">
+                                        <c:set var="minPeriod" value="${w.warrantyPeriod}" />
+                                    </c:if>
+                                </c:forEach>
                                 <c:forEach var="w" items="${warrantyMap[p.categoryID]}" varStatus="status">
                                     <div style="margin-left: 10px;">
                                         <input type="radio"
                                                name="warranty-${p.categoryID}"
                                                id="w-${p.categoryID}-${status.index}"
                                                value="${w.warrantyDetailID}"
-                                               <c:if test="${w.status == 1 && not checkedSet}">
-                                                   checked="checked"
-                                                   <c:set var="checkedSet" value="true"/>
-                                               </c:if>
+                                               <c:if test="${w.status == 1 && w.warrantyPeriod == minPeriod}">checked="checked"</c:if>
                                                <c:if test="${w.status != 1}">disabled</c:if> />
                                         <label for="w-${p.categoryID}-${status.index}">
                                             ${w.warrantyPeriod} month -
@@ -109,6 +111,7 @@
                                 </c:forEach>
                             </div>
                         </c:if>
+
                     </div>
 
                     <div class="card-footer d-flex justify-content-between mt-3">
