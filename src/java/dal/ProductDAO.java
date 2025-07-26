@@ -214,6 +214,23 @@ public class ProductDAO extends DBContext {
         }
         return null;
     }
+    
+     public boolean activeWarrantyByProductID(int ProductID) {
+        int n = 0;
+        String sql = """
+        UPDATE Products
+        SET Status = ?
+        WHERE ProductID = ?;
+    """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, 2);
+            ps.setInt(2, ProductID);
+            n = ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return n > 0;
+    }
 
     public static void main(String[] args) {
 
