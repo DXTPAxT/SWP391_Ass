@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,8 +111,8 @@ public class BuildPC_ListCate extends HttpServlet {
             int userID = user.getUserId();
 
             if ("Admin".equalsIgnoreCase(role)) {
-                if (dao.isDuplicateBuildPC(categoryIDs, -1)) {
-                    response.sendError(HttpServletResponse.SC_CONFLICT, "Build PC với cấu hình này đã tồn tại.");
+                if (dao.isDuplicateWithAdminBuildPC(categoryIDs)) {
+                    response.sendError(HttpServletResponse.SC_CONFLICT, "Cấu hình Build PC này đã được Admin tạo trước đó.");
                     return;
                 }
             }
@@ -149,11 +150,11 @@ public class BuildPC_ListCate extends HttpServlet {
                 return;
             }
 
-            List<Integer> categoryIDs = new ArrayList<>();
+            List<Integer> newCategoryIDs = new ArrayList<>();
             List<Integer> warrantyIDs = new ArrayList<>();
 
             for (int i = 0; i < 6; i++) {
-                categoryIDs.add(Integer.parseInt(parts[i].trim()));
+                newCategoryIDs.add(Integer.parseInt(parts[i].trim()));
                 int wID = Integer.parseInt(warranties[i].trim());
                 warrantyIDs.add(Math.max(wID, 0));
             }
@@ -161,14 +162,26 @@ public class BuildPC_ListCate extends HttpServlet {
             String roleParam = request.getParameter("role");
             String role = (roleParam != null && !roleParam.isEmpty()) ? roleParam : (user.getRole() != null ? user.getRole().getRoleName() : "Customer");
 
+            // ✅ Nếu là Admin → Kiểm tra thay đổi cấu hình
             if ("Admin".equalsIgnoreCase(role)) {
-                if (dao.isDuplicateBuildPC(categoryIDs, buildPCID)) {
-                    response.sendError(HttpServletResponse.SC_CONFLICT, "Build PC đã tồn tại.");
-                    return;
+                List<Integer> oldCategoryIDs = dao.getCategoryIDsByBuildPCID(buildPCID);
+
+                // Sắp xếp để đảm bảo so sánh chính xác
+                List<Integer> sortedOld = new ArrayList<>(oldCategoryIDs);
+                List<Integer> sortedNew = new ArrayList<>(newCategoryIDs);
+                Collections.sort(sortedOld);
+                Collections.sort(sortedNew);
+
+                // Nếu cấu hình mới khác cấu hình cũ → kiểm tra trùng
+                if (!sortedOld.equals(sortedNew)) {
+                    if (dao.isDuplicateWithAdminBuildPCId(sortedNew, buildPCID)) {
+                        response.sendError(HttpServletResponse.SC_CONFLICT, "Build PC đã tồn tại.");
+                        return;
+                    }
                 }
             }
 
-            boolean success = dao.updateBuildPC(buildPCID, categoryIDs, warrantyIDs, newStatus, role);
+            boolean success = dao.updateBuildPC(buildPCID, newCategoryIDs, warrantyIDs, newStatus, role);
             if (success) {
                 response.getWriter().write("Cập nhật thành công.");
             } else {
@@ -241,7 +254,7 @@ public class BuildPC_ListCate extends HttpServlet {
             PrintWriter out = response.getWriter();
 
             //  đầu tiên là role của người tạo
-            out.println("ROLE|" + creatorRole); 
+            out.println("ROLE|" + creatorRole);
 
             //  các thành phần
             for (BuildPCAdmin item : items) {
