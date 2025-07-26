@@ -29,11 +29,23 @@ public class OrderAdminCateServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
+        HttpSession session1 = request.getSession(false);
+            User currentUser1 = (User) session1.getAttribute("user");
+
+            if (currentUser1 == null || currentUser1.getRole().getRoleID() == 3) {
+                if (session1 != null) {
+                    session1.invalidate();
+                }
+                HttpSession newSession = request.getSession(true);
+                newSession.setAttribute("error", "You do not have permission to access this task.");
+                response.sendRedirect(request.getContextPath() + "/Login");
+                return;
+            }
         String service = request.getParameter("service");
         if (service == null) {
             service = "listCate";
         }
-
+        
         OrderCateAdminDAO dao = new OrderCateAdminDAO();
         CategoryAdminDAO c = new CategoryAdminDAO();
         if (service.equals("listCate")) {
