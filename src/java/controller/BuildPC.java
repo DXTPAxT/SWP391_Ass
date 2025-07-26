@@ -41,6 +41,15 @@ public class BuildPC extends HttpServlet {
         String service = request.getParameter("service");
         boolean ajax = "true".equalsIgnoreCase(request.getParameter("ajax"));
         CategoriesDAO dao = new CategoriesDAO();
+        if ("getRoleID".equals(service)) {
+            HttpSession session = request.getSession(false);
+            User user = (session != null) ? (User) session.getAttribute("user") : null;
+            int roleID = (user != null && user.getRole() != null) ? user.getRole().getRoleID() : 0;
+
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write("{\"roleID\": " + roleID + "}");
+            return;
+        }
 
         if ("filter".equals(service)) {
             int componentID = parseIntOrDefault(request.getParameter("componentID"), -1);
@@ -85,15 +94,15 @@ public class BuildPC extends HttpServlet {
                 StringBuilder sb = new StringBuilder();
 
                 for (Categories c : items) {
-                    sb.append(c.getCategoryID()).append("|") 
-                            .append(c.getCategoryName()).append("|") 
-                            .append(c.getBrandName()).append("|") 
-                            .append(c.getPrice()).append("|") 
-                            .append(c.getImgURL() == null ? "" : c.getImgURL()).append("|") 
-                            .append(c.getComponentID()).append("|") 
-                            .append(c.getWarrantyDesc()).append("|") 
-                            .append(c.getWarrantyPrice()).append("|") 
-                            .append(c.getWarrantyDetailID()).append(";");           
+                    sb.append(c.getCategoryID()).append("|")
+                            .append(c.getCategoryName()).append("|")
+                            .append(c.getBrandName()).append("|")
+                            .append(c.getPrice()).append("|")
+                            .append(c.getImgURL() == null ? "" : c.getImgURL()).append("|")
+                            .append(c.getComponentID()).append("|")
+                            .append(c.getWarrantyDesc()).append("|")
+                            .append(c.getWarrantyPrice()).append("|")
+                            .append(c.getWarrantyDetailID()).append(";");
                 }
 
                 out.print(sb.toString());

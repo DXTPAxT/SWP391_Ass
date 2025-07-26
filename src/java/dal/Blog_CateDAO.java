@@ -499,10 +499,7 @@ public class Blog_CateDAO extends DBContext {
 
     public List<SaleEvents> getAllSaleEvents() {
         List<SaleEvents> list = new ArrayList<>();
-        String sql = "SELECT se.*, u1.FullName AS createdByName, u2.FullName AS approvedByName "
-                + "FROM SaleEvents se "
-                + "JOIN Users u1 ON se.CreatedBy = u1.UserID "
-                + "LEFT JOIN Users u2 ON se.ApprovedBy = u2.UserID";
+        String sql = "SELECT * FROM SaleEvents se JOIN Users u ON se.ApprovedBy = u.UserID";
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(parseSaleEvent(rs));
