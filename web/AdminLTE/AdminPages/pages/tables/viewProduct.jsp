@@ -108,7 +108,7 @@
 
 
                                                         <td>
-                                                            <a href="Import?service=listbypro&productCode=${product.productCode}" 
+                                                            <a href="CateAdmin?service=listbypro&productCode=${product.productCode}" 
                                                                class="btn btn-warning btn-sm">View</a>
                                                         </td>
                                                         <td>

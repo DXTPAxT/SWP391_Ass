@@ -97,6 +97,7 @@
                                             <tr>
                                                 <th class="text-center">Category ID</th>
                                                 <th class="text-center">Category Name</th>
+                                                <th class="text-center">Inventory</th>
                                                 <th class="text-center">Queue</th>
                                                 <th class="text-center">Import</th>
                                             </tr>
@@ -106,6 +107,7 @@
                                                 <tr>
                                                     <td>${category.categoryID}</td>
                                                     <td>${category.categoryName}</td>
+                                                    <td>${category.inventory}</td>
                                                     <td>${category.queue}</td>
                                                     <td>
                                                         <a href="${ctx}/Import?categoryID=${category.categoryID}"
