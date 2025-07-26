@@ -150,7 +150,7 @@ public class ConfirmOrderServlet extends HttpServlet {
                     if ("COD".equals(paymentMethod)) {
                         response.sendRedirect("Order?action=viewOrder&orderID=" + orderId);
                     } else {
-
+                        response.sendRedirect("Order?action=viewOrder&orderID=" + orderId);
                     }
                 } else {
                     session.setAttribute("toastType", "error");

@@ -20,7 +20,6 @@ INSERT INTO OrderStatus (StatusID, StatusName) VALUES
 
 INSERT INTO Users (RoleID, FullName, Email, PhoneNumber, PasswordHash, CreatedAt, Status) VALUES
 (1, 'Alice Nguyen', 'alice@domain.com', '0912345678', 'b9ff6b991cdc84277a42cacc41493d5a9dc867445a33999401f50efe8052a022', NOW(), 1), -- hashed 'hashedpassword123'
-(1, 'DXT', 'taidoyasuovn@gmail.com', '0912345671', 'b9ff6b991cdc84277a42cacc41493d5a9dc867445a33999401f50efe8052a022', NOW(), 1), -- hashed 'hashedpassword123'
 (2, 'Bob Tran', 'bob@domain.com', '0987654321', '9878d344400c00f8bab1a4ba1a3488b3ace88aea983e3d94ba1c781e09ba32bb', NOW(), 1), -- hashed 'securepass456'
 (4, 'Charlie Pham', 'charlie@domain.com', '0909090909', '51f334a658e9bf4ce073412c5948c01083cbb64497cf913347fa106dd962e9b0', NOW(), 1), -- hashed 'pass789secure'
 (4, 'Charlie Pham2', 'charlie@doma.com', '0909090908', '51f334a658e9bf4ce073412c5948c01083cbb64497cf913347fa106dd962e9b0', NOW(), 1), -- hashed 'pass789secure'
@@ -28,7 +27,8 @@ INSERT INTO Users (RoleID, FullName, Email, PhoneNumber, PasswordHash, CreatedAt
 (3, 'Cus1', 'customer1@example.com', '0912345673', 'ef688fb1a087af8b9a7f22eb141fd9e8707160954e8c855a45abd848e35516e5', NOW(), 1), -- hashed 'hashedpassword3'
 (3, 'Cus2', 'customer2@example.com', '0912345679', 'ef688fb1a087af8b9a7f22eb141fd9e8707160954e8c855a45abd848e35516e5', NOW(), 1), -- hashed 'hashedpassword3'
 (3, 'Cus3', 'customer3@example.com', '0912345610', 'ef688fb1a087af8b9a7f22eb141fd9e8707160954e8c855a45abd848e35516e5', NOW(), 1), -- hashed 'hashedpassword3'
-(4, 'Ship1', 'ship1@example.com', '0912345611', 'ef688fb1a087af8b9a7f22eb141fd9e8707160954e8c855a45abd848e35516e5', NOW(), 1); -- hashed 'hashedpassword3'
+(4, 'Ship1', 'ship1@example.com', '0912345611', 'ef688fb1a087af8b9a7f22eb141fd9e8707160954e8c855a45abd848e35516e5', NOW(), 1), -- hashed 'hashedpassword3'
+(1, 'DXT', 'taidoyasuovn@gmail.com', '0912345671', 'b9ff6b991cdc84277a42cacc41493d5a9dc867445a33999401f50efe8052a022', NOW(), 1); -- hashed 'hashedpassword123'
 
 
 INSERT INTO CustomerInfo (UserID, Address) VALUES
@@ -892,27 +892,27 @@ INSERT INTO WarrantyDetails (WarrantyID, BrandComID, Price, Status) VALUES
 
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
-VALUES ('OR001', 0, 5, '2022-04-27 05:34:02', 'Customer 2 Address #49', 'Nguyen Van A', '0123456789', 7632869, 3, 1);
+VALUES ('012345', 0, 5, '2022-04-27 05:34:02', 'Customer 2 Address #49', 'Nguyen Van A', '0123456789', 7632869, 3, 1);
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
-VALUES ('OR002', 0, 5, '2025-04-27 05:34:02', 'Customer 2 Address #49', 'Nguyen Van A', '0123456789', 7632869, 3, 1);
+VALUES ('012346', 0, 5, '2025-04-27 05:34:02', 'Customer 2 Address #49', 'Nguyen Van A', '0123456789', 7632869, 3, 1);
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
-VALUES ('OR003', 1,5, '2024-12-11 05:34:02', 'Customer 2 Address #50', 'Le Thi B', '0987654321', 9077684, 3, 2);
+VALUES ('012347', 1,5, '2024-12-11 05:34:02', 'Customer 2 Address #50', 'Le Thi B', '0987654321', 9077684, 3, 2);
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
-VALUES ('OR004', 0, 6, '2024-12-11 05:34:02', 'Customer 2 Address #50', 'Pham Van C', '0367890123', 9077684, 5, 2);
+VALUES ('012348', 0, 6, '2024-12-11 05:34:02', 'Customer 2 Address #50', 'Pham Van C', '0367890123', 9077684, 5, 2);
 
 
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
-VALUES ('OR005', 0, 6, '2024-01-11 05:34:02', 'Customer 2 Address #50', 'Pham Van C', '0367890123', 9077684, 0, 2);
+VALUES ('012349', 0, 6, '2024-01-11 05:34:02', 'Customer 2 Address #50', 'Pham Van C', '0367890123', 9077684, 0, 1);
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
-VALUES ('OR006', 0, 6, '2024-12-11 05:34:02', 'Customer 2 Address #50', 'Pham Van C', '0367890123', 9077684, 1, 2);
+VALUES ('012340', 0, 6, '2024-12-11 05:34:02', 'Customer 2 Address #50', 'Pham Van C', '0367890123', 9077684, 1, 2);
 
 INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, FullName, PhoneNumber, TotalAmount, Status, PaymentStatusID)
-VALUES ('OR007', 0, 6, '2024-12-11 05:34:02', 'Customer 2 Address #50', 'Pham Van C', '0367890123', 9077684, 2, 2);
+VALUES ('012351', 0, 6, '2024-12-11 05:34:02', 'Customer 2 Address #50', 'Pham Van C', '0367890123', 9077684, 2, 2);
 
 -- Insert data into CartItems
 INSERT INTO CartItems (UserID, CategoryID, WarrantyDetailID, Quantity, Status) VALUES (5, 16, 6, 1, 1);
