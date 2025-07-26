@@ -6,6 +6,7 @@ package controller.cart;
 
 import dal.OrderDAO;
 import dal.OrderItemDAO;
+import dal.ProductDAO;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -64,13 +65,26 @@ public class OrderServlet extends HttpServlet {
         OrderDAO dao = new OrderDAO();
         String orderIDPara = request.getParameter("orderID");
         try {
+            String service = request.getParameter("service");
             int orderID = Integer.parseInt(orderIDPara);
-            OrderCate order = dao.getOrderCateByID(orderID);
-            request.setAttribute("order", order);
-            RequestDispatcher rd = request.getRequestDispatcher("ShopPages/Pages/OrderInfo.jsp");
-            rd.forward(request, response);
+            if (service == null || service.isEmpty()) {
+                OrderCate order = dao.getOrderCateByID(orderID);
+                request.setAttribute("order", order);
+                RequestDispatcher rd = request.getRequestDispatcher("ShopPages/Pages/OrderInfo.jsp");
+                rd.forward(request, response);
+            } else if ("activeWarranty".equals(service)) {
+                int productID = Integer.parseInt(request.getParameter("productID"));
+                ProductDAO productdao = new ProductDAO();
+                boolean success = dao.activeWarrantyByOrderID(orderID);
+                success = productdao.activeWarrantyByProductID(productID);
+                if (success) {
+                    response.sendRedirect(request.getContextPath() + "/Order?orderID=" +orderIDPara );
+                } else {
+                    response.sendRedirect(request.getContextPath() +"/OrderHistory");
+                }
+            }
         } catch (Exception e) {
-            
+            response.sendRedirect("/OrderHistory");
         }
     }
 

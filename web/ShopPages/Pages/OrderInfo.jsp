@@ -306,7 +306,7 @@
                                        >
                                         Buy new one
                                     </a>        
-                                    <c:if test="${currentStatus == 5}">
+                                    <c:if test="${currentStatus >= 5}">
                                         <a href="${pageContext.request.contextPath}/feedback?orderItemID=${item.orderItemID}"
                                            class="btn btn-success"
                                            >
@@ -349,7 +349,7 @@
                                                     <td>
                                                         <c:choose>
                                                             <c:when test="${order.order_Status.statusID >= 5 && detail.product.status == 0}">
-                                                                <a href="#" class="btn btn-primary mt-0">Activate Warranty</a>
+                                                                <a href="Order?service=activeWarranty&orderID=${order.orderID}&productID=${detail.product.productID}" class="btn btn-warning btn-sm mt-1 text-white">Activate Warranty</a>
                                                             </c:when>
                                                             <c:otherwise>
                                                                 <button class="btn btn-secondary mt-0" disabled>Activate Warranty</button>
@@ -382,7 +382,7 @@
                                         <div class="rc-item">
                                             <c:choose>
                                                 <c:when test="${order.order_Status.statusID >= 5 && detail.product.status == 0}">
-                                                    <a href="#" class="btn btn-warning btn-sm mt-1 text-white">Activate Warranty</a>
+                                                    <a href="Order?service=activeWarranty&orderID=${order.orderID}&productID=${detail.product.productID}" class="btn btn-warning btn-sm mt-1 text-white">Activate Warranty</a>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <button class="btn btn-secondary btn-sm mt-1" disabled>Activate Warranty</button>
