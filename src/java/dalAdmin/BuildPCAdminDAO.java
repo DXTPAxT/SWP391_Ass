@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -781,6 +782,119 @@ public List<BuildPCAdmin> getBuildPCItemsByBuildPCID(int buildPCID) {
         }
         return "";
     }
+public boolean isDuplicateWithAdminBuildPC(List<Integer> categoryIDs) {
+    String getAdminBuildPCsSQL = """
+        SELECT bp.BuildPCID
+        FROM Build_PC bp
+        JOIN Users u ON bp.UserID = u.UserID
+        WHERE u.RoleID = 1
+    """;
+
+    String getItemSQL = """
+        SELECT CategoryID
+        FROM Build_PC_Items
+        WHERE BuildPCID = ?
+        ORDER BY CategoryID
+    """;
+
+    try (
+        PreparedStatement psBuild = connection.prepareStatement(getAdminBuildPCsSQL);
+        ResultSet rsBuild = psBuild.executeQuery()
+    ) {
+        List<Integer> inputSorted = new ArrayList<>(categoryIDs);
+        Collections.sort(inputSorted);
+
+        while (rsBuild.next()) {
+            int buildPCID = rsBuild.getInt("BuildPCID");
+
+            try (
+                PreparedStatement psItems = connection.prepareStatement(getItemSQL)
+            ) {
+                psItems.setInt(1, buildPCID);
+                ResultSet rsItems = psItems.executeQuery();
+
+                List<Integer> existingSorted = new ArrayList<>();
+                while (rsItems.next()) {
+                    existingSorted.add(rsItems.getInt("CategoryID"));
+                }
+
+                Collections.sort(existingSorted);
+
+                if (inputSorted.equals(existingSorted)) {
+                    return true; // Trùng với 1 cấu hình của Admin
+                }
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return false;
+}
+public boolean isDuplicateWithAdminBuildPCId(List<Integer> categoryIDs, int excludeBuildPCID) {
+    String getAdminBuildPCsSQL = """
+        SELECT bp.BuildPCID
+        FROM Build_PC bp
+        JOIN Users u ON bp.UserID = u.UserID
+        WHERE u.RoleID = 1 AND bp.BuildPCID != ?
+    """;
+
+    String getItemSQL = """
+        SELECT CategoryID
+        FROM Build_PC_Items
+        WHERE BuildPCID = ?
+        ORDER BY CategoryID
+    """;
+
+    try (
+        PreparedStatement psBuild = connection.prepareStatement(getAdminBuildPCsSQL)
+    ) {
+        psBuild.setInt(1, excludeBuildPCID);
+        ResultSet rsBuild = psBuild.executeQuery();
+
+        List<Integer> inputSorted = new ArrayList<>(categoryIDs);
+        Collections.sort(inputSorted);
+
+        while (rsBuild.next()) {
+            int buildPCID = rsBuild.getInt("BuildPCID");
+
+            try (PreparedStatement psItems = connection.prepareStatement(getItemSQL)) {
+                psItems.setInt(1, buildPCID);
+                ResultSet rsItems = psItems.executeQuery();
+
+                List<Integer> existingSorted = new ArrayList<>();
+                while (rsItems.next()) {
+                    existingSorted.add(rsItems.getInt("CategoryID"));
+                }
+
+                Collections.sort(existingSorted);
+
+                if (inputSorted.equals(existingSorted)) {
+                    return true; // Trùng với 1 cấu hình của Admin khác
+                }
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return false;
+}
+
+public List<Integer> getCategoryIDsByBuildPCID(int buildPCID) {
+    List<Integer> categoryIDs = new ArrayList<>();
+    String sql = "SELECT CategoryID FROM Build_PC_Items WHERE BuildPCID = ? ORDER BY CategoryID ASC";
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, buildPCID);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            categoryIDs.add(rs.getInt("CategoryID"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return categoryIDs;
+}
 
 
 }

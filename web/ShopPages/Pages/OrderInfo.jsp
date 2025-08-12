@@ -299,18 +299,20 @@
                         <div class="cart-card clearfix">
                             <div class="cart-card-header d-flex">
                                 <div class="card-left">
-                                    <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/cart/two.png" alt="Product">
+                                    <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/CatePicture/${item.category.imgURL}" alt="Product">
                                     <h4 class="category-name">${item.category.categoryName}</h4>
                                     <a href="${pageContext.request.contextPath}/CategoriesController?service=detail&categoryID=${item.category.categoryID}"
                                        class="btn btn-success"
                                        >
                                         Buy new one
-                                    </a>                                    
-                                    <a href="${pageContext.request.contextPath}/feedback?orderItemID=${item.orderItemID}"
-                                       class="btn btn-success"
-                                       >
-                                        Feedback
-                                    </a>
+                                    </a>        
+                                    <c:if test="${currentStatus >= 5}">
+                                        <a href="${pageContext.request.contextPath}/feedback?orderItemID=${item.orderItemID}"
+                                           class="btn btn-success"
+                                           >
+                                            Feedback
+                                        </a>
+                                    </c:if>
                                 </div>
 
                                 <div class="card-right">
@@ -347,7 +349,7 @@
                                                     <td>
                                                         <c:choose>
                                                             <c:when test="${order.order_Status.statusID >= 5 && detail.product.status == 0}">
-                                                                <a href="#" class="btn btn-primary mt-0">Activate Warranty</a>
+                                                                <a href="Order?service=activeWarranty&orderID=${order.orderID}&productID=${detail.product.productID}" class="btn btn-warning btn-sm mt-1 text-white">Activate Warranty</a>
                                                             </c:when>
                                                             <c:otherwise>
                                                                 <button class="btn btn-secondary mt-0" disabled>Activate Warranty</button>
@@ -380,7 +382,7 @@
                                         <div class="rc-item">
                                             <c:choose>
                                                 <c:when test="${order.order_Status.statusID >= 5 && detail.product.status == 0}">
-                                                    <a href="#" class="btn btn-warning btn-sm mt-1 text-white">Activate Warranty</a>
+                                                    <a href="Order?service=activeWarranty&orderID=${order.orderID}&productID=${detail.product.productID}" class="btn btn-warning btn-sm mt-1 text-white">Activate Warranty</a>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <button class="btn btn-secondary btn-sm mt-1" disabled>Activate Warranty</button>

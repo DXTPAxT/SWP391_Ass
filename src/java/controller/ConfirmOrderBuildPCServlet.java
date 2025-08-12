@@ -8,9 +8,12 @@ import dal.CartBuildPCDAO;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.regex.Pattern;
 
 @WebServlet(name = "ConfirmOrderBuildPCServlet", urlPatterns = {"/ConfirmOrderBuildPC"})
 public class ConfirmOrderBuildPCServlet extends HttpServlet {
+
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^0\\d{9}$");
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -36,11 +39,24 @@ public class ConfirmOrderBuildPCServlet extends HttpServlet {
                 return;
             }
 
-            if (cartIDsParam == null || cartIDsParam.trim().isEmpty()) {
-                throw new IllegalArgumentException("Không có cartID nào được chọn.");
+            // Validate inputs
+            if (fullname == null || fullname.trim().isEmpty()) {
+                throw new IllegalArgumentException("Full name cannot be empty.");
             }
 
-            // Làm sạch cartIDs
+            if (phone == null || !PHONE_PATTERN.matcher(phone).matches()) {
+                throw new IllegalArgumentException("Invalid phone number. It must be 10 digits and start with 0.");
+            }
+
+            if (address == null || address.trim().isEmpty()) {
+                throw new IllegalArgumentException("Address cannot be empty.");
+            }
+
+            if (cartIDsParam == null || cartIDsParam.trim().isEmpty()) {
+                throw new IllegalArgumentException("No cart IDs selected.");
+            }
+
+            // Clean and process input
             String[] cartIDs = cartIDsParam.trim().split(",");
             amountRaw = amountRaw.replaceAll("[^\\d]", "");
             int amount = Integer.parseInt(amountRaw);
@@ -48,20 +64,17 @@ public class ConfirmOrderBuildPCServlet extends HttpServlet {
             CartBuildPCDAO dao = new CartBuildPCDAO();
 
             if ("cod".equalsIgnoreCase(paymentMethod)) {
-                // ✅ Xử lý COD: tạo đơn hàng cho từng cartID
+                // ✅ Handle Cash On Delivery (COD)
                 for (String idStr : cartIDs) {
                     int cartID = Integer.parseInt(idStr.trim());
                     int orderID = dao.insertOrderFromCartAndReturnOrderID(cartID, user.getUserId());
                     dao.updateOrderCustomerInfo(orderID, fullname, phone, address, note, 1); // 1 = COD
                 }
 
-                // Sau khi xong hết
                 response.sendRedirect("ShopPages/Pages/order-success.jsp");
 
             } else {
-                // ✅ Xử lý VNPay: lưu session và chuyển đến trang thanh toán
-
-                // Gộp cartIDs thành 1 chuỗi lưu lại cho VNPay callback
+                // ✅ Handle VNPay payment
                 session.setAttribute("pendingCartIDs", cartIDsParam);
                 session.setAttribute("pendingAmount", amount);
                 session.setAttribute("pendingNote", note != null ? note : "");
@@ -80,8 +93,11 @@ public class ConfirmOrderBuildPCServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Đã xảy ra lỗi khi xác nhận đơn hàng: " + e.getMessage());
-            request.getRequestDispatcher("error.jsp").forward(request, response);
+            request.setAttribute("error", "An error occurred while confirming the order: " + e.getMessage());
+            request.setAttribute("ids", request.getParameter("cartIDs"));
+            request.setAttribute("amount", request.getParameter("amount"));
+            request.getRequestDispatcher("ShopPages/Pages/confirmVnPayOrder.jsp").forward(request, response);
+
         }
     }
 

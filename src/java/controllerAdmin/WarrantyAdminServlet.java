@@ -11,7 +11,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import models.User;
 import models.Warranties;
 
 /**
@@ -32,6 +34,18 @@ public class WarrantyAdminServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession(false);
+        User currentUser = (User) session.getAttribute("user");
+
+        if (currentUser == null || currentUser.getRole().getRoleID() != 1) {
+            if (session != null) {
+                session.invalidate();
+            }
+            HttpSession newSession = request.getSession(true);
+            newSession.setAttribute("error", "You do not have permission to access this task.");
+            response.sendRedirect(request.getContextPath() + "/Login");
+            return;
+        }
         WarrantyAdminDAO dao = new WarrantyAdminDAO();
         List<Warranties> warranties = dao.getAllWarranties();
         String service = request.getParameter("service");

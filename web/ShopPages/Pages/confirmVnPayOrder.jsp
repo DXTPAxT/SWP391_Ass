@@ -1,18 +1,18 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="models.User" %>
+
 <%
-    // Kiểm tra đăng nhập
     User user = (User) session.getAttribute("user");
     if (user == null) {
         response.sendRedirect("Login");
         return;
     }
 
-    // Lấy dữ liệu từ request
-    String cartIDs = request.getParameter("ids"); // VD: "2,5,7"
+    String cartIDs = request.getParameter("ids");
     String amountStr = request.getParameter("amount");
-
     int amount = 0;
+
     try {
         if (amountStr != null) {
             amountStr = amountStr.replaceAll("[^\\d]", "");
@@ -22,113 +22,121 @@
         amount = 0;
     }
 
-    // Thông tin người dùng mặc định
     String fullName = user.getFullname();
     String phone = user.getPhoneNumber();
     String address = (user.getCustomerInfo() != null && user.getCustomerInfo().getAddress() != null)
-        ? user.getCustomerInfo().getAddress() : "";
+            ? user.getCustomerInfo().getAddress() : "";
 %>
 
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <title>Xác nhận đặt hàng</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            max-width: 600px;
-            margin: auto;
-            padding-top: 30px;
-        }
-        label { font-weight: bold; }
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 12px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: green;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        .amount-box {
-            background-color: #f9f9f9;
-            padding: 12px;
-            border: 1px solid #ccc;
-            margin: 12px 0;
-        }
-        #vnpayModal {
-            display: none;
-            position: fixed;
-            z-index: 999;
-            left: 0; top: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.6);
-        }
-        #vnpayModalContent {
-            background-color: white;
-            margin: 10% auto;
-            padding: 20px;
-            width: 400px;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <h2>Xác nhận thông tin đặt hàng</h2>
+    <head>
+        <meta charset="UTF-8">
+        <title>Confirm Build PC Order | E-Shopper</title>
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/bootstrap.min.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/font-awesome.min.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/main.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/ShopPages/Pages/css/custom.css" rel="stylesheet">
+    </head>
+    <body>
 
-    <div class="amount-box">
-        <strong>Số tiền đặt cọc (20%):</strong> <%= amount %> VND
-    </div>
+                <jsp:include page="/ShopPages/Pages/components/header.jsp" />
 
-    <form id="orderForm" action="<%= request.getContextPath() %>/ConfirmOrderBuildPC" method="post" onsubmit="return handleSubmit()">
-        <label>Họ tên:</label>
-        <input type="text" name="fullname" value="<%= fullName %>" required>
+        <div class="container mt-4">
+            <div class="breadcrumbs">
+                <ol class="breadcrumb mb-1">
+                    <li><a href="${pageContext.request.contextPath}/BuildPC">Build PC</a></li>
+                    <li class="active">Order Confirmation</li>
+                </ol>
+            </div>
 
-        <label>Số điện thoại:</label>
-        <input type="text" name="phone" value="<%= phone %>" required>
+            <h2 class="text-center mb-4">Confirm Your Order</h2>
 
-        <label>Địa chỉ:</label>
-        <input type="text" name="address" value="<%= address %>" required>
+            <c:if test="${not empty requestScope.error}">
+                <div class="alert alert-danger">
+                    ${requestScope.error}
+                </div>
+            </c:if>
 
-        <label>Ghi chú:</label>
-        <textarea name="note" rows="3"></textarea>
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong>Deposit Amount</strong></div>
+                <div class="panel-body">
+                    <h4><strong><%= amount %></strong> VND</h4>
+                </div>
+            </div>
 
-        <label>Phương thức thanh toán:</label><br>
-        <input type="radio" name="methodOption" value="vnpay" checked> Thanh toán VNPay<br>
-        <input type="radio" name="methodOption" value="cod"> Thanh toán khi nhận hàng (COD)<br><br>
+            <form id="orderForm" class="checkout-form" action="<%= request.getContextPath() %>/ConfirmOrderBuildPC" method="post" onsubmit="return handleSubmit()">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Receiver's Information</h4>
+                        <div class="form-group">
+                            <label>Full Name:</label>
+                            <input type="text" name="fullname" class="form-control" value="<%= fullName %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone:</label>
+                            <input type="text" name="phone" class="form-control" value="<%= phone %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Address:</label>
+                            <input type="text" name="address" class="form-control" value="<%= address %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Note:</label>
+                            <textarea name="note" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
 
-        <!-- Thông tin ẩn -->
-        <input type="hidden" name="cartIDs" value="<%= cartIDs %>">
-        <input type="hidden" name="amount" value="<%= amount %>">
-        <input type="hidden" id="paymentMethodInput" name="paymentMethod" value="vnpay">
-        <input type="hidden" id="bankCodeInput" name="bankCode" value="">
+                    <div class="col-md-6">
+                        <h4>Payment Method</h4>
+                        <div class="radio">
+                            <label><input type="radio" name="methodOption" value="vnpay" checked> Pay with VNPay</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="methodOption" value="cod"> Cash on Delivery</label>
+                        </div>
 
-        <button type="submit">Xác nhận đặt hàng</button>
-    </form>
+                        <input type="hidden" name="cartIDs" value="<%= cartIDs %>">
+                        <input type="hidden" name="amount" value="<%= amount %>">
+                        <input type="hidden" id="paymentMethodInput" name="paymentMethod" value="vnpay">
+                        <input type="hidden" id="bankCodeInput" name="bankCode" value="">
+                       
 
-    <!-- Modal VNPay -->
-    <div id="vnpayModal">
-        <div id="vnpayModalContent">
-            <h3>Đang chuyển đến VNPay...</h3>
-            <img src="assets/images/loading.gif" width="80" alt="Loading..." />
-            <p>Nếu không chuyển trang, vui lòng chờ trong giây lát...</p>
+                        <button type="submit" class="btn btn-primary btn-lg mt-3">Confirm Order</button>
+                    </div>
+                         
+                </div>
+            </form>
+                         <div class="text-left mb-3">
+                            <a href="${pageContext.request.contextPath}/CardBuildPc" class="btn btn-outline-secondary">
+                                <i class="fa fa-arrow-left"></i> Back to Build PC Cart
+                            </a>
+                        </div>
         </div>
-    </div>
 
-    <script>
-        function handleSubmit() {
-            const method = document.querySelector('input[name="methodOption"]:checked').value;
-            document.getElementById("paymentMethodInput").value = method;
+        <!-- VNPay Modal -->
+        <div id="vnpayModal" style="display:none; position:fixed; z-index:9999; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6);">
+            <div style="background:#fff; padding:20px; margin:15% auto; width:300px; text-align:center;">
+                <h4>Redirecting to VNPay...</h4>
+                <img src="${pageContext.request.contextPath}/assets/images/loading.gif" width="80" alt="Loading...">
+                <p>Please wait...</p>
+            </div>
+        </div>
 
-            if (method === "vnpay") {
-                document.getElementById("vnpayModal").style.display = "block";
+        <jsp:include page="/ShopPages/Pages/components/footer.jsp" />
+
+        <script>
+            function handleSubmit() {
+                const method = document.querySelector('input[name="methodOption"]:checked').value;
+                document.getElementById("paymentMethodInput").value = method;
+
+                if (method === "vnpay") {
+                    document.getElementById("vnpayModal").style.display = "block";
+                }
+                return true;
             }
-            return true;
-        }
-    </script>
-</body>
+        </script>
+        <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.js"></script>
+        <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/bootstrap.min.js"></script>
+    </body>
 </html>

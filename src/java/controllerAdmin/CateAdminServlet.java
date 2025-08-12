@@ -8,6 +8,7 @@ import dalAdmin.BrandComAdminDAO;
 import dalAdmin.BrandAdminDAO;
 import dalAdmin.CategoryAdminDAO;
 import dalAdmin.ComponentAdminDAO;
+import dalAdmin.ImportDAO;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,6 +18,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
 import java.nio.file.Paths;
@@ -27,7 +29,9 @@ import models.BrandComs;
 import models.Brands;
 import models.Categories;
 import models.Components;
+import models.Imports;
 import models.Products;
+import models.User;
 
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024, // 1MB
@@ -51,9 +55,22 @@ public class CateAdminServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
 
             String service = request.getParameter("service");
+            HttpSession session = request.getSession(false);
+            User currentUser = (User) session.getAttribute("user");
 
+            if (currentUser == null || currentUser.getRole().getRoleID() != 1) {
+                if (session != null) {
+                    session.invalidate();
+                }
+                HttpSession newSession = request.getSession(true);
+                newSession.setAttribute("error", "You do not have permission to access this task.");
+                response.sendRedirect(request.getContextPath() + "/Login");
+                return;
+            }
             CategoryAdminDAO cate = new CategoryAdminDAO();
+            ImportDAO im = new ImportDAO();
             List<Categories> list;
+            List<Imports> list1;
             cate.updateCategoryQuantities();
             cate.updateCategoryInventory();
             cate.updateCategoryStatusIfInventoryZero();
@@ -123,6 +140,8 @@ public class CateAdminServlet extends HttpServlet {
 
                     if (description == null || description.trim().isEmpty()) {
                         errors.add("Description cannot be empty.");
+                    } else if (description.length() > 150) {
+                        errors.add("Description must not exceed 150 characters.");
                     }
 
                     if (imagePart == null || imagePart.getSize() == 0) {
@@ -315,6 +334,20 @@ public class CateAdminServlet extends HttpServlet {
                     }
                 }
 
+            } else if ("listbycate".equals(service)) {
+                int id = Integer.parseInt(request.getParameter("categoryID"));
+
+                list1 = im.getImportsWithProductsByCategoryID(id);
+
+                request.setAttribute("list", list1);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewImport.jsp").forward(request, response);
+            } else if ("listbypro".equals(service)) {
+                String id = request.getParameter("productCode");
+
+                Imports imp = im.getImportByProductCode(id);
+
+                request.setAttribute("imp", imp);
+                request.getRequestDispatcher("AdminLTE/AdminPages/pages/tables/viewImportProductCode.jsp").forward(request, response);
             }
         }
     }

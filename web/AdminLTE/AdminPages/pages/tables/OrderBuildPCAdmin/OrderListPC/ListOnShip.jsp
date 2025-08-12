@@ -43,6 +43,7 @@
 
             <jsp:include page="../../../../components/header.jsp" />
             <jsp:include page="../../../../components/sidebar.jsp">
+                <jsp:param name="activeMenu" value="orderbuildpc"/>
                 <jsp:param name="ctx" value="${ctx}" />
             </jsp:include>
 
@@ -53,7 +54,7 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Order Rejected Tables
+                        Order Build PC On Ship
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>

@@ -90,7 +90,10 @@
                                     <input type="text" class="form-control" value="${selectedCategory.categoryName}" readonly />
                                     <input type="hidden" name="categoryID" value="${selectedCategory.categoryID}" />
                                 </div>
-
+                                <div class="form-group">
+                                    <label>Inventory</label>
+                                    <input type="text" class="form-control" value="${selectedCategory.inventory}" readonly />
+                                </div>
                                 <!-- Queue -->
                                 <div class="form-group">
                                     <label>Current Queue</label>

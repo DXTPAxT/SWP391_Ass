@@ -11,10 +11,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.Date;
 import java.util.List;
 import java.util.Vector;
 import models.Products;
+import models.User;
 
 /**
  *
@@ -36,6 +38,18 @@ public class ProductAdminServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             String service = request.getParameter("service");
+            HttpSession session = request.getSession(false);
+            User currentUser = (User) session.getAttribute("user");
+
+            if (currentUser == null || currentUser.getRole().getRoleID() != 1) {
+                if (session != null) {
+                    session.invalidate();
+                }
+                HttpSession newSession = request.getSession(true);
+                newSession.setAttribute("error", "You do not have permission to access this task.");
+                response.sendRedirect(request.getContextPath() + "/Login");
+                return;
+            }
             ProductAdminDAO pro = new ProductAdminDAO();
             List<Products> product;
             if (service == null) {

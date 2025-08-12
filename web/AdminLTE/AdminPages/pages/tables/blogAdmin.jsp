@@ -58,6 +58,7 @@
             <jsp:include page="../../components/header.jsp" />
 
             <jsp:include page="../../components/sidebar.jsp">
+                <jsp:param name="activeMenu" value="blog"/>
                 <jsp:param name="ctx" value="${ctx}" />
             </jsp:include>
 

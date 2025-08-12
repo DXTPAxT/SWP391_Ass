@@ -65,11 +65,10 @@ public class SignUpServlet extends HttpServlet {
         String address = request.getParameter("address");
         String phoneNumber = request.getParameter("phoneNumber");
         String password = request.getParameter("password");
-        String confirmPassword = request.getParameter("confirmPassword");
 
         try {
             // Validate input
-            String error = validateSignUpInput(email, fullName, address, phoneNumber, password, confirmPassword);
+            String error = validateSignUpInput(email, fullName, address, phoneNumber, password);
             if (error != null) {
                 setSignUpAttributes(request, error, email, fullName, address, phoneNumber);
                 forwardToSignUp(request, response);
@@ -129,7 +128,7 @@ public class SignUpServlet extends HttpServlet {
     }
 
     private String validateSignUpInput(String email, String fullName, String address,
-            String phoneNumber, String password, String confirmPassword) {
+            String phoneNumber, String password) {
         if (Validator.isNullOrEmpty(email)) {
             return "Email is required!";
         }
@@ -150,12 +149,6 @@ public class SignUpServlet extends HttpServlet {
         }
         if (Validator.isNullOrEmpty(password)) {
             return "Password is required!";
-        }
-        if (Validator.isNullOrEmpty(confirmPassword)) {
-            return "Confirm password is required!";
-        }
-        if (!password.equals(confirmPassword)) {
-            return "Passwords do not match!";
         }
         return null;
     }

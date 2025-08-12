@@ -12,8 +12,10 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import models.Categories;
+import models.User;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -24,6 +26,18 @@ public class ImportServlet extends HttpServlet {
             throws ServletException, IOException {
 
         response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession(false);
+        User currentUser = (User) session.getAttribute("user");
+
+        if (currentUser == null || currentUser.getRole().getRoleID() != 1) {
+            if (session != null) {
+                session.invalidate();
+            }
+            HttpSession newSession = request.getSession(true);
+            newSession.setAttribute("error", "You do not have permission to access this task.");
+            response.sendRedirect(request.getContextPath() + "/Login");
+            return;
+        }
         ImportDAO im = new ImportDAO();
         im.updateImportQuantitiesFromProducts();
 
@@ -106,7 +120,9 @@ public class ImportServlet extends HttpServlet {
                             Cell cell = row.getCell(0);
                             if (cell != null && cell.getCellType() == CellType.STRING) {
                                 String code = cell.getStringCellValue().trim();
-                                if (code.isEmpty()) continue;
+                                if (code.isEmpty()) {
+                                    continue;
+                                }
 
                                 // Validate từng product code
                                 if (code.length() > 30 || !code.matches("^[a-zA-Z0-9_-]+$")) {

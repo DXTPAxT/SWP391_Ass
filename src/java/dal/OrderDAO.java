@@ -214,6 +214,23 @@ public class OrderDAO extends DBContext {
         }
         return orders;
     }
+    
+    public boolean activeWarrantyByOrderID(int OrderID) {
+        int n = 0;
+        String sql = """
+        UPDATE Orders
+        SET Status = ?
+        WHERE OrderID = ?;
+    """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, 6);
+            ps.setInt(2, OrderID);
+            n = ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return n > 0;
+    }
 
     public static void main(String[] args) {
         OrderDAO dao = new OrderDAO();
@@ -261,5 +278,7 @@ public class OrderDAO extends DBContext {
             System.out.println(oc);
         }
     }
+    
+    
 
 }

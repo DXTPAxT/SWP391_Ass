@@ -9,8 +9,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import models.BrandComs;
+import models.User;
 
 public class BrandComAdminServlet extends HttpServlet {
 
@@ -20,6 +22,19 @@ public class BrandComAdminServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             String service = request.getParameter("service");
+            HttpSession session = request.getSession(false);
+            User currentUser = (User) session.getAttribute("user");
+
+            if (currentUser == null || currentUser.getRole().getRoleID() != 1) {
+                if (session != null) {
+                    session.invalidate();
+                }
+                HttpSession newSession = request.getSession(true);
+                newSession.setAttribute("error", "You do not have permission to access this task.");
+                response.sendRedirect(request.getContextPath() + "/Login");
+                return;
+            }
+
             if (service == null) {
                 service = "list";
             }
@@ -59,9 +74,8 @@ public class BrandComAdminServlet extends HttpServlet {
                     try {
                         int brandID = Integer.parseInt(brandRaw);
                         int componentID = Integer.parseInt(componentRaw);
-                        int quantity = 0; 
+                        int quantity = 0;
 
-                        
                         if (dao.existsBrandComponentPair(brandID, componentID)) {
                             error = "This brand-component combination already exists.";
                         }

@@ -413,7 +413,7 @@
                                     const totalDisplay = document.getElementById('totalPrice');
                                     let selectedComponents = JSON.parse(localStorage.getItem("selectedComponents")) || {};
                                     let isCustomerPC = false;
-                                    
+
                                     function openModal(componentid, componentName) {
                                         modal.style.display = 'flex';
                                         modalTitle.innerText = `Select ${componentName}`;
@@ -430,7 +430,7 @@
                                                     modalBody.innerHTML = "<p style='color:red;'>Failed to load data</p>";
                                                 });
                                     }
-                                    
+
                                     document.getElementById('closeModal').addEventListener('click', () => {
                                         modal.style.display = 'none';
                                         document.body.style.overflow = "";
@@ -441,7 +441,7 @@
                                             document.body.style.overflow = "";
                                         }
                                     });
-                                    
+
                                     window.addEventListener("DOMContentLoaded", function () {
                                         const urlParams = new URLSearchParams(window.location.search);
                                         const buildPCID = urlParams.get("buildPCID");
@@ -476,10 +476,10 @@
                                             if (role === "Admin") {
                                                 statusWrapper.style.display = "block";
                                                 statusSelect.innerHTML = `
-                <option value="1">On Sales</option>
-                <option value="2">Off</option>`;
-                                            }  else {
-                                                statusWrapper.style.display = "none";  // Role không hợp lệ thì ẩn dropdown
+                                          <option value="1">On Sales</option>
+                                                    <option value="2">Off</option>`;
+                                             } else {
+                                                statusWrapper.style.display = "none"; 
                                             }
                                             fetch(`${ctx}/BuildPC_ListCate?service=loadBuildPC&buildPCID=${buildPCID}`)
                                                     .then(res => res.text())
@@ -494,23 +494,23 @@
                                                                 isCustomerPC = true;
                                                             }
                                                         }
-                                                      
+                                                    
                                                         if (creatorRole === "Customer") {
-                                                          
+
                                                             document.querySelectorAll(".component-block").forEach(block => {
                                                                 const chooseBtn = block.querySelector("button.btn-primary");
                                                                 if (chooseBtn)
                                                                     chooseBtn.style.display = "none";
                                                             });
 
-                                                          
+
                                                             document.querySelectorAll('[id^="remove-"]').forEach(btn => {
                                                                 btn.style.display = "none";
                                                             });
                                                         }
 
 
-                                                        
+
                                                         for (let i = 1; i < lines.length; i++) {
                                                             const line = lines[i];
                                                             const [componentID, categoryID, categoryName, brandName, price, imgURL, warrantyDesc, warrantyPrice, warrantyDetailID] = line.split("|");
@@ -557,6 +557,7 @@
                                             });
                                         });
                                     }
+                                    
                                     function goToPage(page, componentID, componentName) {
                                         const filterForm = modalBody.querySelector('#filterForm');
                                         if (filterForm) {
@@ -572,6 +573,7 @@
                                             });
                                         }
                                     }
+                                    
                                     function selectProduct(componentID, categoryID, categoryName, brandName, price, imgURL, warrantyDesc = "", warrantyPrice = 0, warrantyDetailID = 0) {
 
                                         price = parseInt(price);
@@ -587,10 +589,10 @@
                                             warrantyDetailID = 0;
 
                                         document.getElementById(`meta-${componentID}`).innerText = `${categoryName} - ${brandName}`;
-                                        document.getElementById(`price-${componentID}`).innerText = `Sản phẩm: ${price.toLocaleString()}₫`;
+                                        document.getElementById(`price-${componentID}`).innerText = `Product: ${price.toLocaleString()}₫`;
 
                                         // Hiển thị bảo hành
-                                        const warrantyText = warrantyDesc ? `Bảo hành: ${warrantyDesc} - ${warrantyPrice.toLocaleString()}₫` : "Bảo hành: Không chọn";
+                                        const warrantyText = warrantyDesc ? `Warranty: ${warrantyDesc} - ${warrantyPrice.toLocaleString()}₫` : "Warranty:Not choose";
                                         if (!document.getElementById(`warranty-${componentID}`)) {
                                             const warrantyDiv = document.createElement("div");
                                             warrantyDiv.id = `warranty-${componentID}`;
@@ -607,7 +609,7 @@
                                             totalDiv.classList.add("component-total", "text-success");
                                             document.getElementById(`warranty-${componentID}`).after(totalDiv);
                                         }
-                                        document.getElementById(`total-${componentID}`).innerText = `Tổng: ${totalItem.toLocaleString()}₫`;
+                                        document.getElementById(`total-${componentID}`).innerText = `Total: ${totalItem.toLocaleString()}₫`;
 
                                         if (!isCustomerPC) {
                                             document.getElementById(`remove-${componentID}`).style.display = 'inline-block';
@@ -753,7 +755,7 @@
                                     }
 
 
-
+                                    
                                     function chooseProductWithWarranty(componentID, realCategoryID, categoryName, brandName, price, imgURL, radioCategoryID) {
                                         const selectedRadio = document.querySelector(`input[name="warranty-${radioCategoryID}"]:checked`);
 
@@ -780,7 +782,7 @@
 
                                         selectProduct(componentID, realCategoryID, categoryName, brandName, price, imgURL, warrantyDesc, warrantyPrice, warrantyDetailID);
                                     }
-
+                                      // xoa 
                                     function removeComponent(componentID) {
                                         document.getElementById(`meta-${componentID}`).innerText = "";
                                         document.getElementById(`price-${componentID}`).innerText = "";

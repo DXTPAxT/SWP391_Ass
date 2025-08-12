@@ -53,20 +53,35 @@
                         <div class="features_items" id="pc">
                             <h2 class="title text-center" style="margin-top: 30px">Sale events</h2>
                             <div class="row">
-                                <c:forEach var="product" items="${pcProducts}">
+                                <c:forEach var="s" items="${sale}">
                                     <div class="col-sm-4">
                                         <div class="card mb-4 shadow-sm">
-                                            <a href="${ctx}/CategoriesController?service=detail&categoryID=${product.categoryID}">
-                                            <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/CatePicture/${product.imgURL}" class="card-img-top img-fluid" alt="${product.categoryName}" style="height: 250px; object-fit: contain;">
-                                            <div class="card-body text-center">
-                                                <h5 class="card-title">${product.categoryName}</h5>
-                                                <p class="card-text">Brand: ${product.brandName}</p>
-                                                <p class="card-text text-success">Price: <fmt:formatNumber value="${product.price}" type="currency"/></p>
-                                            </div>
+                                            <a href="${ctx}/CategoriesController?service=detail&categoryID=${s.categoryID}">
+                                                <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/CatePicture/${s.imgURL}" 
+                                                     class="card-img-top img-fluid" 
+                                                     alt="${s.brandName}" 
+                                                     style="height: 250px; object-fit: contain;">
+                                                <div class="card-body text-center">
+                                                    <h5 class="card-title">${s.brandName}</h5>
+                                                    <p class="card-text">Category ID: ${s.categoryID}</p>
+                                                    <p class="card-text text-secondary">Start: ${s.startDate} - End: ${s.endDate}</p>
+                                                    <p class="card-text text-danger">
+                                                        Original: <fmt:formatNumber value="${s.originalPrice}" type="currency"/>
+                                                    </p>
+                                                    <p class="card-text text-success fw-bold">
+                                                        Discounted: <fmt:formatNumber value="${s.discountedPrice}" type="currency"/>
+                                                    </p>
+                                                    <p class="card-text">Created by: ${s.createdByName}</p>
+                                                    <c:if test="${not empty s.approvedByName}">
+                                                        <p class="card-text text-success">Approved by: ${s.approvedByName}</p>
+                                                    </c:if>
+                                                </div>
                                             </a>
                                         </div>
                                     </div>
                                 </c:forEach>
+
+
                             </div>
 
                             <c:if test="${empty pcProducts}">

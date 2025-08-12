@@ -23,6 +23,7 @@ public class AddSaleEvents extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         CategoriesDAO cdao = new CategoriesDAO();
         Blog_CateDAO dao = new Blog_CateDAO();
 
@@ -46,10 +47,17 @@ public class AddSaleEvents extends HttpServlet {
             String endDateStr = request.getParameter("endDate");
             String discountStr = request.getParameter("discountPercent");
 
-            // Check empty
-            if (cateIdStr == null || postIdStr == null || startDateStr == null || endDateStr == null || discountStr == null
-                    || cateIdStr.isEmpty() || postIdStr.isEmpty() || startDateStr.isEmpty() || endDateStr.isEmpty() || discountStr.isEmpty()) {
-                request.setAttribute("errorMsg", "Please fill in all fields.");
+            String imgURL = request.getParameter("imgURL");
+            String brandName = request.getParameter("brandName");
+            String originalPriceStr = request.getParameter("originalPrice");
+
+            // Validate input
+            if (cateIdStr == null || postIdStr == null || startDateStr == null || endDateStr == null
+                    || discountStr == null || originalPriceStr == null
+                    || cateIdStr.isEmpty() || postIdStr.isEmpty() || startDateStr.isEmpty()
+                    || endDateStr.isEmpty() || discountStr.isEmpty() || originalPriceStr.isEmpty()) {
+
+                request.setAttribute("error", "Please fill in all fields.");
                 doGet(request, response);
                 return;
             }
@@ -57,16 +65,19 @@ public class AddSaleEvents extends HttpServlet {
             int categoryID = Integer.parseInt(cateIdStr);
             int postID = Integer.parseInt(postIdStr);
             double discount = Double.parseDouble(discountStr);
+            double originalPrice = Double.parseDouble(originalPriceStr);
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = sdf.parse(startDateStr);
             Date endDate = sdf.parse(endDateStr);
 
             if (startDate.after(endDate)) {
-                request.setAttribute("errorMsg", "Start date must be before end date!");
+                request.setAttribute("error", "Start date must be before end date!");
                 doGet(request, response);
                 return;
             }
+
+            double discountedPrice = originalPrice * (1 - discount / 100.0);
 
             HttpSession session = request.getSession();
             User staff = (User) session.getAttribute("user");
@@ -81,17 +92,20 @@ public class AddSaleEvents extends HttpServlet {
             event.setStatus(2); // Đang chờ duyệt
             event.setCreatedBy(createdBy);
             event.setApprovedBy(null);
+            event.setImgURL(imgURL);
+            event.setBrandName(brandName);
+            event.setOriginalPrice(originalPrice);
+            event.setDiscountedPrice(discountedPrice);
 
             Blog_CateDAO dao = new Blog_CateDAO();
             dao.addSaleEvent(event);
 
-            // ✅ Redirect về trang danh sách
             response.sendRedirect("saleevents");
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMsg", "System Error: " + e.getMessage());
-            doGet(request, response); // Quay lại form kèm lỗi
+            request.setAttribute("error", "System Error: " + e.getMessage());
+            doGet(request, response);
         }
     }
 

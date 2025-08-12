@@ -178,7 +178,7 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-4 mb-md-0">
                                         <h2>${product.categoryName}</h2>
-                                        <img src="${ctx}/ShopPages/Pages/images/product-details/1.jpg" class="img-fluid" alt="Product Image">
+                                        <img src="${ctx}/ShopPages/Pages/images/CatePicture/${product.imgURL}" class="img-fluid" alt="Product Image">
                                     </div>
                                     <div class="col-md-6">
                                         <div class="price-box">
@@ -323,7 +323,7 @@
                         </div>
                     </div><!--/category-tab-->
 
-                    <div class="recommended_items"><!--recommended_items-->
+<!--                    <div class="recommended_items">recommended_items
                         <h2 class="title text-center">recommended items</h2>
 
                         <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
@@ -412,7 +412,7 @@
                                 <i class="fa fa-angle-right"></i>
                             </a>			
                         </div>
-                    </div><!--/recommended_items-->
+                    </div>/recommended_items-->
 
                 </div>
             </div>

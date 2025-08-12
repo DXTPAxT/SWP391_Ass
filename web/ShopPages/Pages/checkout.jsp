@@ -55,7 +55,7 @@
                                 <input type="hidden" name="cartItemIds" value="${cartItem.cartItemID}" />
                                 <!-- Ảnh -->
                                 <div class="cart-card-image pull-left">
-                                    <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/cart/two.png"
+                                    <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/CatePicture/${cartItem.category.imgURL}"
                                          alt="Product">
                                 </div>
 

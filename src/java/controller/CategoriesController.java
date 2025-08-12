@@ -23,7 +23,9 @@ public class CategoriesController extends HttpServlet {
 
         response.setContentType("text/html;charset=UTF-8");
         String service = request.getParameter("service");
-        if (service == null) service = "list";
+        if (service == null) {
+            service = "list";
+        }
 
         // --- Chi tiết sản phẩm ---
         if ("detail".equals(service)) {

@@ -5,7 +5,7 @@
     <tr>
         <td><input type="checkbox" class="select-item" value="${cartItem.cartItemID}"></td>
         <td>
-            <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/cart/two.png" alt="Product">
+            <img src="${pageContext.request.contextPath}/ShopPages/Pages/images/CatePicture/${cartItem.category.imgURL}" alt="Product">
         </td>
         <td class="text-left">
             <strong>${cartItem.category.categoryName} ${cartItem.category.categoryID}</strong><br>

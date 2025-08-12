@@ -62,7 +62,6 @@ public class HomePagesController extends HttpServlet {
         request.setAttribute("totalPagesLaptop", totalPagesLaptop);
         request.setAttribute("currentPageLaptop", pageLaptop);
 
-       
         request.getRequestDispatcher("/ShopPages/Pages/homepages.jsp").forward(request, response);
     }
 
@@ -74,17 +73,27 @@ public class HomePagesController extends HttpServlet {
         }
     }
 
-      @Override
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+<<<<<<< HEAD
        processRequest(request, response);
+=======
+
+       processRequest(request, response);
+
+>>>>>>> 8da093aefa18c03e5f372b1e91f5620bd3f97674
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> 8da093aefa18c03e5f372b1e91f5620bd3f97674
     }
 
     @Override

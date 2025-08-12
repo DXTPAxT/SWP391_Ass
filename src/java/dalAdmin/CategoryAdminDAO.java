@@ -80,7 +80,7 @@ public class CategoryAdminDAO extends DBAdminContext {
         JOIN BrandComs bc ON c.BrandComID = bc.BrandComID
         JOIN Brands b ON bc.BrandID = b.BrandID
         JOIN Components com ON bc.ComponentID = com.ComponentID
-        WHERE c.inventory = 0 OR c.Queue != 0
+        WHERE (c.inventory = 0 OR c.Queue != 0) and c.inventory <= c.Queue
     """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {

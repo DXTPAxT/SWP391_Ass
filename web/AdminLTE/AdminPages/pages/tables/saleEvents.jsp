@@ -138,7 +138,7 @@
                                         Add Sale Events
                                     </a>
                                 </div>
-                                
+
                                 <div class="form-container">
                                     <form action="saleevents" method="get">
                                         <label for="categoryID"></label>
@@ -160,6 +160,10 @@
                                             <th>Event ID</th>
                                             <th>Category</th>
                                             <th>Post Title</th>
+                                            <th>Image</th>
+                                            <th>Brand</th>
+                                            <th>Original Price</th>
+                                            <th>Discounted Price</th>
                                             <th>Start Date</th>
                                             <th>End Date</th>
                                             <th>Discount (%)</th>
@@ -189,6 +193,15 @@
                                                                 </c:if>
                                                             </c:forEach>
                                                         </td>
+                                                        <td>
+                                                            <c:if test="${not empty event.imgURL}">
+                                                                <img src="${event.imgURL}" alt="Event Image" style="max-width: 80px; max-height: 80px;" />
+                                                            </c:if>
+                                                        </td>
+                                                        <td>${event.brandName}</td>
+                                                        <td><fmt:formatNumber value="${event.originalPrice}" type="currency" /></td>
+                                                        <td><fmt:formatNumber value="${event.discountedPrice}" type="currency" /></td>
+
                                                         <td><fmt:formatDate value="${event.startDate}" pattern="yyyy-MM-dd"/></td>
                                                         <td><fmt:formatDate value="${event.endDate}" pattern="yyyy-MM-dd"/></td>
                                                         <td>${event.discountPercent}</td>

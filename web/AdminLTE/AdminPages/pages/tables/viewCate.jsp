@@ -128,7 +128,7 @@
                                                                    class="btn btn-warning btn-sm">View</a>
                                                             </td>
                                                             <td>
-                                                                <a href="Import?service=listbycate&categoryID=${category.categoryID}" 
+                                                                <a href="CateAdmin?service=listbycate&categoryID=${category.categoryID}" 
                                                                    class="btn btn-warning btn-sm">View</a>
                                                             </td>
                                                             <td>

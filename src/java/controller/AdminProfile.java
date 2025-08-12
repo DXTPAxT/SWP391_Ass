@@ -2,11 +2,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.cart;
+package controller;
 
-import dal.OrderDAO;
-import dal.OrderItemDAO;
-import dal.ProductDAO;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,15 +11,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import models.OrderCate;
-import models.OrderItems;
+import jakarta.servlet.http.HttpSession;
+import models.User;
 
 /**
  *
  * @author PC ASUS
  */
-public class OrderServlet extends HttpServlet {
+public class AdminProfile extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +37,10 @@ public class OrderServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet OrderServlet</title>");
+            out.println("<title>Servlet AdminProfile</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet OrderServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AdminProfile at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,29 +58,13 @@ public class OrderServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        OrderDAO dao = new OrderDAO();
-        String orderIDPara = request.getParameter("orderID");
-        try {
-            String service = request.getParameter("service");
-            int orderID = Integer.parseInt(orderIDPara);
-            if (service == null || service.isEmpty()) {
-                OrderCate order = dao.getOrderCateByID(orderID);
-                request.setAttribute("order", order);
-                RequestDispatcher rd = request.getRequestDispatcher("ShopPages/Pages/OrderInfo.jsp");
-                rd.forward(request, response);
-            } else if ("activeWarranty".equals(service)) {
-                int productID = Integer.parseInt(request.getParameter("productID"));
-                ProductDAO productdao = new ProductDAO();
-                boolean success = dao.activeWarrantyByOrderID(orderID);
-                success = productdao.activeWarrantyByProductID(productID);
-                if (success) {
-                    response.sendRedirect(request.getContextPath() + "/Order?orderID=" +orderIDPara );
-                } else {
-                    response.sendRedirect(request.getContextPath() +"/OrderHistory");
-                }
-            }
-        } catch (Exception e) {
-            response.sendRedirect("/OrderHistory");
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+           RequestDispatcher rd = request.getRequestDispatcher("/AdminLTE/AdminPages/pages/examples/profileSetting.jsp");
+rd.forward(request, response);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/Login");
         }
     }
 

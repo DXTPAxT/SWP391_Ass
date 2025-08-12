@@ -143,14 +143,13 @@ public class CartBuildPCDAO extends DBContext {
         WHERE cbi.CartBuildPCID = ?
     """;
         String insertBuildPCSQL = "INSERT INTO Build_PC (Price, Status, UserID) VALUES (?, 1, ?)";
-
         String insertBuildPCItemSQL = """
         INSERT INTO Build_PC_Items (BuildPCID, CategoryID, Price, WarrantyDetailID, Status)
         VALUES (?, ?, ?, ?, 1)
     """;
         String insertOrderSQL = """
         INSERT INTO Orders (OrderCode, Product_Type, CustomerID, OrderDate, Address, PhoneNumber, Fullname, PaymentStatusID, TotalAmount, Status)
-        VALUES (NULL, 1, ?, NOW(), '', ?, ?, 2, ?, 1)
+        VALUES (NULL, 1, ?, ?, '', ?, ?, 2, ?, 1)
     """;
         String insertOrderItemSQL = "INSERT INTO Order_BuildPCItems (OrderID, BuildPCID, Price) VALUES (?, ?, ?)";
         String insertDetailSQL = """
@@ -163,9 +162,15 @@ public class CartBuildPCDAO extends DBContext {
     """;
         String deleteCartItemsSQL = "DELETE FROM Cart_Build_PC_Items WHERE CartBuildPCID = ?";
         String deleteCartSQL = "DELETE FROM Cart_Build_PC WHERE CartBuildPCID = ?";
+
         try {
             connection.setAutoCommit(false);
 
+            // Thời gian thực
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            System.out.println("✅ JVM OrderDate = " + currentTime);
+
+            // Lấy thông tin user
             PreparedStatement psUser = connection.prepareStatement(getUserSQL);
             psUser.setInt(1, userID);
             ResultSet rsUser = psUser.executeQuery();
@@ -176,6 +181,7 @@ public class CartBuildPCDAO extends DBContext {
             String fullName = rsUser.getString("FullName");
             String phone = rsUser.getString("PhoneNumber");
 
+            // Lấy item trong giỏ
             PreparedStatement psItems = connection.prepareStatement(getItemsSQL);
             psItems.setInt(1, cartBuildPCID);
             ResultSet rsItems = psItems.executeQuery();
@@ -195,10 +201,9 @@ public class CartBuildPCDAO extends DBContext {
                 return -1;
             }
 
-            int finalPrice = totalPrice;
-
+            // Insert Build_PC
             PreparedStatement psBuildPC = connection.prepareStatement(insertBuildPCSQL, Statement.RETURN_GENERATED_KEYS);
-            psBuildPC.setInt(1, finalPrice);
+            psBuildPC.setInt(1, totalPrice);
             psBuildPC.setInt(2, userID);
             psBuildPC.executeUpdate();
             ResultSet rsBuildPC = psBuildPC.getGeneratedKeys();
@@ -208,6 +213,7 @@ public class CartBuildPCDAO extends DBContext {
             }
             int buildPCID = rsBuildPC.getInt(1);
 
+            // Insert Build_PC_Items
             PreparedStatement psInsertBuildPCItem = connection.prepareStatement(insertBuildPCItemSQL);
             for (Object[] item : items) {
                 psInsertBuildPCItem.setInt(1, buildPCID);
@@ -222,11 +228,13 @@ public class CartBuildPCDAO extends DBContext {
             }
             psInsertBuildPCItem.executeBatch();
 
+            // Insert Orders (dùng currentTime)
             PreparedStatement psOrder = connection.prepareStatement(insertOrderSQL, Statement.RETURN_GENERATED_KEYS);
             psOrder.setInt(1, userID);
-            psOrder.setString(2, phone);
-            psOrder.setString(3, fullName);
-            psOrder.setInt(4, finalPrice);
+            psOrder.setTimestamp(2, currentTime);  // ✅ Thời gian thực
+            psOrder.setString(3, phone);
+            psOrder.setString(4, fullName);
+            psOrder.setInt(5, totalPrice);
             psOrder.executeUpdate();
 
             ResultSet rsOrder = psOrder.getGeneratedKeys();
@@ -236,15 +244,18 @@ public class CartBuildPCDAO extends DBContext {
             }
             int orderID = rsOrder.getInt(1);
 
+            // Update OrderCode
             String updateOrderCodeSQL = "UPDATE Orders SET OrderCode = ? WHERE OrderID = ?";
             PreparedStatement psUpdateOrderCode = connection.prepareStatement(updateOrderCodeSQL);
             psUpdateOrderCode.setString(1, "OD" + orderID);
             psUpdateOrderCode.setInt(2, orderID);
             psUpdateOrderCode.executeUpdate();
+
+            // Insert Order_BuildPCItems
             PreparedStatement psInsertOrderItem = connection.prepareStatement(insertOrderItemSQL, Statement.RETURN_GENERATED_KEYS);
             psInsertOrderItem.setInt(1, orderID);
             psInsertOrderItem.setInt(2, buildPCID);
-            psInsertOrderItem.setInt(3, finalPrice);
+            psInsertOrderItem.setInt(3, totalPrice);
             psInsertOrderItem.executeUpdate();
 
             ResultSet rsOrderItem = psInsertOrderItem.getGeneratedKeys();
@@ -254,6 +265,7 @@ public class CartBuildPCDAO extends DBContext {
             }
             int orderBuildPCItemID = rsOrderItem.getInt(1);
 
+            // Insert Order_BuildPCDetails + Products
             PreparedStatement psInsertDetail = connection.prepareStatement(insertDetailSQL, Statement.RETURN_GENERATED_KEYS);
             PreparedStatement psInsertProduct = connection.prepareStatement(insertProductSQL);
 
@@ -283,6 +295,7 @@ public class CartBuildPCDAO extends DBContext {
                 psInsertProduct.executeUpdate();
             }
 
+            // Xoá giỏ hàng
             PreparedStatement psDeleteItems = connection.prepareStatement(deleteCartItemsSQL);
             psDeleteItems.setInt(1, cartBuildPCID);
             psDeleteItems.executeUpdate();
@@ -387,7 +400,8 @@ public class CartBuildPCDAO extends DBContext {
             e.printStackTrace();
         }
     }
- public static void main(String[] args) {
+
+    public static void main(String[] args) {
         // Giả sử cartBuildPCID bạn muốn xóa là 5
         int cartID = 3;
 

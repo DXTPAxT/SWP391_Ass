@@ -67,16 +67,16 @@
         <div class="change-container">
             <div class="change-form-box">
                 <h2>Change Password</h2>
-                <form action="User" method="POST">
+                <form action="User" method="POST" id="changePasswordForm" >
                     <input type="hidden" name="service" value="changePassword"/>
                     <input type="hidden" name="email" value="${email}"/>
                     <label for="password" class="form">New Password</label>
-                    <input type="password" id="password" name="password" class="form-control${error == 'Password must be at least 6 characters.' ? ' is-invalid' : ''}" required placeholder="Enter new password"/>
+                    <input type="password" id="password" class="form-control${error == 'Password must be at least 6 characters.' ? ' is-invalid' : ''}" required placeholder="Enter new password"/>
                     <c:if test="${error == 'Password must be at least 6 characters.'}">
                         <div class="alert alert-danger">${error}</div>
                     </c:if>
                     <label for="confirmPassword" class="form">Confirm Password</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control${error == 'Passwords do not match.' ? ' is-invalid' : ''}" required placeholder="Confirm new password"/>
+                    <input type="password" id="confirmPassword" class="form-control${error == 'Passwords do not match.' ? ' is-invalid' : ''}" required placeholder="Confirm new password"/>
                     <c:if test="${error == 'Passwords do not match.'}">
                         <div class="alert alert-danger">${error}</div>
                     </c:if>
@@ -85,9 +85,51 @@
                     </c:if>
                     <button type="submit" class="btn-modern">Change Password</button>
                     <a href="Login">Back to Login</a>
+                    <!-- Thêm input hidden để chứa password đã hash -->
+                    <input type="hidden" name="hashedPassword" id="hashedPassword">
                 </form>
             </div>
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const form = document.getElementById("changePasswordForm");
+
+                form.addEventListener("submit", async function (e) {
+                    e.preventDefault(); // chặn submit mặc định
+
+                    const passwordInput = document.getElementById("password");
+                    const confirmPasswordInput = document.getElementById("confirmPassword");
+                    const hashedInput = document.getElementById("hashedPassword");
+
+                    const password = passwordInput.value;
+                    const confirmPassword = confirmPasswordInput.value;
+
+                    // ✅ Kiểm tra độ dài
+                    if (password.length < 6) {
+                        alert("Password must be at least 6 characters.");
+                        return;
+                    }
+
+                    // ✅ Kiểm tra khớp
+                    if (password !== confirmPassword) {
+                        alert("Passwords do not match.");
+                        return;
+                    }
+
+                    // ✅ Nếu hợp lệ, tiến hành hash
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(password);
+
+                    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+                    hashedInput.value = hashHex;
+
+                    form.submit(); // submit lại form sau khi đã hash
+                });
+            });
+        </script>
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/jquery.js"></script>
         <script src="${pageContext.request.contextPath}/ShopPages/Pages/js/bootstrap.min.js"></script>
     </body>

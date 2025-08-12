@@ -143,7 +143,8 @@
                         <!-- Trạng thái đơn hàng -->
                         <div class="col-md-6 col-sm-12">
                             <form method="get" action="OrderHistory" class="mb-0">
-                                <select name="status" class="form-control" onchange="this.form.submit()" style="height: 35px;">                                        <option value="-1" ${selectedStatus == -1 ? 'selected' : ''}>All</option>
+                                <select name="status" class="form-control" onchange="this.form.submit()" style="height: 35px;">           
+                                    <option value="-1" ${selectedStatus == -1 ? 'selected' : ''}>All</option>
                                     <option value="1" ${selectedStatus == 1 ? 'selected' : ''}>Pending</option>
                                     <option value="2" ${selectedStatus == 2 ? 'selected' : ''}>On-progress</option>
                                     <option value="3" ${selectedStatus == 3 ? 'selected' : ''}>Waiting for ship</option>
